@@ -5,14 +5,16 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     
     <meta name="description" content="Personal portfolio of Alfred Justus, CS student at ETH Zurich.">
-    <meta name="robots" content="index, follow"> <meta name="author" content="Alfred Justus">
+    <meta name="robots" content="index, follow"> 
+    <meta name="author" content="Alfred Justus">
 
     <title>Alfred Justus</title>
     <style>
         /* Minimalist / Brutalist Styling */
         :root {
             --bg-color: #ffffff;
-            --text-color: #000000;
+            --text-color: #1a1a1a;
+            --meta-color: #666666;
             --link-color: #000000;
         }
 
@@ -20,28 +22,40 @@
             font-family: "Courier New", Courier, monospace;
             background-color: var(--bg-color);
             color: var(--text-color);
-            line-height: 1.6;
+            line-height: 1.5;
             margin: 0;
-            padding: 40px 20px;
+            padding: 60px 20px;
         }
 
         main {
-            max-width: 600px;
+            max-width: 580px;
             margin: 0 auto;
         }
 
+        /* Typography */
         h1 {
-            font-size: 1.5rem;
+            font-size: 1.2rem;
             font-weight: bold;
-            margin-bottom: 0.5rem;
+            margin: 0 0 0.5rem 0;
             letter-spacing: -0.02em;
+            text-transform: uppercase;
+        }
+
+        h2 {
+            font-size: 0.9rem;
+            font-weight: bold;
+            margin: 2rem 0 1rem 0;
+            text-transform: uppercase;
+            border-bottom: 1px solid #000;
+            padding-bottom: 5px;
+            display: inline-block;
         }
 
         p {
-            margin-bottom: 1.5rem;
-            color: #333;
+            margin-bottom: 1rem;
         }
 
+        /* Links */
         a {
             color: var(--link-color);
             text-decoration: underline;
@@ -55,22 +69,51 @@
             text-decoration: none;
         }
 
+        /* List Styling */
         ul {
             list-style-type: none;
             padding: 0;
+            margin: 0;
         }
 
         li {
-            margin-bottom: 1rem;
+            margin-bottom: 1.5rem;
         }
 
-        .project-title {
+        /* Custom Classes */
+        .header-bio {
+            color: var(--meta-color);
+            margin-bottom: 2rem;
+        }
+
+        .item-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: baseline;
+            flex-wrap: wrap;
+        }
+
+        .title {
             font-weight: bold;
         }
 
-        .note {
+        .meta {
             font-size: 0.85rem;
-            color: #666;
+            color: var(--meta-color);
+            white-space: nowrap;
+        }
+
+        .description {
+            display: block;
+            margin-top: 0.25rem;
+            font-size: 0.95rem;
+            color: #333;
+        }
+
+        /* Utility */
+        .socials {
+            margin-top: 3rem;
+            font-size: 0.9rem;
         }
     </style>
 </head>
@@ -79,38 +122,73 @@
     <main>
         <header>
             <h1>Alfred Justus</h1>
+            <div class="header-bio">
+                B.Sc. CS Student @ <a href="https://ethz.ch" target="_blank">ETH Zürich</a>
+            </div>
         </header>
 
-        <section id="about">
-            <p>
-                18 years old.<br>
-                CS Student at <a href="https://ethz.ch" target="_blank">ETH Zürich</a> '28.<br>
-                Former <a href="https://jfks.de" target="_blank">JFKS</a> student.
-            </p>
-            <p>
-                &#8594; <a href="https://www.linkedin.com/in/alfred-justus" target="_blank">LinkedIn</a>
-            </p>
-        </section>
-
-        <hr style="border: 0; border-top: 1px dashed #ccc; margin: 2rem 0;">
-
-        <section id="projects">
-            <strong>Projects</strong>
+        <section id="experience">
+            <h2>Experience</h2>
             <ul>
                 <li>
-                    <span class="project-title">
-                        <a href="https://stutor.de" target="_blank">stutor.de</a>
+                    <div class="item-header">
+                        <span class="title">Co-Founder, <a href="https://stutor.de" target="_blank">stutor.de</a></span>
+                        <span class="meta">2024–2025</span>
+                    </div>
+                    <span class="description">
+                        Built a platform to streamline peer tutoring at schools. Now actively managed and used by the John F. Kennedy School Berlin.
                     </span>
-                    <br>
-                    <span class="note">Tutoring platform used at JFKS.</span>
-                </li>
-                <li>
-                    <span class="project-title">glass pdf viewer</span>
-                    <br>
-                    <span class="note">Link coming soon.</span>
                 </li>
             </ul>
         </section>
+
+        <section id="projects">
+            <h2>Selected Projects</h2>
+            <ul>
+                <li>
+                    <div class="item-header">
+                        <span class="title">NotionFlow</span>
+                        <span class="meta">Web Tool</span>
+                    </div>
+                    <span class="description">
+                        A browser extension that instantly converts web content—including LaTeX equations, code snippets, and video transcripts—into native Notion blocks.
+                    </span>
+                </li>
+                <li>
+                    <div class="item-header">
+                        <span class="title">Glass PDF Viewer</span>
+                        <span class="meta">In Progress</span>
+                    </div>
+                    <span class="description">
+                        Minimalist PDF rendering engine.
+                    </span>
+                </li>
+            </ul>
+        </section>
+
+        <section id="education">
+            <h2>Education</h2>
+            <ul>
+                <li>
+                    <div class="item-header">
+                        <span class="title">ETH Zürich</span>
+                        <span class="meta">2025–2028</span>
+                    </div>
+                    <span class="description">B.Sc. Computer Science</span>
+                </li>
+                <li>
+                    <div class="item-header">
+                        <span class="title">John F. Kennedy School</span>
+                        <span class="meta">2012–2025</span>
+                    </div>
+                    <span class="description">Abitur / High School Diploma</span>
+                </li>
+            </ul>
+        </section>
+
+        <footer class="socials">
+            &#8594; <a href="https://www.linkedin.com/in/alfred-justus" target="_blank">LinkedIn</a>
+        </footer>
     </main>
 
 </body>
