@@ -1,0 +1,368 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Privacy Policy | NotionSesh</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:opsz,wght@8..60,400;8..60,600;8..60,700&family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
+  <script data-goatcounter="https://alfredjustus.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>
+  <style>
+    :root {
+      --terracotta: #d4734a;
+      --deep-clay: #2d2416;
+      --cream: #fef9f3;
+      --burnt-orange: #e67e3d;
+      --text-body: rgba(45, 36, 22, 0.85);
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      width: 100%;
+      min-height: 100vh;
+      font-family: 'DM Sans', sans-serif;
+      -webkit-font-smoothing: antialiased;
+      background: linear-gradient(135deg, #fef9f3 0%, #f9f3ea 50%, #f4ede3 100%);
+      color: var(--deep-clay);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      position: relative;
+      overflow-x: hidden;
+      padding: 100px 20px 60px 20px;
+    }
+
+    body::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='1.2' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+      opacity: 0.03;
+      pointer-events: none;
+      z-index: 1;
+      position: fixed;
+    }
+
+    .nav-header {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      padding: 24px 40px;
+      z-index: 100;
+      pointer-events: none;
+    }
+
+    .back-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      color: var(--deep-clay);
+      text-decoration: none;
+      font-weight: 700;
+      font-size: 16px;
+      opacity: 0.6;
+      transition: all 0.2s ease;
+      pointer-events: auto;
+      border: none !important;
+    }
+
+    .back-link:hover {
+      opacity: 1;
+      transform: translateX(-4px);
+      color: var(--terracotta);
+    }
+
+    .content-container {
+      width: 100%;
+      max-width: 800px;
+      position: relative;
+      z-index: 2;
+    }
+
+    h1 {
+      font-family: 'Source Serif 4', serif;
+      font-size: clamp(36px, 6vw, 56px);
+      font-weight: 700;
+      margin-bottom: 10px;
+      color: var(--deep-clay);
+      text-align: center;
+    }
+
+    .last-updated {
+      text-align: center;
+      font-size: 14px;
+      color: rgba(45, 36, 22, 0.5);
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      margin-bottom: 50px;
+    }
+
+    h2 {
+      font-family: 'Source Serif 4', serif;
+      font-size: 28px;
+      font-weight: 600;
+      margin-top: 50px;
+      margin-bottom: 16px;
+      border-bottom: 2px solid rgba(212, 115, 74, 0.15);
+      padding-bottom: 8px;
+    }
+
+    h3 {
+      font-family: 'DM Sans', sans-serif;
+      font-size: 18px;
+      font-weight: 700;
+      margin-top: 28px;
+      margin-bottom: 10px;
+      color: var(--terracotta);
+    }
+
+    p {
+      line-height: 1.7;
+      margin-bottom: 16px;
+      color: var(--text-body);
+      font-size: 16px;
+    }
+
+    ul {
+      list-style: none;
+      padding-left: 0;
+      margin-bottom: 20px;
+    }
+
+    ul li {
+      position: relative;
+      padding-left: 24px;
+      margin-bottom: 10px;
+      line-height: 1.6;
+      color: var(--text-body);
+    }
+
+    ul li::before {
+      content: "•";
+      color: var(--terracotta);
+      font-weight: bold;
+      position: absolute;
+      left: 0;
+    }
+
+    code {
+      background: rgba(212, 115, 74, 0.1);
+      padding: 2px 4px;
+      border-radius: 4px;
+      font-family: monospace;
+      font-size: 0.9em;
+    }
+
+    a {
+      color: var(--terracotta);
+      text-decoration: none;
+      font-weight: 500;
+      border-bottom: 1px solid rgba(212, 115, 74, 0.3);
+      transition: all 0.2s;
+    }
+
+    a:hover {
+      color: var(--burnt-orange);
+      border-bottom-color: var(--burnt-orange);
+    }
+
+    .table-container {
+      overflow-x: auto;
+      background: #fff;
+      border-radius: 12px;
+      box-shadow: 0 4px 20px rgba(45, 36, 22, 0.04);
+      border: 1px solid rgba(45, 36, 22, 0.08);
+      margin: 24px 0;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      min-width: 500px;
+    }
+
+    th {
+      text-align: left;
+      background: rgba(212, 115, 74, 0.08);
+      padding: 12px 16px;
+      font-size: 14px;
+      font-weight: 700;
+      color: var(--deep-clay);
+      font-family: 'Source Serif 4', serif;
+    }
+
+    td {
+      padding: 12px 16px;
+      border-top: 1px solid rgba(45, 36, 22, 0.06);
+      font-size: 14px;
+    }
+
+    footer {
+      margin-top: 80px;
+      text-align: center;
+      border-top: 1px solid rgba(45, 36, 22, 0.1);
+      padding-top: 30px;
+      font-size: 14px;
+      color: rgba(45, 36, 22, 0.6);
+    }
+
+    @media (max-width: 600px) {
+      .nav-header { padding: 16px 20px; }
+    }
+  </style>
+</head>
+<body>
+
+  <nav class="nav-header">
+    <a href="../" class="back-link">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>
+      NotionSesh
+    </a>
+  </nav>
+
+  <div class="content-container">
+    <h1>Privacy Policy</h1>
+    <div class="last-updated">Last Updated: February 22, 2026</div>
+
+    <p><strong>NotionSesh</strong> ("we," "us," or "the Extension") respects your privacy. This policy explains how we handle your data when you use our Chrome extension to capture and format web content for Notion.</p>
+
+    <p>We operate on a <strong>privacy-first</strong> basis: we do not require accounts, we do not track your browsing history, and we do not sell your data.</p>
+
+    <h2>1. Data Collection & Storage</h2>
+    <p>We minimize data collection. Data is handled in three main ways: stored locally on your device, sent briefly to our backend for processing, or hosted for Notion embedding.</p>
+
+    <h3>A. Local Data (Stored on your device)</h3>
+    <p>The following data is stored in your browser's local storage (<code>chrome.storage.local</code>) and never leaves your device:</p>
+    <ul>
+      <li><strong>Editor Session:</strong> The text blocks and content you have captured.</li>
+      <li><strong>Preferences:</strong> Settings such as theme mode (dark/light) and equation toggles.</li>
+      <li><strong>Installation ID:</strong> A randomly generated UUID used to anonymously track daily usage limits.</li>
+      <li><strong>Image Tracking:</strong> Temporary tracking data used to manage which uploaded screenshots are currently active in your editor.</li>
+    </ul>
+
+    <h3>B. Server-Side Data (Sent to our Backend)</h3>
+    <p>We use a secure backend (Supabase) to manage usage limits and processing.</p>
+    <ul>
+      <li><strong>Anonymous Usage Data:</strong> We store your Installation ID, daily usage counts, and coupon redemptions. This data is not linked to your name, email, or IP address.</li>
+      <li><strong>Voluntary Feedback:</strong> If you submit feedback, we store the text description and any images or email addresses you voluntarily provide.</li>
+      <li><strong>AI Feedback:</strong> If you explicitly rate an AI capture (thumbs up/down) or report an error, we store the screenshot image and the AI response for debugging purposes.</li>
+    </ul>
+
+    <h3>C. Transient Data (AI Processing)</h3>
+    <p>When you trigger an AI capture (e.g., converting a screenshot or complex text):</p>
+    <ul>
+      <li>The screenshot, selected text, and source URL are sent to our processing server.</li>
+      <li>This data is passed immediately to our AI providers (Google Vertex AI or Mathpix) for extraction.</li>
+      <li><strong>Crucially:</strong> This data is <strong>transient</strong>. Once the extraction is returned to you, the image and text are discarded by our server. They are <strong>not stored</strong> in our database unless you manually submit a feedback report regarding that specific capture.</li>
+    </ul>
+
+    <h3>D. Hosted Content (Manual Screenshot Feature)</h3>
+    <p>When you use the manual screenshot feature to capture a portion of your browser tab, we host the image so it can be displayed in Notion.</p>
+    <ul>
+      <li><strong>What is collected:</strong> A JPEG image containing only the pixel content of your selected screen area. We do not collect metadata, user identifiers, cookies, or browsing history alongside this image.</li>
+      <li><strong>Where it is stored:</strong> Images are uploaded to a publicly accessible Supabase Storage bucket (backed by AWS S3).</li>
+      <li><strong>Access & Security:</strong> Images are assigned a random, unguessable UUID filename. While the URL is publicly readable, only someone with the exact URL can access it.</li>
+      <li><strong>Retention & Deletion:</strong>
+        <ul>
+          <li><strong>Active Cleanup:</strong> If you delete a screenshot from the extension editor or clear your session, the uncopied image is automatically deleted from our servers.</li>
+          <li><strong>Permanent Storage:</strong> Once you click "Copy to Notion," the image must be retained indefinitely so your Notion page does not break.</li>
+          <li><strong>Orphaned Images:</strong> If you uninstall the extension before copying an uploaded image, our servers can no longer identify it for deletion, and it will persist in storage indefinitely.</li>
+        </ul>
+      </li>
+    </ul>
+
+    <h2>2. Third-Party Services</h2>
+    <p>We use a select few trusted third-party services to provide functionality. We do not use third-party analytics (like Google Analytics) or tracking SDKs.</p>
+
+    <div class="table-container">
+      <table>
+        <thead>
+          <tr>
+            <th>Service</th>
+            <th>Purpose</th>
+            <th>Data Received</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>Google Vertex AI</strong></td>
+            <td>Primary AI content extraction</td>
+            <td>Transient Image/Text</td>
+          </tr>
+          <tr>
+            <td><strong>Mathpix</strong></td>
+            <td>Fallback OCR extraction</td>
+            <td>Transient Image</td>
+          </tr>
+          <tr>
+            <td><strong>Supabase (AWS S3)</strong></td>
+            <td>Backend database, API & Image Hosting</td>
+            <td>Anonymous UUID, Usage Stats, Hosted Screenshot Images</td>
+          </tr>
+          <tr>
+            <td><strong>Google Fonts</strong></td>
+            <td>UI Typography</td>
+            <td>Font requests (IP/User-Agent)</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h2>3. Permissions</h2>
+    <p>We request specific Chrome permissions solely to enable core features:</p>
+    <ul>
+      <li><strong>activeTab & scripting:</strong> To capture the text or screenshot you select on the current page.</li>
+      <li><strong>clipboardWrite:</strong> To allow you to paste formatted content into Notion.</li>
+      <li><strong>storage:</strong> To save your settings locally.</li>
+      <li><strong>&lt;all_urls&gt;:</strong> Required for the screenshot engine to function on any page you visit.</li>
+    </ul>
+
+    <h2>4. Data Security</h2>
+    <ul>
+      <li><strong>Encryption:</strong> All data transmitted between the extension, our backend, and AI providers is encrypted via HTTPS.</li>
+      <li><strong>Anonymity:</strong> Users are identified solely by a random UUID. We cannot link this ID to a real person, Google Account, or Chrome Profile. Hosted screenshots are entirely decoupled from any user identifier.</li>
+      <li><strong>Access Control:</strong> Our database is protected by Row Level Security, ensuring no unauthorized access to data.</li>
+    </ul>
+
+    <h2>5. Legal Basis & International Transfers</h2>
+    <h3>A. Legal Basis for Processing</h3>
+    <p>We process your data under the following legal bases (GDPR Art. 6 and Swiss FADP):</p>
+    <ul>
+      <li><strong>Performance of Contract:</strong> Processing your text/images and hosting your screenshots is necessary to fulfill the core service of the Extension.</li>
+      <li><strong>Legitimate Interest:</strong> We process anonymous usage statistics and error logs to improve the stability and performance of the Extension.</li>
+    </ul>
+
+    <h3>B. International Data Transfers</h3>
+    <p>Our backend services (Supabase, Google Cloud) are located in the <strong>United States</strong> (specifically us-east-1 for image storage). By using the Extension, you acknowledge that your data is transferred to the US for processing and storage.</p>
+    <p>We ensure your data is protected through:</p>
+    <ul>
+      <li><strong>Standard Contractual Clauses (SCCs):</strong> Our agreements include clauses approved by the European Commission and Swiss FDPIC.</li>
+      <li><strong>Data Privacy Framework:</strong> Our providers are certified under the EU-U.S. and Swiss-U.S. Data Privacy Frameworks.</li>
+    </ul>
+
+    <h2>6. Your Rights (GDPR)</h2>
+    <p>Under the GDPR and Swiss FADP, you have the right to access, correct, and delete your data.</p>
+    <ul>
+      <li><strong>Deletion:</strong> You can delete all local data by uninstalling the extension. Because server-side data (usage stats and hosted screenshots) is entirely anonymous, we cannot process individual deletion requests for server-side files.</li>
+      <li><strong>Complaints:</strong> You have the right to lodge a complaint with a supervisory authority. In Switzerland, this is the <strong>Federal Data Protection and Information Commissioner (FDPIC)</strong>.</li>
+    </ul>
+
+    <h2>7. Contact</h2>
+    <p>If you have questions about this policy or privacy concerns, please contact the developer directly:</p>
+    <p>
+      <strong>Email:</strong> <a href="mailto:ajustus@student.ethz.ch">ajustus@student.ethz.ch</a>
+    </p>
+
+    <footer>
+      <p>&copy; 2026 Alfred Justus. All rights reserved.</p>
+      <p style="margin-top: 10px; font-size: 12px;"><a href="../">Back to Home</a></p>
+    </footer>
+
+  </div>
+
+</body>
+</html>

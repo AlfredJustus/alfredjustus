@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>NotionSesh Intro</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:opsz,wght@8..60,400;8..60,700&family=DM+Sans:wght@500;700&display=swap" rel="stylesheet">
+  <script data-goatcounter="https://alfredjustus.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>
+  <style>
+    :root {
+      --terracotta: #d4734a;
+      --deep-clay: #2d2416;
+      --cream: #fef9f3;
+      --burnt-orange: #e67e3d;
+      --card-bg: #ffffff;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      width: 100%;
+      min-height: 100vh;
+      font-family: 'DM Sans', sans-serif;
+      -webkit-font-smoothing: antialiased;
+      background: linear-gradient(135deg, #fef9f3 0%, #f9f3ea 50%, #f4ede3 100%);
+      color: var(--deep-clay);
+      line-height: 1.6;
+      position: relative;
+      padding: 40px 20px;
+    }
+
+    /* Organic paper texture overlay */
+    body::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='1.2' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+      opacity: 0.03;
+      pointer-events: none;
+      z-index: 1;
+    }
+
+    .wrap {
+      max-width: 860px;
+      margin: 0 auto;
+      position: relative;
+      z-index: 2;
+    }
+
+    /* ─── Navigation ─── */
+    .nav-header {
+      margin-bottom: 40px;
+    }
+
+    .btn-back {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 10px 20px;
+      border-radius: 10px;
+      font-size: 14px;
+      font-weight: 700;
+      text-decoration: none;
+      color: var(--deep-clay);
+      background: transparent;
+      border: 2px solid rgba(45, 36, 22, 0.1);
+      transition: all 0.2s ease;
+    }
+
+    .btn-back:hover {
+      background: rgba(45, 36, 22, 0.05);
+      border-color: rgba(45, 36, 22, 0.2);
+      transform: translateX(-4px);
+    }
+
+    /* ─── Typography ─── */
+    h1, h2, h3 { 
+        font-family: 'Source Serif 4', serif; 
+        color: var(--deep-clay);
+    }
+
+    h1 { font-size: clamp(32px, 5vw, 48px); margin-bottom: 16px; }
+    h2 { font-size: 28px; margin: 48px 0 24px; }
+    
+    p { color: rgba(45, 36, 22, 0.7); margin-bottom: 16px; }
+
+    /* ─── Components ─── */
+    .hero {
+      background: var(--card-bg);
+      border: 2px solid rgba(45, 36, 22, 0.05);
+      border-radius: 20px;
+      box-shadow: 0 12px 40px rgba(45, 36, 22, 0.06);
+      padding: 40px;
+      margin-bottom: 32px;
+    }
+
+    .badge {
+      display: inline-block;
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      padding: 4px 12px;
+      background: rgba(212, 115, 74, 0.12);
+      color: var(--terracotta);
+      border-radius: 6px;
+      margin-bottom: 16px;
+    }
+
+    .steps {
+      list-style: none;
+      display: grid;
+      gap: 20px;
+    }
+
+    .step {
+      background: var(--card-bg);
+      border: 2px solid rgba(45, 36, 22, 0.05);
+      border-radius: 16px;
+      padding: 24px;
+      display: grid;
+      grid-template-columns: 40px 1fr;
+      gap: 20px;
+      align-items: start;
+      box-shadow: 0 4px 20px rgba(45, 36, 22, 0.03);
+    }
+
+    .step-num {
+      width: 40px;
+      height: 40px;
+      border-radius: 10px;
+      display: grid;
+      place-items: center;
+      color: white;
+      background: var(--terracotta);
+      font-weight: 700;
+      font-family: 'DM Sans', sans-serif;
+    }
+
+    .step h3 {
+      margin-bottom: 8px;
+      font-size: 20px;
+    }
+
+    .kbd {
+      font-family: monospace;
+      font-size: 0.9em;
+      background: #f1ede8;
+      padding: 2px 6px;
+      border-radius: 4px;
+      border: 1px solid rgba(45, 36, 22, 0.1);
+    }
+
+    .tips {
+      margin-top: 40px;
+      background: rgba(45, 36, 22, 0.03);
+      border: 2px dashed rgba(45, 36, 22, 0.1);
+      border-radius: 16px;
+      padding: 24px;
+    }
+
+    .tips h3 { font-size: 20px; margin-bottom: 12px; }
+    .tips ul { margin-left: 20px; }
+    .tips li { margin-bottom: 8px; color: rgba(45, 36, 22, 0.8); }
+
+    .cta {
+      display: inline-block;
+      margin-top: 24px;
+      background: var(--terracotta);
+      color: white;
+      text-decoration: none;
+      padding: 14px 28px;
+      border-radius: 12px;
+      font-weight: 700;
+      transition: all 0.3s ease;
+      box-shadow: 0 4px 12px rgba(212, 115, 74, 0.2);
+    }
+
+    .cta:hover {
+      background: var(--burnt-orange);
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(212, 115, 74, 0.3);
+    }
+
+    @media (max-width: 640px) {
+      .hero { padding: 24px; }
+      .step { grid-template-columns: 1fr; gap: 12px; }
+    }
+  </style>
+</head>
+<body>
+  <main class="wrap">
+    <nav class="nav-header">
+      <a href="/notionsesh" class="btn-back">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>
+        NotionSesh
+      </a>
+    </nav>
+
+    <section class="hero">
+      <span class="badge">NotionSesh Intro</span>
+      <h1>From Web Content to Clean Notion Blocks in Minutes</h1>
+      <p>NotionSesh helps you move text, screenshots, and extracted content into Notion with 1:1 block mapping so formatting stays consistent.</p>
+    </section>
+
+    <h2>Step-by-Step Guide</h2>
+    <div class="steps">
+      <div class="step">
+        <span class="step-num">1</span>
+        <div>
+          <h3>Open the sidepanel</h3>
+          <p>Open NotionSesh from your extension toolbar and pin it if you use it often. Keep the panel open while collecting content.</p>
+        </div>
+      </div>
+
+      <div class="step">
+        <span class="step-num">2</span>
+        <div>
+          <h3>Copy &amp; paste content directly</h3>
+          <p>Paste content from websites, LLM chats, docs, and notes straight into the editor. Shortcut: <span class="kbd">Ctrl</span> + <span class="kbd">V</span> (or <span class="kbd">⌘</span> + <span class="kbd">V</span> on Mac).</p>
+        </div>
+      </div>
+
+      <div class="step">
+        <span class="step-num">3</span>
+        <div>
+          <h3>Use Smart Extract for hard-to-copy areas</h3>
+          <p>Click <strong>Extract</strong> to select a region in PDFs, slides, or image-heavy pages. NotionSesh converts detected content into editable Notion-style blocks.</p>
+        </div>
+      </div>
+
+      <div class="step">
+        <span class="step-num">4</span>
+        <div>
+          <h3>Use Screenshot when you want visuals preserved</h3>
+          <p>Click <strong>Screenshot</strong> to capture a region as an image block. This is ideal when exact visual fidelity matters more than text extraction.</p>
+        </div>
+      </div>
+
+      <div class="step">
+        <span class="step-num">5</span>
+        <div>
+          <h3>Review and adjust in the editor</h3>
+          <p>Reorder blocks, edit text, and tidy structure before exporting. You can combine pasted, extracted, and screenshot content in one workflow.</p>
+        </div>
+      </div>
+
+      <div class="step">
+        <span class="step-num">6</span>
+        <div>
+          <h3>Copy to Notion and paste</h3>
+          <p>Click <strong>Copy to Notion</strong>, then paste into any Notion page. Blocks are transferred in a Notion-friendly structure for clean results.</p>
+        </div>
+      </div>
+    </div>
+
+    <section class="tips">
+      <h3>Pro Tips</h3>
+      <ul>
+        <li>Use Extract for mixed text/math layouts and Screenshot for exact visual snippets.</li>
+        <li>Keep your panel open while collecting multiple sources into one final paste.</li>
+        <li>If your OS uses reduced motion settings, animations can be toned down automatically.</li>
+      </ul>
+      <a class="cta" href="https://chromewebstore.google.com/" target="_blank" rel="noopener noreferrer">Install NotionSesh</a>
+    </section>
+  </main>
+</body>
+</html>

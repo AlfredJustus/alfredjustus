@@ -1,0 +1,1290 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Flashcards</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.21/dist/katex.min.css">
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.21/dist/katex.min.js"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.21/dist/contrib/auto-render.min.js"></script>
+  <script data-goatcounter="https://alfredjustus.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>
+  <style>
+    :root {
+      --bg: #ffffff;
+      --bg-soft: #f7f6f3;
+      --text: #37352f;
+      --text-secondary: #787774;
+      --text-muted: #b4b4b0;
+      --accent: #2383e2;
+      --divider: #e3e2de;
+      --code-bg: #f7f6f3;
+      --selection: rgba(35, 131, 226, 0.15);
+      --right-flash: rgba(46, 170, 93, 0.18);
+      --wrong-flash: rgba(226, 95, 95, 0.18);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    html,
+    body {
+      min-height: 100%;
+    }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+      line-height: 1.6;
+      text-rendering: optimizeLegibility;
+    }
+
+    ::selection {
+      background: var(--selection);
+    }
+
+    button,
+    input {
+      font: inherit;
+      color: inherit;
+    }
+
+    input[type="checkbox"] {
+      accent-color: var(--accent);
+    }
+
+    a {
+      color: var(--accent);
+      text-decoration: none;
+    }
+
+    a:hover {
+      text-decoration: underline;
+      text-underline-offset: 2px;
+    }
+
+    .hidden {
+      display: none !important;
+    }
+
+    .screen {
+      display: none;
+    }
+
+    .screen.active {
+      display: block;
+    }
+
+    .shell {
+      width: min(980px, calc(100% - 40px));
+      margin: 0 auto;
+      padding: 36px 0 56px;
+    }
+
+    .title {
+      font-size: clamp(2.3rem, 6vw, 3.4rem);
+      font-weight: 700;
+      letter-spacing: -0.03em;
+      line-height: 1.08;
+      margin-bottom: 26px;
+      color: #37352f;
+    }
+
+    .courses {
+      border-top: 1px solid var(--divider);
+    }
+
+    .course-row {
+      width: 100%;
+      display: block;
+      text-align: left;
+      border: 0;
+      border-bottom: 1px solid var(--divider);
+      background: transparent;
+      padding: 16px 10px;
+      cursor: pointer;
+    }
+
+    .course-row:hover {
+      background: var(--bg-soft);
+    }
+
+    .course-name {
+      display: block;
+      font-size: 1.03rem;
+      font-weight: 600;
+      margin-bottom: 2px;
+      letter-spacing: -0.01em;
+      color: var(--text);
+    }
+
+    .course-meta,
+    .error,
+    .subtle {
+      color: var(--text-secondary);
+      font-size: 0.94rem;
+    }
+
+    .setup-head {
+      margin-bottom: 22px;
+    }
+
+    .back-link {
+      display: inline-block;
+      margin-bottom: 10px;
+      color: var(--text-secondary);
+    }
+
+    .setup-title {
+      font-size: clamp(1.7rem, 4vw, 2.25rem);
+      letter-spacing: -0.02em;
+      margin-bottom: 6px;
+      color: var(--text);
+    }
+
+    .section {
+      margin-top: 28px;
+    }
+
+    .section-top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 10px;
+    }
+
+    .section-title {
+      font-size: 0.8rem;
+      text-transform: uppercase;
+      letter-spacing: 0.09em;
+      color: var(--text-muted);
+      font-weight: 700;
+    }
+
+    .text-btn {
+      border: 1px solid var(--divider);
+      background: transparent;
+      padding: 7px 11px;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 0.9rem;
+      color: var(--text-secondary);
+    }
+
+    .text-btn:hover {
+      background: var(--bg-soft);
+      color: var(--text);
+    }
+
+    .lecture-list {
+      border-top: 1px solid var(--divider);
+    }
+
+    .lecture-row {
+      display: grid;
+      grid-template-columns: auto 1fr auto;
+      gap: 12px;
+      align-items: center;
+      padding: 11px 8px;
+      border-bottom: 1px solid var(--divider);
+      cursor: pointer;
+      color: var(--text);
+    }
+
+    .lecture-row:hover {
+      background: var(--bg-soft);
+    }
+
+    .lecture-date {
+      font-weight: 500;
+    }
+
+    .lecture-count {
+      color: var(--text-secondary);
+      font-size: 0.92rem;
+      text-align: right;
+    }
+
+    .shuffle-toggle {
+      display: inline-flex;
+      align-items: center;
+      gap: 9px;
+      color: var(--text);
+      font-size: 0.95rem;
+      user-select: none;
+    }
+
+    .actions {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-top: 18px;
+    }
+
+    .primary-btn {
+      border: 0;
+      background: #2383e2;
+      color: #ffffff;
+      border-radius: 4px;
+      min-height: 40px;
+      padding: 0 15px;
+      font-weight: 600;
+      cursor: pointer;
+    }
+
+    .primary-btn:disabled {
+      opacity: 0.4;
+      cursor: not-allowed;
+    }
+
+    .secondary-btn {
+      border: 1px solid var(--divider);
+      background: #ffffff;
+      border-radius: 4px;
+      min-height: 40px;
+      padding: 0 14px;
+      cursor: pointer;
+      color: var(--text);
+    }
+
+    .secondary-btn:hover {
+      background: var(--bg-soft);
+    }
+
+    .progress-line {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 1px;
+      z-index: 20;
+      background: transparent;
+    }
+
+    .progress-fill {
+      width: 0;
+      height: 100%;
+      background: var(--accent);
+      transition: width 140ms ease;
+    }
+
+    .session-wrap {
+      min-height: 100vh;
+      padding: 18px 0 112px;
+    }
+
+    .session-top {
+      width: min(980px, calc(100% - 40px));
+      margin: 0 auto 24px;
+      display: grid;
+      grid-template-columns: 1fr auto 1fr;
+      align-items: center;
+      gap: 12px;
+      color: var(--text-secondary);
+    }
+
+    .session-progress {
+      font-variant-numeric: tabular-nums;
+      justify-self: center;
+      font-size: 0.92rem;
+      color: var(--text-secondary);
+    }
+
+    .close-btn {
+      justify-self: end;
+      border: 0;
+      background: transparent;
+      color: var(--text-secondary);
+      width: 32px;
+      height: 32px;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 1.3rem;
+      line-height: 1;
+    }
+
+    .close-btn:hover {
+      background: var(--bg-soft);
+      color: var(--text);
+    }
+
+    .doc {
+      width: min(720px, calc(100% - 40px));
+      margin: 0 auto;
+      padding-bottom: 24px;
+    }
+
+    .question,
+    .answer {
+      font-size: clamp(1.08rem, 2.4vw, 1.25rem);
+      line-height: 1.85;
+      white-space: normal;
+      word-break: break-word;
+      color: var(--text);
+    }
+
+    .question-only {
+      cursor: pointer;
+      min-height: 46vh;
+    }
+
+    .question-label,
+    .answer-label {
+      font-size: 0.75rem;
+      letter-spacing: 0.09em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      margin-bottom: 10px;
+      font-weight: 600;
+    }
+
+    .question-context {
+      margin-bottom: 26px;
+      padding-bottom: 18px;
+      border-bottom: 1px solid var(--divider);
+    }
+
+    .question-context .question {
+      font-size: 0.96rem;
+      color: var(--text-secondary);
+      line-height: 1.7;
+    }
+
+    .session-hint {
+      color: var(--text-muted);
+      font-size: 0.88rem;
+      margin-top: 14px;
+    }
+
+    .session-footer {
+      position: fixed;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      z-index: 25;
+      border-top: 1px solid var(--divider);
+      background: #ffffff;
+      padding: 12px 16px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .rate-btn {
+      border: 1px solid var(--divider);
+      background: #ffffff;
+      border-radius: 4px;
+      min-height: 38px;
+      min-width: 108px;
+      padding: 0 14px;
+      cursor: pointer;
+      font-weight: 500;
+      color: var(--text);
+      transition: background-color 120ms ease;
+    }
+
+    .rate-btn:hover {
+      background: var(--bg-soft);
+    }
+
+    .rate-right {
+      border-color: rgba(35, 131, 226, 0.55);
+      color: var(--accent);
+    }
+
+    .flash-right {
+      animation: rightPulse 200ms ease;
+    }
+
+    .flash-wrong {
+      animation: wrongPulse 200ms ease;
+    }
+
+    @keyframes rightPulse {
+      0% { background-color: #ffffff; }
+      45% { background-color: var(--right-flash); }
+      100% { background-color: #ffffff; }
+    }
+
+    @keyframes wrongPulse {
+      0% { background-color: #ffffff; }
+      45% { background-color: var(--wrong-flash); }
+      100% { background-color: #ffffff; }
+    }
+
+    .complete {
+      width: min(720px, calc(100% - 40px));
+      margin: 40px auto;
+    }
+
+    .complete h2 {
+      font-size: 1.8rem;
+      letter-spacing: -0.02em;
+      margin-bottom: 10px;
+      color: var(--text);
+    }
+
+    .stats {
+      margin-bottom: 18px;
+      color: var(--text-secondary);
+    }
+
+    .rendered p {
+      margin: 0 0 12px;
+    }
+
+    .rendered p:last-child {
+      margin-bottom: 0;
+    }
+
+    .rendered code {
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+      background: var(--code-bg);
+      padding: 0.08em 0.32em;
+      border-radius: 4px;
+      font-size: 0.92em;
+    }
+
+    .rendered pre {
+      overflow-x: auto;
+      background: var(--code-bg);
+      padding: 12px;
+      border-radius: 4px;
+      margin: 12px 0;
+    }
+
+    .rendered pre code {
+      background: transparent;
+      padding: 0;
+    }
+
+    @media (max-width: 700px) {
+      .shell {
+        width: calc(100% - 28px);
+        padding-top: 24px;
+      }
+
+      .session-top,
+      .doc,
+      .complete {
+        width: calc(100% - 28px);
+      }
+
+      .session-wrap {
+        padding-bottom: 104px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div id="progressLine" class="progress-line hidden" aria-hidden="true">
+    <div id="progressFill" class="progress-fill"></div>
+  </div>
+
+  <main>
+    <section id="screen-home" class="screen active" aria-live="polite"></section>
+    <section id="screen-setup" class="screen" aria-live="polite"></section>
+    <section id="screen-session" class="screen" aria-live="polite"></section>
+    <section id="screen-complete" class="screen" aria-live="polite"></section>
+  </main>
+
+  <script>
+    (function () {
+      "use strict";
+
+      const STORAGE_KEY = "ethz-srs-state";
+      const DEFAULT_EASE = 2.5;
+      const MIN_EASE = 1.3;
+
+      const state = {
+        screen: "home",
+        manifest: null,
+        error: "",
+        course: null,
+        deck: [],
+        setup: {
+          shuffle: false,
+          selectedLectures: new Set()
+        },
+        session: null,
+        srs: loadSrsState()
+      };
+
+      const screens = {
+        home: document.getElementById("screen-home"),
+        setup: document.getElementById("screen-setup"),
+        session: document.getElementById("screen-session"),
+        complete: document.getElementById("screen-complete")
+      };
+
+      const progressLine = document.getElementById("progressLine");
+      const progressFill = document.getElementById("progressFill");
+
+      bindGlobalEvents();
+      loadManifest();
+
+      function bindGlobalEvents() {
+        document.addEventListener("keydown", onKeyDown);
+      }
+
+      async function loadManifest() {
+        renderHome(true);
+        try {
+          const response = await fetch("decks/manifest.json", { cache: "no-store" });
+          if (!response.ok) {
+            throw new Error("manifest");
+          }
+          const manifest = await response.json();
+          state.manifest = manifest;
+          state.error = "";
+        } catch (error) {
+          state.error = "Failed to load decks/manifest.json";
+        }
+        renderHome(false);
+      }
+
+      function showScreen(name) {
+        state.screen = name;
+        Object.keys(screens).forEach(function (key) {
+          screens[key].classList.toggle("active", key === name);
+        });
+        progressLine.classList.toggle("hidden", name !== "session");
+      }
+
+      function renderHome(loading) {
+        showScreen("home");
+
+        const courses = state.manifest && Array.isArray(state.manifest.courses)
+          ? state.manifest.courses
+          : [];
+
+        let body = "";
+        if (loading) {
+          body = "<p class=\"subtle\">Loading courses...</p>";
+        } else {
+          const rows = courses.map(function (course) {
+            return ""
+              + "<button type=\"button\" class=\"course-row\" data-course-id=\"" + escapeAttr(course.id) + "\">"
+              + "<span class=\"course-name\">" + escapeHtml(course.name) + "</span>"
+              + "<span class=\"course-meta\">" + Number(course.lectures || 0) + " lectures</span>"
+              + "</button>";
+          }).join("");
+          body = "<div class=\"courses\">" + rows + "</div>";
+        }
+
+        screens.home.innerHTML = ""
+          + "<div class=\"shell\">"
+          + "<a href=\"/\" class=\"back-link\">← Back</a>"
+          + "<h1 class=\"title\">Flashcards</h1>"
+          + body
+          + (state.error ? "<p class=\"error\">" + escapeHtml(state.error) + "</p>" : "")
+          + "</div>";
+
+        screens.home.querySelectorAll("[data-course-id]").forEach(function (el) {
+          el.addEventListener("click", function () {
+            openCourseSetup(el.getAttribute("data-course-id"));
+          });
+        });
+      }
+
+      async function openCourseSetup(courseId) {
+        const courses = state.manifest && Array.isArray(state.manifest.courses)
+          ? state.manifest.courses
+          : [];
+
+        const course = courses.find(function (entry) {
+          return entry.id === courseId;
+        });
+
+        if (!course) {
+          return;
+        }
+
+        state.course = course;
+        try {
+          const response = await fetch("decks/" + encodeURIComponent(course.id) + ".json", { cache: "no-store" });
+          if (!response.ok) {
+            throw new Error("deck");
+          }
+          const deck = await response.json();
+          state.deck = normalizeDeck(deck);
+          state.setup.shuffle = false;
+          state.setup.selectedLectures = new Set();
+          state.error = "";
+          renderSetup();
+        } catch (error) {
+          state.error = "Failed to load decks/" + course.id + ".json";
+          renderHome(false);
+        }
+      }
+
+      function renderSetup() {
+        showScreen("setup");
+
+        const buckets = getLectureBuckets(state.deck);
+        const allSelected = buckets.length > 0 && buckets.every(function (b) {
+          return state.setup.selectedLectures.has(b.key);
+        });
+
+        const selectedCards = getSelectedCards();
+        const modeCount = getModeCards(state.setup.shuffle, selectedCards).length;
+
+        const lectureRows = buckets.map(function (bucket) {
+          const checked = state.setup.selectedLectures.has(bucket.key);
+          return ""
+            + "<label class=\"lecture-row\">"
+            + "<input type=\"checkbox\" data-lecture=\"" + escapeAttr(bucket.key) + "\"" + (checked ? " checked" : "") + ">"
+            + "<span class=\"lecture-date\">" + escapeHtml(bucket.label) + "</span>"
+            + "<span class=\"lecture-count\">" + bucket.count + " cards</span>"
+            + "</label>";
+        }).join("");
+
+        screens.setup.innerHTML = ""
+          + "<div class=\"shell\">"
+          + "<div class=\"setup-head\">"
+          + "<a href=\"#\" id=\"backHome\" class=\"back-link\">← Back</a>"
+          + "<h2 class=\"setup-title\">" + escapeHtml(state.course.name) + "</h2>"
+          + "</div>"
+          + "<div class=\"section\">"
+          + "<div class=\"section-top\"><div class=\"section-title\">Lecture Selection</div><button type=\"button\" id=\"toggleAll\" class=\"text-btn\">" + (allSelected ? "Deselect All" : "Select All") + "</button></div>"
+          + "<div class=\"lecture-list\">" + lectureRows + "</div>"
+          + "</div>"
+          + "<div class=\"section\">"
+          + "<label class=\"shuffle-toggle\"><input type=\"checkbox\" id=\"shuffleToggle\"" + (state.setup.shuffle ? " checked" : "") + "> Shuffle</label>"
+          + "</div>"
+          + "<div class=\"actions\">"
+          + "<button type=\"button\" id=\"startSession\" class=\"primary-btn\"" + (modeCount === 0 ? " disabled" : "") + ">Start · " + modeCount + " cards</button>"
+          + "<button type=\"button\" id=\"exportAnki\" class=\"secondary-btn\">Export to Anki</button>"
+          + "</div>"
+          + "</div>";
+
+        document.getElementById("backHome").addEventListener("click", function (event) {
+          event.preventDefault();
+          renderHome(false);
+        });
+
+        document.getElementById("toggleAll").addEventListener("click", function () {
+          if (allSelected) {
+            state.setup.selectedLectures.clear();
+          } else {
+            buckets.forEach(function (bucket) {
+              state.setup.selectedLectures.add(bucket.key);
+            });
+          }
+          renderSetup();
+        });
+
+        screens.setup.querySelectorAll("[data-lecture]").forEach(function (checkbox) {
+          checkbox.addEventListener("change", function () {
+            const key = checkbox.getAttribute("data-lecture");
+            if (checkbox.checked) {
+              state.setup.selectedLectures.add(key);
+            } else {
+              state.setup.selectedLectures.delete(key);
+            }
+            renderSetup();
+          });
+        });
+
+        document.getElementById("shuffleToggle").addEventListener("change", function (event) {
+          state.setup.shuffle = event.target.checked;
+          renderSetup();
+        });
+
+        document.getElementById("startSession").addEventListener("click", startSession);
+        document.getElementById("exportAnki").addEventListener("click", exportToAnkiTxt);
+      }
+
+      function getSelectedCards() {
+        return state.deck.filter(function (card) {
+          return state.setup.selectedLectures.has(card.lectureKey);
+        });
+      }
+
+      function getModeCards(shuffle, selectedCards) {
+        if (shuffle) {
+          return shuffled(selectedCards.slice());
+        }
+
+        return selectedCards.filter(function (card) {
+          return isDue(getCardSrs(card));
+        });
+      }
+
+      function startSession() {
+        const selectedCards = getSelectedCards();
+        const cards = getModeCards(state.setup.shuffle, selectedCards);
+        if (cards.length === 0) {
+          renderSetup();
+          return;
+        }
+
+        state.session = {
+          mode: state.setup.shuffle ? "shuffle" : "study",
+          cards: cards,
+          index: 0,
+          showingAnswer: false,
+          startedAt: Date.now(),
+          reviewed: 0,
+          wrong: 0,
+          right: 0
+        };
+
+        renderSession();
+      }
+
+      function renderSession() {
+        showScreen("session");
+        window.scrollTo({ top: 0, behavior: "auto" });
+
+        const session = state.session;
+        if (!session) {
+          renderHome(false);
+          return;
+        }
+
+        if (session.index >= session.cards.length) {
+          finishSession();
+          return;
+        }
+
+        const card = session.cards[session.index];
+        const progress = (session.index + 1) + " / " + session.cards.length;
+        const progressPct = Math.round((session.index / Math.max(1, session.cards.length)) * 100);
+        progressFill.style.width = progressPct + "%";
+
+        let content = "";
+        if (!session.showingAnswer) {
+          content = ""
+            + "<div class=\"question-only\" id=\"revealArea\">"
+            + "<div class=\"question-label\">Question</div>"
+            + "<div id=\"questionBody\" class=\"question rendered\"></div>"
+            + "<p class=\"session-hint\">Space or → to reveal answer.</p>"
+            + "</div>";
+        } else {
+          content = ""
+            + "<div class=\"question-context\">"
+            + "<div class=\"question-label\">Question</div>"
+            + "<div id=\"questionBody\" class=\"question rendered\"></div>"
+            + "</div>"
+            + "<div class=\"answer-area\">"
+            + "<div class=\"answer-label\">Answer</div>"
+            + "<div id=\"answerBody\" class=\"answer rendered\"></div>"
+            + "</div>";
+        }
+
+        let footer = "";
+        if (session.showingAnswer) {
+          if (session.mode === "study") {
+            footer = ""
+              + "<div class=\"session-footer\">"
+              + "<button type=\"button\" class=\"rate-btn\" id=\"wrongBtn\">Wrong</button>"
+              + "<button type=\"button\" class=\"rate-btn rate-right\" id=\"rightBtn\">Right</button>"
+              + "</div>";
+          } else {
+            footer = ""
+              + "<div class=\"session-footer\">"
+              + "<button type=\"button\" class=\"rate-btn rate-right\" id=\"nextBtn\">Next</button>"
+              + "</div>";
+          }
+        }
+
+        screens.session.innerHTML = ""
+          + "<div class=\"session-wrap\">"
+          + "<div class=\"session-top\">"
+          + "<div class=\"subtle\">" + escapeHtml(state.course.name) + "</div>"
+          + "<div class=\"session-progress\">" + progress + "</div>"
+          + "<button type=\"button\" id=\"closeSession\" class=\"close-btn\" aria-label=\"Close session\">×</button>"
+          + "</div>"
+          + "<article class=\"doc\">" + content + "</article>"
+          + footer
+          + "</div>";
+
+        renderRichText(card.frontDisplay, document.getElementById("questionBody"));
+        if (session.showingAnswer) {
+          renderRichText(card.back, document.getElementById("answerBody"));
+        }
+
+        document.getElementById("closeSession").addEventListener("click", exitToHome);
+
+        const revealArea = document.getElementById("revealArea");
+        if (revealArea) {
+          revealArea.addEventListener("click", function () {
+            revealAnswer();
+          });
+        }
+
+        const wrongBtn = document.getElementById("wrongBtn");
+        if (wrongBtn) {
+          wrongBtn.addEventListener("click", function () {
+            animateChoice("wrongBtn", "flash-wrong", function () {
+              applyStudyRating("wrong");
+            });
+          });
+        }
+
+        const rightBtn = document.getElementById("rightBtn");
+        if (rightBtn) {
+          rightBtn.addEventListener("click", function () {
+            animateChoice("rightBtn", "flash-right", function () {
+              applyStudyRating("right");
+            });
+          });
+        }
+
+        const nextBtn = document.getElementById("nextBtn");
+        if (nextBtn) {
+          nextBtn.addEventListener("click", advanceNonStudyCard);
+        }
+      }
+
+      function animateChoice(buttonId, className, callback) {
+        const button = document.getElementById(buttonId);
+        if (!button) {
+          callback();
+          return;
+        }
+
+        button.classList.remove("flash-right", "flash-wrong");
+        void button.offsetWidth;
+        button.classList.add(className);
+        window.setTimeout(function () {
+          button.classList.remove(className);
+          callback();
+        }, 200);
+      }
+
+      function revealAnswer() {
+        const session = state.session;
+        if (!session || session.index >= session.cards.length || session.showingAnswer) {
+          return;
+        }
+        session.showingAnswer = true;
+        renderSession();
+      }
+
+      function hideAnswer() {
+        const session = state.session;
+        if (!session || !session.showingAnswer) {
+          return;
+        }
+        session.showingAnswer = false;
+        renderSession();
+      }
+
+      function applyStudyRating(rating) {
+        const session = state.session;
+        if (!session || session.mode !== "study" || !session.showingAnswer) {
+          return;
+        }
+
+        const card = session.cards[session.index];
+        const current = getCardSrs(card);
+        const today = getToday();
+
+        if (rating === "wrong") {
+          const wrongInterval = current.repetitions === 0 ? 1 : Math.max(1, current.interval * 1.0);
+          setCardSrs(card, {
+            ease: Math.max(MIN_EASE, current.ease - 0.15),
+            interval: wrongInterval,
+            repetitions: current.repetitions,
+            dueDate: addDays(today, Math.ceil(wrongInterval))
+          });
+          session.wrong += 1;
+        }
+
+        if (rating === "right") {
+          const rightInterval = current.repetitions === 0 ? 3 : Math.max(1, current.interval * current.ease);
+          setCardSrs(card, {
+            ease: current.ease,
+            interval: rightInterval,
+            repetitions: current.repetitions + 1,
+            dueDate: addDays(today, Math.ceil(rightInterval))
+          });
+          session.right += 1;
+        }
+
+        session.reviewed += 1;
+        session.index += 1;
+        session.showingAnswer = false;
+        saveSrsState();
+        renderSession();
+      }
+
+      function advanceNonStudyCard() {
+        const session = state.session;
+        if (!session || session.mode === "study" || !session.showingAnswer) {
+          return;
+        }
+
+        session.reviewed += 1;
+        session.index += 1;
+        session.showingAnswer = false;
+        renderSession();
+      }
+
+      function finishSession() {
+        const session = state.session;
+        if (!session) {
+          return;
+        }
+
+        const elapsed = formatDuration(Date.now() - session.startedAt);
+        progressFill.style.width = "100%";
+        showScreen("complete");
+
+        const modeLine = session.mode === "study"
+          ? "<div>Wrong: " + session.wrong + " · Right: " + session.right + "</div>"
+          : "";
+
+        screens.complete.innerHTML = ""
+          + "<div class=\"complete\">"
+          + "<h2>Session complete</h2>"
+          + "<div class=\"stats\">"
+          + "<div>Cards reviewed: " + session.reviewed + "</div>"
+          + modeLine
+          + "<div>Time: " + elapsed + "</div>"
+          + "</div>"
+          + "<button type=\"button\" id=\"doneBtn\" class=\"primary-btn\">Done</button>"
+          + "</div>";
+
+        document.getElementById("doneBtn").addEventListener("click", function () {
+          state.session = null;
+          renderHome(false);
+        });
+      }
+
+      function exitToHome() {
+        state.session = null;
+        progressFill.style.width = "0%";
+        renderHome(false);
+      }
+
+      function onKeyDown(event) {
+        if (state.screen !== "session" || !state.session) {
+          return;
+        }
+
+        const session = state.session;
+        const key = event.key;
+
+        if (key === "Escape") {
+          event.preventDefault();
+          exitToHome();
+          return;
+        }
+
+        if (!session.showingAnswer) {
+          if (key === " " || key === "ArrowRight") {
+            event.preventDefault();
+            revealAnswer();
+          }
+          return;
+        }
+
+        if (key === "ArrowLeft") {
+          event.preventDefault();
+          hideAnswer();
+          return;
+        }
+
+        if (session.mode === "study") {
+          if (key === " " || key === "ArrowRight" || key === "2") {
+            event.preventDefault();
+            animateChoice("rightBtn", "flash-right", function () {
+              applyStudyRating("right");
+            });
+            return;
+          }
+          if (key === "1") {
+            event.preventDefault();
+            animateChoice("wrongBtn", "flash-wrong", function () {
+              applyStudyRating("wrong");
+            });
+          }
+          return;
+        }
+
+        if (key === " " || key === "ArrowRight") {
+          event.preventDefault();
+          advanceNonStudyCard();
+        }
+      }
+
+      function exportToAnkiTxt() {
+        const selected = getSelectedCards();
+        if (selected.length === 0) {
+          return;
+        }
+
+        const lines = selected.map(function (card) {
+          const front = sanitizeForTsv(convertForAnkiHtml(card.frontDisplay));
+          const back = sanitizeForTsv(convertForAnkiHtml(card.back));
+          return front + "\t" + back;
+        });
+
+        const payload = lines.join("\n");
+        const blob = new Blob([payload], { type: "text/plain;charset=utf-8" });
+        const url = URL.createObjectURL(blob);
+        const anchor = document.createElement("a");
+        anchor.href = url;
+        anchor.download = state.course.id + "-anki.txt";
+        document.body.appendChild(anchor);
+        anchor.click();
+        anchor.remove();
+        URL.revokeObjectURL(url);
+      }
+
+      function convertForAnkiHtml(value) {
+        let content = String(value || "");
+
+        content = escapeHtml(content);
+
+        content = content.replace(/\$\$([\s\S]*?)\$\$/g, function (_match, math) {
+          return "\\[" + String(math).trim() + "\\]";
+        });
+
+        content = content.replace(/(?<!\$)\$(?!\$)([^\$\n]+?)\$(?!\$)/g, function (_match, math) {
+          return "\\(" + String(math).trim() + "\\)";
+        });
+
+        content = content.replace(/\*\*(.+?)\*\*/g, "<b>$1</b>");
+
+        return content.replace(/\r?\n/g, "<br>");
+      }
+
+      function sanitizeForTsv(value) {
+        return String(value || "")
+          .replace(/\t/g, " ")
+          .trim();
+      }
+
+      function normalizeDeck(deck) {
+        if (!Array.isArray(deck)) {
+          return [];
+        }
+
+        return deck.map(function (item) {
+          const front = String(item && item.front ? item.front : "");
+          const back = String(item && item.back ? item.back : "");
+          const dateMatch = front.match(/^\[(\d{4}-\d{2}-\d{2})\]\s*/);
+          const date = dateMatch ? dateMatch[1] : null;
+          const frontDisplay = dateMatch ? front.slice(dateMatch[0].length) : front;
+          return {
+            front: front,
+            frontDisplay: frontDisplay,
+            back: back,
+            date: date,
+            lectureKey: date || "undated",
+            key: cardKey(front + "\n" + back)
+          };
+        });
+      }
+
+      function getLectureBuckets(deck) {
+        const counts = new Map();
+        deck.forEach(function (card) {
+          counts.set(card.lectureKey, (counts.get(card.lectureKey) || 0) + 1);
+        });
+
+        return Array.from(counts.keys()).sort(function (a, b) {
+          if (a === "undated") {
+            return 1;
+          }
+          if (b === "undated") {
+            return -1;
+          }
+          return a.localeCompare(b);
+        }).map(function (key) {
+          return {
+            key: key,
+            label: key === "undated" ? "Undated" : formatLectureDate(key),
+            count: counts.get(key)
+          };
+        });
+      }
+
+      function formatLectureDate(value) {
+        const date = new Date(value + "T00:00:00");
+        if (Number.isNaN(date.getTime())) {
+          return value;
+        }
+        return date.toLocaleDateString(undefined, {
+          year: "numeric",
+          month: "short",
+          day: "numeric"
+        });
+      }
+
+      function shuffled(list) {
+        for (let i = list.length - 1; i > 0; i -= 1) {
+          const j = Math.floor(Math.random() * (i + 1));
+          const tmp = list[i];
+          list[i] = list[j];
+          list[j] = tmp;
+        }
+        return list;
+      }
+
+      function renderRichText(text, container) {
+        if (!container) {
+          return;
+        }
+
+        let content = String(text || "");
+        const protectedTokens = [];
+
+        content = content.replace(/```([\s\S]*?)```/g, function (_match, code) {
+          const token = "@@PROT_" + protectedTokens.length + "@@";
+          protectedTokens.push("<pre><code>" + escapeHtml(String(code).trim()) + "</code></pre>");
+          return token;
+        });
+
+        content = content.replace(/`([^`\n]+?)`/g, function (_match, code) {
+          const token = "@@PROT_" + protectedTokens.length + "@@";
+          protectedTokens.push("<code>" + escapeHtml(code) + "</code>");
+          return token;
+        });
+
+        content = content.replace(/\$\$([\s\S]*?)\$\$/g, function (_match, math) {
+          const token = "@@PROT_" + protectedTokens.length + "@@";
+          protectedTokens.push('<span class="math-display">$$' + math + '$$</span>');
+          return token;
+        });
+
+        content = content.replace(/(?<!\$)\$(?!\$)([^\$\n]+?)\$(?!\$)/g, function (_match, math) {
+          const token = "@@PROT_" + protectedTokens.length + "@@";
+          protectedTokens.push('<span class="math-inline">$' + math + '$</span>');
+          return token;
+        });
+
+        content = escapeHtml(content);
+        content = content.replace(/\*\*(.+?)\*\*/g, "<strong>$1</strong>");
+        content = content.replace(/^- (.+)$/gm, "• $1");
+
+        const paragraphs = content.split(/\n{2,}/).map(function (block) {
+          return "<p>" + block.replace(/\n/g, "<br>") + "</p>";
+        });
+        content = paragraphs.join("");
+
+        content = content.replace(/@@PROT_(\d+)@@/g, function (_match, idx) {
+          return protectedTokens[Number(idx)] || "";
+        });
+
+        container.innerHTML = content;
+
+        if (typeof renderMathInElement === "function") {
+          renderMathInElement(container, {
+            delimiters: [
+              { left: "$$", right: "$$", display: true },
+              { left: "$", right: "$", display: false },
+              { left: "\\(", right: "\\)", display: false },
+              { left: "\\[", right: "\\]", display: true }
+            ],
+            throwOnError: false
+          });
+        }
+      }
+
+      function loadSrsState() {
+        try {
+          const raw = localStorage.getItem(STORAGE_KEY);
+          if (!raw) {
+            return { courses: {} };
+          }
+          const parsed = JSON.parse(raw);
+          if (!parsed || typeof parsed !== "object" || typeof parsed.courses !== "object") {
+            return { courses: {} };
+          }
+          return parsed;
+        } catch (_error) {
+          return { courses: {} };
+        }
+      }
+
+      function saveSrsState() {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(state.srs));
+      }
+
+      function getCourseSrsState(courseId, ensure) {
+        if (!state.srs.courses[courseId]) {
+          if (!ensure) {
+            return null;
+          }
+          state.srs.courses[courseId] = { cards: {} };
+        }
+        return state.srs.courses[courseId];
+      }
+
+      function getCardSrs(card) {
+        const courseState = getCourseSrsState(state.course.id, true);
+        if (!courseState.cards[card.key]) {
+          courseState.cards[card.key] = {
+            ease: DEFAULT_EASE,
+            interval: 0,
+            repetitions: 0,
+            dueDate: getToday()
+          };
+        }
+        return courseState.cards[card.key];
+      }
+
+      function setCardSrs(card, data) {
+        const courseState = getCourseSrsState(state.course.id, true);
+        courseState.cards[card.key] = data;
+      }
+
+      function isDue(entry) {
+        const today = getToday();
+        return !entry || !entry.dueDate || entry.dueDate <= today;
+      }
+
+      function cardKey(value) {
+        return String(value || "").trim().toLowerCase().slice(0, 140);
+      }
+
+      function addDays(isoDate, days) {
+        const date = new Date(isoDate + "T00:00:00");
+        date.setDate(date.getDate() + days);
+        const year = date.getFullYear();
+        const month = String(date.getMonth() + 1).padStart(2, "0");
+        const day = String(date.getDate()).padStart(2, "0");
+        return year + "-" + month + "-" + day;
+      }
+
+      function getToday() {
+        const now = new Date();
+        const year = now.getFullYear();
+        const month = String(now.getMonth() + 1).padStart(2, "0");
+        const day = String(now.getDate()).padStart(2, "0");
+        return year + "-" + month + "-" + day;
+      }
+
+      function formatDuration(ms) {
+        const total = Math.max(1, Math.round(ms / 1000));
+        const mins = Math.floor(total / 60);
+        const secs = total % 60;
+        return mins + "m " + secs + "s";
+      }
+
+      function escapeHtml(value) {
+        return String(value)
+          .replace(/&/g, "&amp;")
+          .replace(/</g, "&lt;")
+          .replace(/>/g, "&gt;")
+          .replace(/\"/g, "&quot;")
+          .replace(/'/g, "&#39;");
+      }
+
+      function escapeAttr(value) {
+        return escapeHtml(value).replace(/`/g, "");
+      }
+    })();
+  </script>
+</body>
+</html>

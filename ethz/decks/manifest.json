@@ -1,0 +1,40 @@
+{
+  "generated": "2026-03-16T19:30:52.007Z",
+  "model": "gpt-5.4",
+  "cardsPerLectureTarget": 15,
+  "format": "markdown->parser->json",
+  "courses": [
+    {
+      "id": "227-0003-10L",
+      "name": "Digital Design and Computer Architecture",
+      "file": "227-0003-10L.json",
+      "apkg": null,
+      "lectures": 7,
+      "cards": 105
+    },
+    {
+      "id": "252-0029-00L",
+      "name": "Parallele Programmierung",
+      "file": "252-0029-00L.json",
+      "apkg": null,
+      "lectures": 8,
+      "cards": 120
+    },
+    {
+      "id": "252-0030-00L",
+      "name": "Algorithmen und Wahrscheinlichkeit",
+      "file": "252-0030-00L.json",
+      "apkg": null,
+      "lectures": 8,
+      "cards": 120
+    },
+    {
+      "id": "401-0212-16L",
+      "name": "Analysis I",
+      "file": "401-0212-16L.json",
+      "apkg": null,
+      "lectures": 8,
+      "cards": 120
+    }
+  ]
+}

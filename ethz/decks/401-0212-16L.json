@@ -1,0 +1,482 @@
+[
+  {
+    "front": "[2026-02-16] Warum führt die Energiebilanz beim Chip auf eine Differentialgleichung für $T(t)$?",
+    "back": "Man betrachtet ein kleines Zeitintervall $\\Delta t$ und schreibt:\n\n**Änderung der gespeicherten Energie** $=$ **zugeführte Energie** $-$ **abgegebene Energie**.\n\nTeilt man durch $\\Delta t$ und lässt $\\Delta t \\to 0$, entsteht eine **momentane Änderungsrate**, also eine Ableitung. Deshalb beschreibt man die Temperatur durch eine Funktion $T(t)$ mit einer Gleichung für $T'(t)$.\n\nIm Vorlesungsmodell ergibt das\n$$\nT'(t)=p(t)-c\\bigl(T(t)-T_{\\mathrm{env}}\\bigr), \\qquad c>0.\n$$\n\nDie Analysis liefert hier also genau die Sprache für **kontinuierliche zeitliche Entwicklung**: statt diskreter Schritte wie in einem Rekursionsmodell verwendet man eine Ableitung."
+  },
+  {
+    "front": "[2026-02-16] Welche physikalische Bedeutung haben die beiden Terme in",
+    "back": "$$\nT'(t)=p(t)-c\\bigl(T(t)-T_{\\mathrm{env}}\\bigr)?\n$$\n\nDer Term $p(t)$ beschreibt die **Wärmezufuhr / Leistungszufuhr**: je größer $p(t)$, desto stärker steigt die Temperatur.\n\nDer Term\n$$\n-c\\bigl(T(t)-T_{\\mathrm{env}}\\bigr)\n$$\nbeschreibt die **Abkühlung an die Umgebung** nach dem newtonschen Abkühlungsgesetz:\n\n- Ist $T(t)>T_{\\mathrm{env}}$, dann ist der Term negativ: der Chip kühlt ab.\n- Ist $T(t)=T_{\\mathrm{env}}$, dann verschwindet der Term.\n- Ist $T(t)<T_{\\mathrm{env}}$, dann ist der Term positiv: die Umgebung wärmt den Chip.\n\nDas Vorzeichen ist also so gewählt, dass die Temperatur zur **Umgebungstemperatur hin** gedrückt wird."
+  },
+  {
+    "front": "[2026-02-16] Warum reicht eine Differentialgleichung allein nicht aus, um die Temperaturentwicklung eindeutig festzulegen?",
+    "back": "Eine **gewöhnliche Differentialgleichung** beschreibt nur, wie sich eine gesuchte Funktion lokal ändern muss. Es gibt oft viele Funktionen, die dieselbe Änderungsregel erfüllen.\n\nErst mit einer **Anfangsbedingung** wie\n$$\nT(t_0)=T_0\n$$\nerhält man ein **Anfangswertproblem**. Gesucht ist dann die Funktion $T(t)$, die\n\n- die Differentialgleichung erfüllt und\n- am Zeitpunkt $t_0$ den Wert $T_0$ hat.\n\nDie Anfangsbedingung wählt also aus den möglichen Lösungskurven diejenige aus, die zur konkreten Situation passt."
+  },
+  {
+    "front": "[2026-02-16] Woran erkennt man, ob eine gegebene Funktion $T(t)$ eine Lösung eines Anfangswertproblems ist?",
+    "back": "Man muss **zwei Bedingungen** prüfen:\n\n1. **Differentialgleichung erfüllen**:\n   $$T'(t)=p(t)-c\\bigl(T(t)-T_{\\mathrm{env}}\\bigr).$$\n2. **Anfangsbedingung erfüllen**:\n   $$T(t_0)=T_0.$$\n\nNur wenn beides stimmt, ist $T(t)$ eine Lösung des Anfangswertproblems.\n\nWichtig ist der typische Fehler: Es genügt nicht, nur die Anfangsbedingung zu erfüllen, und es genügt auch nicht, nur die Differentialgleichung zu erfüllen. Eine Lösung muss **beides gleichzeitig** leisten."
+  },
+  {
+    "front": "[2026-02-16] Warum sind heißer Kaffee und kalter Orangensaft gute Beispiele für dasselbe mathematische Modell?",
+    "back": "Beide Situationen folgen derselben Grundidee des **newtonschen Abkühlungsgesetzes**: Die Änderungsrate der Temperatur hängt von der Differenz zur Umgebungstemperatur ab.\n\n- Beim **heißen Kaffee** gilt anfangs $T>T_{\\mathrm{env}}$, also sinkt die Temperatur.\n- Beim **kalten Orangensaft** gilt anfangs $T<T_{\\mathrm{env}}$, also steigt die Temperatur.\n\nIn beiden Fällen treibt der Term\n$$\n-c\\bigl(T(t)-T_{\\mathrm{env}}\\bigr)\n$$\ndie Temperatur in Richtung $T_{\\mathrm{env}}$.\n\nDer Unterschied liegt also nicht im Modelltyp, sondern nur im **Vorzeichen der Temperaturdifferenz**."
+  },
+  {
+    "front": "[2026-02-16] Was ist der Unterschied zwischen einer Aussage und einem Prädikat?",
+    "back": "Eine **Aussage** hat bereits einen festen Wahrheitswert: sie ist **wahr oder falsch**.\n\nEin **Prädikat** enthält noch freie Variablen; sein Wahrheitswert hängt erst von der Einsetzung ab.\n\nBeispiel:\n$$\nP(x): x^2=x.\n$$\n\n- $P(x)$ ist ein **Prädikat**.\n- $P(1)$ ist die **Aussage** $1^2=1$, also wahr.\n- $P(2)$ ist die **Aussage** $2^2=2$, also falsch.\n\nEin Prädikat wird also erst durch Wahl eines konkreten Werts oder durch Quantoren wie $\\forall$ und $\\exists$ zu einer Aussage."
+  },
+  {
+    "front": "[2026-02-16] Warum ist „Jede Primzahl ist ungerade“ falsch, obwohl es fast immer stimmt?",
+    "back": "Die Aussage ist **universell** formuliert: „jede“ bedeutet\n$$\n\\forall p \\; (\\text{$p$ prim} \\Rightarrow \\text{$p$ ungerade}).\n$$\n\nEine solche Aussage ist schon dann falsch, wenn es **ein einziges Gegenbeispiel** gibt. Dieses Gegenbeispiel ist\n$$\n2,\n$$\ndenn $2$ ist prim, aber gerade.\n\nDas zeigt einen zentralen Punkt für Beweise und Widerlegungen:\n\n- Eine **All-Aussage** widerlegt man durch **ein Gegenbeispiel**.\n- Viele passende Beispiele beweisen sie dagegen nicht."
+  },
+  {
+    "front": "[2026-02-16] Wie negiert man korrekt die Aussage „Für alle reellen $x$ gilt $x^2=x$“?",
+    "back": "Die gegebene Aussage lautet\n$$\n\\forall x\\in\\mathbb{R}: x^2=x.\n$$\n\nIhre **Negation** ist\n$$\n\\exists x\\in\\mathbb{R}: x^2\\neq x.\n$$\n\nMerksatz:\n$$\n\\neg(\\forall x\\, P(x)) \\iff \\exists x\\, \\neg P(x).\n$$\n\nEin konkretes Gegenbeispiel ist $x=2$, denn\n$$\n2^2=4\\neq 2.\n$$\n\nDer typische Fehler wäre, nur „nicht für alle“ informell zu sagen, ohne den Existenzquantor sauber zu formulieren."
+  },
+  {
+    "front": "[2026-02-16] Wie negiert man eine Existenzaussage der Form $\\exists x\\,P(x)$?",
+    "back": "Die korrekte Regel lautet:\n$$\n\\neg(\\exists x\\,P(x)) \\iff \\forall x\\,\\neg P(x).\n$$\n\nBedeutung: Wenn es **kein** Element mit Eigenschaft $P$ gibt, dann gilt für **jedes** Element die Negation von $P$.\n\nDas ist die genaue Umkehrung zur Regel\n$$\n\\neg(\\forall x\\,P(x)) \\iff \\exists x\\,\\neg P(x).\n$$\n\nDiese beiden Regeln sind grundlegend, weil sie in Grenzwertdefinitionen und Beweisen ständig auftreten."
+  },
+  {
+    "front": "[2026-02-16] Warum sind $\\forall x\\exists y\\,Q(x,y)$ und $\\exists y\\forall x\\,Q(x,y)$ im Allgemeinen nicht äquivalent?",
+    "back": "Der Unterschied ist die **Abhängigkeit von $y$ von $x$**.\n\n- Bei\n  $$\n  \\forall x\\exists y\\,Q(x,y)\n  $$\n  darf man zu jedem $x$ ein möglicherweise anderes $y$ wählen.\n- Bei\n  $$\n  \\exists y\\forall x\\,Q(x,y)\n  $$\n  muss **ein einziges** $y$ für alle $x$ funktionieren.\n\nBeispiel mit $Q(x,y): x=y^2$ über $\\mathbb{R}$:\n\n- $\\forall x\\exists y: x=y^2$ ist falsch, weil negative $x$ kein reelles Quadrat sind.\n- $\\exists y\\forall x: x=y^2$ ist erst recht falsch, weil ein festes $y$ nicht alle reellen $x$ erzeugen kann.\n\nDie Reihenfolge der Quantoren ist also nicht bloße Notation, sondern inhaltlich entscheidend."
+  },
+  {
+    "front": "[2026-02-16] Warum ist die Reihenfolge der Quantoren ein typischer Fallstrick in der Analysis?",
+    "back": "Weil Quantoren festlegen, **wer von wem abhängen darf**. Das wird später bei Grenzwerten zentral, etwa in Formulierungen wie:\n\n„Für jedes $\\varepsilon>0$ gibt es ein $\\delta>0$ ...“\n\nHier darf $\\delta$ von $\\varepsilon$ abhängen. Vertauscht man die Reihenfolge, verlangt man etwas viel Stärkeres und meist Falsches.\n\nAllgemein gilt:\n\n- $\\forall x\\exists y$ erlaubt ein **von $x$ abhängiges** $y$.\n- $\\exists y\\forall x$ verlangt ein **einheitliches** $y$.\n\nDer Fehler ist gefährlich, weil beide Aussagen sprachlich ähnlich klingen, mathematisch aber völlig verschieden sein können."
+  },
+  {
+    "front": "[2026-02-16] Warum ist die Kontraposition oft nützlicher als ein direkter Beweis von $A\\implies B$?",
+    "back": "Die **Kontraposition** lautet\n$$\n\\neg B \\implies \\neg A.\n$$\n\nSie ist logisch äquivalent zu\n$$\nA\\implies B.\n$$\n\nOft ist es leichter, von $\\neg B$ auszugehen und zu zeigen, dass dann $\\neg A$ folgen muss, als direkt aus $A$ auf $B$ zu schließen.\n\nDas ist besonders hilfreich, wenn $B$ schwer direkt zu beweisen ist, aber ein Verstoß gegen $B$ sofort eine klare Unmöglichkeit für $A$ erzeugt.\n\nWichtig: Man ersetzt den ursprünglichen Beweis nicht durch etwas Schwächeres, sondern durch eine **voll äquivalente Formulierung**."
+  },
+  {
+    "front": "[2026-02-16] Was ist der entscheidende Unterschied zwischen Kontraposition und Konverse?",
+    "back": "Zu\n$$\nA\\implies B\n$$\ngibt es zwei naheliegende Umformulierungen:\n\n- **Kontraposition**:\n  $$\n  \\neg B\\implies \\neg A\n  $$\n- **Konverse**:\n  $$\n  B\\implies A\n  $$\n\nNur die **Kontraposition** ist logisch äquivalent zur ursprünglichen Aussage. Die **Konverse** ist im Allgemeinen nicht äquivalent.\n\nDas ist ein klassischer Fehler in Beweisen: Aus $A\\implies B$ darf man nicht einfach $B\\implies A$ machen.\n\nMerksatz:\n$$\nA\\implies B \\iff \\neg B\\implies \\neg A,\n$$\naber im Allgemeinen **nicht**\n$$\nA\\implies B \\iff B\\implies A.\n$$"
+  },
+  {
+    "front": "[2026-02-16] Wie kann man die Implikation $A\\implies B$ als logische Verknüpfung ohne Pfeil schreiben?",
+    "back": "Es gilt die Äquivalenz\n$$\nA\\implies B \\iff \\neg A \\lor B.\n$$\n\nDas ist nützlich, weil man Implikationen so mit den Grundoperatoren **Negation** und **Oder** ausdrücken kann.\n\nInterpretation:\n\n- Wenn $A$ falsch ist, ist die Implikation automatisch wahr.\n- Wenn $A$ wahr ist, muss $B$ wahr sein.\n\nDiese Umformung erklärt auch, warum eine Implikation nicht verlangt, dass zwischen $A$ und $B$ ein kausaler Zusammenhang besteht; sie ist zunächst eine **logische** Aussageform."
+  },
+  {
+    "front": "[2026-02-16] Wie formuliert man „$X$ ist Teilmenge von $Y$“ präzise mit Quantoren?",
+    "back": "Die Aussage\n$$\nX\\subseteq Y\n$$\nbedeutet formal:\n$$\n\\forall x\\;(x\\in X \\Rightarrow x\\in Y).\n$$\n\nAlso: Jedes Element von $X$ ist auch Element von $Y$.\n\nFür eine **echte Teilmenge** schreibt man\n$$\nX\\subsetneq Y,\n$$\ndas heißt zusätzlich $X\\neq Y$.\n\nDer Quantor macht klar, dass Teilmengenbeziehungen selbst logische Aussagen über **alle Elemente** sind. Das verbindet Mengenlehre direkt mit der zuvor eingeführten Logik."
+  },
+  {
+    "front": "[2026-02-18] Warum werden die Zahlenmengen schrittweise von $\\mathbb{N}$ bis $\\mathbb{C}$ erweitert?",
+    "back": "Jede Erweiterung behebt eine Rechenoperation oder Gleichung, die in der kleineren Menge nicht allgemein lösbar ist:\n\n- $\\mathbb{N}\\to\\mathbb{Z}$: **additive Inverse** ergänzen, damit Subtraktion wie $2-5$ möglich wird.\n- $\\mathbb{Z}\\to\\mathbb{Q}$: **multiplikative Inverse** ergänzen, damit Division wie $1/2$ möglich wird.\n- $\\mathbb{Q}\\to\\mathbb{R}$: Lösungen für Gleichungen wie $x^2=2$ ermöglichen.\n- $\\mathbb{R}\\to\\mathbb{C}$: Lösungen für Gleichungen wie $x^2=-1$ ermöglichen.\n\nWichtig ist die **Konsistenz**: bereits bekannte Operationen bleiben erhalten. Die Addition auf $\\mathbb{N}$ ist also dieselbe, wenn man Zahlen als Elemente von $\\mathbb{Z}$ oder $\\mathbb{Q}$ betrachtet."
+  },
+  {
+    "front": "[2026-02-18] Warum reicht $\\mathbb{Q}$ für die Gleichung $x^2=2$ nicht aus, obwohl $\\mathbb{Q}$ unter den Grundrechenarten abgeschlossen ist?",
+    "back": "**Abgeschlossenheit unter den Grundrechenarten** bedeutet nicht, dass jede algebraische Gleichung in $\\mathbb{Q}$ lösbar ist. Für\n$$x^2=2$$\ngibt es **keine rationale Lösung**.\n\nDas ist der entscheidende Unterschied zwischen $\\mathbb{Q}$ und $\\mathbb{R}$: In $\\mathbb{R}$ existiert eine Zahl $\\sqrt{2}$ mit\n$$\\sqrt{2}^2=2,$$\nin $\\mathbb{Q}$ aber nicht.\n\nDie Vorlesung nutzt dieses Beispiel als Motivation für die **Ordnungsvollständigkeit** der reellen Zahlen: $\\mathbb{R}$ enthält Grenz- bzw. Trennpunkte, die in $\\mathbb{Q}$ fehlen."
+  },
+  {
+    "front": "[2026-02-18] Woran erkennt man in der Intervallschreibweise, ob Randpunkte enthalten sind?",
+    "back": "Die Klammern kodieren genau die Zugehörigkeit der Endpunkte:\n\n- **offen**: $(a,b)$ enthält weder $a$ noch $b$\n- **abgeschlossen**: $[a,b]$ enthält beide Endpunkte\n- **halb-offen**: $(a,b]$ enthält nur $b$, $[a,b)$ nur $a$\n\nFormal:\n$$\n(a,b)=\\{x\\in\\mathbb{R}\\mid a<x<b\\},\\qquad\n[a,b]=\\{x\\in\\mathbb{R}\\mid a\\le x\\le b\\}.\n$$\n\n**Runde Klammern** bedeuten also strikt, **eckige Klammern** nicht-strikt. Ein häufiger Fehler ist, aus $[a,b)$ fälschlich zu schließen, dass auch $b$ enthalten sei."
+  },
+  {
+    "front": "[2026-02-18] Warum stehen bei unbeschränkten Intervallen immer runde Klammern bei $\\pm\\infty$?",
+    "back": "Weil $+\\infty$ und $-\\infty$ **keine reellen Zahlen** sind, sondern nur Symbole für Unbeschränktheit. Deshalb können sie nicht als Randpunkte „enthalten“ sein.\n\nBeispiele:\n$$\n(-\\infty,a),\\qquad (b,+\\infty),\\qquad (-\\infty,+\\infty)=\\mathbb{R}.\n$$\n\nEckige Klammern bei $\\pm\\infty$ wären irreführend, weil sie Zugehörigkeit eines Endpunkts andeuten würden. Genau das ist hier unmöglich."
+  },
+  {
+    "front": "[2026-02-18] Was ist der präzise Unterschied zwischen Maximum und Supremum einer Menge $S\\subset\\mathbb{R}$?",
+    "back": "Ein **Maximum** ist ein größtes **Element der Menge**:\n$$\nm=\\max S \\iff m\\in S\\ \\text{und}\\ \\forall s\\in S:\\ s\\le m.\n$$\n\nEin **Supremum** ist die **kleinste obere Schranke**:\n$$\nu=\\sup S \\iff u\\ \\text{ist obere Schranke von }S\\ \\text{und keine kleinere Zahl ist das}.\n$$\n\nDer entscheidende Unterschied:  \n- $\\max S$ muss in $S$ liegen,\n- $\\sup S$ muss **nicht** in $S$ liegen.\n\nDaher gilt: Existiert ein Maximum, dann ist\n$$\\max S=\\sup S,$$\naber nicht umgekehrt."
+  },
+  {
+    "front": "[2026-02-18] Was ist eine obere Schranke, und warum gibt es davon oft viele?",
+    "back": "Eine Zahl $u\\in\\mathbb{R}$ heißt **obere Schranke** von $S\\subset\\mathbb{R}$, wenn\n$$\n\\forall s\\in S:\\ s\\le u.\n$$\n\nEs gibt oft viele obere Schranken, weil jede noch größere Zahl ebenfalls eine obere Schranke ist. Ist etwa $u$ obere Schranke, dann ist auch jedes $v\\ge u$ obere Schranke.\n\nDeshalb sucht man nicht irgendeine obere Schranke, sondern die **beste**, also die kleinste obere Schranke:\n$$\n\\sup S.\n$$\n\nAnalog definiert man **untere Schranken** und das **Infimum**."
+  },
+  {
+    "front": "[2026-02-18] Wie charakterisiert die $\\varepsilon$-Bedingung das Supremum präzise?",
+    "back": "Für $u\\in\\mathbb{R}$ gilt\n$$\nu=\\sup S\n$$\ngenau dann, wenn zwei Bedingungen erfüllt sind:\n\n1. $u$ ist eine **obere Schranke**:\n   $$\n   \\forall s\\in S:\\ s\\le u.\n   $$\n2. $u$ ist die **kleinste** obere Schranke:\n   $$\n   \\forall \\varepsilon>0\\ \\exists s\\in S:\\ u-\\varepsilon<s.\n   $$\n\nDie zweite Bedingung bedeutet: Man kann $u$ nicht nach unten verschieben, ohne die Eigenschaft „obere Schranke“ zu verlieren. Es gibt also Elemente von $S$, die beliebig nahe von unten an $u$ herankommen."
+  },
+  {
+    "front": "[2026-02-18] Wie lautet die analoge $\\varepsilon$-Charakterisierung des Infimums?",
+    "back": "Für $l\\in\\mathbb{R}$ gilt\n$$\nl=\\inf S\n$$\ngenau dann, wenn:\n\n1. $l$ eine **untere Schranke** ist:\n   $$\n   \\forall s\\in S:\\ l\\le s.\n   $$\n2. $l$ die **größte** untere Schranke ist:\n   $$\n   \\forall \\varepsilon>0\\ \\exists s\\in S:\\ s<l+\\varepsilon.\n   $$\n\nDie zweite Bedingung sagt: Elemente von $S$ kommen beliebig nahe von oben an $l$ heran. Deshalb kann man $l$ nicht durch eine größere Zahl ersetzen, ohne die Eigenschaft „untere Schranke“ zu verlieren."
+  },
+  {
+    "front": "[2026-02-18] Bestimme für $M=\\left\\{3+\\frac{1}{n}\\mid n\\in\\mathbb{N}\\right\\}$ Maximum und Infimum.",
+    "back": "Für\n$$\nM=\\left\\{3+\\frac{1}{n}\\mid n\\in\\mathbb{N}\\right\\}\n$$\ngilt:\n\n- Für $n=1$ ist\n  $$\n  3+\\frac11=4,\n  $$\n  also ist\n  $$\n  \\max M=4.\n  $$\n- Für große $n$ wird $\\frac1n$ beliebig klein, also nähern sich die Elemente von oben der $3$ an.\n- Die Zahl $3$ selbst liegt **nicht** in $M$, denn $\\frac1n\\neq 0$ für alle $n\\in\\mathbb{N}$.\n\nDaher:\n$$\n\\inf M=3,\\qquad \\min M\\ \\text{existiert nicht}.\n$$\n\nDas Beispiel zeigt anschaulich: **Infimum** muss nicht angenommen werden, ein **Maximum** dagegen schon."
+  },
+  {
+    "front": "[2026-02-18] Warum hat die Menge $M=\\left\\{3+\\frac{1}{n}\\mid n\\in\\mathbb{N}\\right\\}$ kein Minimum?",
+    "back": "Ein **Minimum** müsste ein Element $m\\in M$ sein mit\n$$\nm\\le x\\quad\\text{für alle }x\\in M.\n$$\n\nZwar ist $3$ die größte untere Schranke von $M$, also\n$$\n\\inf M=3,\n$$\naber $3\\notin M$, weil jedes Element die Form\n$$\n3+\\frac1n\n$$\nhat und damit strikt größer als $3$ ist.\n\nAußerdem gibt es zu jedem Element $3+\\frac1n$ ein kleineres Element der Menge, etwa für größeres $k>n$:\n$$\n3+\\frac1k<3+\\frac1n.\n$$\n\nAlso kann kein Element das kleinste sein. Deshalb besitzt $M$ **kein Minimum**."
+  },
+  {
+    "front": "[2026-02-18] Wie liest man aus einem Beispiel wie $X$ mit $\\min X=-2$ und $\\sup X=1$ den Unterschied zwischen Randwert und angenommenem Wert ab?",
+    "back": "Wenn\n$$\n\\min X=-2,\n$$\ndann bedeutet das: $-2\\in X$ und kein Element von $X$ ist kleiner.\n\nWenn aber\n$$\n\\sup X=1\n$$\nund zugleich **kein Maximum** existiert, dann ist $1$ zwar die kleinste obere Schranke, aber\n$$\n1\\notin X.\n$$\n\nDas zeigt den Kernunterschied:\n\n- **Minimum/Maximum**: tatsächliche Elemente der Menge\n- **Infimum/Supremum**: optimale Schranken, die auch außerhalb der Menge liegen dürfen\n\nGerade bei offenen Intervallen oder Grenzwertmengen tritt dieser Unterschied ständig auf."
+  },
+  {
+    "front": "[2026-02-18] Was bedeutet es, dass $\\mathbb{R}$ ein geordneter Körper ist?",
+    "back": "Ein **geordneter Körper** verbindet zwei Strukturen:\n\n1. **Körperstruktur**: Addition, Multiplikation, neutrale Elemente, Inverse, Distributivgesetz\n2. **totale Ordnung** $\\le$, die mit den Rechenoperationen verträglich ist\n\nWichtige Verträglichkeitsregeln sind:\n$$\nx\\le y \\Rightarrow x+z\\le y+z\n$$\nund\n$$\n0\\le x,\\ 0\\le y \\Rightarrow 0\\le xy.\n$$\n\nAußerdem ist\n$$\nx<y\n$$\nnur die Abkürzung für\n$$\nx\\le y\\ \\text{und}\\ x\\neq y.\n$$\n\nDiese Struktur erlaubt es, in der Analysis sinnvoll mit Ungleichungen, Schranken und Intervallen zu arbeiten."
+  },
+  {
+    "front": "[2026-02-18] Warum kann man $\\mathbb{C}$ nicht in einer mit den Körperaxiomen verträglichen Weise total ordnen?",
+    "back": "In der Analysis braucht man eine Ordnung, die mit Multiplikation verträglich ist:\n$$\n0\\le x,\\ 0\\le y \\Rightarrow 0\\le xy.\n$$\n\nFür $\\mathbb{C}$ ist das unmöglich. Der Grund ist das Element $i$ mit\n$$\ni^2=-1.\n$$\n\nIn einer totalen Ordnung müsste entweder $i\\ge 0$ oder $-i\\ge 0$ gelten. In beiden Fällen wäre wegen der Verträglichkeit\n$$\ni^2\\ge 0.\n$$\nAber\n$$\ni^2=-1,\n$$\nalso müsste\n$$\n-1\\ge 0\n$$\ngelten — Widerspruch.\n\nDeshalb sind die komplexen Zahlen zwar ein Körper, aber **nicht** total geordnet auf eine Weise, die zur Analysis auf $\\mathbb{R}$ passt."
+  },
+  {
+    "front": "[2026-02-18] Wie lautet das Ordnungsvollständigkeitsaxiom in der Dedekind-Trennungsformulierung?",
+    "back": "Sind $A,B\\subset\\mathbb{R}$ **nichtleer** und gilt\n$$\n\\forall a\\in A,\\ \\forall b\\in B:\\ a\\le b,\n$$\ndann existiert ein\n$$\nc\\in\\mathbb{R}\n$$\nmit\n$$\n\\forall a\\in A,\\ \\forall b\\in B:\\ a\\le c\\le b.\n$$\n\nDas heißt: Wenn alle Elemente von $A$ links und alle von $B$ rechts liegen, dann gibt es in $\\mathbb{R}$ einen **Trennpunkt** $c$ dazwischen.\n\nGenau diese Eigenschaft ist ein Ausdruck der **Ordnungsvollständigkeit** und unterscheidet $\\mathbb{R}$ wesentlich von $\\mathbb{Q}$."
+  },
+  {
+    "front": "[2026-02-18] Warum folgt aus der Ordnungsvollständigkeit die Existenz von Suprema beschränkter nichtleerer Mengen?",
+    "back": "Sei $S\\subset\\mathbb{R}$ nichtleer und nach oben beschränkt. Betrachte:\n\n- $A:=S$\n- $B:=$ Menge aller **oberen Schranken** von $S$\n\nDann sind $A$ und $B$ nichtleer, und für alle $a\\in A$, $b\\in B$ gilt\n$$\na\\le b.\n$$\n\nNach der **Ordnungsvollständigkeit** existiert also ein\n$$\nc\\in\\mathbb{R}\n$$\nmit\n$$\na\\le c\\le b\n$$\nfür alle $a\\in A$, $b\\in B$.\n\nDamit ist $c$ selbst eine obere Schranke von $S$, und zugleich liegt $c$ unter allen oberen Schranken. Also ist $c$ die **kleinste obere Schranke**:\n$$\nc=\\sup S.\n$$\n\nSo wird die Supremumseigenschaft aus dem Vollständigkeitsaxiom gewonnen."
+  },
+  {
+    "front": "[2026-02-23] Warum liefert die Ordnungsvollständigkeit einen Kandidaten $c$ mit möglichem $c^2=2$?",
+    "back": "Wähle\n$$\nA=\\{x\\in\\mathbb{R}:1\\le x\\le 2,\\ x^2\\le 2\\},\\qquad\nB=\\{x\\in\\mathbb{R}:1\\le x\\le 2,\\ x^2\\ge 2\\}.\n$$\nDann gilt für alle $a\\in A$ und $b\\in B$: $a\\le b$. Also ist $A$ nach oben beschränkt und nicht leer.\n\nWegen der **Ordnungsvollständigkeit** besitzt $A$ ein Supremum\n$$\nc=\\sup A.\n$$\nDieses $c$ ist genau der **Trennpunkt** zwischen den Zahlen mit Quadrat $\\le 2$ und denen mit Quadrat $\\ge 2$.\n\nDie Vollständigkeit liefert noch nicht direkt $c^2=2$, aber sie liefert den entscheidenden Kandidaten. Danach zeigt man per Widerspruch, dass weder $c^2<2$ noch $c^2>2$ möglich ist."
+  },
+  {
+    "front": "[2026-02-23] Warum ist das Archimedische Prinzip im Beweis für $\\sqrt{2}\\in\\mathbb{R}$ unverzichtbar?",
+    "back": "Im Fall $c^2<2$ braucht man ein **konkretes kleines positives** $\\frac1n$, sodass $c+\\frac1n$ immer noch Quadrat $<2$ hat. Dafür genügt nicht nur „es gibt kleine Zahlen“, sondern man braucht eine Form, die kontrollierbar ist.\n\nAus\n$$\n2-c^2>0\n$$\nund dem **Archimedischen Prinzip** folgt ein $n\\in\\mathbb{N}$ mit\n$$\nn(2-c^2)>2c+1.\n$$\nDas ist äquivalent zu\n$$\n\\frac{2c+1}{n}<2-c^2.\n$$\nGenau diese Abschätzung macht dann\n$$\n\\left(c+\\frac1n\\right)^2<2\n$$\nmöglich.\n\nOhne das Archimedische Prinzip könnte man den nötigen rationalen Schritt $\\frac1n$ nicht systematisch erzeugen."
+  },
+  {
+    "front": "[2026-02-23] Wie entsteht der Widerspruch im Fall $c^2<2$?",
+    "back": "Angenommen\n$$\nc^2<2.\n$$\nDann ist $2-c^2>0$. Wähle mit dem **Archimedischen Prinzip** ein $n\\in\\mathbb{N}$ so, dass\n$$\nn(2-c^2)>2c+1.\n$$\nDann gilt\n$$\n\\frac{2c+1}{n}<2-c^2.\n$$\nNun:\n$$\n\\left(c+\\frac1n\\right)^2\n= c^2+\\frac{2c}{n}+\\frac1{n^2}\n\\le c^2+\\frac{2c+1}{n}\n< c^2+(2-c^2)=2.\n$$\nAlso ist\n$$\nc+\\frac1n\\in A.\n$$\nAber $c+\\frac1n>c$, im Widerspruch dazu, dass $c=\\sup A$ eine **obere Schranke** von $A$ ist.\n\nAlso kann $c^2<2$ nicht gelten."
+  },
+  {
+    "front": "[2026-02-23] Wie sieht die analoge Widerspruchsidee für den Fall $c^2>2$ aus?",
+    "back": "Angenommen\n$$\nc^2>2.\n$$\nDann ist $c^2-2>0$. Man wählt $n\\in\\mathbb{N}$ so groß, dass\n$$\n\\frac{2c}{n}<c^2-2\n$$\n(oder eine leicht stärkere Variante mit zusätzlichem $\\frac1{n^2}$).\n\nDann gilt\n$$\n\\left(c-\\frac1n\\right)^2\n= c^2-\\frac{2c}{n}+\\frac1{n^2}\n>2\n$$\nfür geeignet großes $n$.\n\nDamit liegt $c-\\frac1n$ noch in $B$, aber zugleich ist\n$$\nc-\\frac1n<c.\n$$\nDas widerspricht der Rolle von $c$ als **kleinstem Trennpunkt** bzw. als unterer Schranke von $B$.\n\nAlso ist auch $c^2>2$ unmöglich, und es bleibt nur\n$$\nc^2=2.\n$$"
+  },
+  {
+    "front": "[2026-02-23] Warum zeigt das Beispiel $x^2=2$, dass $\\mathbb{Q}$ nicht ordnungsvollständig ist?",
+    "back": "Betrachte dieselben Mengen, aber nur mit **rationalen Zahlen**:\n$$\nA_{\\mathbb Q}=\\{x\\in\\mathbb{Q}:1\\le x\\le 2,\\ x^2\\le 2\\}.\n$$\nDiese Menge ist in $\\mathbb{Q}$ nach oben beschränkt. Wäre $\\mathbb{Q}$ ordnungsvollständig, hätte sie ein Supremum in $\\mathbb{Q}$.\n\nDieses Supremum müsste genau der Trennpunkt zwischen Zahlen mit Quadrat $<2$ und $>2$ sein und daher\n$$\nc^2=2\n$$\nerfüllen.\n\nAber es gibt **kein rationales** $c$ mit $c^2=2$. Also existiert das Supremum nicht in $\\mathbb{Q}$.\n\nDas zeigt: **$\\mathbb{Q}$ ist nicht vollständig**, obwohl es geordnet ist."
+  },
+  {
+    "front": "[2026-02-23] Warum ist die Abschwächung $\\frac1{n^2}\\le \\frac1n$ im Beweis zulässig?",
+    "back": "Im Beweis braucht man keine exakte Formel, sondern nur eine **obere Schranke**, die einfach genug ist, um den Widerspruch zu erzeugen.\n\nFür $n\\ge 1$ gilt\n$$\n\\frac1{n^2}\\le \\frac1n.\n$$\nDaher folgt\n$$\nc^2+\\frac{2c}{n}+\\frac1{n^2}\n\\le c^2+\\frac{2c+1}{n}.\n$$\nDie rechte Seite ist gröber, aber leichter mit der archimedischen Abschätzung zu kontrollieren.\n\nFür einen Widerspruchsbeweis reicht jede Abschätzung, die stark genug ist, um\n$$\n\\left(c+\\frac1n\\right)^2<2\n$$\nzu zeigen.\n\n**Gotcha:** Man darf dabei nicht vergessen zu sagen, **warum** die Abschwächung gilt; sie ist nicht „offensichtlich erlaubt“, sondern muss begründet werden."
+  },
+  {
+    "front": "[2026-02-23] Warum ist $||x|-|y||\\le |x-y|$ stärker nützlich als nur die Dreiecksungleichung?",
+    "back": "Die **Dreiecksungleichung**\n$$\n|x+y|\\le |x|+|y|\n$$\nschätzt einen Betrag von oben ab. Die Ungleichung\n$$\n||x|-|y||\\le |x-y|\n$$\nkontrolliert dagegen, wie stark sich **Beträge selbst ändern**.\n\nSie sagt: Wenn $x$ und $y$ nahe beieinander liegen, dann sind auch ihre Beträge nahe beieinander.\n\nHerleitung aus der Dreiecksungleichung:\n$$\n|x|=|(x-y)+y|\\le |x-y|+|y|\n\\quad\\Rightarrow\\quad\n|x|-|y|\\le |x-y|.\n$$\nVertauscht man $x,y$, erhält man auch\n$$\n|y|-|x|\\le |x-y|.\n$$\nZusammen folgt\n$$\n||x|-|y||\\le |x-y|.\n$$\n\nDas ist besonders nützlich bei Grenzwerten und Stetigkeitsargumenten."
+  },
+  {
+    "front": "[2026-02-23] Wie beweist man die Young-Ungleichung",
+    "back": "$$\n|xy|\\le \\frac{\\varepsilon x^2}{2}+\\frac{y^2}{2\\varepsilon}\n\\quad (\\varepsilon>0)?\n$$\n\nMan startet mit der Nichtnegativität eines Quadrats:\n$$\n\\left(\\sqrt{\\varepsilon}\\,|x|-\\frac{|y|}{\\sqrt{\\varepsilon}}\\right)^2\\ge 0.\n$$\nAusmultiplizieren ergibt\n$$\n\\varepsilon x^2+\\frac{y^2}{\\varepsilon}-2|x||y|\\ge 0.\n$$\nAlso\n$$\n2|x||y|\\le \\varepsilon x^2+\\frac{y^2}{\\varepsilon}.\n$$\nDurch Division durch $2$ folgt\n$$\n|xy|=|x||y|\n\\le \\frac{\\varepsilon x^2}{2}+\\frac{y^2}{2\\varepsilon}.\n$$\n\nDie Idee ist, das Produkt $|xy|$ durch eine Summe von Quadraten zu **balancieren**, wobei $\\varepsilon$ steuert, welcher Term stärker gewichtet wird."
+  },
+  {
+    "front": "[2026-02-23] Wann wählt man in der Young-Ungleichung ein kleines oder großes $\\varepsilon$?",
+    "back": "In\n$$\n|xy|\\le \\frac{\\varepsilon x^2}{2}+\\frac{y^2}{2\\varepsilon}\n$$\nsteuert $\\varepsilon$ den Kompromiss zwischen den beiden Quadrattermen.\n\n- **Kleines $\\varepsilon$** macht $\\frac{\\varepsilon x^2}{2}$ klein, aber $\\frac{y^2}{2\\varepsilon}$ groß.\n- **Großes $\\varepsilon$** macht $\\frac{y^2}{2\\varepsilon}$ klein, aber $\\frac{\\varepsilon x^2}{2}$ groß.\n\nMan wählt $\\varepsilon$ also so, dass der „teure“ Term absorbiert werden kann. In Abschätzungen ist das nützlich, wenn einer der beiden Quadratterme bereits an anderer Stelle vorkommt.\n\nSpezialfall:\n$$\n\\varepsilon=1\n\\quad\\Rightarrow\\quad\n|xy|\\le \\frac{x^2}{2}+\\frac{y^2}{2}.\n$$"
+  },
+  {
+    "front": "[2026-02-23] Warum ist die euklidische Norm in $\\mathbb{R}^1$ genau der Absolutbetrag?",
+    "back": "Für $x\\in\\mathbb{R}$ ist das Standardskalarprodukt einfach\n$$\n\\langle x,x\\rangle = x^2.\n$$\nDaher ist die **euklidische Norm**\n$$\n\\|x\\|=\\sqrt{\\langle x,x\\rangle}=\\sqrt{x^2}=|x|.\n$$\n\nDas zeigt: Der **Absolutbetrag** ist der eindimensionale Spezialfall der euklidischen Norm.\n\nDeshalb sind viele Ungleichungen für Beträge direkte Vorläufer entsprechender Aussagen für Normen in $\\mathbb{R}^n$."
+  },
+  {
+    "front": "[2026-02-23] Warum kann man in $\\mathbb{R}^n$ nicht dieselbe Ordnungsidee wie in $\\mathbb{R}$ verwenden?",
+    "back": "Auf $\\mathbb{R}$ gibt es eine **natürliche totale Ordnung**: Für zwei Zahlen $x,y$ gilt immer genau eine der Beziehungen $x<y$, $x=y$, $x>y$.\n\nFür Vektoren in $\\mathbb{R}^n$ gibt es keine solche mit der Vektorraumstruktur verträgliche natürliche totale Ordnung. Zum Beispiel sind in $\\mathbb{R}^2$\n$$\n(1,0)\\quad\\text{und}\\quad (0,1)\n$$\nnicht sinnvoll „der Größe nach“ vergleichbar.\n\nStattdessen misst man Größe über eine **Norm**\n$$\n\\|x\\|=\\sqrt{\\langle x,x\\rangle},\n$$\nund Abstand über\n$$\n\\|x-y\\|.\n$$\n\n**Gotcha:** Aussagen mit Supremum, Intervallen oder „zwischen zwei Zahlen“ übertragen sich nicht einfach auf Vektoren."
+  },
+  {
+    "front": "[2026-02-23] Wie berechnet man",
+    "back": "$$\n\\frac{1+i}{2-i}\n$$\nin Normalform?\n\nMan erweitert mit der **konjugierten Zahl** des Nenners:\n$$\n\\frac{1+i}{2-i}\\cdot\\frac{2+i}{2+i}\n=\n\\frac{(1+i)(2+i)}{(2-i)(2+i)}.\n$$\nZähler:\n$$\n(1+i)(2+i)=2+i+2i+i^2=1+3i.\n$$\nNenner:\n$$\n(2-i)(2+i)=4-i^2=5.\n$$\nAlso\n$$\n\\frac{1+i}{2-i}=\\frac{1+3i}{5}\n=\\frac15+\\frac35 i.\n$$\n\nDie Konjugation funktioniert, weil\n$$\n(2-i)(2+i)=|2-i|^2\n$$\nreell ist."
+  },
+  {
+    "front": "[2026-02-23] Warum ist die komplexe Konjugation genau das richtige Werkzeug für Division?",
+    "back": "Für\n$$\nw=a+ib\\ne 0\n$$\nist der Nenner bei direkter Division störend. Die **konjugierte Zahl**\n$$\n\\overline{w}=a-ib\n$$\neliminiert den Imaginärteil im Produkt:\n$$\nw\\overline{w}=(a+ib)(a-ib)=a^2+b^2=|w|^2.\n$$\nDamit wird\n$$\n\\frac{z}{w}\n=\n\\frac{z\\overline{w}}{w\\overline{w}}\n=\n\\frac{z\\overline{w}}{|w|^2}.\n$$\nDer Nenner ist jetzt reell, also lässt sich der Zähler leicht in die Form $a+ib$ bringen.\n\nDer entscheidende Punkt ist also nicht „irgendein Trick“, sondern:\n**Konjugation macht aus $w$ die reelle Zahl $|w|^2$.**"
+  },
+  {
+    "front": "[2026-02-23] Warum gilt für komplexe Zahlen $z$ die Identität $z\\overline{z}=|z|^2$?",
+    "back": "Schreibe\n$$\nz=a+ib,\\qquad \\overline{z}=a-ib.\n$$\nDann\n$$\nz\\overline{z}=(a+ib)(a-ib)=a^2-(ib)^2=a^2+b^2.\n$$\nAndererseits ist der **Betrag**\n$$\n|z|=\\sqrt{a^2+b^2},\n$$\nalso\n$$\n|z|^2=a^2+b^2.\n$$\nDamit folgt\n$$\nz\\overline{z}=|z|^2.\n$$\n\nDiese Identität verbindet Algebra und Geometrie:\n- algebraisch: Produkt mit der Konjugierten,\n- geometrisch: Quadrat des Abstands zum Ursprung.\n\nSie ist die Schlüsselregel hinter der Division komplexer Zahlen."
+  },
+  {
+    "front": "[2026-02-23] Wie liest man die Polarform $z=re^{i\\varphi}$ geometrisch?",
+    "back": "Die Darstellung\n$$\nz=r(\\cos\\varphi+i\\sin\\varphi)=re^{i\\varphi}\n$$\nzerlegt eine komplexe Zahl in zwei Informationen:\n\n- **$r=|z|$** ist der Abstand zum Ursprung,\n- **$\\varphi$** ist der Winkel zur positiven reellen Achse.\n\nGeometrisch ist $z$ also der Punkt in der Gaußschen Ebene mit Polarkoordinaten $(r,\\varphi)$.\n\nDer Vorteil: Multiplikation komplexer Zahlen wird anschaulich:\n- Beträge multiplizieren sich,\n- Winkel addieren sich.\n\nDarum ist die Polarform besonders nützlich für Potenzen und Wurzeln."
+  },
+  {
+    "front": "[2026-02-25] Warum ist die Polardarstellung für komplexe Zahlen nützlicher als die Normalform, wenn man multiplizieren oder potenzieren will?",
+    "back": "In der **Normalform** $z=x+iy$ sind Addition und Subtraktion einfach, aber Multiplikation ist unübersichtlich.  \nIn der **Polardarstellung**\n$$\nz=r e^{i\\varphi}\n$$\nwerden Multiplikation und Potenzen direkt:\n$$\nz_1z_2=r_1r_2 e^{i(\\varphi_1+\\varphi_2)},\\qquad z^n=r^n e^{in\\varphi}.\n$$\n\nDer Vorteil ist also:\n\n- **Beträge** werden multipliziert,\n- **Winkel** werden addiert,\n- geometrisch ist das eine **Streckung + Drehung**.\n\nDeshalb ist die Polarform das natürliche Werkzeug für Produkte, Potenzen und Wurzeln komplexer Zahlen."
+  },
+  {
+    "front": "[2026-02-25] Wie erhält man aus der Exponentialreihe die Euler-Formel $e^{it}=\\cos t+i\\sin t$?",
+    "back": "Man setzt in die **Exponentialreihe**\n$$\ne^x=\\sum_{k=0}^{\\infty}\\frac{x^k}{k!}\n$$\nden Wert $x=it$ ein:\n$$\ne^{it}=\\sum_{k=0}^{\\infty}\\frac{(it)^k}{k!}.\n$$\n\nDann nutzt man die periodischen Potenzen von $i$:\n$$\ni^0=1,\\; i^1=i,\\; i^2=-1,\\; i^3=-i,\\; i^4=1,\\dots\n$$\n\nSo zerfällt die Reihe in:\n\n- **gerade Terme**:\n$$\n\\sum_{m=0}^\\infty (-1)^m\\frac{t^{2m}}{(2m)!}=\\cos t,\n$$\n- **ungerade Terme**:\n$$\ni\\sum_{m=0}^\\infty (-1)^m\\frac{t^{2m+1}}{(2m+1)!}=i\\sin t.\n$$\n\nZusammen:\n$$\ne^{it}=\\cos t+i\\sin t.\n$$"
+  },
+  {
+    "front": "[2026-02-25] Warum ist die Umgruppierung der Exponentialreihe in gerade und ungerade Terme nicht nur formale Spielerei?",
+    "back": "Beim Herleiten von\n$$\ne^{it}=\\cos t+i\\sin t\n$$\nwerden Summanden **umgeordnet bzw. gruppiert**. Das ist nicht immer erlaubt.\n\nHier funktioniert es, weil die Exponentialreihe **absolut konvergiert**:\n$$\n\\sum_{k=0}^\\infty \\left|\\frac{(it)^k}{k!}\\right|\n=\n\\sum_{k=0}^\\infty \\frac{|t|^k}{k!}\n$$\nkonvergiert für alle $t\\in\\mathbb{R}$.\n\n**Absolute Konvergenz** erlaubt genau diese Art von Umordnung. Ohne sie könnten sich Summenwerte durch Umstellen ändern. Der wichtige Punkt ist also: Die Euler-Formel folgt nicht nur aus Mustererkennung bei den Potenzen von $i$, sondern auch aus einer legitimen Reihenmanipulation."
+  },
+  {
+    "front": "[2026-02-25] Welche Reihenentwicklungen für $\\cos t$ und $\\sin t$ folgen aus der Euler-Formel?",
+    "back": "Aus\n$$\ne^{it}=\\cos t+i\\sin t\n$$\nund der Exponentialreihe erhält man direkt die **Potenzreihen**:\n$$\n\\cos t=\\sum_{m=0}^\\infty (-1)^m\\frac{t^{2m}}{(2m)!},\n$$\n$$\n\\sin t=\\sum_{m=0}^\\infty (-1)^m\\frac{t^{2m+1}}{(2m+1)!}.\n$$\n\nWichtig ist die Struktur:\n\n- **$\\cos$** enthält nur gerade Potenzen,\n- **$\\sin$** enthält nur ungerade Potenzen,\n- die Vorzeichen wechseln mit $(-1)^m$.\n\nDiese Reihen erklären auch, warum nahe $t=0$\n$$\n\\cos t\\approx 1-\\frac{t^2}{2},\\qquad \\sin t\\approx t-\\frac{t^3}{6}\n$$\ngute Approximationen sind."
+  },
+  {
+    "front": "[2026-02-25] Warum gilt $e^{z+2\\pi i}=e^z$ für komplexe Zahlen $z$?",
+    "back": "Mit dem **Exponentialgesetz**\n$$\ne^{z_1+z_2}=e^{z_1}e^{z_2}\n$$\nfolgt\n$$\ne^{z+2\\pi i}=e^z e^{2\\pi i}.\n$$\n\nNun liefert die **Euler-Formel**\n$$\ne^{2\\pi i}=\\cos(2\\pi)+i\\sin(2\\pi)=1.\n$$\n\nAlso:\n$$\ne^{z+2\\pi i}=e^z.\n$$\n\nDas zeigt die **Periodizität in imaginärer Richtung**. Deshalb ist die Polardarstellung nicht eindeutig: Winkel $\\varphi$ und $\\varphi+2\\pi k$ beschreiben dieselbe komplexe Zahl."
+  },
+  {
+    "front": "[2026-02-25] Was ist der Unterschied zwischen $\\arg(z)$ und einer beliebigen Winkelangabe in der Polardarstellung?",
+    "back": "Für eine komplexe Zahl $z\\neq 0$ gibt es unendlich viele Winkel:\n$$\nz=r e^{i(\\varphi+2\\pi k)},\\qquad k\\in\\mathbb{Z}.\n$$\n\nDer Ausdruck **$\\arg(z)$** meint meist den **Hauptwert** des Winkels, hier mit Konvention\n$$\n\\arg(z)\\in(-\\pi,\\pi].\n$$\n\nDer Unterschied ist also:\n\n- eine **beliebige Winkelangabe** ist nicht eindeutig,\n- der **Hauptwert** $\\arg(z)$ macht die Darstellung bis auf $r$ eindeutig.\n\nWichtig: Diese Eindeutigkeit gilt nur für $z\\neq 0$."
+  },
+  {
+    "front": "[2026-02-25] Warum ist $\\varphi=\\arctan(y/x)$ allein keine zuverlässige Formel für das Argument von $z=x+iy$?",
+    "back": "Die Funktion $\\arctan(y/x)$ kennt nur den Quotienten $y/x$, aber nicht den **Quadranten**.  \nZum Beispiel haben\n$$\n(1,1)\\quad\\text{und}\\quad (-1,-1)\n$$\ndenselben Quotienten $y/x=1$, aber verschiedene Richtungen.\n\nDeshalb braucht man **Quadrantenkorrekturen** oder direkt eine Funktion wie\n$$\n\\operatorname{atan2}(y,x).\n$$\n\nZusätzlich gibt es den Spezialfall $x=0$: Dann ist $y/x$ gar nicht definiert.  \nDie naive Formel mit $\\arctan$ ist also unvollständig; sie kann falsche Winkel liefern oder gar nicht anwendbar sein."
+  },
+  {
+    "front": "[2026-02-25] Was geht bei der Polardarstellung im Spezialfall $z=0$ schief?",
+    "back": "Für $z=0$ ist der Betrag klar:\n$$\n|0|=0.\n$$\n\nAber ein **Argument** ist nicht definiert, denn der Nullvektor hat keine Richtung.  \nMan kann also nicht sinnvoll von\n$$\n0 = r e^{i\\varphi}\n$$\nmit eindeutigem Winkel sprechen.\n\nDer wichtige Punkt ist: Die Polardarstellung\n$$\nz=r e^{i\\varphi}\n$$\nfunktioniert sauber nur für **$z\\neq 0$**. Bei $z=0$ bleibt nur der Betrag $r=0$ eindeutig, der Winkel nicht."
+  },
+  {
+    "front": "[2026-02-25] Wie interpretiert man die Multiplikation mit $w=0.5\\,e^{i\\pi/4}$ geometrisch?",
+    "back": "Für ein beliebiges $z$ gilt in Polarform:\n$$\nzw = z\\cdot 0.5\\,e^{i\\pi/4}.\n$$\n\nDas bedeutet geometrisch:\n\n- **Streckung** mit Faktor $0.5$,\n- also eine **Verkürzung** auf die Hälfte des Abstands zum Ursprung,\n- danach eine **Drehung** um den Winkel $\\pi/4$ gegen den Uhrzeigersinn.\n\nAllgemein ist Multiplikation mit einer komplexen Zahl $r e^{i\\varphi}$ genau eine Kombination aus **Skalierung um $r$** und **Rotation um $\\varphi$**."
+  },
+  {
+    "front": "[2026-02-25] Wie berechnet man $(r e^{i\\varphi})^n$, und warum ist das geometrisch plausibel?",
+    "back": "Es gilt die Potenzregel\n$$\n(r e^{i\\varphi})^n = r^n e^{in\\varphi}.\n$$\n\nDas ist geometrisch plausibel, weil jede Multiplikation mit $r e^{i\\varphi}$\n\n- den Betrag mit $r$ multipliziert,\n- den Winkel um $\\varphi$ erhöht.\n\nNach $n$-maligem Multiplizieren hat man daher:\n\n- Betrag $r^n$,\n- Winkel $n\\varphi$.\n\nDas ist die komplexe Version von wiederholter Streckung und wiederholter Drehung."
+  },
+  {
+    "front": "[2026-02-25] Wie findet man alle $n$-ten Wurzeln von $z=r e^{i\\varphi}$?",
+    "back": "Gesucht sind alle $w$ mit\n$$\nw^n = r e^{i\\varphi}.\n$$\n\nSchreibt man\n$$\nw=\\rho e^{i\\alpha},\n$$\ndann folgt\n$$\n\\rho^n=r,\\qquad n\\alpha=\\varphi+2\\pi k.\n$$\n\nDaraus erhält man die **$n$ Lösungen**\n$$\nw_k=r^{1/n}e^{i\\frac{\\varphi+2\\pi k}{n}},\\qquad k=0,\\dots,n-1.\n$$\n\nWichtig ist das $2\\pi k$: Wegen der Mehrdeutigkeit des Winkels entstehen genau $n$ verschiedene Wurzeln. Geometrisch liegen sie **gleichmäßig auf einem Kreis**."
+  },
+  {
+    "front": "[2026-02-25] Berechne die drei Kubikwurzeln von $8e^{i\\pi}$.",
+    "back": "Verwende die Formel\n$$\nw_k=r^{1/n}e^{i\\frac{\\varphi+2\\pi k}{n}},\\qquad k=0,\\dots,n-1.\n$$\n\nHier ist\n$$\nr=8,\\qquad \\varphi=\\pi,\\qquad n=3.\n$$\n\nAlso:\n$$\nw_k=8^{1/3}e^{i\\frac{\\pi+2\\pi k}{3}}=2e^{i\\frac{\\pi+2\\pi k}{3}},\\qquad k=0,1,2.\n$$\n\nDamit:\n\n- für $k=0$:\n$$\nw_0=2e^{i\\pi/3},\n$$\n- für $k=1$:\n$$\nw_1=2e^{i\\pi}=-2,\n$$\n- für $k=2$:\n$$\nw_2=2e^{i5\\pi/3}.\n$$\n\nDie drei Lösungen sind also gleichmäßig um den Kreis mit Radius $2$ verteilt."
+  },
+  {
+    "front": "[2026-02-25] Warum haben Polynome mit reellen Koeffizienten nichtreelle Nullstellen immer paarweise?",
+    "back": "Hat ein Polynom **reelle Koeffizienten** und ist\n$$\nz=a+ib\n$$\neine Nullstelle, dann ist auch die konjugierte Zahl\n$$\n\\overline z=a-ib\n$$\neine Nullstelle.\n\nDer Grund ist:\nFür reelle Koeffizienten verträgt sich das Polynom mit Konjugation:\n$$\n\\overline{p(z)} = p(\\overline z).\n$$\nWenn also $p(z)=0$, dann auch\n$$\np(\\overline z)=\\overline{0}=0.\n$$\n\nDaher können nichtreelle Nullstellen nicht isoliert auftreten. Sie erscheinen immer als **konjugiertes Paar**."
+  },
+  {
+    "front": "[2026-02-25] Was sagt der Fundamentalsatz der Algebra präzise aus?",
+    "back": "Der **Fundamentalsatz der Algebra** sagt:\n\nJedes Polynom vom Grad $n\\ge 1$ hat in $\\mathbb{C}$ genau $n$ Nullstellen, **gezählt mit Vielfachheit**.\n\nDas bedeutet:\n\n- über $\\mathbb{C}$ „fehlen“ keine Nullstellen,\n- ein Polynom zerfällt dort vollständig in Linearfaktoren,\n- Mehrfachnullstellen werden mehrfach gezählt.\n\nBeispielhaft hat ein Polynom dritten Grades in $\\mathbb{C}$ immer insgesamt $3$ Nullstellen, auch wenn davon einige zusammenfallen oder nicht reell sind."
+  },
+  {
+    "front": "[2026-02-25] Wie nutzt man beim Polynom $p(x)=x^3-5x^2+17x-13$ eine gefundene reelle Nullstelle weiter?",
+    "back": "Wenn man durch Probieren erkennt, dass\n$$\np(1)=1-5+17-13=0,\n$$\ndann ist $x=1$ eine Nullstelle. Also ist\n$$\nx-1\n$$\nein Faktor von $p(x)$.\n\nDurch **Polynomdivision** kann man dann schreiben:\n$$\np(x)=(x-1)q(x),\n$$\nwobei $q(x)$ quadratisch ist. Dieses Restpolynom lässt sich anschließend mit den bekannten Methoden für quadratische Gleichungen lösen.\n\nDie Strategie ist wichtig: Eine einfache Nullstelle reduziert den Grad und macht das restliche Problem deutlich leichter."
+  },
+  {
+    "front": "[2026-03-02] Warum sind Folgen ein guter Einstieg in den Grenzwertbegriff, verglichen mit allgemeinen Funktionen?",
+    "back": "**Folgen** sind einfacher zu analysieren, weil ihre Definitionsmenge diskret ist: $a:\\mathbb{N}\\to\\mathbb{R}$. Man betrachtet also nur Werte an den Stellen $0,1,2,\\dots$ statt auf einem ganzen Intervall.\n\nDas macht den Grenzwertbegriff zugänglicher:\n- man verfolgt das Verhalten „für große $n$“,\n- die Reihenfolge der Werte ist klar vorgegeben,\n- Begriffe wie **Konvergenz**, **Teilfolge** und **Häufungspunkt** lassen sich zuerst in einem technisch einfacheren Rahmen entwickeln.\n\nEine Folge ist also ein **Spezialfall einer Funktion**, aber gerade dieser Spezialfall enthält schon die wesentlichen Ideen der Analysis."
+  },
+  {
+    "front": "[2026-03-02] Was ist eine Folge formal, und worin unterscheidet sie sich von einer allgemeinen Funktion?",
+    "back": "Eine **Folge** ist eine Abbildung\n$$\na:\\mathbb{N}\\to\\mathbb{R},\\qquad n\\mapsto a_n.\n$$\n\nDer Unterschied zu einer allgemeinen Funktion $f:D\\subseteq\\mathbb{R}\\to\\mathbb{R}$ liegt in der **Definitionsmenge**:\n- bei Folgen: diskret, nämlich $\\mathbb{N}$,\n- bei allgemeinen Funktionen: oft ein Intervall oder eine andere Teilmenge von $\\mathbb{R}$.\n\nWichtig ist außerdem die **Indexierung**: $a_0,a_1,a_2,\\dots$ ist nicht nur eine Menge von Werten, sondern eine geordnete Liste."
+  },
+  {
+    "front": "[2026-03-02] Woran erkennt man den Unterschied zwischen einer expliziten und einer rekursiven Folgenvorschrift?",
+    "back": "Bei einer **expliziten Vorschrift** wird $a_n$ direkt aus $n$ berechnet, z. B.\n$$\na_n=e^{-n^2}.\n$$\n\nBei einer **rekursiven Vorschrift** wird $a_n$ aus früheren Folgengliedern bestimmt, z. B. bei der Fibonacci-Folge:\n$$\nb_0=0,\\quad b_1=1,\\quad b_n=b_{n-1}+b_{n-2}\\quad (n\\ge2).\n$$\n\nDer Unterschied ist also:\n- **explizit**: direkter Zugriff auf jedes Glied,\n- **rekursiv**: jedes neue Glied hängt von vorherigen ab.\n\nBeides definiert eine Folge, aber rekursive Folgen zeigen oft dynamisches Verhalten."
+  },
+  {
+    "front": "[2026-03-02] Wie lauten die ersten Werte der Fibonacci-Folge aus der Rekursion, und was zeigt das Beispiel?",
+    "back": "Aus\n$$\nb_0=0,\\quad b_1=1,\\quad b_n=b_{n-1}+b_{n-2}\n$$\nfolgt schrittweise:\n$$\nb_2=1,\\quad b_3=2,\\quad b_4=3,\\quad b_5=5.\n$$\n\nAlso beginnt die Folge mit\n$$\n0,1,1,2,3,5,\\dots\n$$\n\nDas Beispiel zeigt, dass eine Folge nicht immer durch eine geschlossene Formel gegeben sein muss. Eine **Rekursion** reicht aus, solange Anfangswerte und Bildungsgesetz klar sind."
+  },
+  {
+    "front": "[2026-03-02] Was bedeutet $a_n\\to L$ anschaulich?",
+    "back": "**Konvergenz** gegen $L$ bedeutet: Für jedes noch so kleine Toleranzband um $L$ liegen ab einem gewissen Index alle weiteren Folgenglieder dauerhaft in diesem Band.\n\nFormal denkt man an ein Intervall\n$$\n(L-\\varepsilon,\\;L+\\varepsilon).\n$$\nDann gilt: Ab einem passenden $N$ verlässt die Folge dieses Intervall nicht mehr.\n\nWichtig ist das Wort **dauerhaft**: Es genügt nicht, dass einzelne Glieder nahe bei $L$ liegen. Fast das ganze „Ende“ der Folge muss nahe bei $L$ bleiben."
+  },
+  {
+    "front": "[2026-03-02] Wie lautet die präzise $\\varepsilon$-$N$-Definition der Konvergenz?",
+    "back": "Eine Folge $(a_n)$ **konvergiert** gegen $L\\in\\mathbb{R}$, wenn\n$$\n\\forall \\varepsilon>0\\;\\exists N\\in\\mathbb{N}\\;\\forall n\\ge N:\\ |a_n-L|<\\varepsilon.\n$$\n\nBedeutung der Quantoren:\n- **für jedes** gewünschte Genauigkeitsniveau $\\varepsilon>0$,\n- gibt es einen Index $N$,\n- so dass **alle** späteren Glieder $a_n$ mit $n\\ge N$ die Bedingung erfüllen.\n\nDie Reihenfolge der Quantoren ist entscheidend. Genau sie drückt aus, dass die Folge langfristig beliebig genau an $L$ herankommt."
+  },
+  {
+    "front": "[2026-03-02] Warum ist die Aussage „Es gibt ein $n$ mit $|a_n-L|<\\varepsilon$“ keine Konvergenzdefinition?",
+    "back": "Diese Aussage ist viel zu schwach, weil sie nur **ein einziges** passendes Folgenglied verlangt. Das sagt nichts über das langfristige Verhalten der Folge aus.\n\nMan könnte sogar trivial für ein festes $n$ einfach\n$$\nL=a_n\n$$\nwählen, dann wäre\n$$\n|a_n-L|=0<\\varepsilon.\n$$\nTrotzdem folgt daraus keinerlei Konvergenz.\n\nFür Konvergenz braucht man nicht „einmal nah“, sondern:\n$$\n\\text{ab einem Index }N\\text{ sind alle späteren Glieder nah.}\n$$"
+  },
+  {
+    "front": "[2026-03-02] Warum ist die Quantorenreihenfolge in der Konvergenzdefinition so wichtig?",
+    "back": "Die korrekte Form ist\n$$\n\\forall \\varepsilon>0\\;\\exists N\\;\\forall n\\ge N:\\ |a_n-L|<\\varepsilon.\n$$\n\nSie bedeutet: Für jede gewünschte Genauigkeit findet man einen Zeitpunkt, ab dem alles passt.\n\nVertauscht man die Logik, etwa zu einer Aussage wie „für jedes $\\varepsilon$ gibt es irgendwann ein passendes Glied“, dann erlaubt man oszillierende Folgen, die nur gelegentlich nahe an $L$ sind. Das ist keine Konvergenz.\n\nDer Kern ist also:\n- **nicht**: unendlich oft nah,\n- sondern: **ab irgendwann immer** nah."
+  },
+  {
+    "front": "[2026-03-02] Warum konvergiert die Folge $a_n=e^{-n^2}$ gegen $0$?",
+    "back": "Für $\\varepsilon>0$ wählt man $N$ so groß, dass\n$$\ne^{-N^2}<\\varepsilon.\n$$\nDann gilt für alle $n\\ge N$:\n$$\n|a_n-0|=e^{-n^2}\\le e^{-N^2}<\\varepsilon.\n$$\n\nAlso erfüllt die Folge genau die $\\varepsilon$-$N$-Definition, und damit\n$$\ne^{-n^2}\\to 0.\n$$\n\nDie Idee ist: Weil $n^2$ wächst, wird $-n^2$ stark negativ, und daher wird $e^{-n^2}$ sehr schnell sehr klein."
+  },
+  {
+    "front": "[2026-03-02] Was bedeutet Divergenz gegen $+\\infty$, und warum ist das kein reeller Grenzwert?",
+    "back": "Eine Folge **divergiert gegen $+\\infty$**, wenn\n$$\n\\forall M>0\\;\\exists N\\in\\mathbb{N}\\;\\forall n\\ge N:\\ a_n>M.\n$$\n\nDas heißt: Ab einem gewissen Index sind alle Folgenglieder größer als jede vorgegebene Schranke $M$.\n\nDas ist **kein reeller Grenzwert**, weil $+\\infty$ keine reelle Zahl ist. Man spricht daher von einem **uneigentlichen Grenzwert**. Er beschreibt Wachstumsverhalten, nicht Konvergenz in $\\mathbb{R}$.\n\nAnalog definiert man Divergenz gegen $-\\infty$."
+  },
+  {
+    "front": "[2026-03-02] Warum ist $(-1)^n$ ein Standardbeispiel für Divergenz mit Häufungspunkten?",
+    "back": "Die Folge\n$$\na_n=(-1)^n\n$$\nnimmt abwechselnd die Werte $1$ und $-1$ an. Sie wird also nie dauerhaft in einem kleinen Intervall um einen einzigen Wert bleiben.\n\nDaher **konvergiert** sie nicht.\n\nTrotzdem hat sie zwei **Häufungspunkte**:\n- $1$, weil unendlich viele Glieder gleich $1$ sind,\n- $-1$, weil unendlich viele Glieder gleich $-1$ sind.\n\nDas Beispiel zeigt: **Nichtkonvergenz** bedeutet nicht, dass gar keine Struktur vorhanden ist. Häufungspunkte können trotzdem existieren."
+  },
+  {
+    "front": "[2026-03-02] Was ist eine Teilfolge, und warum müssen die Indizes strikt wachsen?",
+    "back": "Eine **Teilfolge** von $(a_n)$ hat die Form\n$$\n(a_{n_k})_{k\\in\\mathbb{N}},\n$$\nwobei\n$$\nn_1<n_2<n_3<\\dots\n$$\neine strikt wachsende Folge natürlicher Zahlen ist.\n\nDie strikt wachsenden Indizes sind wichtig, weil man nur spätere und spätere Zeitpunkte auswählen darf. Ohne diese Bedingung könnte man:\n- Indizes wiederholen,\n- zurückspringen,\n- das zeitliche Verhalten der Folge verfälschen.\n\nEine Teilfolge ist also eine geordnete Auswahl aus der ursprünglichen Folge, ohne die Reihenfolge zu zerstören."
+  },
+  {
+    "front": "[2026-03-02] Wie wählt man bei $a_n=n$ eine Teilfolge, die gegen $+\\infty$ divergiert?",
+    "back": "Man kann zum Beispiel die geraden Indizes wählen:\n$$\nn_k=2k.\n$$\nDann ist die Teilfolge\n$$\na_{n_k}=a_{2k}=2k.\n$$\n\nDa\n$$\n2k\\to +\\infty,\n$$\ndivergiert auch diese Teilfolge gegen $+\\infty$.\n\nAllgemein genügt jede strikt wachsende Indexfolge $(n_k)$ mit $n_k\\to\\infty$, denn dann gilt bei $a_n=n$ automatisch\n$$\na_{n_k}=n_k\\to+\\infty.\n$$"
+  },
+  {
+    "front": "[2026-03-02] Was ist ein Häufungspunkt einer Folge, und wie erkennt man ihn formal?",
+    "back": "Eine Zahl $A$ heißt **Häufungspunkt** der Folge $(a_n)$, wenn\n$$\n\\forall \\varepsilon>0\\;\\forall N\\in\\mathbb{N}\\;\\exists n\\ge N:\\ |a_n-A|<\\varepsilon.\n$$\n\nDas bedeutet:\n- egal wie klein das Intervall um $A$ ist,\n- und egal wie weit man in der Folge schon gegangen ist,\n- man findet später wieder ein Folgenglied nahe bei $A$.\n\nAnschaulich liegen also in jedem Intervall\n$$\n(A-\\varepsilon,\\;A+\\varepsilon)\n$$\nunendlich viele Folgenglieder.\n\nEin Häufungspunkt muss **kein Grenzwert** sein."
+  },
+  {
+    "front": "[2026-03-02] Warum konvergiert jede Teilfolge einer konvergenten Folge gegen denselben Grenzwert?",
+    "back": "Sei\n$$\na_n\\to L.\n$$\nDann gilt für jedes $\\varepsilon>0$: Es gibt ein $N$, so dass für alle $n\\ge N$\n$$\n|a_n-L|<\\varepsilon.\n$$\n\nBetrachte nun eine Teilfolge $(a_{n_k})$. Da die Indizes $n_k$ strikt wachsen, werden sie irgendwann alle mindestens $N$ sein. Also gilt für alle hinreichend großen $k$:\n$$\n|a_{n_k}-L|<\\varepsilon.\n$$\n\nDamit folgt\n$$\na_{n_k}\\to L.\n$$\n\nKonvergenz ist also **robust gegenüber dem Weglassen von Gliedern**."
+  },
+  {
+    "front": "[2026-03-04] Warum ist die Reihenfolge der Quantoren in der Konvergenzdefinition entscheidend?",
+    "back": "Eine Folge $(a_n)$ konvergiert gegen $L$, wenn\n$$\n\\forall \\varepsilon>0\\ \\exists N\\in\\mathbb{N}\\ \\forall n\\ge N:\\ |a_n-L|<\\varepsilon.\n$$\n\nEntscheidend ist: **Zuerst** wird die gewünschte Genauigkeit $\\varepsilon$ vorgegeben, **danach** darf man ein passendes $N$ wählen.\n\nVertauscht man die Quantoren, etwa zu\n$$\n\\exists N\\ \\forall \\varepsilon>0\\ \\forall n\\ge N:\\ |a_n-L|<\\varepsilon,\n$$\ndann müsste ab einem festen Index sogar $a_n=L$ exakt gelten, denn eine Ungleichung für **alle** $\\varepsilon>0$ ist nur möglich, wenn der Abstand $0$ ist.\n\nDie vertauschte Aussage beschreibt also etwas viel Stärkeres als Konvergenz."
+  },
+  {
+    "front": "[2026-03-04] Wie lautet die präzise $\\varepsilon$–$N$-Definition der Konvergenz einer Folge?",
+    "back": "Eine Folge $(a_n)$ in $\\mathbb{R}$ konvergiert gegen $L\\in\\mathbb{R}$, wenn\n$$\n\\forall \\varepsilon>0\\ \\exists N\\in\\mathbb{N}\\ \\forall n\\ge N:\\ |a_n-L|<\\varepsilon.\n$$\n\nBedeutung:\n- $\\varepsilon$ ist die vorgegebene Toleranz,\n- $N$ ist ein Index, ab dem alle Folgenglieder nahe genug bei $L$ liegen,\n- nur das Verhalten für große $n$ zählt.\n\nMan schreibt dann\n$$\na_n\\to L \\quad \\text{oder} \\quad \\lim_{n\\to\\infty} a_n=L.\n$$"
+  },
+  {
+    "front": "[2026-03-04] Warum beeinflussen endlich viele Anfangsglieder die Konvergenz einer Folge nicht?",
+    "back": "**Konvergenz** ist eine Aussage über den „Schwanz“ der Folge: Es muss nur gelten, dass ab einem gewissen Index $N$ alle Glieder in einer $\\varepsilon$-Umgebung von $L$ liegen.\n\nÄndert man nur endlich viele Anfangsglieder, dann kann man ein größeres $N$ wählen, das hinter allen Änderungen liegt. Für alle $n\\ge N$ ist die Folge dann unverändert, also bleibt die Konvergenzeigenschaft gleich.\n\nDeshalb sind auch Konventionsfragen wie ein einzelner Wert $0^0$ für Folgen oft irrelevant: Ein einzelnes oder endlich viele Glieder ändern den Grenzwert nicht."
+  },
+  {
+    "front": "[2026-03-04] Was zeigt die Darstellung einer Folge als Punkte $(n,a_n)$ besser als die Darstellung auf dem Zahlenstrahl?",
+    "back": "Die Darstellung als Punkte $(n,a_n)$ zeigt die **Reihenfolge der Folgenglieder**. Das ist wichtig, weil eine Folge nicht nur aus ihren Werten besteht, sondern auch daraus, **wann** welcher Wert auftritt.\n\nIn dieser Darstellung bedeutet $a_n\\to L$:\nFür jedes $\\varepsilon>0$ gibt es ein $N$, sodass alle Punkte mit $n\\ge N$ im horizontalen Streifen\n$$\n(L-\\varepsilon,\\;L+\\varepsilon)\n$$\nliegen.\n\nDie Darstellung auf dem Zahlenstrahl zeigt nur die Wertemenge bzw. Häufungen von Werten, verliert aber die zeitliche Struktur."
+  },
+  {
+    "front": "[2026-03-04] Warum ist eine Teilfolge mehr als nur „einige ausgewählte Glieder“?",
+    "back": "Eine **Teilfolge** hat die Form $(a_{n_k})$ mit streng wachsender Indexfolge\n$$\nn_1<n_2<n_3<\\dots\n$$\n\nWichtig ist die strenge Monotonie der Indizes:\n- Die ursprüngliche Reihenfolge bleibt erhalten.\n- Man darf Glieder auslassen, aber nicht umsortieren.\n- Man betrachtet weiterhin ein Verhalten „späterer“ Glieder der ursprünglichen Folge.\n\nGerade deshalb sind Teilfolgen geeignet, verborgenes Grenzverhalten sichtbar zu machen, etwa bei oszillierenden Folgen."
+  },
+  {
+    "front": "[2026-03-04] Wann ist eine Zahl $a$ ein Häufungspunkt einer Folge?",
+    "back": "$a$ ist ein **Häufungspunkt** der Folge $(a_n)$, wenn\n$$\n\\forall \\varepsilon>0\\ \\forall N\\in\\mathbb{N}\\ \\exists n\\ge N:\\ |a_n-a|<\\varepsilon.\n$$\n\nDas bedeutet:\nEgal wie klein die Umgebung von $a$ ist und egal wie weit man in der Folge schon gegangen ist, man findet später immer noch ein Folgenglied in dieser Umgebung.\n\nAlso: In jeder noch so kleinen Umgebung von $a$ liegen **unendlich viele** Folgenglieder „immer wieder später“."
+  },
+  {
+    "front": "[2026-03-04] Warum ist „$a$ ist Häufungspunkt“ äquivalent zu „es gibt eine Teilfolge mit Grenzwert $a$“?",
+    "back": "Die Äquivalenz lautet:\n$$\na \\text{ ist Häufungspunkt von } (a_n)\n\\iff\n\\exists \\text{ Teilfolge } (a_{n_k}) \\text{ mit } a_{n_k}\\to a.\n$$\n\nIdee:\n- **Häufungspunkt $\\Rightarrow$ Teilfolge:** Wähle nacheinander Indizes so, dass\n  $$\n  |a_{n_k}-a|<\\frac1k.\n  $$\n  Wegen der Häufungspunkteigenschaft kann man das immer mit größer werdenden Indizes tun.\n- **Teilfolge $\\Rightarrow$ Häufungspunkt:** Wenn $a_{n_k}\\to a$, dann liegen ab einem gewissen $k$ alle Teilfolgenglieder beliebig nahe bei $a$. Da die Indizes $n_k$ beliebig groß werden, findet man auch nach jedem vorgegebenen $N$ noch ein solches Glied.\n\nDiese Charakterisierung ist eines der wichtigsten Werkzeuge für Folgen."
+  },
+  {
+    "front": "[2026-03-04] Warum kann eine konvergente Folge nicht zwei verschiedene Häufungspunkte haben?",
+    "back": "Wenn $a_n\\to L$, dann liegt für jedes $\\varepsilon>0$ ab einem gewissen Index jedes Folgenglied in der $\\varepsilon$-Umgebung von $L$.\n\nNehme nun an, es gäbe einen anderen Häufungspunkt $a\\ne L$. Dann gäbe es eine Teilfolge $(a_{n_k})$ mit\n$$\na_{n_k}\\to a.\n$$\nAber jede Teilfolge einer gegen $L$ konvergenten Folge konvergiert ebenfalls gegen $L$.\n\nAlso hätte dieselbe Teilfolge zwei Grenzwerte, nämlich $a$ und $L$. Wegen der **Eindeutigkeit des Grenzwerts** folgt\n$$\na=L,\n$$\nWiderspruch.\n\nEine konvergente Folge hat daher genau einen Häufungspunkt: ihren Grenzwert."
+  },
+  {
+    "front": "[2026-03-04] Wie entscheidet man die Konvergenz von $x^n$ anhand von $x$?",
+    "back": "Das Verhalten von $x^n$ hängt von der Größe von $x$ ab:\n\n- Falls $|x|<1$, dann\n  $$\n  x^n\\to 0.\n  $$\n- Falls $x=1$, dann ist die Folge konstant:\n  $$\n  x^n=1.\n  $$\n- Falls $x=-1$, dann ist\n  $$\n  (-1)^n\n  $$\n  oszillierend und **nicht konvergent**.\n- Falls $|x|>1$, dann wächst der Betrag:\n  $$\n  |x|^n\\to\\infty,\n  $$\n  also keine endliche Konvergenz.\n\nDer Randfall $x=-1$ zeigt, dass „Betrag $=1$“ nicht automatisch Konvergenz bedeutet."
+  },
+  {
+    "front": "[2026-03-04] Warum konvergiert $(-\\tfrac12)^n$, obwohl die Vorzeichen wechseln?",
+    "back": "Die Folge\n$$\n\\left(-\\frac12\\right)^n\n$$\nwechselt zwar das Vorzeichen, aber ihr Betrag ist\n$$\n\\left|\\left(-\\frac12\\right)^n\\right|=\\left(\\frac12\\right)^n.\n$$\n\nDa\n$$\n\\left(\\frac12\\right)^n\\to 0,\n$$\nwerden die Ausschläge nach oben und unten immer kleiner. Also folgt\n$$\n\\left(-\\frac12\\right)^n\\to 0.\n$$\n\nDas zeigt: **Oszillation allein** verhindert Konvergenz nicht. Problematisch ist nur eine Oszillation, deren Amplitude nicht gegen $0$ geht, wie bei $(-1)^n$."
+  },
+  {
+    "front": "[2026-03-04] Warum konvergiert $n^{-p}$ für $p>0$ gegen $0$?",
+    "back": "Für $p>0$ gilt\n$$\nn^{-p}=\\frac{1}{n^p}.\n$$\n\nDa $n\\to\\infty$, wächst auch $n^p\\to\\infty$. Der Kehrwert einer Folge mit immer größer werdendem positiven Nenner wird immer kleiner, also\n$$\n\\frac{1}{n^p}\\to 0.\n$$\n\nDas ist ein Grundbeispiel für eine Folge, die polynomial gegen $0$ fällt. Es wird später oft als Vergleichsfolge verwendet."
+  },
+  {
+    "front": "[2026-03-04] Warum ist $\\lim_{n\\to\\infty} x^{1/n}=1$ für festes $x>0$?",
+    "back": "Für festes $x>0$ gilt\n$$\n\\lim_{n\\to\\infty} x^{1/n}=1.\n$$\n\nIntuition: Der Exponent $\\frac1n$ geht gegen $0$. Potenzen mit sehr kleinem Exponenten verändern eine positive Zahl immer weniger.\n\nEin wichtiges Beispiel ist\n$$\nn^{1/n}\\to 1.\n$$\n\nDas ist ein typischer Fall von „Basis wächst, Exponent schrumpft“. Hier „gewinnt“ das Schrumpfen des Exponenten, sodass der Grenzwert trotzdem $1$ ist.\n\nDie Aussage gilt nur für $x>0$, damit $x^{1/n}$ für alle $n$ reell definiert ist."
+  },
+  {
+    "front": "[2026-03-04] Wann darf man die Quotientenregel für Grenzwerte anwenden, und was ist die typische Falle?",
+    "back": "Sind\n$$\na_n\\to A,\\qquad b_n\\to B,\n$$\ndann gilt\n$$\n\\frac{a_n}{b_n}\\to \\frac{A}{B}\n$$\n**nur falls**\n$$\nB\\ne 0.\n$$\n\nDie typische Falle ist, blind durch einen Ausdruck zu teilen, dessen Grenzwert $0$ ist. Dann ist die Regel nicht anwendbar.\n\nBeispiel für korrektes Vorgehen:\nWenn der Nenner gegen eine von $0$ verschiedene Zahl konvergiert, ist die Quotientenregel erlaubt.\n\nMerksatz:\n**Keine Division durch $0$ bei Grenzwertregeln.** Erst die Voraussetzung prüfen, dann die Regel anwenden."
+  },
+  {
+    "front": "[2026-03-04] Wie berechnet man $\\lim_{n\\to\\infty}\\frac{3n^7-n^8}{4n^8+3n^5}$ systematisch?",
+    "back": "Man teilt Zähler und Nenner durch die höchste vorkommende Potenz, hier $n^8$:\n$$\n\\frac{3n^7-n^8}{4n^8+3n^5}\n=\n\\frac{3/n-1}{4+3/n^3}.\n$$\n\nNun gilt\n$$\n\\frac{3}{n}\\to 0,\\qquad \\frac{3}{n^3}\\to 0.\n$$\n\nAlso folgt mit den Grenzwertregeln:\n$$\n\\lim_{n\\to\\infty}\\frac{3n^7-n^8}{4n^8+3n^5}\n=\n\\frac{0-1}{4+0}\n=\n-\\frac14.\n$$\n\nDie Methode lautet: **höchste Potenz ausklammern bzw. durch sie teilen**."
+  },
+  {
+    "front": "[2026-03-04] Wie bestimmt man den Grenzwert von $n\\sin(3/n)$?",
+    "back": "Für kleine $x$ gilt die Entwicklung\n$$\n\\sin x = x - \\frac{x^3}{3!} + \\dots\n$$\n\nSetzt man\n$$\nx=\\frac{3}{n},\n$$\nso erhält man\n$$\nn\\sin\\left(\\frac{3}{n}\\right)\n=\nn\\left(\\frac{3}{n}-\\frac{(3/n)^3}{3!}+\\dots\\right)\n=\n3-\\frac{\\text{const}}{n^2}+\\dots\n$$\n\nDaher folgt\n$$\nn\\sin\\left(\\frac{3}{n}\\right)\\to 3.\n$$\n\nDie Grundidee ist: Für kleine Argumente ist $\\sin x$ fast gleich $x$. Hier wird also\n$$\n\\sin\\left(\\frac{3}{n}\\right)\\approx \\frac{3}{n},\n$$\nund das Produkt mit $n$ ergibt ungefähr $3$."
+  },
+  {
+    "front": "[2026-03-09] Warum beginnt die Analysis mit Folgen und nicht direkt mit Ableitungen oder Integralen?",
+    "back": "**Folgen** sind die einfachste diskrete Form von **Grenzwertprozessen**. Viele zentrale Begriffe der Analysis beruhen genau darauf:\n- **Ableitung** als Grenzwert von Differenzenquotienten,\n- **Integral** als Grenzwert von Summen,\n- weitere stetige Konstruktionen als Grenzwerte geeigneter Approximationen.\n\nDarum untersucht man zuerst präzise, was **Konvergenz**, **Beschränktheit**, **Monotonie** und **Häufungspunkte** bedeuten. Diese Werkzeuge tragen später die kontinuierlichen Begriffe."
+  },
+  {
+    "front": "[2026-03-09] Was bedeutet es präzise, dass eine Folge $(a_n)$ gegen $L$ konvergiert?",
+    "back": "Die Folge $(a_n)$ konvergiert gegen **$L$**, wenn gilt:\n$$\n\\forall \\varepsilon>0\\ \\exists N\\in\\mathbb{N}\\ \\forall n\\ge N:\\ |a_n-L|<\\varepsilon.\n$$\n\nDie Bedeutung ist: Ab einem genügend großen Index liegen **alle** Folgenglieder in der $\\varepsilon$-Umgebung von $L$.\n\nWichtig:\n- Das $N$ darf von $\\varepsilon$ abhängen.\n- Endlich viele Anfangsglieder sind für den Grenzwert irrelevant.\n- Es geht nicht darum, dass einzelne Glieder nahe bei $L$ liegen, sondern dass dies **dauerhaft ab einem Index** gilt."
+  },
+  {
+    "front": "[2026-03-09] Wie zeigt man mit dem Einschachtelungsprinzip, dass $\\sqrt[n]{2^n+3^n}\\to 3$?",
+    "back": "Man schätzt die Folge von unten und oben ab.\n\n**Untere Schranke:**\n$$\n2^n+3^n\\ge 3^n\n\\quad\\Rightarrow\\quad\n\\sqrt[n]{2^n+3^n}\\ge \\sqrt[n]{3^n}=3.\n$$\n\n**Obere Schranke:**\nDa $2^n\\le 3^n$, gilt\n$$\n2^n+3^n\\le 3^n+3^n=2\\cdot 3^n,\n$$\nalso\n$$\n\\sqrt[n]{2^n+3^n}\\le \\sqrt[n]{2\\cdot 3^n}=3\\sqrt[n]{2}.\n$$\n\nDamit:\n$$\n3\\le \\sqrt[n]{2^n+3^n}\\le 3\\sqrt[n]{2}.\n$$\nDa\n$$\n\\sqrt[n]{2}\\to 1,\n$$\nkonvergiert der rechte Rand gegen $3$. Also folgt mit dem **Einschachtelungsprinzip**\n$$\n\\lim_{n\\to\\infty}\\sqrt[n]{2^n+3^n}=3.\n$$"
+  },
+  {
+    "front": "[2026-03-09] Warum ist die Begründung „$2^n$ ist gegenüber $3^n$ vernachlässigbar“ in einer Klausur nicht ausreichend?",
+    "back": "Weil eine Grenzwertaussage in der Analysis durch **präzise Ungleichungen** begründet werden muss, nicht nur durch Intuition.\n\nStatt „vernachlässigbar“ schreibt man konkret:\n$$\n3^n\\le 2^n+3^n\\le 2\\cdot 3^n.\n$$\nNach Ziehen der $n$-ten Wurzel erhält man\n$$\n3\\le \\sqrt[n]{2^n+3^n}\\le 3\\sqrt[n]{2}.\n$$\n\nErst diese saubere Einschachtelung erlaubt die Anwendung des Satzes. Der Punkt ist also: Nicht bloß die Idee zählt, sondern die **formal richtige Abschätzung**."
+  },
+  {
+    "front": "[2026-03-09] Wie lautet das Einschachtelungsprinzip präzise?",
+    "back": "Seien $(a_n)$, $(b_n)$, $(c_n)$ Folgen mit\n$$\na_n\\le b_n\\le c_n \\qquad \\text{für alle } n\\ge N_0,\n$$\nund\n$$\n\\lim_{n\\to\\infty} a_n=\\lim_{n\\to\\infty} c_n=L.\n$$\nDann gilt auch\n$$\n\\lim_{n\\to\\infty} b_n=L.\n$$\n\nWichtig ist das „**ab einem gewissen Index**“: Die Ungleichung muss nicht für alle Anfangsglieder gelten, sondern nur für alle hinreichend großen $n$."
+  },
+  {
+    "front": "[2026-03-09] Wie funktioniert die Beweisidee des Einschachtelungsprinzips mit $\\varepsilon$?",
+    "back": "Sei $\\varepsilon>0$ gegeben. Wegen\n$$\na_n\\to L \\quad\\text{und}\\quad c_n\\to L\n$$\ngibt es $N_1,N_2$ mit\n$$\n|a_n-L|<\\varepsilon \\quad (n\\ge N_1),\\qquad\n|c_n-L|<\\varepsilon \\quad (n\\ge N_2).\n$$\nAlso gilt für große $n$:\n$$\nL-\\varepsilon<a_n,\\qquad c_n<L+\\varepsilon.\n$$\n\nZusammen mit\n$$\na_n\\le b_n\\le c_n\n$$\nfolgt für $n\\ge \\max(N_0,N_1,N_2)$:\n$$\nL-\\varepsilon<b_n<L+\\varepsilon.\n$$\nDamit\n$$\n|b_n-L|<\\varepsilon.\n$$\nAlso konvergiert $(b_n)$ gegen $L$.\n\nDie Struktur des Beweises ist: **beide Ränder kontrollieren, dann die Mitte einklemmen**."
+  },
+  {
+    "front": "[2026-03-09] Warum ist jede konvergente Folge beschränkt?",
+    "back": "Sei $a_n\\to L$. Wähle etwa $\\varepsilon=1$. Dann gibt es ein $N$, sodass für alle $n\\ge N$ gilt:\n$$\n|a_n-L|<1.\n$$\nDaraus folgt\n$$\n|a_n|\\le |L|+1 \\qquad (n\\ge N).\n$$\n\nDie endlich vielen Anfangsglieder\n$$\na_1,\\dots,a_{N-1}\n$$\nhaben ebenfalls einen endlichen Maximalbetrag. Setzt man\n$$\nM:=\\max\\{|a_1|,\\dots,|a_{N-1}|,|L|+1\\},\n$$\nso gilt für alle $n$:\n$$\n|a_n|\\le M.\n$$\n\nDer Kern ist: Ab einem Index liegt die Folge in einem festen Intervall um den Grenzwert, und die restlichen Glieder sind nur endlich viele."
+  },
+  {
+    "front": "[2026-03-09] Warum reicht Beschränktheit allein nicht für Konvergenz?",
+    "back": "Weil eine Folge trotz Beschränktheit **oszillieren** kann. Das Standardbeispiel ist\n$$\na_n=(-1)^n.\n$$\nDann gilt zwar\n$$\n|a_n|=1 \\quad \\text{für alle } n,\n$$\nalso ist die Folge beschränkt. Aber sie springt zwischen $1$ und $-1$ hin und her und nähert sich keinem einzigen Wert an.\n\nGenauer:\n- die Teilfolge gerader Indizes ist konstant $1$,\n- die Teilfolge ungerader Indizes ist konstant $-1$.\n\nDa zwei verschiedene Teilfolgen verschiedene Grenzwerte haben, kann die Gesamtfolge nicht konvergieren."
+  },
+  {
+    "front": "[2026-03-09] Wann garantiert Beschränktheit doch Konvergenz?",
+    "back": "Innerhalb der Klasse der **monotonen Folgen**. Genauer:\n\n- Ist $(a_n)$ **monoton wachsend** und nach oben beschränkt, dann konvergiert $(a_n)$.\n- Ist $(a_n)$ **monoton fallend** und nach unten beschränkt, dann konvergiert $(a_n)$.\n\nBeschränktheit allein genügt also nicht, aber **Beschränktheit + Monotonie** genügt.\n\nDie Monotonie verhindert Oszillation; die Beschränktheit verhindert unbeschränktes Weglaufen."
+  },
+  {
+    "front": "[2026-03-09] Gegen welchen Wert konvergiert eine monoton wachsende, nach oben beschränkte Folge?",
+    "back": "Gegen das **Supremum** ihrer Wertemenge:\n$$\n\\lim_{n\\to\\infty} a_n=\\sup\\{a_n:n\\in\\mathbb{N}\\}.\n$$\n\nWarum? Sei\n$$\ns:=\\sup\\{a_n:n\\in\\mathbb{N}\\}.\n$$\nDann ist jedes $a_n\\le s$. Wegen der Supremumseigenschaft gibt es zu jedem $\\varepsilon>0$ ein Glied $a_N$ mit\n$$\ns-\\varepsilon<a_N\\le s.\n$$\nDa die Folge monoton wachsend ist, gilt für alle $n\\ge N$:\n$$\ns-\\varepsilon<a_N\\le a_n\\le s.\n$$\nAlso\n$$\n|a_n-s|<\\varepsilon.\n$$\nDamit folgt $a_n\\to s$."
+  },
+  {
+    "front": "[2026-03-09] Was ist der Unterschied zwischen „monoton wachsend“ und „streng monoton wachsend“?",
+    "back": "**Monoton wachsend** bedeutet:\n$$\na_n\\le a_m \\qquad \\text{für } n<m.\n$$\n\n**Streng monoton wachsend** bedeutet:\n$$\na_n<a_m \\qquad \\text{für } n<m.\n$$\n\nDer Unterschied ist also, ob Gleichheit erlaubt ist:\n- bei **monoton wachsend** ja,\n- bei **streng monoton wachsend** nein.\n\nFür viele Konvergenzsätze genügt die schwache Form mit $\\le$. Man muss also beim Anwenden eines Satzes genau auf die verwendete Definition achten."
+  },
+  {
+    "front": "[2026-03-09] Was ist eine Teilfolge, und warum ist sie für Häufungspunkte wichtig?",
+    "back": "Eine **Teilfolge** von $(a_n)$ ist eine Folge der Form\n$$\n(a_{n_k})_{k\\in\\mathbb{N}},\n$$\nwobei\n$$\nn_1<n_2<n_3<\\dots\n$$\nstreng wachsend ist.\n\nSie ist wichtig, weil ein Wert $x$ genau dann ein **Häufungspunkt** von $(a_n)$ ist, wenn es eine Teilfolge gibt mit\n$$\na_{n_k}\\to x.\n$$\n\nTeilfolgen erlauben also, aus einer nicht konvergenten Gesamtfolge dennoch regelmäßiges Langzeitverhalten herauszufiltern."
+  },
+  {
+    "front": "[2026-03-09] Wie erkennt man am Beispiel $a_n=(-1)^n(1+1/n)$ die Häufungspunkte?",
+    "back": "Man betrachtet gerade und ungerade Indizes getrennt.\n\nFür gerade Indizes $n=2k$ gilt\n$$\na_{2k}=(-1)^{2k}\\left(1+\\frac{1}{2k}\\right)=1+\\frac{1}{2k}\\to 1.\n$$\n\nFür ungerade Indizes $n=2k-1$ gilt\n$$\na_{2k-1}=(-1)^{2k-1}\\left(1+\\frac{1}{2k-1}\\right)=-\\left(1+\\frac{1}{2k-1}\\right)\\to -1.\n$$\n\nAlso hat die Folge die Häufungspunkte\n$$\n1 \\quad\\text{und}\\quad -1.\n$$\nDa es zwei verschiedene Häufungspunkte gibt, ist die Folge **nicht konvergent**."
+  },
+  {
+    "front": "[2026-03-09] Wie definiert man $\\limsup a_n$ und $\\liminf a_n$ über die Restmengen?",
+    "back": "Für jedes $N\\in\\mathbb{N}$ definiert man\n$$\nS_N:=\\sup\\{a_n:n\\ge N\\},\\qquad\nI_N:=\\inf\\{a_n:n\\ge N\\}.\n$$\n\nDann setzt man\n$$\n\\limsup_{n\\to\\infty} a_n:=\\lim_{N\\to\\infty} S_N,\n\\qquad\n\\liminf_{n\\to\\infty} a_n:=\\lim_{N\\to\\infty} I_N.\n$$\n\nIntuition:\n- $S_N$ ist der größte Wert, der **ab Index $N$ noch vorkommen kann**,\n- $I_N$ ist der kleinste Wert, der **ab Index $N$ noch vorkommen kann**.\n\nSo werden die äußersten langfristigen Schwankungen der Folge erfasst."
+  },
+  {
+    "front": "[2026-03-09] Warum ist $(S_N)$ monoton fallend und $(I_N)$ monoton wachsend?",
+    "back": "Mit wachsendem $N$ wird die Restmenge\n$$\n\\{a_n:n\\ge N\\}\n$$\nkleiner, weil man immer mehr Anfangsglieder entfernt.\n\nDaher kann ihr **Supremum** nicht größer werden:\n$$\nS_{N+1}\\le S_N.\n$$\nAlso ist $(S_N)$ **monoton fallend**.\n\nAnalog kann ihr **Infimum** nicht kleiner werden:\n$$\nI_{N+1}\\ge I_N.\n$$\nAlso ist $(I_N)$ **monoton wachsend**.\n\nDiese Monotonie ist entscheidend, weil man dann bei beschränkten Folgen den Satz über monotone beschränkte Folgen anwenden kann."
+  },
+  {
+    "front": "[2026-03-11] Warum ist $s_n=\\sup_{k\\ge n} a_k$ monoton fallend?",
+    "back": "Für $n+1$ betrachtet man die kleinere Menge\n$$\n\\{a_k:k\\ge n+1\\}\\subseteq \\{a_k:k\\ge n\\}.\n$$\nDas **Supremum** einer kleineren Menge kann nicht größer sein als das Supremum einer größeren. Daher gilt\n$$\ns_{n+1}=\\sup_{k\\ge n+1} a_k \\le \\sup_{k\\ge n} a_k=s_n.\n$$\nAlso ist $(s_n)$ **monoton fallend**."
+  },
+  {
+    "front": "[2026-03-11] Warum ist $i_n=\\inf_{k\\ge n} a_k$ monoton wachsend?",
+    "back": "Mit wachsendem $n$ entfernt man Anfangsglieder, also wird die betrachtete Menge kleiner:\n$$\n\\{a_k:k\\ge n+1\\}\\subseteq \\{a_k:k\\ge n\\}.\n$$\nDas **Infimum** einer kleineren Menge kann nicht kleiner werden, denn es gibt weniger Kandidaten nach unten. Deshalb\n$$\ni_{n+1}=\\inf_{k\\ge n+1} a_k \\ge \\inf_{k\\ge n} a_k=i_n.\n$$\nAlso ist $(i_n)$ **monoton wachsend**."
+  },
+  {
+    "front": "[2026-03-11] Was misst $\\limsup a_n$ wirklich, wenn die Folge nicht konvergiert?",
+    "back": "Der **Limes superior**\n$$\n\\limsup_{n\\to\\infty} a_n=\\lim_{n\\to\\infty}\\sup_{k\\ge n} a_k\n$$\nist der **größte Häufungspunkt** der Folge, nicht einfach ein „Ersatzgrenzwert“.\n\nDas bedeutet:\n- Jede Teilfolge kann höchstens gegen $\\limsup a_n$ oder etwas Kleineres konvergieren.\n- Es gibt Teilfolgen, die beliebig nahe an $\\limsup a_n$ herankommen.\n- Falls die Folge konvergiert, dann stimmt $\\limsup a_n$ mit dem gewöhnlichen Grenzwert überein.\n\nEr beschreibt also das asymptotisch größte Niveau, das die Folge unendlich oft noch erreicht."
+  },
+  {
+    "front": "[2026-03-11] Was misst $\\liminf a_n$ und wie ergänzt es den $\\limsup$?",
+    "back": "Der **Limes inferior**\n$$\n\\liminf_{n\\to\\infty} a_n=\\lim_{n\\to\\infty}\\inf_{k\\ge n} a_k\n$$\nist der **kleinste Häufungspunkt** der Folge.\n\nEr gibt das asymptotisch kleinste Niveau an, das die Folge unendlich oft noch annimmt. Zusammen mit $\\limsup a_n$ beschreibt er die äußeren Grenzen des langfristigen Verhaltens:\n$$\n\\liminf a_n \\le \\limsup a_n.\n$$\nGilt sogar\n$$\n\\liminf a_n=\\limsup a_n=L,\n$$\ndann konvergiert die Folge gegen $L$."
+  },
+  {
+    "front": "[2026-03-11] Warum liefern $\\limsup$ und $\\liminf$ nicht alle Häufungspunkte?",
+    "back": "Weil sie nur die **extremen** Häufungspunkte erfassen:\n- $\\limsup a_n$ ist der größte,\n- $\\liminf a_n$ ist der kleinste.\n\nDazwischen können weitere Häufungspunkte liegen. Im Vorlesungsbeispiel konvergieren gerade Indizes gegen $2$ und ungerade gegen $-2$, also\n$$\n\\limsup a_n=2,\\qquad \\liminf a_n=-2.\n$$\nTrotzdem kann es noch eine andere Teilfolge geben, die gegen $0$ konvergiert. Dann ist $0$ ebenfalls Häufungspunkt, wird aber von $\\limsup$ und $\\liminf$ nicht direkt angezeigt."
+  },
+  {
+    "front": "[2026-03-11] Bestimme $\\limsup a_n$ und $\\liminf a_n$, wenn die geraden Glieder gegen $2$ und die ungeraden gegen $-2$ konvergieren.",
+    "back": "Dann gibt es zwei Teilfolgen:\n$$\na_{2n}\\to 2,\\qquad a_{2n-1}\\to -2.\n$$\nAlso sind $2$ und $-2$ Häufungspunkte. Da $2$ der größte und $-2$ der kleinste davon ist, gilt\n$$\n\\limsup_{n\\to\\infty} a_n=2,\\qquad \\liminf_{n\\to\\infty} a_n=-2.\n$$\nDie Folge selbst konvergiert nicht, weil sie nicht auf einen einzigen Wert zuläuft."
+  },
+  {
+    "front": "[2026-03-11] Warum ist $\\limsup a_n$ selbst ein Häufungspunkt?",
+    "back": "Setze\n$$\nL=\\limsup a_n=\\lim s_n,\\qquad s_n=\\sup_{k\\ge n} a_k.\n$$\nFür jedes $\\varepsilon>0$ gilt für große $n$:\n$$\n|s_n-L|<\\varepsilon.\n$$\nDa $s_n$ ein **Supremum** ist, gibt es zu jedem solchen $n$ ein $k\\ge n$ mit\n$$\na_k>s_n-\\varepsilon.\n$$\nDann liegt $a_k$ nahe bei $L$, denn $s_n$ liegt nahe bei $L$. So findet man für jedes $\\varepsilon>0$ und jedes $N$ ein $k\\ge N$ mit\n$$\n|a_k-L|<\\text{klein}.\n$$\nAlso gibt es unendlich viele Folgenglieder beliebig nahe bei $L$: $L$ ist ein **Häufungspunkt**."
+  },
+  {
+    "front": "[2026-03-11] Warum folgt aus Beschränktheit einer Folge die Existenz eines Häufungspunkts?",
+    "back": "Für eine **beschränkte** Folge $(a_n)$ sind auch die Folgen\n$$\ns_n=\\sup_{k\\ge n} a_k,\\qquad i_n=\\inf_{k\\ge n} a_k\n$$\nbeschränkt. Außerdem ist $(s_n)$ monoton fallend und $(i_n)$ monoton wachsend. Nach dem Satz über monotone beschränkte Folgen konvergieren beide.\n\nIhre Grenzwerte sind\n$$\n\\limsup a_n \\quad\\text{und}\\quad \\liminf a_n,\n$$\nund diese sind selbst Häufungspunkte. Also besitzt jede beschränkte Folge mindestens einen Häufungspunkt.\n\nDas ist genau der Inhalt von **Bolzano–Weierstraß** für Folgen in $\\mathbb{R}$."
+  },
+  {
+    "front": "[2026-03-11] Was sagt der Satz von Bolzano–Weierstraß für Folgen in $\\mathbb{R}$?",
+    "back": "Jede **beschränkte** Folge reeller Zahlen besitzt eine **konvergente Teilfolge**.\n\nÄquivalent formuliert: Jede beschränkte Folge in $\\mathbb{R}$ hat mindestens einen **Häufungspunkt**.\n\nDer Satz ist zentral, weil er aus bloßer Beschränktheit schon asymptotische Struktur liefert. Im heutigen Kontext wird er benutzt, um aus einer **Cauchy-Folge** zunächst eine konvergente Teilfolge zu gewinnen und daraus dann die Konvergenz der ganzen Folge zu zeigen."
+  },
+  {
+    "front": "[2026-03-11] Warum hängt Konvergenz von der gewählten Metrik ab?",
+    "back": "Konvergenz ist nicht nur eine Eigenschaft der Zahlenfolge, sondern der Folge **zusammen mit einer Metrik**.\n\nBeispiel: In der Standardmetrik auf $\\mathbb{R}$ gilt\n$$\n\\frac1n \\to 0.\n$$\nIn der **diskreten Metrik**\n$$\nd(x,y)=\n\\begin{cases}\n0,&x=y,\\\\\n1,&x\\ne y,\n\\end{cases}\n$$\nist das anders: Für alle $n$ mit $\\frac1n\\ne 0$ gilt\n$$\nd\\!\\left(\\frac1n,0\\right)=1,\n$$\nalso wird der Abstand nie klein. Daher konvergiert $\\left(\\frac1n\\right)$ dort **nicht** gegen $0$.\n\nMan darf Aussagen über Konvergenz also nicht unbesehen auf andere Metriken übertragen."
+  },
+  {
+    "front": "[2026-03-11] Wie zeigt man mit dem $\\varepsilon/2$-Trick: Konvergenz impliziert Cauchy?",
+    "back": "Angenommen,\n$$\na_n\\to L.\n$$\nZu gegebenem $\\varepsilon>0$ wähle $N$ so, dass für alle $n\\ge N$\n$$\n|a_n-L|<\\frac{\\varepsilon}{2}.\n$$\nDann gilt für alle $m,n\\ge N$ mit der **Dreiecksungleichung**\n$$\n|a_n-a_m|\\le |a_n-L|+|a_m-L|\n<\\frac{\\varepsilon}{2}+\\frac{\\varepsilon}{2}\n=\\varepsilon.\n$$\nAlso ist $(a_n)$ eine **Cauchy-Folge**.\n\nDie Idee ist: Wenn beide Glieder nahe bei demselben Grenzwert liegen, dann liegen sie auch nahe beieinander."
+  },
+  {
+    "front": "[2026-03-11] Warum ist jede Cauchy-Folge beschränkt?",
+    "back": "Wähle in der Definition der **Cauchy-Folge** etwa $\\varepsilon=1$. Dann gibt es ein $N$, sodass für alle $m,n\\ge N$\n$$\n|a_n-a_m|<1.\n$$\nFixiere ein $m=N$. Dann gilt für alle $n\\ge N$\n$$\n|a_n-a_N|<1,\n$$\nalso\n$$\n|a_n|\\le |a_N|+1.\n$$\nDer „späte“ Teil der Folge ist also beschränkt. Die endlich vielen Anfangsglieder\n$$\na_1,\\dots,a_{N-1}\n$$\nsind ebenfalls beschränkt, weil jede endliche Menge beschränkt ist. Zusammen ist die ganze Folge beschränkt."
+  },
+  {
+    "front": "[2026-03-11] Warum gilt auf $\\mathbb{R}$: Cauchy-Folge $\\Rightarrow$ konvergent?",
+    "back": "Der Beweis besteht aus drei Schritten:\n\n1. **Cauchy $\\Rightarrow$ beschränkt.**\n\n2. **Beschränkt $\\Rightarrow$ konvergente Teilfolge** nach Bolzano–Weierstraß:\n   $$\n   a_{n_k}\\to L.\n   $$\n\n3. Mit der Cauchy-Eigenschaft zeigt man, dass dann die ganze Folge gegen dasselbe $L$ konvergiert: Für $\\varepsilon>0$ wähle $N$ mit\n   $$\n   |a_n-a_m|<\\frac{\\varepsilon}{2}\\quad (m,n\\ge N).\n   $$\n   Wähle dann $k$ so groß, dass $n_k\\ge N$ und\n   $$\n   |a_{n_k}-L|<\\frac{\\varepsilon}{2}.\n   $$\n   Dann folgt für $n\\ge N$\n   $$\n   |a_n-L|\\le |a_n-a_{n_k}|+|a_{n_k}-L|<\\varepsilon.\n   $$\n\nAlso konvergiert $(a_n)$ gegen $L$."
+  },
+  {
+    "front": "[2026-03-11] Warum ist die Umkehrung „Cauchy $\\Rightarrow$ konvergent“ keine rein formale Aussage?",
+    "back": "Weil sie die **Vollständigkeit** von $\\mathbb{R}$ benutzt. Der Beweis verwendet Bolzano–Weierstraß bzw. die Existenz eines Grenzwerts in $\\mathbb{R}$.\n\nIn allgemeinen Räumen gilt das nicht automatisch: Es gibt Räume, in denen Folgen zwar immer enger zusammenrücken, aber ihr Grenzwert „fehlt“. Dann sind sie Cauchy, aber nicht konvergent.\n\nDie Aussage\n$$\n\\text{Cauchy} \\iff \\text{konvergent}\n$$\nist also eine besondere Stärke von **vollständigen Räumen** wie $\\mathbb{R}$."
+  },
+  {
+    "front": "[2026-03-11] Wann konvergiert eine Reihe $\\sum_{k=1}^\\infty b_k$?",
+    "back": "Eine Reihe wird über ihre **Partialsummen**\n$$\nS_n=\\sum_{k=1}^n b_k\n$$\ndefiniert. Die Reihe\n$$\n\\sum_{k=1}^\\infty b_k\n$$\nkonvergiert genau dann, wenn die Folge $(S_n)$ konvergiert.\n\nAuf $\\mathbb{R}$ ist das äquivalent dazu, dass $(S_n)$ eine **Cauchy-Folge** ist. Praktisch prüft man also oft:\n$$\n|S_n-S_m|=\\left|\\sum_{k=m+1}^n b_k\\right|\n$$\nfür große $m,n$."
+  }
+]

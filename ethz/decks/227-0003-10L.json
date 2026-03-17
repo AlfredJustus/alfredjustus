@@ -1,0 +1,422 @@
+[
+  {
+    "front": "[2026-02-19] Why is a computer described as $(\\text{Computation}, \\text{Communication}, \\text{Storage})$ instead of just “computation”?",
+    "back": "A **computer** must do three things together:\n\n- **Computation**: transform data\n- **Communication**: move data between components\n- **Storage**: keep data/state over time\n\nFormally:\n$$\nComputer = (\\text{Computation}, \\text{Communication}, \\text{Storage})\n$$\n\nThis matters because many real bottlenecks are not in arithmetic itself. A system can have fast computation but still perform poorly or waste energy if communication is expensive or storage is too slow/small. Modern architecture therefore optimizes all three, not just the ALU."
+  },
+  {
+    "front": "[2026-02-19] Why are transistors treated as switches in digital design?",
+    "back": "A **transistor** in CMOS is abstracted as a controllable switch: either effectively **open** or **closed**. This abstraction lets us ignore most analog device physics when building digital systems.\n\nUsing the switch view, we can compose transistors into **logic gates**, and then gates into larger circuits. The key benefit is hierarchy: device behavior becomes a clean binary model that supports Boolean reasoning.\n\nWithout this abstraction, designing CPUs directly from continuous electrical behavior would be intractable at scale."
+  },
+  {
+    "front": "[2026-02-19] What is the key difference between combinational and sequential logic?",
+    "back": "**Combinational logic** has outputs that depend only on the **current inputs**.\n\n**Sequential logic** has outputs that depend on current inputs **and stored state** from the past.\n\nSo:\n\n- combinational logic = no memory\n- sequential logic = memory present\n\nThis difference is fundamental because arithmetic units like Boolean functions can often be combinational, but a CPU needs sequential logic to remember things such as the program counter, register values, and control state across cycles."
+  },
+  {
+    "front": "[2026-02-19] Why can’t you build a CPU from combinational logic alone?",
+    "back": "A CPU must remember past information, so **combinational logic alone is insufficient**.\n\nCombinational circuits compute:\n$$\ny = f(x)\n$$\nfrom current inputs only. But a CPU needs state such as:\n\n- the current instruction position\n- register contents\n- intermediate control state\n\nThat requires **sequential logic** such as flip-flops and registers. Without memory, the machine could not execute a sequence of instructions over time; it would only produce instantaneous outputs from instantaneous inputs."
+  },
+  {
+    "front": "[2026-02-19] Why is the ISA called a contract between software and hardware?",
+    "back": "The **Instruction Set Architecture (ISA)** is a **contract** because it defines what software may assume the hardware will do.\n\nIt specifies the available instructions and their semantics. Software targets the ISA, while hardware must implement it correctly. This separation allows software and hardware to evolve somewhat independently: compilers and programs rely on the ISA, not on a specific circuit implementation.\n\nIf the hardware violates ISA semantics, correct software can still fail. That is why the ISA is an interface with precise behavioral guarantees."
+  },
+  {
+    "front": "[2026-02-19] What is the difference between ISA and microarchitecture?",
+    "back": "The **ISA** specifies **what** the machine does; the **microarchitecture** specifies **how** it does it.\n\n- **ISA**: instructions, visible state, semantics\n- **Microarchitecture**: pipelines, caches, predictors, datapaths, control logic\n\nA crucial consequence is that **multiple microarchitectures can implement the same ISA**. For example, one processor may be simple and in-order, while another is deeply pipelined and speculative, yet both run the same ISA-compatible program correctly.\n\nConfusing these two leads to wrong reasoning about portability and performance."
+  },
+  {
+    "front": "[2026-02-19] A processor is pipelined and speculative, another is simple and in-order. When can both still run the same program correctly?",
+    "back": "They can both run the same program correctly if they implement the **same ISA semantics**.\n\nThe internal organization may differ greatly:\n\n- one may use **pipelining**\n- one may use **speculative execution**\n- one may use different cache structures\n\nBut as long as the externally visible behavior matches the ISA contract, software sees them as compatible machines. Performance may differ, but correctness at the ISA level should not.\n\nThis is exactly why ISA and microarchitecture are separated."
+  },
+  {
+    "front": "[2026-02-19] What does the transformation hierarchy explain, and why is it useful?",
+    "back": "The **transformation hierarchy** explains how a human problem becomes physical computation:\n\n$$\n\\text{Problem} \\to \\text{Algorithm} \\to \\text{Programming Language} \\to \\text{System Software} \\to \\text{ISA} \\to \\text{Microarchitecture} \\to \\text{Logic} \\to \\text{Devices}\n$$\n\nIt is useful because optimization opportunities exist at many layers, not just in hardware. A poor algorithm can waste even excellent hardware, while a good cross-layer design can improve both performance and energy.\n\nThe hierarchy also clarifies where concepts belong: ISA is the software–hardware interface, while logic and devices are lower-level implementation layers."
+  },
+  {
+    "front": "[2026-02-19] Why is cross-layer co-design especially important for workloads like ML?",
+    "back": "**Cross-layer co-design** jointly optimizes algorithms, software, and hardware instead of treating each layer independently.\n\nFor **ML** and other data-intensive workloads, this matters because performance and energy depend on the interaction of:\n\n- algorithm structure\n- compiler/runtime decisions\n- hardware parallelism\n- memory movement\n\nFor example, dense matrix multiplication maps well to specialized hardware such as systolic arrays. If the model, compiler, and hardware are co-designed, the system can achieve much higher throughput and energy efficiency than a generic stack."
+  },
+  {
+    "front": "[2026-02-19] Why are special-purpose processors not always better than general-purpose CPUs?",
+    "back": "**Special-purpose processors** are usually more efficient for their target workload, but they are not always preferable because efficiency comes at the cost of flexibility.\n\n- **General-purpose CPUs**: easier to program, broad applicability\n- **Special-purpose processors**: higher efficiency for narrow tasks, less flexible\n\nIf the workload changes often, is irregular, or does not match the accelerator’s structure, a CPU may be the better choice. So “better” depends on the metric and workload, not on a universal rule."
+  },
+  {
+    "front": "[2026-02-19] Why does modern hardware include heterogeneous components instead of only CPUs?",
+    "back": "Modern systems are **heterogeneous** because different tasks benefit from different hardware structures.\n\nA single chip may include:\n\n- CPUs for flexible control-heavy code\n- GPUs for throughput-oriented parallel work\n- ML accelerators for specialized tensor operations\n- caches and interconnects for data delivery\n\nThis exists because one design cannot simultaneously optimize all workloads and metrics. Heterogeneity improves overall system efficiency by matching hardware to task characteristics."
+  },
+  {
+    "front": "[2026-02-19] Why can moving data cost more energy than computing on it?",
+    "back": "In many systems, **data movement** is more energy-expensive than arithmetic because transporting bits across memory hierarchies and interconnects requires substantial physical activity.\n\nA simple arithmetic operation may be cheap, but fetching operands from far-away memory can dominate energy and time. This is why memory bandwidth and communication often limit performance scaling.\n\nThe architectural implication is important: reducing unnecessary movement can matter more than making arithmetic units slightly faster."
+  },
+  {
+    "front": "[2026-02-19] How does processing-in-memory help with data-intensive workloads?",
+    "back": "**Processing-in-memory (PIM)** places computation near or inside memory so that less data must travel back and forth to a separate processor.\n\nThis helps because the main problem in many data-intensive applications is not lack of arithmetic capability, but the cost of moving large volumes of data. By computing near the data, PIM can reduce:\n\n- communication energy\n- latency from memory transfers\n- pressure on memory bandwidth\n\nIt is especially attractive for workloads such as ML and genomics, where large datasets dominate execution cost."
+  },
+  {
+    "front": "[2026-02-19] How does “last-time prediction” justify speculative execution?",
+    "back": "**Last-time prediction** assumes that recent past behavior is a useful predictor of near-future behavior. For example, if a branch went one way last time, hardware predicts it will likely do so again.\n\nThis enables **speculative execution**: the processor starts executing before the true outcome is known, increasing overlap and throughput.\n\nThe idea is analogous to learned anticipation: use history to avoid waiting. If the prediction is correct, performance improves; if wrong, speculative work must be discarded, so speculation trades extra complexity and possible wasted work for speed."
+  },
+  {
+    "front": "[2026-02-19] A predictor guesses a branch using “what happened last time,” but the guess is wrong. What goes wrong, and why can speculation still be worthwhile?",
+    "back": "If the prediction is wrong, the processor may execute along the wrong path and must later discard that speculative work. This wastes energy and can cost time due to recovery.\n\nHowever, speculation is still worthwhile when predictions are correct often enough that the average performance gain outweighs the misprediction cost. The point is not perfect prediction, but improved expected throughput.\n\nSo speculative execution is a trade-off:\n- **benefit**: overlap work before certainty\n- **cost**: recovery and wasted work on wrong guesses"
+  },
+  {
+    "front": "[2026-02-20] Why does **CMOS** use both NMOS and PMOS instead of building logic from only one transistor type?",
+    "back": "**CMOS** pairs an **NMOS pull-down network** with a **PMOS pull-up network** so that, ideally, exactly one path is active for each input combination.\n\nThis matters because:\n- **NMOS** is good at pulling the output to **0** but poor at passing a strong **1**.\n- **PMOS** is good at pulling the output to **1** but poor at passing a strong **0**.\n- Using both gives **full logic levels**, better **noise margins**, and ideally **low static power** in steady state.\n\nIf you used only one type naively, you would get weaker logic levels or unwanted current paths."
+  },
+  {
+    "front": "[2026-02-20] In a CMOS inverter, what happens for the two input cases, and why is the output robust?",
+    "back": "A **CMOS inverter** has a PMOS on top connected to $V_{DD}$ and an NMOS on bottom connected to GND, with both gates driven by $A$.\n\n- If $A=0$: PMOS is **ON**, NMOS is **OFF**, so the output is pulled to $V_{DD}$, i.e. $Y=1$.\n- If $A=1$: PMOS is **OFF**, NMOS is **ON**, so the output is pulled to GND, i.e. $Y=0$.\n\nThus,\n$$\nY=\\overline{A}.\n$$\n\nThe output is robust because it is actively driven either high or low, rather than left floating."
+  },
+  {
+    "front": "[2026-02-20] Why does a CMOS **NAND** use NMOS in series and PMOS in parallel?",
+    "back": "A **NAND** must output $0$ only when **both** inputs are $1$.\n\nSo the **pull-down network** should connect to GND only when both inputs are high:\n- NMOS transistors are therefore placed in **series**, since series means both must be ON.\n\nThe **pull-up network** must connect to $V_{DD}$ whenever at least one input is $0$:\n- PMOS transistors are therefore placed in **parallel**, since a PMOS turns ON for input $0$, and parallel means either path can pull up.\n\nHence the gate implements\n$$\nY=\\overline{A\\cdot B}.\n$$"
+  },
+  {
+    "front": "[2026-02-20] Why is the CMOS **NOR** topology the dual of NAND?",
+    "back": "A **NOR** must output $1$ only when both inputs are $0$, and output $0$ whenever either input is $1$.\n\nSo:\n- The **NMOS pull-down** should activate if **either** input is high, so NMOS are in **parallel**.\n- The **PMOS pull-up** should activate only if **both** inputs are low, so PMOS are in **series**.\n\nThis is the **dual** of NAND: series and parallel are swapped between the pull-up and pull-down networks.\n\nThe resulting function is\n$$\nY=\\overline{A+B}.\n$$"
+  },
+  {
+    "front": "[2026-02-20] What goes wrong if both the pull-up and pull-down networks are ON at the same time?",
+    "back": "If both networks are ON, there is a direct path from\n$$\nV_{DD} \\to \\text{output node} \\to \\text{GND}.\n$$\n\nThis causes a **short-circuit current**:\n- power is wasted,\n- current can become very large,\n- the circuit may overheat or be damaged.\n\nGood **CMOS design** avoids input combinations for which both networks conduct simultaneously.\n\nThe complementary structure is specifically chosen so one network should conduct exactly when the other does not."
+  },
+  {
+    "front": "[2026-02-20] What goes wrong if both the pull-up and pull-down networks are OFF?",
+    "back": "If both networks are OFF, the output is **floating**:\n- it is not connected to $V_{DD}$,\n- it is not connected to GND.\n\nThen the output voltage becomes **undefined** and may depend on stored charge from the past. That is dangerous because the logic value is no longer reliably $0$ or $1$.\n\nSo a valid CMOS gate should avoid this case too: for every input combination, the output should be actively driven either high or low."
+  },
+  {
+    "front": "[2026-02-20] Why are series transistors usually slower than parallel transistors in a CMOS network?",
+    "back": "When transistors are ON, they behave roughly like resistive switches.\n\n- **Series** transistors add effective resistance.\n- Higher resistance means slower charging or discharging of the output capacitance.\n- **Parallel** paths reduce effective resistance when more than one path is available.\n\nSo long series stacks increase delay on the critical path. This is why designers try to minimize series depth when optimizing for speed.\n\nThe key idea is the RC effect: larger effective $R$ with the same load $C$ gives larger delay."
+  },
+  {
+    "front": "[2026-02-20] Given $P_\\text{dynamic}=CV^2f$, which design lever reduces dynamic power most strongly: lowering $C$, lowering $V$, or lowering $f$?",
+    "back": "Lowering **$V$** has the strongest effect because dynamic power depends on voltage **quadratically**:\n$$\nP_\\text{dynamic}=CV^2f.\n$$\n\nEffects:\n- reduce $C$ by a factor of $2$ $\\Rightarrow$ power halves,\n- reduce $f$ by a factor of $2$ $\\Rightarrow$ power halves,\n- reduce $V$ by a factor of $2$ $\\Rightarrow$ power becomes one quarter.\n\nSo voltage scaling is very powerful. The trade-off is that lower voltage can reduce performance and worsen reliability/noise margins."
+  },
+  {
+    "front": "[2026-02-20] Why doesn’t lowering supply voltage solve power problems for free?",
+    "back": "Lowering **$V$** helps dynamic power a lot because\n$$\nP_\\text{dynamic}=CV^2f,\n$$\nbut it creates trade-offs:\n\n- lower voltage often reduces switching speed, hurting performance,\n- noise margins shrink, making circuits less robust,\n- reliability can worsen near threshold.\n\nSo voltage scaling is powerful but not free. Designers must balance **energy**, **speed**, and **correct operation**."
+  },
+  {
+    "front": "[2026-02-20] What is the difference between **dynamic power** and **static power**?",
+    "back": "**Dynamic power** is consumed when nodes switch and capacitances charge/discharge:\n$$\nP_\\text{dynamic}=CV^2f.\n$$\n\n**Static power** is consumed even when the circuit is idle, due to leakage current:\n$$\nP_\\text{static}=V\\cdot I_\\text{leak}.\n$$\n\nSo:\n- dynamic power depends on **activity** and **frequency**,\n- static power depends on **leakage** even without switching.\n\nIn older intuition, CMOS mainly saved static power, but with technology scaling, leakage has become a more important fraction of total power."
+  },
+  {
+    "front": "[2026-02-20] Why does technology scaling make **leakage power** more important?",
+    "back": "As technology scales, transistors become smaller and leakage currents become a larger fraction of total power.\n\nSince\n$$\nP_\\text{static}=V\\cdot I_\\text{leak},\n$$\neven an idle block can consume noticeable power if $I_\\text{leak}$ is large.\n\nThis matters because:\n- not all power comes from switching anymore,\n- idle circuitry can still waste energy,\n- techniques like **power gating** become important to cut leakage in unused blocks.\n\nSo modern design is constrained not just by switching power, but also by how much power “off” hardware still leaks."
+  },
+  {
+    "front": "[2026-02-20] How do you use **De Morgan’s law** to move between NAND/NOR-style expressions?",
+    "back": "**De Morgan’s laws** are\n$$\n\\overline{A\\cdot B}=\\overline{A}+\\overline{B},\n\\qquad\n\\overline{A+B}=\\overline{A}\\cdot\\overline{B}.\n$$\n\nThey let you transform between AND/OR forms under inversion, which is exactly what CMOS gate design needs.\n\nFor example, if a pull-down network naturally implements $A\\cdot B$, then the output of the CMOS gate is\n$$\n\\overline{A\\cdot B},\n$$\na NAND. De Morgan tells you how that relates to ORs of complemented variables.\n\nThis is why De Morgan is central for converting Boolean expressions into complementary transistor networks."
+  },
+  {
+    "front": "[2026-02-20] Why is the identity $X\\cdot Y + X\\cdot \\overline{Y} = X$ useful in circuit design?",
+    "back": "It shows that a seemingly more complex circuit is actually redundant:\n$$\nX\\cdot Y + X\\cdot \\overline{Y}\n= X\\cdot (Y+\\overline{Y})\n= X\\cdot 1\n= X.\n$$\n\nSo instead of implementing:\n- two AND gates,\n- one inverter,\n- one OR gate,\n\nyou can replace the whole structure by just a **wire carrying $X$**.\n\nThis reduces:\n- gate count,\n- capacitance,\n- delay,\n- power.\n\nThe point of Boolean algebra is not just correctness, but simpler and faster hardware."
+  },
+  {
+    "front": "[2026-02-20] How do you derive a canonical **SOP** expression from a truth table?",
+    "back": "For **sum-of-products (SOP)**:\n1. Find every row where the output is **1**.\n2. Write the corresponding **minterm** for each such row.\n3. OR all those minterms together.\n\nA **minterm** includes every variable exactly once, complemented or not depending on the row.\n\nExample from the lecture:\n$$\nF=\\sum m(3,4,5,6,7).\n$$\n\nThis means rows numbered $3,4,5,6,7$ are exactly the rows where $F=1$.\n\nSOP is guaranteed to represent the truth table correctly, even if it is not minimal."
+  },
+  {
+    "front": "[2026-02-20] Why are canonical **SOP/POS** forms useful even though they are usually not minimal?",
+    "back": "Canonical forms are useful because they give a **systematic** way to go from a truth table to logic.\n\n- **SOP** uses all rows where $F=1$.\n- **POS** uses all rows where $F=0$.\n\nThey are valuable because they are:\n- guaranteed to be correct,\n- easy to derive mechanically,\n- a good starting point for simplification or CAD tools.\n\nBut they are often inefficient. In the lecture example,\n$$\nF=\\sum m(3,4,5,6,7)\n$$\ncan be simplified to\n$$\nF_{\\min}=A+BC.\n$$\n\nSo canonical form is the starting point; simplification gives the practical circuit."
+  },
+  {
+    "front": "[2026-02-26] Why is a **PLA** able to implement any Boolean function, not just a few special cases?",
+    "back": "A **Programmable Logic Array (PLA)** can implement any Boolean function because any Boolean function can be written in **sum-of-products (SOP)** form.\n\nA PLA directly realizes this structure:\n- the **AND array** generates product terms such as $A\\overline{B}C$,\n- the **OR array** combines the needed product terms for each output,\n- **NOT** is handled by providing complemented inputs.\n\nSo the chain\n$$\\text{truth table} \\rightarrow \\text{SOP} \\rightarrow \\text{AND-OR hardware}$$\nis exactly what a PLA implements."
+  },
+  {
+    "front": "[2026-02-26] For a full adder, why is $C_{\\text{out}} = AB + AC_{\\text{in}} + BC_{\\text{in}}$ called a **majority** function?",
+    "back": "Because **carry-out** is $1$ exactly when at least **two of the three inputs** are $1$.\n\nThe expression\n$$C_{\\text{out}} = AB + AC_{\\text{in}} + BC_{\\text{in}}$$\nchecks all pairwise ways that two inputs can be $1$:\n- $A$ and $B$\n- $A$ and $C_{\\text{in}}$\n- $B$ and $C_{\\text{in}}$\n\nIf any of these terms is true, then a majority of the inputs are $1$, so a carry must be produced."
+  },
+  {
+    "front": "[2026-02-26] Compute the full-adder outputs for $(A,B,C_{\\text{in}})=(1,1,0)$.",
+    "back": "Use\n$$S = A \\oplus B \\oplus C_{\\text{in}}, \\qquad C_{\\text{out}} = AB + AC_{\\text{in}} + BC_{\\text{in}}.$$\n\nSubstitute:\n$$S = 1 \\oplus 1 \\oplus 0 = 0 \\oplus 0 = 0$$\nsince $1 \\oplus 1 = 0$.\n\nFor carry:\n$$C_{\\text{out}} = (1)(1) + (1)(0) + (1)(0) = 1 + 0 + 0 = 1.$$\n\nSo the result is:\n$$S=0,\\qquad C_{\\text{out}}=1.$$"
+  },
+  {
+    "front": "[2026-02-26] Why is implementing a full adder directly from all 8 minterms usually a bad hardware design?",
+    "back": "It is **functionally correct** but **gate-expensive**.\n\nFor three inputs, a direct SOP construction starts from all $2^3=8$ minterms and ORs together the ones where the output is $1$. This works, but it uses many gates and wires.\n\nThe optimized forms are much simpler:\n$$S = A \\oplus B \\oplus C_{\\text{in}}$$\n$$C_{\\text{out}} = AB + AC_{\\text{in}} + BC_{\\text{in}}$$\n\nThese recognize structure:\n- **sum** is odd parity,\n- **carry** is majority.\n\nSo the lesson is: **SOP is systematic, not necessarily optimal**."
+  },
+  {
+    "front": "[2026-02-26] Why does a **ripple carry adder** have latency $O(N)$?",
+    "back": "An $N$-bit **ripple carry adder** chains $N$ full adders, and each stage may need the carry from the previous stage before it can finish.\n\nSo the worst case is:\n- carry generated at the least significant bit,\n- then propagated through every stage up to the most significant bit.\n\nThat means the critical path grows roughly linearly with the number of bits:\n$$\\text{latency} \\propto N.$$\n\nIt is simple and area-efficient, but slow for large $N$."
+  },
+  {
+    "front": "[2026-02-26] When would you prefer a **carry-lookahead adder** over a ripple carry adder?",
+    "back": "Use a **carry-lookahead adder (CLA)** when **speed matters more than area**.\n\nA CLA adds extra **generate/propagate** logic to compute carries faster instead of waiting for them to ripple through every bit. This reduces carry delay, especially for wider adders.\n\nTradeoff:\n- **Ripple carry adder**: smaller, simpler, slower\n- **CLA**: larger, more complex, faster\n\nSo CLA is preferred on timing-critical paths such as CPU arithmetic units."
+  },
+  {
+    "front": "[2026-02-26] How does a **4→1 multiplexer** differ from a **2→4 decoder** in purpose?",
+    "back": "A **multiplexer** selects **one data input** and forwards it to a single output.\n\nA **decoder** takes a binary input and activates **exactly one output line**.\n\nFor example:\n- a **4→1 MUX** uses a 2-bit select to choose one of $D_0,D_1,D_2,D_3$ and send it to $Y$,\n- a **2→4 decoder** uses a 2-bit input to assert one of four outputs.\n\nSo:\n- **MUX = data selection**\n- **decoder = pattern detection / line selection**\n\nDecoders are commonly used for **word-line selection** in memory; multiplexers are used for **routing data**."
+  },
+  {
+    "front": "[2026-02-26] How can a **4-bit equality comparator** be built from 1-bit primitives?",
+    "back": "Use one **XNOR** per bit, then AND all results together.\n\nFor inputs $A_3A_2A_1A_0$ and $B_3B_2B_1B_0$:\n$$EQ = (A_3 \\;\\text{XNOR}\\; B_3)(A_2 \\;\\text{XNOR}\\; B_2)(A_1 \\;\\text{XNOR}\\; B_1)(A_0 \\;\\text{XNOR}\\; B_0).$$\n\nWhy this works:\n- each XNOR outputs $1$ iff the two bits are equal,\n- the final AND is $1$ only if **all** bit positions match.\n\nSo equality is a bitwise comparison followed by a global AND."
+  },
+  {
+    "front": "[2026-02-26] Why is **XNOR** the natural primitive for equality comparison, while **XOR** is natural for sum bits?",
+    "back": "Because the two gates encode opposite meanings:\n- **XOR** outputs $1$ when inputs are **different**,\n- **XNOR** outputs $1$ when inputs are **equal**.\n\nThat matches the applications:\n- in a full adder, the **sum bit** depends on **odd parity**, so XOR is the right operation,\n- in a comparator, we want to know whether bits match, so XNOR is the right operation.\n\nFormally:\n$$A \\oplus B = 1 \\iff A \\ne B$$\n$$A \\;\\text{XNOR}\\; B = 1 \\iff A = B$$"
+  },
+  {
+    "front": "[2026-02-26] What goes wrong if two tri-state drivers are enabled onto the same bus at the same time?",
+    "back": "This causes **bus contention**.\n\nIf one driver tries to force the bus to $1$ while another forces it to $0$, the shared wire is driven in conflicting directions. That can lead to:\n- undefined logic values,\n- large current flow,\n- possible overheating or damage,\n- incorrect system behavior.\n\nA tri-state bus is safe only if **at most one driver is enabled** at a time; all others must be in **high-impedance** state $Z$."
+  },
+  {
+    "front": "[2026-02-26] Why is the **high-impedance** state essential in a tri-state bus?",
+    "back": "Without the **high-impedance** state $Z$, every connected device would always drive the bus, so shared wiring would not work.\n\nThe $Z$ state makes a driver behave like it is electrically disconnected. That allows:\n- one active device to drive the bus,\n- all other devices to stay out of the way.\n\nSo tri-state logic enables **resource sharing** of a physical wire, but only under strict control logic that guarantees mutual exclusion."
+  },
+  {
+    "front": "[2026-02-26] How does the **uniting theorem** simplify logic in the example $A\\overline{B}C + ABC$?",
+    "back": "The two terms differ only in the variable $B$:\n$$A\\overline{B}C + ABC.$$\n\nSince the output is $1$ whether $B=0$ or $B=1$, the variable $B$ does not matter and can be eliminated:\n$$A\\overline{B}C + ABC = AC.$$\n\nThis is the key idea behind **K-map grouping**:\n- if a variable changes but the function stays $1$,\n- that variable can be removed from the implicant.\n\nThe result is fewer literals and usually fewer gates."
+  },
+  {
+    "front": "[2026-02-26] Why do **don't-care conditions** help reduce hardware cost?",
+    "back": "A **don't-care** input combination is one that never occurs or whose output does not matter. You may treat it as either $0$ or $1$—whichever gives simpler logic.\n\nThis helps because don't-cares can be grouped with real $1$-outputs during simplification, creating larger implicants and eliminating variables.\n\nSo they do not add functionality; they add **freedom for optimization**.\n\nThis is especially useful in circuits like **priority encoders**, where lower-priority inputs become irrelevant once a higher-priority input is asserted."
+  },
+  {
+    "front": "[2026-02-26] Why can two cross-coupled inverters store one bit?",
+    "back": "Two **cross-coupled inverters** create a **bistable** circuit with two stable states:\n- $Q=1,\\overline{Q}=0$\n- $Q=0,\\overline{Q}=1$\n\nEach inverter reinforces the other:\n- if one node is high, it drives the other low,\n- that low feeds back and keeps the first high.\n\nBecause the circuit remains in one of these stable states even after the original forcing signal is removed, it acts as **1-bit memory**.\n\nThis is the storage core behind latches and SRAM cells."
+  },
+  {
+    "front": "[2026-02-26] Why is the input combination $S=R=0$ forbidden for the NAND-based **SR latch**?",
+    "back": "For the NAND-based **SR latch**, the idle state is $S=R=1$. If both inputs are driven low:\n$$S=R=0,$$\nboth outputs are forced in a way that breaks the normal complementary relationship between $Q$ and $\\overline{Q}$.\n\nWhen the inputs are later released, the latch may:\n- resolve unpredictably,\n- race internally,\n- enter a **metastable** state before settling.\n\nSo the forbidden input is not just “undesirable”; it can make the stored value undefined."
+  },
+  {
+    "front": "[2026-02-27] Why is **state** necessary for a sequential lock but not for a purely combinational lock?",
+    "back": "A **combinational** lock depends only on the current input, so it can open whenever the input matches the target value at that instant.\n\nA **sequential** lock must remember past correct steps, so its behavior depends on **history**. That requires **state**. For the lecture’s example:\n- $A$: start\n- $B$: after $R13$\n- $C$: after $R13, L22$\n- $D$: after $R13, L22, R3$ (open)\n\nThe machine must distinguish “currently seeing $L22$ after $R13$” from “currently seeing $L22$ with no prior progress,” which is impossible without stored state."
+  },
+  {
+    "front": "[2026-02-27] Given the lock FSM with states $A \\to B \\to C \\to D$, what happens if the wrong input is entered in state $B$ or $C$?",
+    "back": "The machine returns to the **start state** $A$.\n\nIn the lecture example:\n- From $A$, input $R13$ gives $B$; otherwise stay in $A$\n- From $B$, input $L22$ gives $C$; otherwise go to $A$\n- From $C$, input $R3$ gives $D$; otherwise go to $A$\n\nThis design enforces the exact sequence. A wrong input does not merely “pause progress”; it **invalidates** the partial sequence and resets the attempt."
+  },
+  {
+    "front": "[2026-02-27] Why are **synchronous** FSMs usually preferred over **asynchronous** FSMs in large systems?",
+    "back": "**Synchronous** FSMs change state only at defined clock edges, which makes many components easier to coordinate.\n\nMain advantage:\n- All state elements sample at predictable times\n\nThis simplifies:\n- reasoning about correctness\n- composing many modules\n- timing analysis\n\nBy contrast, **asynchronous** FSMs react immediately to input changes. That can be faster in principle, but it is much harder to guarantee correct behavior because of races, coordination problems, and metastability-related issues.\n\nSo the key trade-off is:\n- **asynchronous**: potentially more immediate response\n- **synchronous**: much easier to design and verify reliably"
+  },
+  {
+    "front": "[2026-02-27] Why must the clock period satisfy a timing constraint like “longest combinational delay fits within one cycle”?",
+    "back": "In a synchronous system, the **next-state logic** must finish computing before the next sampling edge.\n\nIf the clock period is too short, the inputs to the state register may still be changing when the flip-flops sample them. Then the machine can latch the **wrong next state**.\n\nConceptually, the requirement is:\n$$\nT_{\\text{clk}} \\ge \\text{worst-case combinational delay} + \\text{timing margins}\n$$\n\nThe point is not just “go slower”; it is to ensure that the computed value of $S'$ is **stable** before the active clock edge."
+  },
+  {
+    "front": "[2026-02-27] Why is a single gated **D latch** not sufficient as the state register of an edge-synchronous FSM?",
+    "back": "A gated **D latch** is **level-sensitive**, not edge-triggered.\n\nIf you drive its enable directly with the clock, then while the clock is high:\n$$\nQ \\leftarrow D\n$$\ncontinuously.\n\nThat means the stored state can change **during** the clock-high interval, not only at the edge. Since combinational logic uses the current state to compute the next state, this can create:\n- races\n- unintended multiple updates\n- unstable intermediate behavior\n\nAn edge-synchronous FSM needs the state to update only at the clock edge and then remain stable for the rest of the cycle. A single latch does not provide that guarantee."
+  },
+  {
+    "front": "[2026-02-27] What exactly does “transparent” mean for a gated **D latch**, and why is that dangerous?",
+    "back": "When a latch is **transparent**, its output follows its input while enable is active:\n$$\n\\text{if } EN = 1,\\quad Q \\leftarrow D\n$$\n\nSo if $D$ changes while $EN=1$, then $Q$ changes immediately too.\n\nThis is dangerous in synchronous state machines because the “stored” state is no longer truly fixed during that interval. The combinational logic may see changing state values mid-cycle, which can alter the next-state computation before the cycle is supposed to end.\n\nThe problem is not storage itself; the problem is **storage that remains open too long**."
+  },
+  {
+    "front": "[2026-02-27] How do two gated latches form a positive-edge-triggered **D flip-flop**?",
+    "back": "A positive-edge-triggered **D flip-flop** can be built from two latches in **master–slave** form with complementary enables.\n\nBehavior:\n- **Clock low**: master is transparent, slave is closed\n- **Rising edge**: master closes, slave opens\n- The slave copies the master’s stored value to $Q$\n\nSo:\n- changes on $D$ are collected by the master while clock is low\n- $Q$ updates only when the clock rises\n\nThis gives the desired edge-triggered behavior:\n$$\nQ^{+} = D \\quad \\text{on the rising edge}\n$$\n\nThe key idea is that the two latches are never transparent in the same way at the same time."
+  },
+  {
+    "front": "[2026-02-27] What property does an edge-triggered **D flip-flop** provide that a latch does not?",
+    "back": "A **D flip-flop** samples its input only on a clock edge and then holds that value for the rest of the cycle.\n\nInformally:\n$$\nQ^{+} = D \\quad \\text{on rising edge}\n$$\n\nThis gives two crucial guarantees:\n- the new state is captured at a single, well-defined instant\n- the stored state remains stable during the following cycle\n\nA latch only guarantees storage when it is not transparent. During its active level, it can keep changing. That makes a flip-flop the right primitive for edge-synchronous FSM state registers."
+  },
+  {
+    "front": "[2026-02-27] An FSM has 4 states. What is the minimum number of **D flip-flops** needed to encode its state?",
+    "back": "You need **2 flip-flops**.\n\nReason:\nWith $n$ state bits, you can encode up to $2^n$ states. We need:\n$$\n2^n \\ge 4\n$$\nThe smallest such $n$ is:\n$$\nn = 2\n$$\n\nSo two state bits, stored in two **D flip-flops**, are sufficient to encode four states."
+  },
+  {
+    "front": "[2026-02-27] What are the three structural parts of a synchronous **FSM**, and what does each do?",
+    "back": "A synchronous **FSM** has three parts:\n\n1. **Next-state logic**  \n   Combinational logic that computes:\n   $$\n   S' = f(S, X)\n   $$\n\n2. **State register**  \n   Flip-flops that store the current state $S$ and update on the clock edge\n\n3. **Output logic**  \n   Computes outputs from state, or from state and inputs:\n   $$\n   Y = g(S) \\quad \\text{or} \\quad Y = g(S, X)\n   $$\n\nThis separation is important: logic computes, registers store, outputs are derived systematically from the stored state."
+  },
+  {
+    "front": "[2026-02-27] What is the difference between a **Moore** machine and a **Mealy** machine?",
+    "back": "The difference is how outputs are computed.\n\nFor a **Moore** machine:\n$$\nY = g(S)\n$$\nOutputs depend only on the current state.\n\nFor a **Mealy** machine:\n$$\nY = g(S, X)\n$$\nOutputs depend on both current state and current inputs.\n\nPractical consequence:\n- **Moore** outputs are tied to state, so they typically change only when state changes\n- **Mealy** outputs can react immediately to input changes within a cycle\n\nIn the lecture’s traffic-light example, outputs were implemented as a **Moore** machine."
+  },
+  {
+    "front": "[2026-02-27] In the lecture’s traffic-light controller, why was a **Moore** formulation a natural choice?",
+    "back": "Traffic-light outputs correspond directly to named control states such as:\n- A green / B red\n- A yellow\n- A red / B green\n- B yellow\n\nSo the outputs are naturally functions of the current state:\n$$\nY = g(S)\n$$\n\nThis is a good fit for a **Moore** machine because each state already represents a specific light configuration. That makes the design easier to reason about: first decide the control states, then derive outputs from them.\n\nIt also avoids making the visible light outputs depend directly on instantaneous sensor changes."
+  },
+  {
+    "front": "[2026-02-27] How do you systematically build an FSM implementation from a behavioral description?",
+    "back": "Use this procedure:\n\n1. Define the **states** and intended outputs\n2. Draw the **state diagram**\n3. Write the full **transition table**\n4. Choose a **state encoding**\n5. Derive next-state equations for the state bits:\n   $$\n   S' = f(S, X)\n   $$\n6. Simplify the Boolean expressions, often starting from **sum-of-products**\n7. Implement with combinational logic plus **D flip-flops**\n8. Add a defined **reset** state\n\nThis method matters because it turns an informal behavior description into a hardware implementation step by step."
+  },
+  {
+    "front": "[2026-02-27] Why is **reset** essential in an FSM?",
+    "back": "Without **reset**, the state register may power up in an unknown or unintended state.\n\nThat is a problem because the FSM’s behavior depends on its current state. If startup state is undefined, outputs and transitions may also be undefined.\n\nA reset forces the machine into a known start state, such as State $0$ in the traffic-light example. That gives a predictable initial condition for both simulation and hardware.\n\nSo reset is not just a convenience; it is what makes the FSM start from a valid snapshot."
+  },
+  {
+    "front": "[2026-02-27] How can a 3-input **LUT** implement the majority function “output 1 if at least two inputs are 1”?",
+    "back": "A 3-input **LUT** stores one output bit for each of the $2^3 = 8$ input combinations.\n\nFor inputs $(A,B,C)$, the majority function is $1$ exactly when at least two inputs are $1$:\n- $011$\n- $101$\n- $110$\n- $111$\n\nSo the LUT is programmed to output:\n$$\n1 \\text{ for } 011,101,110,111\n$$\nand\n$$\n0 \\text{ otherwise}\n$$\n\nThis shows why LUTs are powerful: by filling in a truth table, a single LUT can realize **any** Boolean function of up to its input limit."
+  },
+  {
+    "front": "[2026-03-05] Why are HDLs necessary instead of writing hardware in C or Python?",
+    "back": "**HDLs** are needed because hardware is inherently **concurrent**, **stateful**, and **timing-dependent**. A hardware description must express things like wires, clock edges, and many signals changing in parallel.\n\nGeneral-purpose languages like C or Python mainly describe **sequential execution**, so they do not naturally capture:\n- parallel hardware activity,\n- edge-triggered storage,\n- direct structural connectivity between components.\n\nAn HDL also supports the full hardware flow:\n- **description** of modules,\n- **simulation** before fabrication,\n- **synthesis** into gates/cells.\n\nSo the key difference is not syntax, but the **execution model**: HDL describes a circuit that exists all at once, not a program that runs line by line."
+  },
+  {
+    "front": "[2026-03-05] A port is declared as `input [31:0] A`. What is its width, and why?",
+    "back": "The bus **width** is\n\n$$\n31 - 0 + 1 = 32\n$$\n\nSo `A` is a **32-bit bus**.\n\nIn Verilog, a range `[msb:lsb]` includes **both endpoints**, so the number of bits is always\n\n$$\n\\text{width} = \\text{end} - \\text{start} + 1\n$$\n\nThis matters because off-by-one mistakes in bus widths cause mismatched connections, truncation, or synthesis/simulation bugs."
+  },
+  {
+    "front": "[2026-03-05] Given a 16-bit bus `A`, what does `B = A[12:5]` produce?",
+    "back": "It produces an **8-bit slice** of `A`, containing bits 12 down to 5.\n\nThe width is\n\n$$\n12 - 5 + 1 = 8\n$$\n\nSo `B` must be 8 bits wide to match exactly.\n\nThis is a common source of mistakes: slices are inclusive at both ends, so `[12:5]` is not 7 bits but **8 bits**."
+  },
+  {
+    "front": "[2026-03-05] What does `X = {A[0], A[0], A[0], A[0]}` mean, and when is this useful?",
+    "back": "This is **concatenation**: it builds a 4-bit vector whose bits are all copies of `A[0]`.\n\nSo if `A[0] = 1`, then\n\n$$\nX = 4'b1111\n$$\n\nand if `A[0] = 0`, then\n\n$$\nX = 4'b0000\n$$\n\nThis is useful when you want to **replicate one control bit across multiple bits**, for example to create a mask or drive a whole bus from a single condition."
+  },
+  {
+    "front": "[2026-03-05] When would you prefer structural Verilog over behavioral Verilog?",
+    "back": "Use **structural Verilog** when you want **explicit control over the exact hardware structure**.\n\nIt is appropriate when:\n- you want to instantiate specific gates or modules,\n- you care about exact connectivity,\n- you want a close correspondence to a schematic.\n\nBy contrast, **behavioral Verilog** is better when you want to describe **what the circuit does** rather than exactly how it is built. The synthesizer then chooses an implementation.\n\nSo the trade-off is:\n- **structural**: lower-level, more control, more verbose,\n- **behavioral**: higher-level, faster to write, less explicit mapping."
+  },
+  {
+    "front": "[2026-03-05] A 2:1 mux is written as `Y = S ? D1 : D0`. Why is this behavioral rather than structural?",
+    "back": "This is **behavioral** because it specifies the **function** of the mux, not the exact gates used to implement it.\n\nThe statement says:\n\n- if `S = 1`, output `D1`\n- otherwise, output `D0`\n\nIt does **not** say whether the hardware should be built from AND/OR/NOT gates, transmission gates, or another implementation. That choice is left to the **synthesizer**.\n\nA structural version would explicitly instantiate gates and wires."
+  },
+  {
+    "front": "[2026-03-05] Why should you use parentheses in Verilog expressions even if you know operator precedence?",
+    "back": "Because **operator precedence mistakes change hardware**, not just formatting.\n\nFor example, unary NOT has high precedence, while the ternary operator `?:` has very low precedence. If you rely on precedence and misread an expression, the synthesizer will still build hardware for the written meaning, not the intended one.\n\nSo parentheses are valuable because they:\n- make the intended logic unambiguous,\n- reduce bugs in review and maintenance,\n- avoid subtle synthesis/simulation mismatches caused by misinterpretation.\n\nIn hardware design, readability is correctness."
+  },
+  {
+    "front": "[2026-03-05] What does a literal like `8'b00000001` mean, and what is the gotcha if width is omitted?",
+    "back": "`8'b00000001` means:\n- **8** bits wide,\n- base **binary** (`b`),\n- value `00000001`.\n\nSo it is an 8-bit constant equal to 1.\n\nThe gotcha is that if the width is omitted, Verilog uses a **default width of 32 bits**. That can silently introduce width mismatches, unwanted extension, or truncation.\n\nSo omit the width only when a **32-bit constant** is actually what you want."
+  },
+  {
+    "front": "[2026-03-05] In a tri-state assignment, why would a designer write `Y = 4'bzzzz` when disabled?",
+    "back": "`4'bzzzz` means the output is put into **high impedance** (`Z`) on all 4 bits.\n\nThis is used for **shared buses**: when a device is not enabled, it should stop driving the bus so another device can drive it.\n\nSo the idea is:\n- enabled: drive `Y = A`\n- disabled: drive nothing, i.e. `Y = 4'bzzzz`\n\nThis models a **tri-state buffer**. It is useful for shared interconnect, but it also requires careful arbitration so two devices do not drive conflicting values at the same time."
+  },
+  {
+    "front": "[2026-03-05] Why can `0 & X = 0`, but `1 & X = X` in simulation?",
+    "back": "Because **`X`** means the value is **unknown**, and logic can sometimes determine the result anyway.\n\nFor AND:\n- if one input is `0`, the output must be `0` regardless of the other input, so\n\n$$\n0 \\& X = 0\n$$\n\n- if one input is `1`, the output depends entirely on the other input, which is unknown, so\n\n$$\n1 \\& X = X\n$$\n\nThis matters because `X` propagation in simulation helps reveal uninitialized or conflicting logic, but some gates can still **mask** unknowns."
+  },
+  {
+    "front": "[2026-03-05] What is the difference between simulation and synthesis?",
+    "back": "**Simulation** checks whether the HDL behaves correctly; **synthesis** turns the HDL into hardware.\n\nMore precisely:\n- **simulation** executes the design model and lets you observe outputs for test inputs,\n- **synthesis** maps the RTL to gates/cells from a library and may optimize the result.\n\nA key difference is that simulation answers “**Does this description behave as intended?**” while synthesis answers “**What hardware can implement this?**”\n\nAlso, synthesis is not guaranteed to find a globally optimal implementation, so writing clean RTL still matters."
+  },
+  {
+    "front": "[2026-03-05] Why does `reg` not necessarily mean a physical register?",
+    "back": "In Verilog, **`reg`** is a **language keyword** meaning the signal can be assigned inside an `always` block.\n\nIt does **not** by itself determine the physical hardware.\n\nWhat hardware is inferred depends on the context:\n- in `always @(posedge clk)`, a `reg` often synthesizes to a **flip-flop**,\n- in `always @*`, a `reg` may just represent **combinational logic output storage in the language**, not an actual register.\n\nSo `reg` means **procedural assignment target**, not automatically “stored in a hardware register.”"
+  },
+  {
+    "front": "[2026-03-05] What hardware does `always @(posedge clk) Q <= D` describe, and why is `<=` appropriate?",
+    "back": "It describes an **edge-triggered D flip-flop**.\n\nThe block triggers only on the **rising edge** of `clk`, so `Q` updates once per clock edge with the value of `D`.\n\nThe **non-blocking assignment** `<=` is appropriate because it models synchronous register behavior: updates are **scheduled** and appear together after the event, matching how registers update concurrently in hardware.\n\nThis is the recommended style for clocked logic."
+  },
+  {
+    "front": "[2026-03-05] What is the practical difference between synchronous and asynchronous reset?",
+    "back": "The difference is **when reset takes effect**.\n\n- **Synchronous reset** is checked on the clock edge, so the state changes only when the clock arrives.\n- **Asynchronous reset** can change the state immediately when reset is asserted, independent of the clock.\n\nTrade-off:\n- **synchronous reset** is simpler and fits cleanly into synchronous design style,\n- **asynchronous reset** reacts immediately but can introduce **glitch** and **metastability-related** concerns if not handled carefully.\n\nThat is why many course designs prefer synchronous reset."
+  },
+  {
+    "front": "[2026-03-05] Why can omitting signals from a combinational sensitivity list create bugs or unintended memory?",
+    "back": "A combinational `always` block should re-evaluate whenever **any right-hand-side input changes**. If a signal is missing from the sensitivity list, the block may fail to update when that input changes.\n\nThis causes a mismatch:\n- the intended hardware is combinational,\n- the simulation behaves as if the output sometimes “remembers” an old value.\n\nThat can look like an **unintended latch** or stale output behavior.\n\nSo for combinational logic, use\n\n$$\n\\texttt{always @*}\n$$\n\nto include all relevant inputs automatically."
+  },
+  {
+    "front": "[2026-03-06] Why do combinational circuits need both $T_{cd}$ and $T_{pd}$ instead of a single “gate delay”?",
+    "back": "They capture two different timing risks:\n\n- **Contamination delay** $T_{cd}$ is the **earliest** time an output may start changing after an input change.\n- **Propagation delay** $T_{pd}$ is the **latest** time by which the output is guaranteed to have finished changing.\n\nYou need both because:\n\n- **Setup analysis** depends on the **latest** arrival of correct data, so it uses $T_{pd}$.\n- **Hold analysis** depends on the **earliest** possible change of data, so it uses $T_{cd}$.\n- **Glitches** are also explained by unequal early/late arrivals on different paths.\n\nA single delay number would hide whether a path is dangerously **too slow** or **too fast**."
+  },
+  {
+    "front": "[2026-03-06] How do you compute the timing of the longest and shortest paths in a combinational network?",
+    "back": "Use path-wise sums of gate delays:\n\n$$\nT_{PD} = \\sum_{\\text{gates on critical path}} T_{pd}^{(gate)}\n$$\n\n$$\nT_{CD} = \\sum_{\\text{gates on shortest path}} T_{cd}^{(gate)}\n$$\n\n- **Critical path**: the path with the largest total $T_{pd}$.\n- **Shortest contamination path**: the path with the smallest total $T_{cd}$.\n\nInterpretation:\n\n- $T_{PD}$ limits how fast the circuit can be clocked.\n- $T_{CD}$ matters for **hold safety** and for whether outputs may change very quickly.\n\nSo timing is not just “find the longest path”; the shortest path is also essential."
+  },
+  {
+    "front": "[2026-03-06] In the lecture’s combinational example, why was the input $D$ path important even though it was not the critical path?",
+    "back": "Because the $D$ path was the **shortest path**, so it determined the circuit’s **minimum delay** behavior.\n\nEven if another path from $A$ or $B$ through two AND gates and an OR sets the **critical path** and thus the setup limit, the short $D$ path matters because:\n\n- it can make the output change **very early**,\n- it can contribute to **hold violations** once registers are added,\n- it can create or worsen **glitches** due to unequal arrival times.\n\nThis is the key gotcha: the non-critical path can still break the design if it is **too fast**."
+  },
+  {
+    "front": "[2026-03-06] Why can two logically equivalent 4:1 multiplexer implementations have very different timing?",
+    "back": "Because **logic decomposition** changes the actual gate sequence and therefore the path delays.\n\nIn the lecture, one implementation using inverters, 2-input ANDs, and tri-state buffers had a longest select-to-output path of\n\n$$\n30\\text{ ps} + 60\\text{ ps} + 35\\text{ ps} = 125\\text{ ps},\n$$\n\nwhile a simpler AND/OR-style decomposition was around\n\n$$\n200\\text{ ps}.\n$$\n\nSo even if both implement the same Boolean function, they differ in:\n\n- number of gate stages,\n- gate types,\n- enable/output timing,\n- routing and load effects.\n\n**Functional equivalence does not imply timing equivalence.**"
+  },
+  {
+    "front": "[2026-03-06] Why is the divide-by-3 FSM from the lecture a Moore machine?",
+    "back": "Because its output depends **only on the current state**, not directly on the input.\n\nThe lecture’s behavior was:\n\n- states: $S_0, S_1, S_2$,\n- reset goes to $S_0$,\n- transitions cycle as\n  $$\n  S_0 \\to S_1 \\to S_2 \\to S_0,\n  $$\n- output:\n  $$\n  Y = 1 \\text{ only in } S_0.\n  $$\n\nSince the output logic is simply\n\n$$\nY = (state == S_0),\n$$\n\nit is determined entirely by the stored state. That is exactly the defining property of a **Moore machine**."
+  },
+  {
+    "front": "[2026-03-06] Why can a Mealy machine use fewer states than a Moore machine, as in the “1101” snail detector?",
+    "back": "Because a **Mealy machine** may let the output depend on both the **current state** and the **current input**.\n\nFor the pattern detector, the output can be asserted immediately when the machine is in the state representing the prefix and the current input completes the pattern. So the machine does not always need an extra state just to represent “pattern found.”\n\nCompared with a Moore machine, this often means:\n\n- fewer states,\n- potentially faster output response,\n- but output timing is more sensitive to input changes.\n\nThat is why the lecture’s “1101” detector could be implemented with fewer states in Mealy form."
+  },
+  {
+    "front": "[2026-03-06] What is the setup constraint for a register-to-register path, and what does each term mean?",
+    "back": "For a path from source register to destination register, the setup constraint is\n\n$$\nT_C \\ge T_{pcq} + T_{pd} + T_{setup} + T_{skew}.\n$$\n\nTerms:\n\n- **$T_C$**: clock period\n- **$T_{pcq}$**: source flip-flop clock-to-$Q$ **propagation** delay\n- **$T_{pd}$**: worst-case propagation delay of the combinational logic\n- **$T_{setup}$**: time the destination input must be stable before the sampling edge\n- **$T_{skew}$**: clock arrival mismatch that reduces available time in the worst case\n\nMeaning: data launched by one register must have enough time to appear at the next register and be stable before that register samples it."
+  },
+  {
+    "front": "[2026-03-06] Compute the maximum clock frequency if $T_{pcq}=50\\text{ ps}$, $T_{pd}=105\\text{ ps}$, and $T_{setup}=60\\text{ ps}$ with no skew.",
+    "back": "First compute the minimum clock period:\n\n$$\nT_C \\ge T_{pcq} + T_{pd} + T_{setup}\n= 50 + 105 + 60\n= 215\\text{ ps}.\n$$\n\nThen\n\n$$\nf_{max} = \\frac{1}{T_C} \\approx \\frac{1}{215\\text{ ps}} \\approx 4.65\\text{ GHz}.\n$$\n\nSo the maximum safe frequency is\n\n$$\n\\boxed{f_{max} \\approx 4.65\\text{ GHz}}.\n$$"
+  },
+  {
+    "front": "[2026-03-06] What is the hold constraint for a register-to-register path, and why does it use minimum delays?",
+    "back": "The hold constraint is\n\n$$\nT_{ccq} + T_{cd} \\ge T_{hold} + T_{skew}.\n$$\n\nIt uses minimum delays because hold problems happen when new data arrives **too early**.\n\nTerms:\n\n- **$T_{ccq}$**: source flip-flop clock-to-$Q$ **contamination** delay\n- **$T_{cd}$**: minimum delay through combinational logic\n- **$T_{hold}$**: time after the destination clock edge during which input must remain stable\n- **$T_{skew}$**: clock skew in the hold-worst direction\n\nSo hold analysis asks: “What is the earliest time the destination input could start changing?” If that is too soon, the old value is not held long enough."
+  },
+  {
+    "front": "[2026-03-06] Why can’t a hold violation be fixed by increasing the clock period?",
+    "back": "Because a **hold violation** is a **same-edge local timing problem**, not a cycle-length problem.\n\nThe issue is that the destination register’s input changes too soon after the sampling edge:\n\n$$\nT_{ccq} + T_{cd} < T_{hold} + T_{skew}.\n$$\n\nChanging the clock period only changes the time until the **next** clock edge. It does **not** change how quickly the new data reaches the destination immediately after the **current** edge.\n\nSo the fix must increase the **minimum path delay**, for example by:\n\n- adding buffers/inverters,\n- redesigning the short path,\n- improving skew if possible.\n\nThis is one of the most important timing gotchas."
+  },
+  {
+    "front": "[2026-03-06] In the lecture’s hold example, why did adding an inverter fix the problem?",
+    "back": "The original numbers were:\n\n$$\nT_{ccq}=30\\text{ ps}, \\quad T_{cd}=25\\text{ ps}, \\quad T_{hold}=70\\text{ ps}.\n$$\n\nSo initially:\n\n$$\n30 + 25 = 55\\text{ ps} < 70\\text{ ps},\n$$\n\nwhich is a **hold violation**.\n\nAdding an inverter increased the minimum path delay by about $25\\text{ ps}$, giving:\n\n$$\n30 + 25 + 25 = 80\\text{ ps} > 70\\text{ ps}.\n$$\n\nNow the earliest possible data change occurs late enough, so the destination register can safely hold the old value for the required time.\n\nThe inverter works not because it changes logic, but because it increases the **minimum delay**."
+  },
+  {
+    "front": "[2026-03-06] What is a glitch, and why can it occur even when the Boolean function is correct?",
+    "back": "A **glitch** is a transient, unintended output transition caused by **different path delays**.\n\nThe Boolean function may be correct in steady state, but when an input changes:\n\n- one path may react quickly,\n- another path may react later,\n- the output can briefly take the wrong value before settling.\n\nSo a circuit can be logically correct yet temporally incorrect during transitions.\n\nThis matters because if a register samples during that brief interval, it may latch the wrong value even though the final settled output is correct."
+  },
+  {
+    "front": "[2026-03-06] What are two concrete ways to eliminate a glitch, and what tradeoff do they introduce?",
+    "back": "Two standard fixes from the lecture are:\n\n1. **Add redundant logic terms**  \n   Use K-map redundancy so adjacent minterms remain covered during transitions. This removes the hazard logically.\n\n2. **Balance path delays with buffers**  \n   Slow down the faster path so signals arrive more nearly together.\n\nTradeoffs:\n\n- redundant logic increases **area** and often **power**,\n- buffering changes delays and can worsen the **critical path**.\n\nA third option is to ensure sampling happens outside the glitch window, but that does not remove the glitch itself."
+  },
+  {
+    "front": "[2026-03-06] What is aperture time, and why is it useful when reasoning about sampling?",
+    "back": "The **aperture time** is the interval around the clock edge during which data must remain stable for reliable sampling.\n\nIn simple timing reasoning, it is effectively\n\n$$\nT_{setup} + T_{hold}.\n$$\n\nWhy it matters:\n\n- it gives an intuitive “forbidden window” around the sampling edge,\n- if data changes inside that window, the flip-flop may sample incorrectly,\n- violating it can lead to **metastability**.\n\nSo aperture time is a compact way to think about the combined setup/hold sensitivity of a register."
+  },
+  {
+    "front": "[2026-03-06] How does clock skew affect setup and hold in opposite ways?",
+    "back": "**Clock skew** is the difference in clock arrival times between registers.\n\nEffects:\n\n- For **setup**, if the destination clock arrives earlier in the worst case, the available time for data shrinks, so setup becomes harder:\n  $$\n  T_C \\ge T_{pcq} + T_{pd} + T_{setup} + T_{skew}.\n  $$\n\n- For **hold**, skew can also hurt by effectively increasing how long the old data must remain stable:\n  $$\n  T_{ccq} + T_{cd} \\ge T_{hold} + T_{skew}.\n  $$\n\nSo skew is dangerous because it can simultaneously reduce performance and create short-path failures."
+  },
+  {
+    "front": "[2026-03-12] Why can a single long register-to-register path reduce the clock frequency of the entire processor?",
+    "back": "The clock period must be large enough for the **slowest sequential path** to finish before the next clock edge. A practical bound is\n\n$$\nT_{\\text{clk}} \\ge \\max_{\\text{sequential paths}}(t_{\\text{comb}}) + t_{\\text{setup}} + t_{\\text{clock\\_skew}} + \\text{margins}.\n$$\n\nSo even if most paths are short, one unusually long combinational path becomes the **critical path** and forces a larger global $T_{\\text{clk}}$, hence a lower frequency:\n\n$$\nf = \\frac{1}{T_{\\text{clk}}}.\n$$\n\nThe shorter paths then have unused slack, but they still must wait for the same clock edge."
+  },
+  {
+    "front": "[2026-03-12] How do balancing and pipelining improve timing, and what tradeoff do they make?",
+    "back": "**Balancing** tries to make stage delays similar so no single stage dominates the clock period. **Pipelining** inserts registers to split a long combinational path into shorter ones.\n\nThis reduces the maximum per-stage delay, so the clock can run faster. The main benefit is improved **throughput**, because more instructions or operations can overlap.\n\nThe tradeoff is extra registers, more control complexity, and often higher latency for a single operation. Pipelining helps when the original long path is the bottleneck."
+  },
+  {
+    "front": "[2026-03-12] If a design targets $50\\ \\text{GHz}$, what clock period does that imply?",
+    "back": "Use\n\n$$\nT = \\frac{1}{f}.\n$$\n\nSo for\n\n$$\nf = 50 \\times 10^9\\ \\text{Hz},\n$$\n\nthe period is\n\n$$\nT = \\frac{1}{50 \\times 10^9} = 2 \\times 10^{-11}\\ \\text{s} = 20\\ \\text{ps}.\n$$\n\nThat means every relevant sequential path must satisfy timing within about $20\\ \\text{ps}$, plus setup, skew, and safety margins."
+  },
+  {
+    "front": "[2026-03-12] Why is timing verification harder than functional verification?",
+    "back": "**Functional verification** asks whether the logic computes the right result. **Timing verification** asks whether it still computes the right result at the target clock under all operating conditions.\n\nTiming verification is harder because correctness depends not just on logic, but also on voltage, temperature, wire delays, clock skew, and process variation. A design can be functionally correct yet fail only at speed or only in certain environments.\n\nThat is why timing bugs are expensive and often escape into deployed systems."
+  },
+  {
+    "front": "[2026-03-12] Why is functional correctness alone not enough to trust a chip in the field?",
+    "back": "A chip can be **functionally correct** in ideal tests but still fail in real operation due to timing or physical effects. These failures may produce **silent data corruption**, where the system gives wrong results without crashing or raising an obvious error.\n\nExamples include timing-related field failures and **RowHammer**, where repeated DRAM row activations can induce bit flips in nearby rows.\n\nSo real trust requires both logical correctness and correct operation under realistic timing and environmental conditions."
+  },
+  {
+    "front": "[2026-03-12] What makes RowHammer a good example of why testing and verification are difficult?",
+    "back": "**RowHammer** shows that a system can pass conventional testing yet still fail because of physical behavior not fully captured by simple functional checks. Repeatedly activating one DRAM row can disturb adjacent rows and flip bits.\n\nThe key lesson is that verification must consider more than intended logic behavior. Real hardware can fail because of electrical and timing effects, and those failures may have **security implications** as well as correctness implications.\n\nIt is a classic example of **silent corruption** escaping pre-silicon assumptions."
+  },
+  {
+    "front": "[2026-03-12] What are the two defining properties of the von Neumann model?",
+    "back": "The **von Neumann model** is characterized by:\n\n1. **Stored program**: instructions and data reside in the same memory.\n2. **Sequential instruction processing**: instructions are normally fetched and completed in program order unless control flow changes it.\n\nThese properties define the basic hardware-software interface used by many general-purpose architectures."
+  },
+  {
+    "front": "[2026-03-12] Why does the stored-program idea matter architecturally?",
+    "back": "With a **stored program**, instructions are represented as memory contents just like data. This makes programs loadable, movable, and modifiable using the same memory system.\n\nArchitecturally, it means the CPU interprets a memory value as an instruction only because the **PC** and control logic fetch it as one. The same memory technology stores both code and data; the distinction comes from how the machine uses the bytes.\n\nThis is what makes general-purpose computing flexible."
+  },
+  {
+    "front": "[2026-03-12] What is the difference between address space and addressability?",
+    "back": "**Address space** is the number of distinct addresses visible to the programmer.  \n**Addressability** is the size of the unit each address refers to.\n\nSo a machine with $2^{32}$ addresses has an address space of $2^{32}$ locations. If it is **byte-addressable**, each address names $8$ bits. If it is **word-addressable**, each address names one full word.\n\nA common mistake is to confuse “how many addresses exist” with “how much data one address selects.”"
+  },
+  {
+    "front": "[2026-03-12] On a 32-bit byte-addressable machine, what byte address corresponds to word index $i$?",
+    "back": "A 32-bit word is\n\n$$\n32\\ \\text{bits} = 4\\ \\text{bytes}.\n$$\n\nIn a **byte-addressable** machine, each byte has its own address, so word $i$ starts at\n\n$$\n4i.\n$$\n\nIts four bytes occupy addresses\n\n$$\n4i,\\ 4i+1,\\ 4i+2,\\ 4i+3.\n$$"
+  },
+  {
+    "front": "[2026-03-12] How do little-endian and big-endian differ?",
+    "back": "They differ in the byte order used to store a multi-byte value in memory.\n\n- **Little-endian**: the least-significant byte is stored at the lower address.\n- **Big-endian**: the most-significant byte is stored at the lower address.\n\nEndianness does not change the value itself; it changes how the bytes are laid out in memory. This matters when exchanging binary data between systems with different conventions."
+  },
+  {
+    "front": "[2026-03-12] Why can word-addressable memory be awkward for byte-sized data?",
+    "back": "In **word-addressable** memory, each address refers to a whole word rather than a single byte. That makes byte-sized accesses less natural, because you may need extra logic to select or update only part of a word.\n\nIn **byte-addressable** memory, each byte has its own address, so strings, characters, and packed data are easier to manipulate directly.\n\nThat is why byte addressability is more common in modern general-purpose systems."
+  },
+  {
+    "front": "[2026-03-12] Why are registers so important compared with memory?",
+    "back": "**Registers** are small, fast storage located close to the ALU. They are used for temporary values and frequently reused operands.\n\nAccessing a register is much faster than accessing memory, so keeping active values in registers avoids repeated loads and improves performance. For example, if a value $A$ is used in many ALU operations, loading it once into a register and reusing it is much cheaper than reading it from memory every time.\n\nRegisters are part of the ISA-visible state and are central to efficient instruction execution."
+  },
+  {
+    "front": "[2026-03-12] What is the structure of an instruction, and why is encoding important?",
+    "back": "An instruction consists of an **opcode** plus **operands**.\n\n- The **opcode** says what operation to perform.\n- The **operands** identify the data sources, destination, or control target.\n\n**Encoding** assigns these fields to exact bit positions in the instruction word. For example, LC3 uses 16-bit instructions and MIPS uses 32-bit instructions with defined field layouts.\n\nEncoding matters because hardware decoders and assemblers must interpret the same bit pattern identically. The layout is not guesswork; it is fixed by the ISA."
+  },
+  {
+    "front": "[2026-03-12] Which instruction-processing phases does a load use that a register-to-register ADD does not?",
+    "back": "Common phases are:\n\n1. **Fetch**\n2. **Decode**\n3. **Evaluate Address**\n4. **Fetch Operands**\n5. **Execute**\n6. **Store Result**\n\nA **load** needs **Evaluate Address** to compute the memory address and then a memory read during operand fetch. A register-to-register **ADD** does not need address evaluation, because its operands already come from registers.\n\nSo the extra distinguishing step is the memory-address computation and memory access required by the load."
+  }
+]

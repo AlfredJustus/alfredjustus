@@ -1,0 +1,482 @@
+[
+  {
+    "front": "[2026-02-17] Warum ist Zufall in der Informatik mehr als nur ein Modell für Unsicherheit?",
+    "back": "In diesem Kurs ist **Zufall** vor allem eine **algorithmische Ressource**. Er wird genutzt, um\n\n- Algorithmen **einfacher oder schneller** zu machen, z. B. bei **Hash-Tabellen** oder **Primzahltests**,\n- **Symmetrien zu brechen**, z. B. in Netzwerkprotokollen bei gleichzeitigen Sendeversuchen.\n\nDer Punkt ist also nicht primär, Daten statistisch zu modellieren, sondern Rechenverfahren zu verbessern. Ein typisches Beispiel ist ein probabilistischer Primzahltest: Er ist oft praktisch schneller als ein deterministischer polynomialer Test, obwohl letzterer theoretisch existiert."
+  },
+  {
+    "front": "[2026-02-17] Warum hilft Zufall beim Symmetriebrechen im Wi-Fi-Beispiel?",
+    "back": "Wenn zwei Geräte **deterministisch** immer zur gleichen Zeit erneut senden, können sie in eine Schleife aus **permanenten Kollisionen** geraten.  \n\nMit **zufälligen Wartezeiten** wird diese Symmetrie gebrochen: Die Wahrscheinlichkeit, dass beide Geräte immer wieder exakt gleich handeln, wird sehr klein. Dadurch kommt es mit hoher Wahrscheinlichkeit bald zu einer erfolgreichen Übertragung.\n\nZufall ist hier also nützlich, weil er Situationen auflöst, in denen deterministische Regeln alle Teilnehmer zu identischem Verhalten zwingen würden."
+  },
+  {
+    "front": "[2026-02-17] Wann ist eine Knotenmenge $X$ ein $u$–$v$-Separator?",
+    "back": "Eine Menge $X \\subseteq V \\setminus \\{u,v\\}$ heißt **$u$–$v$-Vertex-Separator**, wenn in $G-X$ die Knoten $u$ und $v$ in **verschiedenen Zusammenhangskomponenten** liegen.\n\nWichtig sind zwei Punkte:\n\n- $u$ und $v$ selbst dürfen **nicht** in $X$ liegen.\n- Man entfernt mit den Knoten auch alle inzidenten Kanten.\n\nEin Separator misst also, wie viele Knoten man löschen muss, um zwei gegebene Knoten voneinander zu trennen."
+  },
+  {
+    "front": "[2026-02-17] Was bedeutet $k$-Zusammenhang präzise, und worauf muss man bei der Vorlesungsformulierung achten?",
+    "back": "Ein Graph $G$ ist **$k$-zusammenhängend**, wenn man **weniger als $k$ Knoten** nicht löschen kann, um den Graphen zu trennen. Äquivalent: Für jedes Paar $u \\neq v$ hat jeder $u$–$v$-Separator Größe mindestens $k$.\n\nTypisch formuliert man also:\n$$\n\\kappa(G) \\ge k.\n$$\n\nDie Vorlesung hatte eine etwas uneindeutige Formulierung mit „$>\\!k$“. Für Beweise und Anwendungen ist die Standardlesart wichtig:\n\n- **kein** Separator mit Größe $<k$ existiert,\n- also ist die minimale Separatorgröße **mindestens** $k$."
+  },
+  {
+    "front": "[2026-02-17] Warum ist $\\delta(G) \\ge k$ eine notwendige Bedingung für $k$-Zusammenhang?",
+    "back": "Hat ein Knoten $v$ Grad kleiner als $k$, also $\\deg(v)<k$, dann kann man alle Nachbarn von $v$ löschen. Danach ist $v$ isoliert und damit vom Rest des Graphen getrennt.\n\nAlso existiert ein Separator der Größe\n$$\n|N(v)|=\\deg(v)<k.\n$$\n\nDas widerspricht $k$-Zusammenhang. Daher gilt notwendig:\n$$\n\\delta(G)\\ge k.\n$$\n\nDas ist nur eine **notwendige**, nicht hinreichende Bedingung: Hoher Minimalgrad allein garantiert noch keinen $k$-Zusammenhang."
+  },
+  {
+    "front": "[2026-02-17] Ein Graph enthält einen Knoten vom Grad $3$. Kann er $4$-zusammenhängend sein?",
+    "back": "Nein.\n\nWenn ein Knoten $v$ Grad $3$ hat, dann hat er genau drei Nachbarn. Löscht man diese drei Nachbarn, wird $v$ isoliert. Damit ist der Graph bereits durch das Entfernen von nur $3<4$ Knoten trennbar.\n\nAlso kann der Graph **nicht** $4$-zusammenhängend sein.\n\nDas ist eine direkte Anwendung der notwendigen Bedingung\n$$\n\\delta(G)\\ge k.\n$$"
+  },
+  {
+    "front": "[2026-02-17] Was bedeutet „intern knotendisjunkte“ $u$–$v$-Pfade?",
+    "back": "Mehrere $u$–$v$-Pfade heißen **intern knotendisjunkt**, wenn sie außer den Endpunkten $u$ und $v$ **keine inneren Knoten gemeinsam** haben.\n\nFormal dürfen sich die Pfade also nur in $u$ und $v$ schneiden.\n\nDas ist genau die richtige Disjunktheitsbedingung für die Knotenversion von Menger: Ein einzelner gelöschter innerer Knoten kann dann höchstens **einen** dieser Pfade zerstören."
+  },
+  {
+    "front": "[2026-02-17] Warum implizieren $k$ intern knotendisjunkte $u$–$v$-Pfade, dass jeder $u$–$v$-Separator mindestens $k$ Knoten haben muss?",
+    "back": "Jeder **$u$–$v$-Separator** muss jeden dieser Pfade treffen, sonst bliebe ein vollständiger $u$–$v$-Pfad in $G-X$ erhalten.\n\nDa die Pfade **intern knotendisjunkt** sind, kann ein gelöschter innerer Knoten höchstens **einen** der Pfade zerstören. Um also alle $k$ Pfade zu unterbrechen, braucht man mindestens $k$ Knoten.\n\nDaher gilt:\n$$\n\\text{Existieren $k$ intern knotendisjunkte $u$–$v$-Pfade, so ist jeder $u$–$v$-Separator mindestens von Größe }k.\n$$\n\nDas ist die „einfache Richtung“ von Mengers Satz."
+  },
+  {
+    "front": "[2026-02-17] Formuliere den Satz von Menger in der Knotenversion.",
+    "back": "Für einen Graphen $G$ und zwei verschiedene Knoten $u\\neq v$ gilt:\n$$\n\\min\\{|X| : X \\text{ ist ein } u\\!-\\!v\\text{-Vertex-Separator}\\}\n=\n\\max\\{t : \\exists\\ t \\text{ intern knotendisjunkte } u\\!-\\!v\\text{-Pfade}\\}.\n$$\n\nDie minimale Separatorgröße ist also genau gleich der maximalen Anzahl intern knotendisjunkter Pfade zwischen $u$ und $v$.\n\nDer Satz verbindet damit ein **Zerstörungsmaß** (Separator) mit einem **Robustheitszertifikat** (disjunkte Pfade)."
+  },
+  {
+    "front": "[2026-02-17] Warum ist Mengers Satz algorithmisch und konzeptionell so nützlich?",
+    "back": "Separatoren direkt zu analysieren ist oft schwierig, weil es sehr viele mögliche Knotenmengen gibt. **Disjunkte Pfade** sind dagegen ein konstruktives Zertifikat.\n\nFindet man z. B. $k$ intern knotendisjunkte $u$–$v$-Pfade, weiß man sofort:\n$$\n\\text{minimale Separatorgröße} \\ge k.\n$$\n\nMenger erlaubt also, Zusammenhang über Pfadstrukturen nachzuweisen statt über alle möglichen Trennmengen. Das ist konzeptionell stark und wird in der Vorlesung auch als Beweistechnik verwendet, etwa bei Aussagen über Blöcke."
+  },
+  {
+    "front": "[2026-02-17] Was ist der Unterschied zwischen Knoten- und Kantenzusammenhang?",
+    "back": "Beim **Knotenzusammenhang** löscht man **Knoten**; beim **Kantenzusammenhang** löscht man **Kanten**.\n\n- **$k$-zusammenhängend**: Weniger als $k$ Knoten zu löschen reicht nicht, um zu trennen.\n- **$k$-kantenzusammenhängend**: Weniger als $k$ Kanten zu löschen reicht nicht, um zu trennen.\n\nDie zugehörigen Menger-Versionen unterscheiden sich entsprechend:\n\n- Knotenversion: **intern knotendisjunkte** Pfade\n- Kantenversion: **kantendisjunkte** Pfade\n\nBeide Begriffe messen Robustheit, aber gegen unterschiedliche Arten von Ausfällen."
+  },
+  {
+    "front": "[2026-02-17] Wie lautet die Kantenversion von Menger?",
+    "back": "Für zwei verschiedene Knoten $u\\neq v$ gilt:\n$$\n\\min\\{|F| : F \\text{ ist ein } u\\!-\\!v\\text{-Kanten-Separator}\\}\n=\n\\max\\{t : \\exists\\ t \\text{ kantendisjunkte } u\\!-\\!v\\text{-Pfade}\\}.\n$$\n\nAlso ist die minimale Anzahl zu löschender Kanten, die $u$ und $v$ trennt, genau gleich der maximalen Anzahl kantendisjunkter $u$–$v$-Pfade.\n\nDer Unterschied zur Knotenversion ist, dass sich die Pfade hier Knoten teilen dürfen, solange sie keine Kanten gemeinsam benutzen."
+  },
+  {
+    "front": "[2026-02-17] Ein Knoten hat Grad höchstens $4$. Warum kann der Graph dann nicht $5$-kantenzusammenhängend sein?",
+    "back": "Sei $v$ ein Knoten mit\n$$\n\\deg(v)\\le 4.\n$$\nLöscht man alle an $v$ inzidenten Kanten, dann ist $v$ vom Rest des Graphen getrennt. Dafür braucht man höchstens $4$ Kanten.\n\nAlso existiert ein Kanten-Separator der Größe $<5$. Damit kann der Graph nicht $5$-kantenzusammenhängend sein.\n\nAllgemein gilt:\n$$\n\\lambda(G)\\le \\delta(G),\n$$\nwobei $\\lambda(G)$ der Kantenzusammenhang ist."
+  },
+  {
+    "front": "[2026-02-17] Was ist der Unterschied zwischen einem Artikulationsknoten und einer Brücke?",
+    "back": "Ein **Artikulationsknoten** ist ein Knoten $v$, für den $G-v$ nicht mehr zusammenhängend ist.  \nEine **Brücke** ist eine Kante $e$, für die $G-e$ nicht mehr zusammenhängend ist.\n\nDer Unterschied ist also:\n\n- Artikulationsknoten: kritischer **Knoten**\n- Brücke: kritische **Kante**\n\nBeides beschreibt strukturelle Schwachstellen, aber auf unterschiedlichen Ebenen. Ein Graph kann Brücken haben, ohne dass jede Endstelle der Brücke ein Artikulationsknoten sein muss."
+  },
+  {
+    "front": "[2026-02-17] Gib eine Konstellation an, in der eine Brücke keinen Artikulationsknoten „erzeugt“.",
+    "back": "Betrachte einen Pfad mit zwei Knoten $u-v$. Die einzige Kante $uv$ ist eine **Brücke**, denn nach dem Löschen von $uv$ ist der Graph nicht mehr zusammenhängend.\n\nAber weder $u$ noch $v$ ist ein **Artikulationsknoten**, denn\n\n- $G-u$ besteht nur noch aus einem einzelnen Knoten,\n- $G-v$ ebenso,\n\nund ein Graph mit einem Knoten ist zusammenhängend.\n\nDas zeigt: Eine Brücke muss nicht bedeuten, dass beide Endknoten Artikulationsknoten sind. Insbesondere bei Endknoten vom Grad $1$ tritt dieser Randfall auf."
+  },
+  {
+    "front": "[2026-02-19] Warum ist DFS für Artikulationsknoten und Brücken geeignet, BFS aber nicht?",
+    "back": "**DFS** erzeugt einen Suchbaum mit **Baumkanten** und **Rückkanten**. Genau diese Rückkanten zeigen, ob ein DFS‑Teilbaum noch eine Verbindung zu einem älteren Vorfahren hat.\n\nFür **Artikulationsknoten** und **Brücken** braucht man genau diese Information: Kann ein Teilbaum seinen Elternknoten umgehen oder nicht?\n\n**BFS** liefert zwar Distanzen und kürzeste Wege in ungewichteten Graphen, aber nicht die passende Vorfahren-/Rückkantenstruktur. Deshalb kann man mit BFS diese Trennungsfragen nicht so direkt und lokal entscheiden."
+  },
+  {
+    "front": "[2026-02-19] Was misst der Low-Wert $\\text{low}(v)$ intuitiv?",
+    "back": "Der **Low-Wert** von $v$ sagt, wie weit „nach oben“ im DFS‑Baum man aus dem Teilbaum von $v$ noch zurückkommen kann.\n\nGenauer: $\\text{low}(v)$ ist die kleinste **DFS‑Nummer** eines Knotens, den man von $v$ aus erreichen kann, wenn man zuerst beliebig viele **Baumkanten** nach unten und danach höchstens eine **Rückkante** benutzt.\n\nKleine Werte bedeuten: Der Teilbaum von $v$ hat noch eine Verbindung zu einem alten Vorfahren.  \nGroße Werte bedeuten: Der Teilbaum hängt stärker an seinem Elternknoten."
+  },
+  {
+    "front": "[2026-02-19] Wie berechnet man $\\text{low}(v)$ aus DFS-Nummern, Kindern und Rückkanten?",
+    "back": "Die Standardformel ist\n$$\n\\text{low}(v)=\\min\\Big(\\text{dfs}(v),\\ \\min\\{\\text{low}(u)\\mid u \\text{ Kind von } v\\},\\ \\min\\{\\text{dfs}(w)\\mid (x,w)\\text{ Rückkante mit }x\\text{ im Teilbaum von }v\\}\\Big).\n$$\n\nPraktisch heißt das:\n\n- starte mit $\\text{dfs}(v)$,\n- berücksichtige alle **Kinder** über ihre $\\text{low}$‑Werte,\n- berücksichtige alle **Rückkanten** zu Vorfahren über deren DFS‑Nummern.\n\nDarum kann man $\\text{low}(v)$ erst korrekt bestimmen, wenn die DFS alle Kinder von $v$ abgeschlossen hat."
+  },
+  {
+    "front": "[2026-02-19] Warum ist eine Baumkante $(v,w)$ genau dann eine Brücke, wenn $\\text{low}(w) > \\text{dfs}(v)$?",
+    "back": "Dann kann der gesamte DFS‑Teilbaum von $w$ **keinen** Knoten mit DFS‑Nummer $\\le \\text{dfs}(v)$ über eine Rückkante erreichen.\n\nAlso gibt es keinen alternativen Weg vom Teilbaum von $w$ zurück zu $v$ oder zu einem Vorfahren von $v$. Entfernt man $(v,w)$, wird dieser Teilbaum vom Rest des Graphen getrennt.\n\nDeshalb ist $(v,w)$ genau dann eine **Brücke**, wenn\n$$\n\\text{low}(w) > \\text{dfs}(v).\n$$\n\nDie strikte Ungleichung ist hier wichtig: Bei Gleichheit gibt es noch eine Rückverbindung zu $v$ selbst."
+  },
+  {
+    "front": "[2026-02-19] Wann ist ein Nicht-Wurzel-Knoten $v$ ein Artikulationsknoten?",
+    "back": "Für einen **Nicht‑Wurzelknoten** gilt die Standardbedingung:\n\n$v$ ist genau dann ein **Artikulationsknoten**, wenn es ein Kind $w$ im DFS‑Baum gibt mit\n$$\n\\text{low}(w)\\ge \\text{dfs}(v).\n$$\n\nBedeutung: Der Teilbaum von $w$ kommt nicht über eine Rückkante zu einem **echten Vorfahren** von $v$ zurück. Entfernt man $v$, ist dieser Teilbaum vom Rest abgeschnitten.\n\nWichtig ist der Unterschied zur Brückenbedingung:\n\n- **Artikulationsknoten:** $\\text{low}(w)\\ge \\text{dfs}(v)$\n- **Brücke:** $\\text{low}(w)>\\text{dfs}(v)$"
+  },
+  {
+    "front": "[2026-02-19] Warum braucht der Wurzel-Fall bei Artikulationsknoten eine Sonderregel?",
+    "back": "Die **Wurzel** des DFS‑Baums hat keinen Vorfahren. Deshalb passt die Bedingung mit $\\text{low}(w)\\ge \\text{dfs}(v)$ hier nicht direkt.\n\nFür die Wurzel gilt stattdessen:\n\nDie Wurzel ist genau dann **Artikulationsknoten**, wenn sie mindestens **zwei Kinder** im DFS‑Baum hat.\n\nDenn diese beiden Teilbäume sind dann nur über die Wurzel verbunden. Entfernt man die Wurzel, zerfällt der Graph in mindestens zwei Komponenten.\n\nHat die Wurzel nur ein Kind, trennt ihr Entfernen den Graphen nicht auf diese Weise."
+  },
+  {
+    "front": "[2026-02-19] Was ist der Unterschied zwischen der Bedingung für Brücken und der für Artikulationsknoten?",
+    "back": "Der Unterschied ist die Ungleichung:\n\n- Für eine **Brücke** $(v,w)$ gilt\n  $$\n  \\text{low}(w)>\\text{dfs}(v).\n  $$\n- Für einen **Nicht‑Wurzel-Artikulationsknoten** $v$ genügt\n  $$\n  \\text{low}(w)\\ge \\text{dfs}(v)\n  $$\n  für ein Kind $w$.\n\nWarum? Wenn $\\text{low}(w)=\\text{dfs}(v)$, dann gibt es noch eine Rückkante zum Knoten $v$ selbst.  \nDann ist $(v,w)$ **keine Brücke**, weil der Teilbaum von $w$ noch einen Zyklus mit $v$ bildet.\n\nTrotzdem ist $v$ ein **Artikulationsknoten**: Entfernt man $v$, verschwindet genau diese Verbindung."
+  },
+  {
+    "front": "[2026-02-19] Gegeben ist ein Nicht-Wurzel-Knoten $v$ mit $\\text{dfs}(v)=5$ und ein Kind $w$ mit $\\text{low}(w)=5$. Was folgt?",
+    "back": "Dann gilt\n$$\n\\text{low}(w)=\\text{dfs}(v),\n$$\nalso insbesondere\n$$\n\\text{low}(w)\\ge \\text{dfs}(v).\n$$\n\nFalls $v$ **nicht die Wurzel** ist, ist $v$ damit ein **Artikulationsknoten**.\n\nAber:\n$$\n\\text{low}(w)>\\text{dfs}(v)\n$$\nist **falsch**, also ist die Baumkante $(v,w)$ **keine Brücke**.\n\nDas ist der klassische Grenzfall, der zeigt, warum bei Artikulationsknoten **$\\ge$** und bei Brücken **$>$** steht."
+  },
+  {
+    "front": "[2026-02-19] Wie erklärt das Beispiel $\\text{low}(8)=3$ die Bedeutung von Low-Werten?",
+    "back": "Wenn in der DFS‑Skizze für Knoten $8$ gilt\n$$\n\\text{low}(8)=3,\n$$\ndann bedeutet das: Aus dem Teilbaum von $8$ kommt man über Baumkanten und dann eine Rückkante zu einem Knoten mit DFS‑Nummer $3$.\n\nAlso ist der Teilbaum von $8$ nicht nur lokal an seinen Elternknoten gebunden, sondern hat noch eine Verbindung weit nach oben im DFS‑Baum.\n\nGenau deshalb sind kleine Low‑Werte ein Hinweis darauf, dass eine Kante **keine Brücke** ist oder ein Elternknoten **nicht wegen dieses Kindes** artikulierend wirkt."
+  },
+  {
+    "front": "[2026-02-19] Wie liest man aus $\\text{low}(5)=3$ im Beispiel einen konkreten Rückweg ab?",
+    "back": "Im Vorlesungsbeispiel war\n$$\n\\text{low}(5)=3,\n$$\nweil es einen Weg\n$$\n5 \\to 6 \\to 7 \\to 8\n$$\nüber **Baumkanten** gibt und von dort eine **Rückkante** zu einem Knoten mit DFS‑Nummer $3$.\n\nDas zeigt die Low‑Definition sehr konkret:\n\n- erst beliebig viele Baumkanten nach unten,\n- dann höchstens eine Rückkante nach oben.\n\nGerade diese Reihenfolge ist wichtig. Man darf nicht beliebig zwischen Baum- und Rückkanten hin‑ und herspringen."
+  },
+  {
+    "front": "[2026-02-19] Warum ist die Reihenfolge „erst Baumkanten, dann höchstens eine Rückkante“ bei Low-Werten wichtig?",
+    "back": "Ohne diese Einschränkung würde der Low‑Wert zu viele Wege erlauben und nicht mehr genau die Struktur eines DFS‑Teilbaums beschreiben.\n\n**Low** soll beantworten: Welche alten Vorfahren sind aus dem Teilbaum von $v$ erreichbar, wenn man innerhalb des Teilbaums nach unten geht und dann einmal nach oben „zurückspringt“?\n\nErlaubte man danach wieder weitere Baumkanten oder mehrere Rückkanten, würde die lokale Information verloren gehen, die für die Kriterien zu **Brücken** und **Artikulationsknoten** gebraucht wird.\n\nDie Definition ist also absichtlich streng, damit die DFS‑Analyse korrekt funktioniert."
+  },
+  {
+    "front": "[2026-02-19] Was ist der Blockgraph, und warum ist er bipartit?",
+    "back": "Der **Blockgraph** hat zwei Knotentypen:\n\n- **Artikulationsknoten**\n- **Blöcke** (2‑zusammenhängende Teilgraphen)\n\nEine Kante im Blockgraphen verbindet einen Artikulationsknoten $a$ mit einem Block $B$ genau dann, wenn $a$ in $B$ liegt.\n\nEr ist daher **bipartit**, weil Kanten immer nur zwischen den beiden Typen verlaufen, nie innerhalb derselben Seite.\n\nIn der Vorlesung wurde außerdem erwähnt: Für einen zusammenhängenden Graphen ist dieser Blockgraph ein **Baum**."
+  },
+  {
+    "front": "[2026-02-19] Warum sind die Endpunkte einer Brücke entweder Grad $1$ oder Artikulationsknoten?",
+    "back": "Sei $e=\\{u,v\\}$ eine **Brücke**. Entfernt man $e$, zerfällt der Graph in zwei Komponenten.\n\nBetrachte einen Endpunkt, etwa $u$:\n\n- Hat $u$ Grad $1$, dann ist klar: $u$ hängt nur über diese Kante am Rest.\n- Hat $u$ Grad größer als $1$, dann trennt das Entfernen von $u$ die Nachbarschaft auf verschiedene Seiten der früheren Brücke. Dann ist $u$ ein **Artikulationsknoten**.\n\nIntuitiv: Eine Brücke ist die einzige Verbindung zwischen zwei Teilen. Wer an so einer einzigen Verbindung „mitten drin“ sitzt und noch weitere Kanten hat, ist selbst kritisch für den Zusammenhang."
+  },
+  {
+    "front": "[2026-02-19] Wann existiert in einem ungerichteten Graphen eine Euler-Tour?",
+    "back": "Ein **zusammenhängender** ungerichteter Graph besitzt genau dann eine **Euler‑Tour**, wenn **alle Knoten geraden Grad** haben.\n\nAlso:\n$$\nG \\text{ hat Euler-Tour } \\iff G \\text{ ist zusammenhängend und } \\forall v:\\deg(v)\\text{ ist gerade.}\n$$\n\nBeide Bedingungen sind nötig:\n\n- **gerade Grade**, damit man jeden Besuch eines Knotens auch wieder verlassen kann,\n- **Zusammenhang**, damit alle Kanten in einer einzigen geschlossenen Tour liegen.\n\nOhne Zusammenhang reicht „alle Grade gerade“ nicht aus."
+  },
+  {
+    "front": "[2026-02-19] Warum ist „alle Grade gerade“ ohne Zusammenhang keine ausreichende Bedingung für eine Euler-Tour?",
+    "back": "Eine Euler‑Tour muss **alle Kanten in einem einzigen geschlossenen Weg** durchlaufen.\n\nHat der Graph mehrere Zusammenhangskomponenten mit Kanten, kann keine einzige Tour zwischen ihnen wechseln. Dann hilft es auch nicht, dass in jeder Komponente alle Grade gerade sind.\n\nDeshalb ist die korrekte Bedingung nicht nur\n$$\n\\forall v:\\deg(v)\\text{ gerade},\n$$\nsondern zusätzlich:\n$$\nG \\text{ ist zusammenhängend.}\n$$\n\nDas ist ein häufiger Fehler bei der Anwendung des Euler-Kriteriums."
+  },
+  {
+    "front": "[2026-02-24] Warum ist der Unterschied zwischen Euler-Tour und Hamilton-Kreis algorithmisch so wichtig?",
+    "back": "Eine **Euler-Tour** ist über eine lokale Gradbedingung charakterisierbar: In einem zusammenhängenden Graphen existiert sie genau dann, wenn alle Knoten geraden Grad haben.\n\nEin **Hamilton-Kreis** verlangt dagegen, dass jeder Knoten genau einmal besucht wird; dafür gibt es keine vergleichbar einfache lokale Charakterisierung. Deshalb ist das Problem algorithmisch viel schwerer:\n- Euler-Touren kann man effizient testen und konstruieren.\n- Hamilton-Kreise sind im Allgemeinen **NP-vollständig** zu entscheiden.\n\nDer Kontrast zeigt: Zwei ähnlich klingende Zyklusprobleme können bezüglich Komplexität völlig verschieden sein."
+  },
+  {
+    "front": "[2026-02-24] Was sagt Diracs Satz aus, und warum ist er nützlich?",
+    "back": "**Diracs Satz** lautet:\n\n$$\n\\text{Falls } G \\text{ einfach und ungerichtet ist, } n\\ge 3 \\text{ und } \\delta(G)\\ge \\frac n2,\n\\text{ dann hat } G \\text{ einen Hamilton-Kreis.}\n$$\n\nEr ist nützlich, weil er eine **leicht prüfbare hinreichende Bedingung** liefert: Statt einen Hamilton-Kreis direkt zu suchen, genügt es, den Minimalgrad zu kontrollieren.\n\nWichtig:\n- Die Bedingung ist **hinreichend**, nicht notwendig.\n- Sie gibt eine strukturelle Garantie, obwohl Hamilton-Kreis im Allgemeinen schwer zu entscheiden ist."
+  },
+  {
+    "front": "[2026-02-24] Warum folgt aus $\\delta(G)\\ge n/2$, dass der Graph zusammenhängend ist?",
+    "back": "Seien $u,v$ zwei beliebige verschiedene Knoten.\n\n- Falls $(u,v)\\in E$, sind sie direkt verbunden.\n- Falls nicht, betrachtet man die Nachbarschaften $N(u)$ und $N(v)$.\n\nWegen $\\deg(u)\\ge n/2$ und $\\deg(v)\\ge n/2$ gilt:\n\n$$\n|N(u)|\\ge \\frac n2,\\qquad |N(v)|\\ge \\frac n2.\n$$\n\nDiese beiden Mengen können nicht disjunkt sein, denn dann gäbe es mindestens $n$ verschiedene Nachbarn zusätzlich zu $u,v$, also zu viele Knoten. Also existiert ein\n\n$$\nw\\in N(u)\\cap N(v).\n$$\n\nDann ist\n\n$$\nu-w-v\n$$\n\nein Pfad von $u$ nach $v$. Also ist $G$ **zusammenhängend**."
+  },
+  {
+    "front": "[2026-02-24] Wie wird im Zusammenhangsbeweis die Inklusions-Exklusions-Idee benutzt?",
+    "back": "Die zentrale Idee ist: Zwei große Nachbarschaftsmengen müssen sich überschneiden.\n\nFür zwei Mengen $A_1,A_2$ gilt:\n\n$$\n|A_1\\cup A_2| = |A_1| + |A_2| - |A_1\\cap A_2|.\n$$\n\nIm Dirac-Beweis setzt man $A_1=N(u)$ und $A_2=N(v)$. Wenn $N(u)$ und $N(v)$ disjunkt wären, dann wäre\n\n$$\n|N(u)\\cup N(v)| = |N(u)|+|N(v)| \\ge \\frac n2+\\frac n2 = n.\n$$\n\nDas ist unmöglich, weil $u$ und $v$ selbst nicht in ihren eigenen Nachbarschaften liegen und es insgesamt nur $n$ Knoten gibt. Also muss\n\n$$\n|N(u)\\cap N(v)|>0\n$$\n\ngelten. Genau diese Überschneidung liefert den Zwischenknoten für einen Pfad der Länge $2$."
+  },
+  {
+    "front": "[2026-02-24] Wie kommt man im Dirac-Beweis von einem $k$-Kreis zu einem Pfad mit $k+1$ Knoten?",
+    "back": "Sei ein **$k$-Kreis** gegeben mit $k<n$.\n\nDann gibt es mindestens einen Knoten außerhalb dieses Kreises. Da der Graph zusammenhängend ist, existiert ein Pfad von einem äußeren Knoten zum Kreis. Nimmt man den ersten Berührungspunkt mit dem Kreis, kann man den Kreis dort „öffnen“ und den äußeren Knoten anhängen.\n\nSo erhält man einen **Pfad mit $k+1$ verschiedenen Knoten**.\n\nDie Idee ist:\n- Ein Kreis mit weniger als $n$ Knoten ist noch nicht maximal.\n- Zusammenhang garantiert eine Verbindung nach außen.\n- Diese Verbindung erlaubt, die besuchten Knoten um einen zu erweitern."
+  },
+  {
+    "front": "[2026-02-24] Wann erhält man aus einem $k$-Pfad sofort einen $(k+1)$-Pfad?",
+    "back": "Sei\n\n$$\nv_1,v_2,\\dots,v_k\n$$\n\nein Pfad mit $k<n$.\n\nFalls einer der Endknoten, also $v_1$ oder $v_k$, einen Nachbarn außerhalb des Pfads besitzt, kann man diesen Knoten einfach anhängen. Zum Beispiel: Hat $v_1$ einen Nachbarn $u\\notin \\{v_1,\\dots,v_k\\}$, dann ist\n\n$$\nu,v_1,v_2,\\dots,v_k\n$$\n\nein Pfad mit $k+1$ Knoten.\n\nDasselbe gilt symmetrisch für $v_k$.\n\nDer schwierige Fall im Dirac-Beweis beginnt also erst dann, wenn **alle Nachbarn beider Endpunkte bereits auf dem Pfad liegen**."
+  },
+  {
+    "front": "[2026-02-24] Warum entsteht im schwierigen Pfad-Fall ein $k$-Kreis?",
+    "back": "Im schwierigen Fall liegen alle Nachbarn von $v_1$ und $v_k$ auf dem Pfad\n\n$$\nv_1,v_2,\\dots,v_k.\n$$\n\nMan betrachtet zwei Mengen von Positionen:\n- Nachbarn von $v_1$ auf dem Pfad,\n- die um $1$ verschobenen Positionen der Nachbarn von $v_k$.\n\nWegen $\\delta(G)\\ge n/2$ sind beide Mengen groß genug, sodass sie sich überlappen müssen. Daraus folgt ein Index $j$ mit\n\n$$\n(v_1,v_j)\\in E\n\\quad\\text{und}\\quad\n(v_k,v_{j-1})\\in E.\n$$\n\nDann kann man den Pfad umordnen zu einem Kreis:\n\n$$\nv_1\\to v_j\\to v_{j+1}\\to \\cdots \\to v_k\\to v_{j-1}\\to \\cdots \\to v_1.\n$$\n\nDie Überlappung der Nachbarschaften erzwingt also genau die zwei „Querkanten“, die den Kreis schließen."
+  },
+  {
+    "front": "[2026-02-24] Warum reicht es im Dirac-Beweis, die beiden Ausbauschritte für alle $k<n$ zu zeigen?",
+    "back": "Die beiden Schritte sind:\n1. Aus einem $k$-Kreis folgt ein Pfad mit $k+1$ Knoten.\n2. Aus einem $k$-Pfad folgt entweder ein Pfad mit $k+1$ Knoten oder ein $k$-Kreis.\n\nMan startet mit $k=2$, denn in einem zusammenhängenden Graphen gibt es eine Kante und damit einen Pfad mit $2$ Knoten. Danach wendet man die Schritte wiederholt an und vergrößert die Zahl der benutzten Knoten immer weiter.\n\nDa es nur $n$ Knoten gibt, kann man nicht unendlich oft einen längeren Pfad erzeugen. Beim Erreichen von $k=n$ muss der Prozess in einem **$n$-Knoten-Kreis** enden, also in einem **Hamilton-Kreis**.\n\nDie Beweisidee ist also ein systematisches „Aufblasen“ von Pfaden und Kreisen."
+  },
+  {
+    "front": "[2026-02-24] Ist die Bedingung $\\delta(G)\\ge n/2$ notwendig für einen Hamilton-Kreis?",
+    "back": "Nein. Sie ist nur **hinreichend**, nicht notwendig.\n\nEin einfaches Gegenbeispiel ist ein Zyklus auf $n$ Knoten:\n- Er ist selbst schon ein **Hamilton-Kreis**.\n- Jeder Knoten hat aber nur Grad $2$.\n\nFür große $n$ gilt dann\n\n$$\n2 < \\frac n2.\n$$\n\nAlso kann ein Graph durchaus einen Hamilton-Kreis besitzen, obwohl die Dirac-Bedingung verletzt ist.\n\nDer Satz sagt nur:\n$$\n\\delta(G)\\ge \\frac n2 \\Rightarrow \\text{Hamilton-Kreis},\n$$\naber nicht die Umkehrung."
+  },
+  {
+    "front": "[2026-02-24] Wie ist die DP-Variable $P_{S,x}$ für Hamilton-Kreis definiert?",
+    "back": "Die **DP-Variable** ist:\n\n$$\nP_{S,x}\\in\\{0,1\\}\n$$\n\nfür eine Teilmenge $S\\subseteq V$ mit $1\\in S$ und einen Knoten $x\\in S$.\n\nDabei gilt:\n\n$$\nP_{S,x}=1\n$$\n\ngenau dann, wenn es einen Pfad gibt, der\n- bei $1$ startet,\n- in $x$ endet,\n- und **genau** die Knoten aus $S$ besucht.\n\nDie Bedeutung ist wichtig:\n- $S$ beschreibt die bereits besuchten Knoten,\n- $x$ ist der aktuelle Endknoten,\n- der Startknoten $1$ wird fixiert, damit dieselbe Lösung nicht in vielen symmetrischen Varianten gezählt wird."
+  },
+  {
+    "front": "[2026-02-24] Warum muss in der DP immer $1\\in S$ gelten?",
+    "back": "Der Knoten $1$ ist der **fixierte Startknoten** aller betrachteten Pfade. Die DP beschreibt nur Pfade, die bei $1$ beginnen.\n\nOhne die Bedingung $1\\in S$ würde die Tabelle auch Zustände enthalten, die gar nicht zur gewählten Problemformulierung passen. Dann wäre unklar,\n- wo der Pfad startet,\n- wie der Basisfall aussieht,\n- und wie man am Ende den Hamilton-Kreis korrekt schließt.\n\nDie Fixierung von $1$ reduziert außerdem Symmetrien: Ein Hamilton-Kreis kann zyklisch verschoben werden, aber durch den festen Startpunkt betrachtet man nur eine kanonische Darstellung."
+  },
+  {
+    "front": "[2026-02-24] Wie lautet die Rekurrenz der DP für Hamilton-Kreis, und was bedeutet sie?",
+    "back": "Die Rekurrenz lautet:\n\n$$\nP_{S,x} = \\max_{y\\in S\\setminus\\{x\\}}\n\\left\\{\nP_{S\\setminus\\{x\\},y}\\cdot \\mathbf{1}_{\\{(y,x)\\in E\\}}\n\\right\\}.\n$$\n\nBedeutung:\n- Der letzte Schritt eines Pfads nach $x$ muss von irgendeinem Vorgänger $y$ kommen.\n- Vorher muss es bereits einen gültigen Pfad über genau die Knoten $S\\setminus\\{x\\}$ gegeben haben, der in $y$ endet.\n- Zusätzlich muss die Kante $(y,x)$ existieren.\n\nAlso gilt:\n$$\nP_{S,x}=1\n$$\ngenau dann, wenn man $x$ als letzten Knoten an einen kleineren gültigen Teilpfad anhängen kann.\n\nDas ist die typische **Teilmengen-DP-Idee**."
+  },
+  {
+    "front": "[2026-02-24] Wie sieht der Basisfall der DP aus?",
+    "back": "Der Basisfall betrachtet Mengen der Form\n\n$$\nS=\\{1,x\\}.\n$$\n\nDann gilt:\n\n$$\nP_{\\{1,x\\},x}=1\n\\quad\\Longleftrightarrow\\quad\n(1,x)\\in E.\n$$\n\nDenn ein Pfad, der bei $1$ startet, in $x$ endet und genau die Knoten $\\{1,x\\}$ besucht, existiert genau dann, wenn die direkte Kante zwischen $1$ und $x$ vorhanden ist.\n\nFalls die Kante fehlt, ist\n\n$$\nP_{\\{1,x\\},x}=0.\n$$\n\nDieser Basisfall ist der Startpunkt für alle größeren Teilmengen."
+  },
+  {
+    "front": "[2026-02-24] Wie entscheidet man mit der DP, ob ein Hamilton-Kreis existiert?",
+    "back": "Nachdem alle Werte $P_{S,x}$ berechnet wurden, betrachtet man die volle Knotenmenge\n\n$$\nV.\n$$\n\nEin **Hamilton-Kreis** existiert genau dann, wenn es einen Endknoten $x\\neq 1$ gibt mit\n\n$$\nP_{V,x}=1\n\\quad\\text{und}\\quad\n(x,1)\\in E.\n$$\n\nInterpretation:\n- $P_{V,x}=1$ bedeutet: Es gibt einen Pfad von $1$ nach $x$, der alle Knoten genau einmal besucht.\n- Die zusätzliche Kante $(x,1)$ schließt diesen Pfad zu einem Kreis.\n\nAlso lautet das Entscheidungskriterium:\n\n$$\n\\exists x\\neq 1:\\; P_{V,x}=1 \\land (x,1)\\in E.\n$$"
+  },
+  {
+    "front": "[2026-02-24] Warum ist die DP deutlich besser als Brute Force, obwohl sie immer noch exponentiell ist?",
+    "back": "**Brute Force** prüft im Wesentlichen alle Permutationen der Knoten und braucht daher Zeit in der Größenordnung\n\n$$\n\\Theta(n!).\n$$\n\nDie **DP** betrachtet stattdessen Teilmengen und Endknoten. Dadurch ergibt sich ungefähr\n\n$$\nO(n^2 2^n)\n$$\n\nZeit und\n\n$$\nO(n2^n)\n$$\n\nSpeicher.\n\nBeides ist noch exponentiell, aber viel kleiner als $n!$. Der Grund ist, dass die DP viele gemeinsame Teilprobleme nur einmal löst, statt dieselben Präfixe von Pfaden immer wieder neu zu berechnen.\n\nDie Verbesserung kommt also aus **Wiederverwendung von Zwischenresultaten**."
+  },
+  {
+    "front": "[2026-02-26] Warum ist die Dreiecksungleichung der entscheidende Schritt in der $2$-Approximation für metrisches TSP?",
+    "back": "Beim **Shortcutting** einer Euler-Tour werden bereits besuchte Knoten übersprungen. Damit die Tour dadurch nicht länger wird, braucht man die **Dreiecksungleichung**:\n$$\n\\ell(x,z) \\le \\ell(x,y)+\\ell(y,z).\n$$\nWenn die Euler-Tour also ein Teilstück $x \\to y \\to z$ enthält und $y$ schon besucht wurde, darf man es durch die direkte Kante $x \\to z$ ersetzen, ohne die Länge zu erhöhen.\n\nOhne diese Eigenschaft könnte die direkte Kante teurer sein als der Umweg über $y$, und das gesamte Approximationargument würde scheitern."
+  },
+  {
+    "front": "[2026-02-26] Warum gilt für jeden metrischen TSP-Graphen $w(\\mathrm{MST}) \\le \\mathrm{OPT}$?",
+    "back": "Sei $C^*$ ein optimaler **Hamiltonkreis**. Entfernt man aus $C^*$ eine beliebige Kante, bleibt ein zusammenhängender, kreisfreier Graph auf allen Knoten übrig, also ein **Spannbaum**.\n\nDessen Gewicht ist höchstens\n$$\nw(C^*) = \\mathrm{OPT}.\n$$\nDa der **MST** der leichteste aller Spannbäume ist, folgt\n$$\nw(\\mathrm{MST}) \\le \\mathrm{OPT}.\n$$\n\nDie Aussage ist zentral, weil sie die Brücke vom schwer zu berechnenden Optimum zu einem effizient berechenbaren Objekt schlägt."
+  },
+  {
+    "front": "[2026-02-26] Warum erzeugt das Verdoppeln aller MST-Kanten eine Euler-Tour?",
+    "back": "Nach dem Verdoppeln jeder Kante im **Spannbaum** hat jeder Knoten geraden Grad: jede inzidente Baumkante zählt nun doppelt.\n\nEin zusammenhängender Graph, in dem alle Knotengrade gerade sind, ist **eulersch**. Daher existiert eine **Euler-Tour**, die jede Kante genau einmal durchläuft.\n\nDie Länge dieser Tour ist genau\n$$\n2 \\cdot w(\\mathrm{MST}),\n$$\nweil jede Baumkante zweimal benutzt wird."
+  },
+  {
+    "front": "[2026-02-26] Wie ergibt sich die Approximationgarantie $\\mathrm{Tour}_{\\mathrm{constructed}} \\le 2\\cdot \\mathrm{OPT}$ für metrisches TSP?",
+    "back": "Die Argumentation besteht aus drei Schritten:\n1. **MST-Schranke**:\n   $$\n   w(\\mathrm{MST}) \\le \\mathrm{OPT}.\n   $$\n2. **Verdoppeln** liefert eine Euler-Tour der Länge\n   $$\n   2\\cdot w(\\mathrm{MST}).\n   $$\n3. **Shortcutting** erhöht wegen der Dreiecksungleichung die Länge nicht.\n\nAlso gilt\n$$\n\\mathrm{Tour}_{\\mathrm{constructed}}\n\\le 2\\cdot w(\\mathrm{MST})\n\\le 2\\cdot \\mathrm{OPT}.\n$$\n\nDamit ist der Algorithmus eine **$2$-Approximation**."
+  },
+  {
+    "front": "[2026-02-26] Warum zeigt die $0/1$-Reduktion von Hamiltonkreis auf TSP die NP-Härte von TSP?",
+    "back": "Gegeben sei ein Graph $G$. Man baut einen vollständigen Graphen auf denselben Knoten und setzt\n$$\n\\ell(e)=\n\\begin{cases}\n0,& \\text{falls } e \\in E(G),\\\\\n1,& \\text{sonst.}\n\\end{cases}\n$$\nDann gilt:\n\n- Hat $G$ einen **Hamiltonkreis**, gibt es eine TSP-Tour nur über ursprüngliche Kanten, also mit Länge $0$.\n- Hat die TSP-Instanz eine Tour der Länge $0$, dann benutzt sie nur Kanten aus $G$ und ist damit ein Hamiltonkreis in $G$.\n\nAlso:\n$$\nG \\text{ hat Hamiltonkreis } \\iff \\text{TSP-Instanz hat Tour der Länge } 0.\n$$\nDamit ist TSP mindestens so schwer wie Hamiltonkreis, also **NP-hart**."
+  },
+  {
+    "front": "[2026-02-26] Warum ist eine multiplikative Approximation beim allgemeinen TSP durch die $0/1$-Reduktion problematisch?",
+    "back": "In der Reduktion kann das Optimum den Wert\n$$\n\\mathrm{OPT}=0\n$$\nhaben. Eine multiplikative Approximation mit Faktor $\\alpha$ müsste dann eine Lösung mit Länge höchstens\n$$\n\\alpha \\cdot 0 = 0\n$$\nfinden.\n\nDas heißt: Sobald das Optimum $0$ ist, müsste der Algorithmus exakt entscheiden, ob eine Tour der Länge $0$ existiert. Das ist gerade die kodierte Hamiltonkreis-Frage.\n\nDer Knackpunkt ist also nicht nur NP-Härte, sondern dass bei **Nulloptimum** jede nichttriviale multiplikative Approximation zusammenbricht."
+  },
+  {
+    "front": "[2026-02-26] Was ist der Unterschied zwischen einem maximalen und einem maximum Matching?",
+    "back": "Ein **maximales Matching** ist **inklusionsmaximal**: Man kann keine weitere Kante hinzufügen, ohne die Matching-Eigenschaft zu verletzen.\n\nEin **maximum Matching** ist **kardinalitätsmaximal**: Es hat unter allen Matchings die größte mögliche Größe.\n\nWichtig:\n- maximum $\\Rightarrow$ maximal\n- maximal $\\not\\Rightarrow$ maximum\n\n**Greedy** liefert immer ein maximales Matching, aber nicht unbedingt ein maximum Matching."
+  },
+  {
+    "front": "[2026-02-26] Gib ein kleines Beispiel, in dem ein Matching maximal, aber nicht maximum ist.",
+    "back": "Betrachte den Pfad mit Knoten\n$$\na-b-c-d\n$$\nund Kanten\n$$\n\\{ab,\\, bc,\\, cd\\}.\n$$\n\nWählt man das Matching\n$$\nM=\\{bc\\},\n$$\ndann ist $M$ **maximal**: Jede andere Kante teilt einen Endpunkt mit $bc$, also kann nichts hinzugefügt werden.\n\nAber $M$ ist nicht **maximum**, denn\n$$\nM'=\\{ab,\\, cd\\}\n$$\nist ebenfalls ein Matching und hat Größe $2$, während $|M|=1$.\n\nAlso ist maximal hier strikt schwächer als maximum."
+  },
+  {
+    "front": "[2026-02-26] Warum liefert der Greedy-Algorithmus immer ein maximales Matching?",
+    "back": "Der **Greedy-Algorithmus** wählt wiederholt eine Kante $e$, nimmt sie in $M$ auf und löscht danach $e$ sowie alle inzidenten Kanten.\n\nWenn der Algorithmus stoppt, gibt es keine Kante mehr, die zu $M$ hinzugefügt werden könnte: Jede ursprünglich noch mögliche Kante wurde entweder selbst gewählt oder wegen eines Konflikts mit einer gewählten Kante entfernt.\n\nAlso kann man $M$ nicht mehr durch Hinzufügen einer einzelnen Kante vergrößern. Genau das bedeutet **maximal**."
+  },
+  {
+    "front": "[2026-02-26] Warum gilt für das Greedy-Matching stets $|M_{\\mathrm{greedy}}| \\ge \\tfrac12 |M^*|$?",
+    "back": "Sei $M$ das **Greedy-Matching** und $M^*$ ein **maximum Matching**.\n\nDa $M$ maximal ist, muss jede Kante $e^* \\in M^*$ an mindestens einem Endpunkt von einer Kante aus $M$ berührt werden. Sonst könnte man $e^*$ noch zu $M$ hinzufügen.\n\nJede Kante aus $M$ hat aber nur zwei Endpunkte und kann daher höchstens zwei Kanten aus $M^*$ „abdecken“.\n\nAlso gilt\n$$\n|M^*| \\le 2|M|.\n$$\nUmgestellt:\n$$\n|M| \\ge \\tfrac12 |M^*|.\n$$\n\nDas ist die klassische **$1/2$-Approximation** für Greedy-Matching."
+  },
+  {
+    "front": "[2026-02-26] Warum kann eine Greedy-Kante höchstens zwei Kanten eines optimalen Matchings „abdecken“?",
+    "back": "Sei $e=\\{u,v\\}\\in M$ eine Kante des **Greedy-Matchings**. Eine Kante aus $M^*$ kann nur dann durch $e$ blockiert werden, wenn sie an $u$ oder $v$ inzident ist.\n\nDa $M^*$ selbst ein Matching ist, kann in $M^*$ höchstens\n- eine Kante an $u$ und\n- eine Kante an $v$\n\nliegen.\n\nAlso können insgesamt höchstens zwei Kanten aus $M^*$ durch $e$ betroffen sein. Genau daraus entsteht im Beweis die Schranke\n$$\n|M^*| \\le 2|M|.\n$$"
+  },
+  {
+    "front": "[2026-02-26] Was ist ein augmentierender Pfad bezüglich eines Matchings $M$?",
+    "back": "Ein **augmentierender Pfad** bezüglich $M$ ist ein Pfad mit drei Eigenschaften:\n- seine Kanten **alternieren** zwischen $E\\setminus M$ und $M$,\n- er beginnt in einem **freien** Knoten,\n- er endet in einem **freien** Knoten.\n\nDadurch enthält der Pfad eine Kante aus $E\\setminus M$ mehr als aus $M$.\n\nDas macht ihn interessant: Durch Umschalten entlang des Pfads kann man die Größe des Matchings um $1$ erhöhen."
+  },
+  {
+    "front": "[2026-02-26] Warum vergrößert das Umschalten entlang eines augmentierenden Pfads das Matching um genau $1$?",
+    "back": "Sei $P$ ein augmentierender Pfad. Dann alternieren die Kanten auf $P$ zwischen „nicht in $M$“ und „in $M$“, und weil beide Enden frei sind, beginnt und endet $P$ mit einer Kante aus $E\\setminus M$.\n\nAlso enthält $P$ genau eine Kante mehr außerhalb von $M$ als innerhalb von $M$.\n\nSetzt man\n$$\nM' = M \\oplus P,\n$$\ndann werden die Kanten auf $P$ umgeschaltet:\n- Kanten aus $M$ werden entfernt,\n- Kanten aus $P\\setminus M$ werden hinzugefügt.\n\nDaher gilt\n$$\n|M'| = |M| + 1.\n$$"
+  },
+  {
+    "front": "[2026-02-26] Warum zerfällt $M \\oplus M'$ in Pfade und Kreise?",
+    "back": "Im Graphen\n$$\nH=(V, M \\oplus M')\n$$\nhat jeder Knoten Grad höchstens $2$:\n- höchstens eine inzidente Kante aus $M$,\n- höchstens eine inzidente Kante aus $M'$.\n\nDaher kann jede Zusammenhangskomponente nur ein **Pfad** oder ein **Kreis** sein. Außerdem alternieren die Kanten in jeder Komponente zwischen $M$ und $M'$.\n\nDiese Struktur ist der Schlüssel für Matching-Beweise, insbesondere für augmentierende Pfade."
+  },
+  {
+    "front": "[2026-02-26] Warum folgt aus $|M'|>|M|$, dass es einen augmentierenden Pfad für $M$ gibt?",
+    "back": "Betrachte\n$$\nM \\oplus M'.\n$$\nJede Komponente ist ein alternierender Pfad oder Kreis.\n\n- In einem **alternierenden Kreis** gibt es gleich viele Kanten aus $M$ und $M'$.\n- In einem **alternierenden Pfad** unterscheiden sich die Anzahlen höchstens um $1$.\n\nWenn insgesamt\n$$\n|M'|>|M|,\n$$\nmuss es mindestens eine Komponente geben, in der mehr Kanten aus $M'$ als aus $M$ liegen. Das kann nur ein alternierender Pfad sein, der an beiden Enden mit Kanten aus $M'$ „beginnt/endet“.\n\nDiese Endknoten sind frei bezüglich $M$, also ist die Komponente ein **augmentierender Pfad für $M$**."
+  },
+  {
+    "front": "[2026-03-03] Warum ist die Hall-Bedingung notwendig, wenn ein Matching alle Knoten in $A$ überdeckt?",
+    "back": "Hat ein bipartiter Graph $G=(A\\cup B,E)$ ein **Matching** $M$ mit $|M|=|A|$, dann ist jeder Knoten aus $A$ mit einem verschiedenen Knoten aus $B$ gepaart.\n\nFür jede Teilmenge $X\\subseteq A$ gilt daher:\n- jeder Knoten in $X$ hat unter den Matching-Kanten einen Partner in $B$,\n- verschiedene Knoten aus $X$ haben verschiedene Partner, da Matching-Kanten knotendisjunkt sind,\n- diese Partner liegen alle in $N(X)$.\n\nAlso gibt es mindestens $|X|$ verschiedene Nachbarn:\n$$\n|N(X)|\\ge |X|.\n$$\n\nGenau deshalb ist die **Hall-Bedingung** für alle $X\\subseteq A$ notwendig."
+  },
+  {
+    "front": "[2026-03-03] Wie lautet der Satz von Hall präzise, und was garantiert er?",
+    "back": "Für einen bipartiten Graphen $G=(A\\cup B,E)$ gilt:\n\n$$\n\\exists\\ \\text{Matching }M\\text{ mit }|M|=|A|\n\\quad\\Longleftrightarrow\\quad\n\\forall X\\subseteq A:\\ |N(X)|\\ge |X|.\n$$\n\nDie Aussage garantiert also genau dann ein Matching, das **alle Knoten von $A$ überdeckt**, wenn keine Teilmenge $X\\subseteq A$ „zu wenige“ Nachbarn in $B$ hat.\n\nWichtig:\n- Es geht um Überdeckung von **$A$**, nicht notwendigerweise von ganz $B$.\n- Ist $|A|=|B|$, dann ist ein solches Matching ein **perfektes Matching** des bipartiten Graphen.\n- Die Bedingung muss für **alle** Teilmengen $X\\subseteq A$ gelten, nicht nur für einzelne Knoten."
+  },
+  {
+    "front": "[2026-03-03] Warum ist die Induktionsbasis im Hall-Beweis für $|A|=1$ trivial?",
+    "back": "Sei $|A|=1$, also $A=\\{a\\}$.\n\nDie Hall-Bedingung muss insbesondere für $X=A$ gelten:\n$$\n|N(A)|\\ge |A|=1.\n$$\n\nDamit ist $N(A)\\neq\\emptyset$, also hat $a$ mindestens einen Nachbarn $b\\in B$. Dann ist\n$$\nM=\\{\\{a,b\\}\\}\n$$\nein Matching, das alle Knoten in $A$ überdeckt.\n\nDer Punkt ist: Bei nur einem linken Knoten reduziert sich die Hall-Bedingung genau auf die Existenz **einer** inzidenten Kante."
+  },
+  {
+    "front": "[2026-03-03] Warum darf man in Fall 1 des Hall-Beweises eine beliebige Kante $uv$ wählen und beide Endpunkte löschen?",
+    "back": "In **Fall 1** gilt für alle echten Teilmengen $X\\subsetneq A$ sogar streng:\n$$\n|N(X)|>|X|.\n$$\n\nWähle eine Kante $uv$ mit $v\\in A$ und $u\\in B$, und betrachte den kleineren Graphen\n$$\nG' = G - \\{u,v\\}.\n$$\n\nFür jede Menge $X\\subseteq A\\setminus\\{v\\}$ war in $G$ bereits\n$$\n|N_G(X)|\\ge |X|+1,\n$$\nweil $X$ eine echte Teilmenge von $A$ ist. Durch das Löschen von $u$ kann die Nachbarschaft höchstens um $1$ schrumpfen:\n$$\n|N_{G'}(X)|\\ge |N_G(X)|-1\\ge |X|.\n$$\n\nAlso erfüllt $G'$ wieder die Hall-Bedingung auf der linken Seite $A\\setminus\\{v\\}$. Dann liefert die Induktion ein Matching in $G'$, und mit $uv$ erhält man ein Matching für ganz $A$."
+  },
+  {
+    "front": "[2026-03-03] Was ist der entscheidende Erhaltungsschritt in Fall 1 des Hall-Beweises?",
+    "back": "Der kritische Punkt ist: Nach dem Löschen von $u\\in B$ und $v\\in A$ muss die Hall-Bedingung im Restgraphen erhalten bleiben.\n\nFür jede Teilmenge $X\\subseteq A\\setminus\\{v\\}$ gilt in Fall 1:\n$$\n|N_G(X)|>|X|.\n$$\nDa Kardinalitäten ganzzahlig sind, folgt sogar\n$$\n|N_G(X)|\\ge |X|+1.\n$$\n\nBeim Übergang zu $G'=G-\\{u,v\\}$ kann aus $N_G(X)$ höchstens der Knoten $u$ verschwinden. Also:\n$$\n|N_{G'}(X)|\\ge |N_G(X)|-1\\ge |X|.\n$$\n\nGenau diese Rechnung macht den Induktionsschritt möglich. Ohne die **strenge** Ungleichheit in $G$ könnte nach dem Löschen die Hall-Bedingung verletzt werden."
+  },
+  {
+    "front": "[2026-03-03] Warum zerlegt man in Fall 2 des Hall-Beweises bei einer Menge $X_0$ mit $|N(X_0)|=|X_0|$ den Graphen?",
+    "back": "Wenn es eine nichtleere Menge $X_0\\subseteq A$ mit\n$$\n|N(X_0)|=|X_0|\n$$\ngibt, ist $X_0$ eine **kritische Menge**: Ihre Nachbarschaft ist genau groß genug, aber nicht größer.\n\nDann zerlegt man den Graphen in:\n- $G_1$ auf $X_0\\cup N(X_0)$,\n- $G_2$ auf $(A\\setminus X_0)\\cup (B\\setminus N(X_0))$.\n\nDie Idee:\n- In $G_1$ sucht man ein Matching, das $X_0$ vollständig überdeckt.\n- In $G_2$ sucht man ein Matching, das $A\\setminus X_0$ vollständig überdeckt.\n\nWarum funktioniert das? Weil Knoten aus $X_0$ nur mit Knoten aus $N(X_0)$ gematcht werden können. Diese „kritische“ Struktur lässt sich daher sauber abtrennen und separat behandeln."
+  },
+  {
+    "front": "[2026-03-03] Warum gilt in $G_1$ aus Fall 2 wieder die Hall-Bedingung?",
+    "back": "$G_1$ ist der von $X_0\\cup N(X_0)$ induzierte Teilgraph.\n\nFür jede Teilmenge $X\\subseteq X_0$ gilt:\n- alle Nachbarn von $X$ liegen bereits in $N(X_0)$,\n- also ist die Nachbarschaft von $X$ in $G_1$ dieselbe wie in $G$.\n\nDamit folgt aus der ursprünglichen Hall-Bedingung in $G$ direkt:\n$$\n|N_{G_1}(X)| = |N_G(X)| \\ge |X|.\n$$\n\nAlso erfüllt $G_1$ die Hall-Bedingung auf der linken Seite $X_0$. Da typischerweise $|X_0|<|A|$, kann man die Induktionsannahme anwenden und erhält ein Matching, das alle Knoten in $X_0$ überdeckt."
+  },
+  {
+    "front": "[2026-03-03] Warum gilt in $G_2$ aus Fall 2 ebenfalls die Hall-Bedingung?",
+    "back": "Sei $Y\\subseteq A\\setminus X_0$. Betrachte\n$$\nG_2 \\text{ auf } (A\\setminus X_0)\\cup (B\\setminus N(X_0)).\n$$\n\nAus Hall in $G$ für $Y\\cup X_0$ folgt:\n$$\n|N_G(Y\\cup X_0)|\\ge |Y|+|X_0|.\n$$\n\nAußerdem gilt\n$$\nN_G(Y\\cup X_0)=N_G(Y)\\cup N_G(X_0),\n$$\nund wegen $|N(X_0)|=|X_0|$ bleibt außerhalb von $N(X_0)$ mindestens Platz für $|Y|$ Nachbarn von $Y$. Formal ergibt sich:\n$$\n|N_{G_2}(Y)|\\ge |Y|.\n$$\n\nDamit erfüllt auch $G_2$ die Hall-Bedingung. Also liefert die Induktion ein Matching, das alle Knoten aus $A\\setminus X_0$ überdeckt."
+  },
+  {
+    "front": "[2026-03-03] Warum vereinigen sich die Matchings aus $G_1$ und $G_2$ in Fall 2 zu einem Matching für ganz $A$?",
+    "back": "Die beiden Teilgraphen sind so gewählt, dass ihre Knotenmengen disjunkt sind:\n- links: $X_0$ und $A\\setminus X_0$,\n- rechts: $N(X_0)$ und $B\\setminus N(X_0)$.\n\nHat man also ein Matching $M_1$ in $G_1$ und ein Matching $M_2$ in $G_2$, dann teilen keine zwei Kanten aus $M_1\\cup M_2$ einen Endpunkt.\n\nDeshalb ist\n$$\nM = M_1\\cup M_2\n$$\nwieder ein **Matching**.\n\nAußerdem deckt $M_1$ alle Knoten in $X_0$ und $M_2$ alle Knoten in $A\\setminus X_0$. Also deckt $M$ ganz $A$.\n\nDie Zerlegung funktioniert genau deshalb, weil die rechte Seite ebenfalls in disjunkte Bereiche zerfällt."
+  },
+  {
+    "front": "[2026-03-03] Was ist der heikle Sonderfall $X_0=A$ im Hall-Beweis?",
+    "back": "Der Sonderfall ist: Es gibt eine kritische Menge mit\n$$\nX_0=A\n\\quad\\text{und}\\quad\n|N(A)|=|A|.\n$$\n\nDann ist die Zerlegung aus Fall 2 nicht mehr hilfreich, weil der „Restgraph“ leer wird. Man kann also nicht einfach zwei echte kleinere Teilprobleme erzeugen.\n\nDie saubere Behandlung besteht darin, die Fallunterscheidung korrekt zu formulieren:\n- **Fall 1:** Für alle **echten** Teilmengen $X\\subsetneq A$ gilt streng $|N(X)|>|X|$.\n- Dann darf trotzdem $|N(A)|=|A|$ gelten.\n\nGenau diese Formulierung reicht für das Löschargument aus Fall 1, denn dort betrachtet man nach dem Löschen nur Teilmengen von $A\\setminus\\{v\\}$, also echte Teilmengen von $A$.\n\nDie Falle ist also, Fall 1 fälschlich auch auf $X=A$ zu beziehen."
+  },
+  {
+    "front": "[2026-03-03] Warum hat jeder $k$-reguläre bipartite Graph ein perfektes Matching?",
+    "back": "Sei $G=(A\\cup B,E)$ **$k$-regulär**, also hat jeder Knoten Grad $k$.\n\nFür jede Teilmenge $X\\subseteq A$ zählt man die Kanten zwischen $X$ und $N(X)$ auf zwei Arten:\n- von $X$ aus: genau $k|X|$,\n- von $N(X)$ aus: höchstens $k|N(X)|$.\n\nAlso:\n$$\nk|X|\\le k|N(X)|.\n$$\nNach Kürzen folgt:\n$$\n|X|\\le |N(X)|.\n$$\n\nDamit ist die Hall-Bedingung erfüllt, also gibt es ein Matching, das alle Knoten in $A$ überdeckt. Wegen Regularität folgt zudem $|A|=|B|$, also ist dieses Matching ein **perfektes Matching**.\n\nDer Kern ist das doppelte Abzählen der Kanten zwischen $X$ und seiner Nachbarschaft."
+  },
+  {
+    "front": "[2026-03-03] Wie findet man in einem $2^k$-regulären bipartiten Graphen in linearer Zeit ein perfektes Matching?",
+    "back": "Die Idee ist ein wiederholter **Euler-Tour-Trick**.\n\n1. In jeder Zusammenhangskomponente sind alle Grade gerade, also existiert eine Euler-Tour.\n2. Entlang dieser Tour wählt man **jede zweite Kante**.\n3. Dadurch wird an jedem Knoten genau die Hälfte der inzidenten Kanten behalten:\n$$\n2^k \\to 2^{k-1}.\n$$\n4. Wiederholt man das $k$-mal, erhält man am Ende Grad $1$ an jedem Knoten.\n\nEin $1$-regulärer bipartiter Graph ist genau ein perfektes Matching.\n\nDie Laufzeit ist linear, weil die Kantenzahl in jeder Runde halbiert wird:\n$$\nm+\\frac m2+\\frac m4+\\dots \\le 2m = O(m).\n$$\n\nWichtig ist, das Verfahren komponentenweise auszuführen, falls der Graph nicht zusammenhängend ist."
+  },
+  {
+    "front": "[2026-03-03] Warum ist Bipartitität für das Korollar über reguläre Graphen wesentlich?",
+    "back": "Die Aussage „jeder $k$-reguläre Graph hat ein perfektes Matching“ ist **falsch** ohne Bipartitität.\n\nDer Hall-Satz ist speziell ein Kriterium für **bipartite** Graphen. Der Beweis für $k$-reguläre bipartite Graphen benutzt die Nachbarschaftsstruktur zwischen den beiden Seiten $A$ und $B$ und das doppelte Abzählen über diese Partition.\n\nIn nicht-bipartiten Graphen können ungerade Zyklen und allgemein andere Hindernisse auftreten. Deshalb gibt es sogar **3-reguläre nicht-bipartite Graphen ohne perfektes Matching**.\n\nDie Gotcha-Aussage ist also:\n- **regulär + bipartit** $\\Rightarrow$ perfektes Matching,\n- **regulär allein** reicht nicht."
+  },
+  {
+    "front": "[2026-03-03] Warum ist ein augmentierender Pfad für ein Matching so wichtig?",
+    "back": "Ein **augmentierender Pfad** bezüglich eines Matchings $M$ beginnt bei einem unbedeckten Knoten in $A$, endet bei einem unbedeckten Knoten in $B$ und alterniert zwischen Kanten außerhalb von $M$ und in $M$.\n\nWenn man entlang dieses Pfades den Status der Kanten umschaltet,\n$$\nM' = M \\triangle E(P),\n$$\ndann gewinnt man genau eine zusätzliche Matching-Kante:\n- vorher waren auf dem Pfad eine Kante mehr außerhalb von $M$ als in $M$,\n- nach dem Umschalten werden diese zusätzlichen Kanten aufgenommen.\n\nDaher gilt:\n$$\n|M'|=|M|+1.\n$$\n\nAugmentierende Pfade sind zentral, weil sie eine lokale Struktur liefern, mit der man ein Matching strikt vergrößern kann."
+  },
+  {
+    "front": "[2026-03-03] Warum hat ein augmentierender Pfad in einem bipartiten Graphen ungerade Länge?",
+    "back": "Ein augmentierender Pfad startet bei einem unbedeckten Knoten in $A$ und endet bei einem unbedeckten Knoten in $B$.\n\nDa der Graph bipartit ist, wechselt jeder Schritt die Seite. Ein Pfad von $A$ nach $B$ hat daher eine **ungerade** Anzahl von Kanten.\n\nZusätzlich alternieren die Kanten entlang des Pfades:\n- erste Kante: nicht in $M$,\n- dann in $M$,\n- dann wieder nicht in $M$,\n- usw.\n\nWeil der Endknoten in $B$ unbedeckt ist, muss auch die letzte Kante **nicht** in $M$ sein. Also gibt es eine Kante mehr außerhalb von $M$ als in $M$, was genau zur Vergrößerung um $1$ führt."
+  },
+  {
+    "front": "[2026-03-05] Warum erhöht ein augmentierender Pfad die Größe eines Matchings um genau $1$?",
+    "back": "Ein **augmentierender Pfad** alterniert zwischen Kanten aus $M$ und aus $E\\setminus M$ und beginnt sowie endet in **ungematchten** Knoten.\n\nBeim Augmentieren ersetzt man auf diesem Pfad die Kanten aus $M$ durch die bisher nicht benutzten Kanten, also bildet man $M' = M \\oplus P$.\n\nWarum ist dann $|M'| = |M|+1$?\n\n- Auf einem augmentierenden Pfad gibt es wegen der ungematchten Endpunkte **eine ungematchte Kante mehr** als gematchte Kanten.\n- Alle inneren Knoten bleiben weiterhin genau einmal gematcht.\n- Die beiden Endknoten werden neu gematcht.\n\nDaher steigt die Anzahl der Matching-Kanten **genau um $1$**, nicht mehr und nicht weniger."
+  },
+  {
+    "front": "[2026-03-05] Warum zerfällt $M \\oplus M'$ für zwei Matchings in Pfade und Zyklen?",
+    "back": "Die entscheidende Eigenschaft ist: In einem **Matching** hat jeder Knoten höchstens eine inzidente Kante aus dem Matching.\n\nIm Graphen der **symmetrischen Differenz**\n$$\nM \\oplus M' = (M\\setminus M') \\cup (M'\\setminus M)\n$$\nkann ein Knoten daher\n\n- höchstens eine Kante aus $M$,\n- und höchstens eine Kante aus $M'$\n\nhaben. Also ist sein Grad in $M\\oplus M'$ höchstens $2$.\n\nEin Graph, in dem jeder Knoten Grad $\\le 2$ hat, besteht komponentenweise nur aus\n\n- **Pfaden**,\n- **Zyklen**,\n- oder isolierten Knoten.\n\nGenau deshalb ist diese Zerlegung für Matching-Argumente so nützlich."
+  },
+  {
+    "front": "[2026-03-05] Wie erkennt man in $M \\oplus M'$ augmentierende Pfade für das kleinere Matching $M$?",
+    "back": "Wenn $|M'| > |M|$, dann müssen in $M \\oplus M'$ Komponenten existieren, in denen **mehr Kanten aus $M'$ als aus $M$** liegen. Solche Komponenten können keine Zyklen sein, denn dort wechseln sich Kanten aus $M$ und $M'$ gleich oft ab.\n\nAlso müssen es **Pfade** sein. Ein solcher Pfad\n\n- alterniert zwischen Kanten aus $M$ und $M'$,\n- beginnt und endet mit einer Kante aus $M'$,\n- hat daher Endknoten, die in $M$ ungematcht sind.\n\nDamit ist er genau ein **augmentierender Pfad für $M$**.\n\nFolge: Aus $M \\oplus M'$ erhält man mindestens\n$$\n|M'|-|M|\n$$\npaarweise knotendisjunkte augmentierende Pfade für $M$."
+  },
+  {
+    "front": "[2026-03-05] Warum findet BFS in einem bipartiten Graphen einen kürzesten augmentierenden Pfad?",
+    "back": "Im bipartiten Graphen startet man BFS von allen ungematchten Knoten einer Seite, etwa $A$.\n\nDabei wechselt man strikt alternierend:\n\n- von $A$ nach $B$ über **ungematchte** Kanten,\n- von $B$ nach $A$ über **gematchte** Kanten.\n\nSo betrachtet BFS genau die zulässigen alternierenden Pfade. Da BFS Knoten in aufsteigender Distanz besucht, wird der erste erreichte ungematchte Knoten auf der Gegenseite über einen Pfad mit **minimaler Kantenanzahl** erreicht.\n\nDer rekonstruierte Pfad ist also\n\n- alternierend,\n- an beiden Enden ungematcht,\n- und damit ein **kürzester augmentierender Pfad**.\n\nWichtig ist die Bipartition: Sie macht die alternierende Suchrichtung sauber strukturierbar."
+  },
+  {
+    "front": "[2026-03-05] Warum startet die BFS von allen ungematchten Knoten einer Seite gleichzeitig?",
+    "back": "Weil man den **global kürzesten** augmentierenden Pfad finden will, nicht nur den kürzesten von einem bestimmten Startknoten.\n\nStartet man BFS gleichzeitig von allen ungematchten Knoten in $A$, dann entspricht das einer Mehrquellen-BFS. Der erste erreichte ungematchte Knoten in $B$ liefert dann den kürzesten augmentierenden Pfad **unter allen möglichen Startpunkten**.\n\nWürde man nur von einem einzelnen ungematchten Knoten starten, könnte man\n\n- einen längeren augmentierenden Pfad finden,\n- obwohl anderswo ein kürzerer existiert.\n\nDie Mehrquellen-BFS ist also nötig, damit die Schichten wirklich die Distanz zu **irgendeinem** freien Startknoten repräsentieren."
+  },
+  {
+    "front": "[2026-03-05] Was ist der Zweck des Layer-Graphs nach der BFS?",
+    "back": "Der **Layer-Graph** speichert nur die Kanten, die zu **kürzesten alternierenden Pfaden** passen.\n\nDazu werden Kanten entsprechend der BFS-Schichten orientiert, sodass nur Vorwärtsbewegungen erlaubt sind, die die kürzeste Distanzstruktur respektieren. Dadurch enthält der Layer-Graph genau die relevanten Kandidaten für kürzeste augmentierende Pfade.\n\nSein Nutzen:\n\n- Er filtert alle „falschen“ Kanten heraus.\n- Jede gefundene Quelle-Ziel-Verbindung entspricht einem **kürzesten** augmentierenden Pfad.\n- Eine anschließende DFS kann gezielt mehrere solche Pfade extrahieren.\n\nOhne Layer-Graph würde die DFS auch längere oder strukturell ungeeignete alternierende Pfade verfolgen."
+  },
+  {
+    "front": "[2026-03-05] Warum liefert die DFS im Layer-Graph nur eine inklusionsmaximale und nicht unbedingt maximale Pfadmenge?",
+    "back": "Die DFS arbeitet **greedy**: Sobald sie einen kürzesten augmentierenden Pfad findet, nimmt sie ihn und entfernt benutzte Knoten bzw. blockiert deren weitere Verwendung.\n\nDadurch gilt am Ende:\n\n- Es lässt sich **kein weiterer** knotendisjunkter kürzester augmentierender Pfad hinzufügen.\n\nDas ist genau **inklusionsmaximal**.\n\nAber die frühe Wahl eines Pfades kann spätere Möglichkeiten verbauen. Vielleicht hätte eine andere Auswahl insgesamt **mehr** knotendisjunkte kürzeste Pfade zugelassen. Deshalb ist die Menge nicht notwendigerweise **kardinalitätsmaximal**.\n\nFür das Hopcroft-Karp-Phasenargument genügt Inklusionsmaximalität jedoch."
+  },
+  {
+    "front": "[2026-03-05] Warum ist Knotendisjunktheit der Pfade wichtig und Kanten­disjunktheit nicht genug?",
+    "back": "Für die Analyse zählt, dass jeder augmentierende Pfad **eigene Knoten verbraucht**.\n\nHat jeder kürzeste augmentierende Pfad Länge $k$, dann enthält er mindestens $k+1$ Knoten. Bei **knotendisjunkten** Pfaden folgt daher sofort die Schranke\n$$\n\\#\\text{Pfade} \\le \\left\\lfloor \\frac{n}{k+1} \\right\\rfloor.\n$$\n\nBei nur **kantendisjunkten** Pfaden könnten mehrere Pfade dieselben Knoten teilen. Dann bricht genau dieses Zählargument zusammen: Man kann die Anzahl der Pfade nicht mehr über die Zahl der Knoten beschränken.\n\nFür das Phasenargument ist also Knotendisjunktheit essenziell, nicht bloß Kantendisjunktheit."
+  },
+  {
+    "front": "[2026-03-05] Welche einfache obere Schranke gibt es für die Zahl kürzester knotendisjunkter augmentierender Pfade der Länge $k$?",
+    "back": "Ein augmentierender Pfad mit Länge $k$ Kanten enthält genau\n$$\nk+1\n$$\nKnoten.\n\nSind mehrere solche Pfade **paarweise knotendisjunkt**, dann verbraucht jeder mindestens $k+1$ eigene Knoten. Bei insgesamt $n$ Knoten können daher höchstens\n$$\n\\left\\lfloor \\frac{n}{k+1} \\right\\rfloor\n$$\nsolche Pfade existieren.\n\nDiese Schranke ist zentral, weil sie zeigt:\n\n- Sind die kürzesten augmentierenden Pfade schon lang,\n- dann gibt es nur noch wenige disjunkte davon,\n- also ist das Matching schon nahe am Maximum.\n\nGenau daraus entsteht später die $O(\\sqrt{n})$-Phasenintuition."
+  },
+  {
+    "front": "[2026-03-05] Warum wächst nach einer Phase die Länge des kürzesten augmentierenden Pfads mindestens um $2$?",
+    "back": "In einer Phase augmentiert man entlang einer **inklusionsmaximalen Menge knotendisjunkter kürzester augmentierender Pfade** der aktuellen Länge $k$.\n\nDanach kann es keinen neuen augmentierenden Pfad der Länge $k$ oder kürzer geben. Intuitiv wäre ein solcher Pfad mit der alten Struktur unverträglich: Über die symmetrische Differenz könnte man zeigen, dass er entweder\n\n- schon vorher existiert hätte und zur gefundenen Menge hätte hinzugefügt werden können,\n- oder wegen Überlappungen nicht kürzer bleiben kann.\n\nFormal liefert das Symmetrische-Differenz-Argument, dass neue augmentierende Pfade gegenüber den alten um mindestens $2$ länger sein müssen.\n\nFolge:\n$$\n\\text{neue minimale Länge} \\ge k+2.\n$$\n\nDas ist der Kern des Phasenfortschritts."
+  },
+  {
+    "front": "[2026-03-05] Warum führt das Längenwachstum auf nur $O(\\sqrt{n})$ Phasen?",
+    "back": "Nach $t$ Phasen ist die Länge des kürzesten augmentierenden Pfads mindestens ungefähr\n$$\n2t.\n$$\n\nDann enthält jeder noch mögliche augmentierende Pfad mindestens $2t+1$ Knoten. Also können höchstens\n$$\n\\left\\lfloor \\frac{n}{2t+1} \\right\\rfloor\n$$\nknotendisjunkte solche Pfade existieren; das beschränkt die noch fehlende Verbesserung bis zum Maximum.\n\nDaraus ergibt sich grob:\n$$\n\\text{Phasen} \\le t + \\frac{n}{2t+1}.\n$$\n\nWählt man\n$$\nt \\approx \\sqrt{n},\n$$\ndann werden beide Terme von Ordnung $\\sqrt{n}$, also insgesamt\n$$\nO(\\sqrt{n}).\n$$\n\nMit linearer Arbeit pro Phase ergibt das die bekannte Hopcroft-Karp-Idee."
+  },
+  {
+    "front": "[2026-03-05] Wie minimiert man grob $f(t)=t+\\frac{n}{2t+1}$, und was folgt daraus?",
+    "back": "Für große $n$ kann man grob\n$$\n2t+1 \\approx 2t\n$$\nsetzen und betrachten\n$$\nf(t) \\approx t + \\frac{n}{2t}.\n$$\n\nDiese Form ist minimal, wenn beide Terme ungefähr gleich groß sind:\n$$\nt \\approx \\frac{n}{2t}.\n$$\nDaraus folgt\n$$\n2t^2 \\approx n\n\\quad\\Rightarrow\\quad\nt \\approx \\sqrt{\\frac{n}{2}} = \\Theta(\\sqrt{n}).\n$$\n\nAlso ist auch der Minimalwert von $f(t)$ von Ordnung\n$$\n\\Theta(\\sqrt{n}).\n$$\n\nInterpretation: Nach etwa $\\sqrt{n}$ Phasen ist entweder die Pfadlänge groß geworden oder es bleiben nur noch wenige Augmentierungen übrig."
+  },
+  {
+    "front": "[2026-03-05] Warum ist $\\text{cost}(T) \\le \\text{OPT}$ für einen MST $T$ im metrischen TSP?",
+    "back": "Sei $C^*$ ein optimaler Hamiltonkreis mit Kosten $\\text{OPT}$.\n\nEntfernt man aus $C^*$ eine beliebige Kante, bleibt ein **Spannbaum** auf allen Knoten übrig. Dieser Spannbaum hat Kosten höchstens\n$$\n\\text{OPT}.\n$$\n\nDa ein **minimaler Spannbaum** $T$ unter allen Spannbäumen die kleinsten Kosten hat, gilt sofort\n$$\n\\text{cost}(T) \\le \\text{OPT}.\n$$\n\nDiese Beobachtung ist die Basis sowohl für die $2$-Approximation als auch für die $1.5$-Approximation des metrischen TSP."
+  },
+  {
+    "front": "[2026-03-05] Warum funktioniert beim metrischen TSP „MST verdoppeln + Shortcutting“ als $2$-Approximation?",
+    "back": "Aus einem MST $T$ macht man durch Verdoppeln aller Kanten einen eulerbaren Multigraphen. Seine Kosten sind\n$$\n2\\cdot \\text{cost}(T) \\le 2\\cdot \\text{OPT}.\n$$\n\nEine Euler-Tour besucht Knoten eventuell mehrfach. Um daraus einen Hamiltonkreis zu machen, überspringt man bereits besuchte Knoten per **Shortcutting**.\n\nWarum steigen die Kosten dabei nicht?\n\nWegen der **Dreiecksungleichung**: Wenn man statt $u\\to v\\to w$ direkt $u\\to w$ geht, gilt\n$$\nc(u,w) \\le c(u,v)+c(v,w).\n$$\n\nAlso wird die Tour durch Shortcutting nie teurer. Das Ergebnis ist ein Hamiltonkreis mit Kosten höchstens\n$$\n2\\cdot \\text{OPT}.\n$$\n\nOhne Dreiecksungleichung wäre dieser Schritt nicht korrekt."
+  },
+  {
+    "front": "[2026-03-05] Warum betrachtet die $1.5$-Approximation genau die Knoten ungeraden Grades im MST?",
+    "back": "In jedem Graphen ist die Anzahl der Knoten ungeraden Grades **gerade**. Sei $S$ diese Menge im MST $T$.\n\nFügt man nun ein **Perfect Matching** auf $S$ hinzu, dann erhöht jede Matching-Kante den Grad ihrer beiden Endknoten um $1$. Dadurch werden genau die ungeraden Grade zu geraden, und alle bereits geraden Knoten bleiben gerade.\n\nAlso hat in\n$$\nT \\cup M_S\n$$\njeder Knoten geraden Grad. Der Graph ist damit **eulerbar**.\n\nGenau deshalb sind die ungeraden Knoten die „Problemknoten“, die man durch Matching ausgleichen muss."
+  },
+  {
+    "front": "[2026-03-10] Warum ist eine $k$-Färbung genau dasselbe wie eine Zerlegung in $k$ stabile Mengen?",
+    "back": "Bei einer **$k$-Färbung** $C:V\\to\\{1,\\dots,k\\}$ ist jede Farbklasse\n$$\nS_i=\\{v\\in V: C(v)=i\\}\n$$\neine **stabile Menge**, denn benachbarte Knoten dürfen nicht dieselbe Farbe haben.\n\nUmgekehrt: Hat man eine Zerlegung\n$$\nV=S_1\\dot\\cup S_2\\dot\\cup \\dots \\dot\\cup S_k\n$$\nin $k$ stabile Mengen, dann erhält man sofort eine $k$-Färbung, indem man allen Knoten in $S_i$ die Farbe $i$ gibt.\n\nAlso gilt äquivalent:\n$$\n\\chi(G)\\le k \\iff V \\text{ lässt sich in } k \\text{ stabile Mengen zerlegen.}\n$$\n\nDas ist wichtig, weil Färbung dadurch als **Partitionierungsproblem** verstanden werden kann, nicht nur als Zuordnung von Zahlen."
+  },
+  {
+    "front": "[2026-03-10] Wie modelliert man Prüfungsplanung als Graphfärbungsproblem?",
+    "back": "Man bildet einen Graphen mit:\n\n- **Knoten** $=$ Vorlesungen\n- **Kante** zwischen zwei Vorlesungen $A,B$, falls es mindestens eine Studentin oder einen Studenten gibt, die/der beide belegt\n\nDann entsprechen **Farben** den Prüfungszeiträumen.\n\nEine gültige Färbung garantiert:\n$$\n(A,B)\\in E \\Rightarrow C(A)\\neq C(B),\n$$\nalso liegen konfliktbehaftete Prüfungen in verschiedenen Zeitslots.\n\nDie **chromatische Zahl** $\\chi(G)$ ist damit die minimale Anzahl benötigter Prüfungszeiträume.\n\nDer Nutzen der Modellierung: Ein organisatorisches Konfliktproblem wird zu einem präzisen kombinatorischen Optimierungsproblem."
+  },
+  {
+    "front": "[2026-03-10] Warum liegt das Problem „Ist $\\chi(G)\\le k$?“ in NP?",
+    "back": "Ein **Zertifikat** ist einfach eine konkrete Färbung\n$$\nC:V\\to\\{1,\\dots,k\\}.\n$$\n\nDiese kann man in Polynomialzeit verifizieren:\n\n- Prüfe für jeden Knoten, ob seine Farbe in $\\{1,\\dots,k\\}$ liegt.\n- Prüfe für jede Kante $(u,v)\\in E$, ob\n  $$\n  C(u)\\neq C(v)\n  $$\n  gilt.\n\nDa jede Kante nur einmal geprüft werden muss, ist die Verifikation in Zeit polynomial in $|V|+|E|$ möglich.\n\nDeshalb gehört das Entscheidungsproblem\n$$\n\\chi(G)\\le k\\ ?\n$$\nzur Klasse **NP**."
+  },
+  {
+    "front": "[2026-03-10] Warum folgt aus lokaler 2-Färbbarkeit nicht, dass der ganze Graph 2-färbbar ist?",
+    "back": "**2-Färbbarkeit ist kein rein lokales Phänomen.** Ein Graph kann in jeder kleinen Umgebung baumartig aussehen und trotzdem global viele Farben benötigen.\n\nDie Vorlesung betonte: Es gibt Graphen mit\n\n- **beliebig großem girth** (also keinen kurzen Kreisen),\n- aber trotzdem **hoher chromatischer Zahl**.\n\nLokal sieht ein solcher Graph oft wie ein Baum aus, und Bäume sind 2-färbbar. Global können jedoch lange, komplizierte Strukturen entstehen, die viele Farben erzwingen.\n\nDie falsche Schlussrichtung wäre also:\n$$\n\\text{„jede Radius-$r$-Umgebung ist 2-färbbar“} \\;\\not\\Rightarrow\\; \\chi(G)=2.\n$$\n\nDie Kernaussage: **Färbbarkeit hängt von globaler Struktur ab, nicht nur von lokalen Nachbarschaften.**"
+  },
+  {
+    "front": "[2026-03-10] Warum benutzt Greedy in jeder festen Reihenfolge höchstens $\\Delta(G)+1$ Farben?",
+    "back": "Wenn der Greedy-Algorithmus einen Knoten $v_i$ färbt, sind nur seine **bereits gefärbten Nachbarn** relevant.\n\nUnter diesen können höchstens\n$$\n\\deg(v_i)\\le \\Delta(G)\n$$\nverschiedene Farben vorkommen.\n\nBetrachtet man also die Farbmenge\n$$\n\\{1,\\dots,\\Delta(G)+1\\},\n$$\ndann können höchstens $\\Delta(G)$ davon blockiert sein. Mindestens eine Farbe bleibt frei.\n\nDaher kann Greedy jeden Knoten legal färben und insgesamt höchstens\n$$\n\\Delta(G)+1\n$$\nFarben verwenden.\n\nDas ist eine einfache, aber allgemeine Obergrenze — unabhängig von der gewählten Reihenfolge."
+  },
+  {
+    "front": "[2026-03-10] Warum ist die Aussage „Greedy findet höchstens $k$ Farben“ nicht gleichbedeutend mit „$\\chi(G)\\le k$“?",
+    "back": "Weil **Greedy stark von der Reihenfolge abhängt**.\n\n- Wenn $\\chi(G)\\le k$, existiert eine optimale Färbung mit $k$ Farben.\n- Daraus folgt aber **nicht**, dass Greedy in einer beliebigen Reihenfolge ebenfalls nur $k$ Farben benutzt.\n\nGreedy ist also ein **Algorithmus**, keine Charakterisierung der chromatischen Zahl.\n\nDie Vorlesung betonte genau diesen Fallstrick: Ein Graph kann sehr wenige Farben benötigen, aber Greedy kann durch eine schlechte Reihenfolge deutlich mehr Farben verbrauchen.\n\nFormal:\n$$\n\\chi(G)\\le k \\centernot\\Rightarrow \\text{Greedy in jeder Reihenfolge benutzt }\\le k\\text{ Farben.}\n$$\n\nMan muss daher zwischen **Existenz einer guten Färbung** und **Verhalten eines konkreten Verfahrens** unterscheiden."
+  },
+  {
+    "front": "[2026-03-10] Wie konstruiert man die smallest-last-Reihenfolge?",
+    "back": "Die **smallest-last-Heuristik** baut die Reihenfolge rückwärts auf:\n\n1. Wähle im aktuellen Restgraphen einen Knoten mit **minimalem Grad**.\n2. Entferne ihn.\n3. Setze ihn **ans Ende** der Reihenfolge.\n4. Wiederhole, bis alle Knoten entfernt sind.\n\nAm Ende färbt man die so erhaltene Reihenfolge mit Greedy von vorne.\n\nDie Idee: Ein Knoten, der beim Entfernen kleinen Grad hatte, hat beim späteren Färben nur wenige bereits gefärbte Nachbarn. Dadurch sinkt oft die Zahl benötigter Farben.\n\nEntscheidend ist die Eigenschaft:\nWenn in jedem Teilgraphen ein Knoten mit Grad $\\le D$ existiert, dann benutzt Greedy auf der smallest-last-Reihenfolge höchstens\n$$\nD+1\n$$\nFarben."
+  },
+  {
+    "front": "[2026-03-10] Warum ist smallest-last auf Bäumen optimal?",
+    "back": "Jeder **Baum** mit mindestens zwei Knoten besitzt ein Blatt, also einen Knoten mit Grad $1$.\n\nDamit gilt sogar für jeden Teilgraphen eines Baums: Es gibt einen Knoten mit Grad $\\le 1$.\n\nWendet man smallest-last an, wird also immer ein Knoten mit Grad höchstens $1$ entfernt. In der späteren Greedy-Färbung hat jeder Knoten daher höchstens einen bereits gefärbten Nachbarn.\n\nFolglich genügen\n$$\n1+1=2\n$$\nFarben.\n\nDa jeder nichtleere Baum mit mindestens einer Kante bipartit, aber nicht 1-färbbar ist, ist das optimal:\n$$\n\\chi(T)=2.\n$$\n\nsmallest-last liefert auf Bäumen also nicht nur eine gute, sondern eine **optimale** Färbung."
+  },
+  {
+    "front": "[2026-03-10] Warum liefert smallest-last für planare Graphen immer eine 6-Färbung?",
+    "back": "Für **planare Graphen** gilt: In jedem planaren Graphen und damit auch in jedem seiner Teilgraphen existiert ein Knoten mit Grad höchstens $5$.\n\nDeshalb kann smallest-last immer einen Knoten mit Grad $\\le 5$ entfernen. In der späteren Greedy-Phase hat jeder Knoten dann höchstens $5$ bereits gefärbte Nachbarn.\n\nAlso reichen stets\n$$\n5+1=6\n$$\nFarben.\n\nDamit erhält man einen einfachen linearen Algorithmus zur 6-Färbung planarer Graphen.\n\nWichtig ist die Struktur des Arguments:\n- nicht der globale Maximalgrad ist entscheidend,\n- sondern die Eigenschaft\n  $$\n  \\forall H\\subseteq G:\\ \\exists v\\in V(H)\\text{ mit }\\deg_H(v)\\le 5.\n  $$\n\nGenau diese Teilgraph-Eigenschaft macht smallest-last wirksam."
+  },
+  {
+    "front": "[2026-03-10] Was zeigt das Beispiel mit dem bipartiten Graphen aus $K_{n/2,n/2}$ ohne perfektes Matching?",
+    "back": "Es zeigt, dass **Greedy trotz $\\chi(G)=2$ sehr viele Farben verbrauchen kann**, wenn die Reihenfolge schlecht gewählt ist.\n\nDer Graph bleibt **bipartit**, also gilt:\n$$\n\\chi(G)=2.\n$$\n\nTrotzdem kann eine ungeschickte Reihenfolge dazu führen, dass Greedy immer wieder eine neue Farbe einführt und insgesamt\n$$\n\\Omega(n)\n$$\nFarben benutzt.\n\nDie Lehre daraus:\n\n- Bipartitheit allein schützt Greedy nicht.\n- Die Qualität von Greedy hängt wesentlich von der **Knotenreihenfolge** ab.\n- Gute Heuristiken wie smallest-last sind deshalb praktisch wichtig.\n\nDas Beispiel ist ein klassischer Gegenbeleg gegen die naive Hoffnung, Greedy sei „fast optimal“."
+  },
+  {
+    "front": "[2026-03-10] Wie testet man, ob ein Graph bipartit ist?",
+    "back": "Ein Graph ist genau dann **bipartit**, wenn er **keinen ungeraden Kreis** enthält.\n\nAlgorithmisch testet man das mit **BFS**:\n\n1. Starte in jeder noch unbesuchten Komponente.\n2. Gib dem Startknoten Farbe $1$.\n3. Färbe bei BFS jeden Nachbarn mit der jeweils anderen Farbe.\n4. Tritt eine Kante zwischen zwei gleich gefärbten Knoten auf, ist der Graph nicht bipartit.\n\nFalls kein Konflikt entsteht, erhält man eine 2-Färbung.\n\nAlso:\n$$\nG \\text{ bipartit } \\iff \\chi(G)\\le 2 \\iff G \\text{ enthält keinen ungeraden Kreis.}\n$$\n\nBFS ist hier nützlich, weil es die Knoten schichtweise nach Distanz ordnet und die Parität der Schichten direkt die zwei Farbklassen liefert."
+  },
+  {
+    "front": "[2026-03-10] Warum darf man Färbungen verschiedener Blöcke an einem Artikulationsknoten durch Farbentausch anpassen?",
+    "back": "Ein **Farbentausch** bedeutet, Farben innerhalb eines Blocks zu permutieren. Das verletzt keine Gültigkeit, weil nur die Gleichheit/Ungleichheit benachbarter Farben zählt, nicht die Namen der Farben.\n\nTreffen zwei Blöcke in einem **Artikulationsknoten** zusammen, kann man daher die Farben eines Blocks so umbenennen, dass der gemeinsame Knoten in beiden Blöcken dieselbe Farbe erhält.\n\nDa der **Blockgraph** ein Baum ist, kann man die Blöcke von einer Wurzel aus nacheinander behandeln:\n\n- Elternblock färben\n- Kindblock färben\n- Farben im Kindblock passend permutieren\n\nSo lässt sich eine globale $k$-Färbung aus lokalen Blockfärbungen zusammensetzen.\n\nDie zentrale Einsicht: **Artikulationsknoten koppeln Blöcke nur schwach**, daher kann man lokal arbeiten und global konsistent machen."
+  },
+  {
+    "front": "[2026-03-10] Welche Ausnahmen muss man bei Brooks' Theorem unbedingt nennen?",
+    "back": "Für einen zusammenhängenden Graphen gilt nach **Brooks**:\n$$\n\\chi(G)\\le \\Delta(G),\n$$\naber **nicht immer**.\n\nDie beiden Ausnahmen sind:\n\n- **vollständige Graphen** $K_n$\n- **ungerade Kreise**\n\nFür diese gilt nämlich\n$$\n\\chi(G)=\\Delta(G)+1.\n$$\n\nBeispiele:\n\n- Bei $K_n$ ist jeder Knoten mit allen anderen adjazent, also braucht jeder Knoten eine eigene Farbe:\n  $$\n  \\chi(K_n)=n=\\Delta(K_n)+1.\n  $$\n- Beim ungeraden Kreis $C_{2m+1}$ ist\n  $$\n  \\Delta(C_{2m+1})=2,\\qquad \\chi(C_{2m+1})=3.\n  $$\n\nOhne diese Ausnahmen wäre die Aussage falsch."
+  },
+  {
+    "front": "[2026-03-10] Warum sind gerade vollständige Graphen und ungerade Kreise die natürlichen Gegenbeispiele zu $\\chi(G)\\le \\Delta(G)$?",
+    "back": "Beide Graphklassen „sättigen“ die Schranke maximal aus:\n\n- Im **vollständigen Graphen** $K_n$ ist jeder Knoten mit allen anderen verbunden. Daher kann keine Farbe wiederverwendet werden:\n  $$\n  \\chi(K_n)=n.\n  $$\n  Gleichzeitig ist\n  $$\n  \\Delta(K_n)=n-1.\n  $$\n\n- Im **ungeraden Kreis** $C_{2m+1}$ hat jeder Knoten Grad $2$, aber 2 Farben reichen wegen der ungeraden Parität nicht:\n  $$\n  \\chi(C_{2m+1})=3=\\Delta+1.\n  $$\n\nDiese beiden Typen zeigen zwei verschiedene Ursachen für „eine Farbe mehr als $\\Delta$“:\n\n- extreme Dichte bei $K_n$\n- Paritätsproblem bei ungeraden Kreisen\n\nGenau deshalb erscheinen sie als die einzigen Ausnahmen in Brooks' Theorem."
+  },
+  {
+    "front": "[2026-03-10] Warum entfernt der $O(\\sqrt{n})$-Algorithmus für 3-färbbare Graphen in jeder Schleife mindestens $\\sqrt{n}+1$ Knoten?",
+    "back": "Die Schleife wird nur ausgeführt, wenn es einen ungefärbten Knoten $v$ mit **mehr als $\\sqrt{n}$ ungefärbten Nachbarn** gibt.\n\nDann färbt man:\n\n- den Knoten $v$ selbst mit einer neuen Farbe,\n- alle seine ungefärbten Nachbarn mit zwei weiteren neuen Farben.\n\nDamit werden insgesamt mehr als\n$$\n1+\\sqrt{n}\n$$\nKnoten entfernt, also mindestens\n$$\n\\sqrt{n}+1.\n$$\n\nDiese Zählung ist der Kern der Laufzeit-/Farbanalyse: Jede Iteration „verbraucht“ zwar 3 neue Farben, entfernt aber auch viele Knoten. Deshalb kann die Zahl der Iterationen nicht zu groß werden."
+  },
+  {
+    "front": "[2026-03-12] Warum garantiert Greedy-Färbung immer höchstens $\\Delta+1$ Farben?",
+    "back": "Beim Färben eines Knotens $v$ sind nur die Farben seiner bereits gefärbten Nachbarn verboten. Davon gibt es höchstens $\\deg(v)\\le \\Delta$.\n\nAlso können höchstens $\\Delta$ Farben blockiert sein. Unter den Farben $\\{1,\\dots,\\Delta+1\\}$ bleibt daher immer mindestens eine freie Farbe übrig.\n\nDas ist die zentrale Worst-Case-Garantie von **Greedy-Färbung**:\n$$\n\\chi_{\\text{greedy}}(G)\\le \\Delta(G)+1.\n$$\n\nDie Aussage hängt von der Reihenfolge ab nur für die konkrete Zahl der benutzten Farben, nicht für die Garantie."
+  },
+  {
+    "front": "[2026-03-12] Warum dreht man bei der Lösch-Heuristik die Löschreihenfolge vor dem Greedy-Färben um?",
+    "back": "Bei der **Lösch-Heuristik** entfernt man wiederholt einen Knoten kleinen Grades. In diesem Moment hat der Knoten nur wenige Nachbarn im noch verbleibenden Graphen.\n\nFärbt man später in **umgekehrter** Reihenfolge, dann sieht dieser Knoten beim Färben genau nur diese wenigen „späteren“ Nachbarn als schon gefärbt. Dadurch ist seine Situation einfach.\n\nOhne Umdrehen ginge dieser Vorteil verloren: Früh gelöschte, „leichte“ Knoten würden auch früh gefärbt und helfen nicht, schwierige Knoten zu entlasten.\n\nDie Idee ist also:\n- beim Löschen kleine Restgrade ausnutzen,\n- diese Eigenschaft durch Umkehrung in eine gute Färbereihenfolge übersetzen."
+  },
+  {
+    "front": "[2026-03-12] Wann verbessert Brooks’ Satz die triviale Greedy-Garantie $\\Delta+1$ auf $\\Delta$?",
+    "back": "**Brooks’ Satz** sagt für zusammenhängende Graphen:\nWenn $G$ weder ein vollständiger Graph noch ein ungerader Kreis ist, dann gilt\n$$\n\\chi(G)\\le \\Delta(G).\n$$\n\nDamit verbessert er die allgemeine Greedy-Schranke\n$$\n\\chi(G)\\le \\Delta(G)+1\n$$\num genau eine Farbe.\n\nDie beiden Ausnahmen sind notwendig:\n- Für den vollständigen Graphen $K_{\\Delta+1}$ braucht man tatsächlich $\\Delta+1$ Farben.\n- Für einen ungeraden Kreis gilt $\\Delta=2$, aber man braucht $3$ Farben.\n\nGerade diese beiden Familien zeigen, warum die Aussage nicht für alle zusammenhängenden Graphen gelten kann."
+  },
+  {
+    "front": "[2026-03-12] Warum kann man Färbungen über Blöcke hinweg durch Farbtausch konsistent machen?",
+    "back": "Die **Blöcke** eines Graphen hängen über **Artikulationsknoten** zusammen, und diese Struktur bildet einen Baum, den **Block-Baum**.\n\nDarum kann man:\n- einen Block als Wurzel wählen,\n- die Blöcke nacheinander bearbeiten,\n- in einem neuen Block Farben **permutieren**, damit die Farbe am gemeinsamen Artikulationsknoten zur bereits festgelegten Farbe passt.\n\nWarum zerstört das nichts? Weil ein Block nur über Artikulationsknoten mit dem schon bearbeiteten Teil verbunden ist. Ein lokaler Farbtausch innerhalb dieses Blocks beeinflusst also keine anderen, bereits abgeschlossenen Blöcke außer an genau diesen Verknüpfungspunkten.\n\nDie Baumstruktur verhindert zyklische Abhängigkeiten."
+  },
+  {
+    "front": "[2026-03-12] Warum ist $G[N(v)]$ in einem 3-färbbaren Graphen immer bipartit?",
+    "back": "Ist $G$ **3-färbbar**, dann ist auch jeder induzierte Teilgraph 3-färbbar, insbesondere der auf $\\{v\\}\\cup N(v)$.\n\nGib $v$ in einer 3-Färbung eine Farbe, etwa **rot**. Dann dürfen alle Nachbarn von $v$ diese Farbe nicht benutzen. Für sie bleiben also nur zwei Farben, etwa **blau** und **grün**.\n\nDamit ist der von den Nachbarn induzierte Graph $G[N(v)]$ mit zwei Farben färbbar, also **2-färbbar**. Das ist äquivalent zu **bipartit**.\n\nFormal:\n$$\nG \\text{ 3-färbbar } \\implies G[N(v)] \\text{ 2-färbbar } \\implies G[N(v)] \\text{ bipartit.}\n$$"
+  },
+  {
+    "front": "[2026-03-12] Wie färbt man die Nachbarschaft $N(v)$ in linearer Zeit mit zwei Farben?",
+    "back": "Sobald man weiß, dass $G[N(v)]$ **bipartit** ist, verwendet man **BFS**.\n\nVorgehen:\n- Starte in jeder noch unbesuchten Zusammenhangskomponente von $G[N(v)]$ eine BFS.\n- Färbe den Startknoten mit Farbe $1$.\n- Jeder neu entdeckte Nachbar bekommt die jeweils andere Farbe.\n- Trifft man auf eine Kante zwischen zwei gleich gefärbten Knoten, ist der Graph nicht bipartit.\n\nFür bipartite Graphen liefert BFS also direkt eine 2-Färbung in Zeit\n$$\nO(|V|+|E|).\n$$\n\nIm Approximationsalgorithmus ist das genau das Werkzeug, um die Nachbarn eines Knotens $v$ mit nur zwei neuen Farben zu färben."
+  },
+  {
+    "front": "[2026-03-12] Warum läuft die While-Schleife im $O(\\sqrt{n})$-Färbungsalgorithmus höchstens $\\sqrt{n}$-mal?",
+    "back": "Eine Iteration wird nur ausgeführt, wenn es einen ungefärbten Knoten $v$ mit mehr als $\\sqrt{n}$ ungefärbten Nachbarn gibt.\n\nDann färbt man:\n- $v$ selbst,\n- alle diese ungefärbten Nachbarn.\n\nAlso verschwinden in einer Iteration mehr als $\\sqrt{n}$ Knoten aus dem Restgraphen. Nach $k$ Iterationen sind daher mehr als $k\\sqrt{n}$ Knoten erledigt.\n\nDa es insgesamt nur $n$ Knoten gibt, muss gelten\n$$\nk\\sqrt{n}\\le n.\n$$\nAlso\n$$\nk\\le \\sqrt{n}.\n$$\n\nGenau dieses Zählargument verhindert, dass die Schleife zu viele neue Farben verbraucht."
+  },
+  {
+    "front": "[2026-03-12] Warum hat der Restgraph nach der While-Schleife Maximalgrad höchstens $\\sqrt{n}$?",
+    "back": "Die Schleife stoppt genau dann, wenn es **keinen** ungefärbten Knoten mehr gibt, der mehr als $\\sqrt{n}$ ungefärbte Nachbarn hat.\n\nDas bedeutet unmittelbar: Im verbleibenden, noch ungefärbten Teilgraphen hat jeder Knoten Grad höchstens $\\sqrt{n}$.\n\nAlso gilt für den Restgraphen:\n$$\n\\Delta \\le \\sqrt{n}.\n$$\n\nDarauf kann man dann die Greedy-Garantie anwenden und erhält eine Färbung mit höchstens\n$$\n\\sqrt{n}+1\n$$\nweiteren Farben.\n\nDer Punkt ist: Die Schleife „schält“ genau die Stellen mit großem Restgrad weg."
+  },
+  {
+    "front": "[2026-03-12] Warum benutzt der 3-färbbare-Approximationsalgorithmus insgesamt höchstens $4\\sqrt{n}+1$ Farben?",
+    "back": "Sei $k$ die Anzahl der While-Iterationen. Pro Iteration werden höchstens **3 neue Farben** benutzt:\n- eine für $v$,\n- zwei für $N(v)$.\n\nAlso verbraucht die Schleife höchstens\n$$\n3k \\le 3\\sqrt{n}\n$$\nFarben.\n\nDanach hat der Restgraph Maximalgrad höchstens $\\sqrt{n}$ und kann greedy mit höchstens\n$$\n\\sqrt{n}+1\n$$\nFarben gefärbt werden.\n\nInsgesamt also:\n$$\n3\\sqrt{n}+(\\sqrt{n}+1)=4\\sqrt{n}+1.\n$$\n\nDas ist die zentrale Approximationsgarantie:\n$$\nO(\\sqrt{n}) \\text{ Farben in linearer Zeit.}\n$$"
+  },
+  {
+    "front": "[2026-03-12] Was bedeutet Scheitern bzw. Erfolg des $O(\\sqrt{n})$-Algorithmus für 3-Färbbarkeit?",
+    "back": "**Scheitern** ist aussagekräftig: Wenn in einer Iteration $G[N(v)]$ nicht 2-färbbar ist, dann kann der Graph nicht 3-färbbar sein, denn in jedem 3-färbbaren Graphen müsste $N(v)$ bipartit sein.\n\n**Erfolg** ist schwächer: Wenn der Algorithmus eine Färbung mit $O(\\sqrt{n})$ Farben findet, beweist das nur die Existenz dieser Färbung, nicht\n$$\n\\chi(G)=3.\n$$\n\nDas passt dazu, dass das Erkennen von **3-Färbbarkeit** NP-vollständig ist. Der Algorithmus ist also kein vollständiger Entscheider:\n- Scheitern $\\Rightarrow$ sicher **nicht** 3-färbbar,\n- Erfolg $\\Rightarrow$ nur eine gefundene Färbung, aber kein Beweis für 3-Färbbarkeit."
+  },
+  {
+    "front": "[2026-03-12] Was ist formal ein $\\alpha$-Spanner?",
+    "back": "Ein **$\\alpha$-Spanner** eines Graphen $G=(V,E)$ ist ein Teilgraph\n$$\nH=(V,E_H), \\quad E_H\\subseteq E,\n$$\nso dass für alle Knotenpaare $u,v$ gilt:\n$$\n\\operatorname{dist}_G(u,v)\\le \\operatorname{dist}_H(u,v)\\le \\alpha\\cdot \\operatorname{dist}_G(u,v).\n$$\n\nDie linke Ungleichung ist automatisch wahr, weil das Entfernen von Kanten Distanzen nicht verkleinern kann.\n\nDie eigentliche Forderung ist also die rechte Seite: In $H$ dürfen Wege höchstens um den Faktor $\\alpha$ länger werden.\n\nEin Spanner ist damit ein **dünnerer Graph**, der Distanzen kontrolliert approximiert."
+  },
+  {
+    "front": "[2026-03-12] Wann fügt der Greedy-Spanner-Algorithmus eine Kante hinzu, und warum ist das sinnvoll?",
+    "back": "Für jede Kante $e=\\{u,v\\}\\in E$ prüft der Algorithmus im aktuellen Teilgraphen $H$:\n- Falls\n  $$\n  \\operatorname{dist}_H(u,v)\\le \\alpha,\n  $$\n  wird $e$ **nicht** hinzugefügt.\n- Sonst wird $e$ **hinzugefügt**.\n\nSinn der Regel: Eine Kante ist nur dann nötig, wenn ihre Endpunkte bisher nicht schon durch einen ausreichend kurzen Umweg verbunden sind.\n\nDa im ungewichteten Graphen jede Originalkante Länge $1$ hat, reicht für die Spanner-Bedingung genau ein Weg der Länge höchstens $\\alpha$ zwischen ihren Endpunkten.\n\nDer Algorithmus behält also nur „wirklich notwendige“ Kanten."
+  },
+  {
+    "front": "[2026-03-12] Warum reicht es beim Greedy-Spanner, nur Originalkanten zu kontrollieren, um die Garantie für alle Knotenpaare zu bekommen?",
+    "back": "Zuerst zeigt man: Für jede Originalkante $\\{u,v\\}\\in E$ gibt es am Ende in $H$ einen Weg der Länge höchstens $\\alpha$ zwischen $u$ und $v$.\n\nNun betrachte beliebige Knoten $s,t$ und einen kürzesten Pfad in $G$:\n$$\ns=v_0,v_1,\\dots,v_\\ell=t,\n$$\nwobei $\\ell=\\operatorname{dist}_G(s,t)$.\n\nJede Kante $\\{v_{i-1},v_i\\}$ dieses Pfades kann in $H$ durch einen Weg der Länge höchstens $\\alpha$ ersetzt werden. Durch Hintereinanderschalten erhält man einen Weg in $H$ der Länge höchstens\n$$\n\\alpha \\ell = \\alpha\\cdot \\operatorname{dist}_G(s,t).\n$$\n\nAlso gilt für alle Paare:\n$$\n\\operatorname{dist}_H(s,t)\\le \\alpha\\cdot \\operatorname{dist}_G(s,t).\n$$"
+  },
+  {
+    "front": "[2026-03-12] Warum kann ein Greedy-Spanner keinen Zyklus der Länge $\\le \\alpha$ enthalten?",
+    "back": "Angenommen, $H$ enthalte einen Zyklus der Länge höchstens $\\alpha$. Betrachte in diesem Zyklus die **zuletzt hinzugefügte** Kante $e=\\{u,v\\}$.\n\nAls $e$ eingefügt wurde, waren alle anderen Kanten des Zyklus bereits vorhanden. Diese übrigen Kanten bilden also schon einen Weg von $u$ nach $v$.\n\nSeine Länge ist höchstens\n$$\n\\alpha-1 < \\alpha\n$$\nbzw. jedenfalls $\\le \\alpha$ bei einem Zyklus der Länge $\\le \\alpha$.\n\nDann hätte beim Einfügen von $e$ bereits gegolten:\n$$\n\\operatorname{dist}_H(u,v)\\le \\alpha,\n$$\nalso hätte $e$ **nicht** hinzugefügt werden dürfen. Widerspruch.\n\nDarum enthält ein Greedy-Spanner keine kurzen Zyklen dieser Länge."
+  },
+  {
+    "front": "[2026-03-12] Warum führt „keine kurzen Zyklen“ in der Spanner-Analyse zu einer linearen Kantenzahl?",
+    "back": "Ohne kurze Zyklen sieht die Umgebung eines Knotens bis zu Radius etwa $\\alpha/2$ **baumartig** aus. In einem Graphen, in dem zusätzlich jeder Knoten Grad mindestens $d$ hat, wächst ein BFS-Baum dann ungefähr mit Faktor $d-1$ pro Ebene.\n\nDas würde nach Tiefe $\\alpha/2$ grob sehr viele Knoten erzwingen, etwa\n$$\n(d-1)^{\\alpha/2},\n$$\nalso mehr, als der Graph insgesamt haben kann.\n\nDaher kann es keinen großen Restgraphen geben, in dem alle Knoten noch Grad $\\ge d$ haben. Mit dem Löschargument „entferne iterativ Knoten mit Grad $<d$“ folgt dann:\n- pro gelöschtem Knoten verschwinden weniger als $d$ Kanten,\n- insgesamt also nur $O(dn)=O(n)$ Kanten.\n\nSo erhält man die Analyseidee\n$$\n|E_H|=O(n).\n$$"
+  }
+]

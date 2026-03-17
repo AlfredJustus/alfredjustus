@@ -1,0 +1,482 @@
+[
+  {
+    "front": "[2026-02-16] Warum begrenzt der sequentielle Anteil den maximalen Nutzen von Parallelität?",
+    "back": "**Sequentielle Schritte** haben echte Abhängigkeiten und müssen nacheinander ausgeführt werden. Diese Teile können durch zusätzliche Worker nicht beschleunigt werden.\n\nFolge:\n- Nur **unabhängige Teilaufgaben** lassen sich parallel ausführen.\n- Die Gesamtlaufzeit wird daher immer durch den nicht parallelisierbaren Anteil mitbestimmt.\n- Selbst mit sehr vielen Kernen bleibt ein Rest an Arbeit übrig, der seriell ablaufen muss.\n\nDie Morgenroutine aus der Vorlesung zeigt das gut: Aufwachen $\\to$ Aufstehen $\\to$ Zähne putzen ist sequentiell, aber Kaffee machen und Toasten können parallel laufen."
+  },
+  {
+    "front": "[2026-02-16] Wie berechnet man den Speedup, und was bedeutet ein Wert kleiner als $1$?",
+    "back": "Der **Speedup** bei $p$ Verarbeitungseinheiten ist\n$$\n\\text{Speedup}(p)=\\frac{T_1}{T_p}.\n$$\n\nInterpretation:\n- $\\text{Speedup}(p) > 1$: Parallelisierung war schneller.\n- $\\text{Speedup}(p) = 1$: Kein Gewinn.\n- $\\text{Speedup}(p) < 1$: Parallelisierung war **langsamer** als die sequentielle Ausführung.\n\nEin Wert kleiner als $1$ bedeutet also, dass **Overhead**, schlechte Arbeitsteilung oder Synchronisation den möglichen Vorteil übertroffen haben."
+  },
+  {
+    "front": "[2026-02-16] Warum kann ein zweiter Worker die Laufzeit sogar erhöhen, obwohl mehr Rechenleistung vorhanden ist?",
+    "back": "Mehr Worker helfen nur, wenn der zusätzliche Aufwand klein genug bleibt. Zwei typische Gründe für eine **längere Laufzeit** sind:\n\n- **Overhead**: Kommunikation, Synchronisation, Starten von Threads, Zusammenführen von Ergebnissen.\n- **Load-Imbalance**: Ein Worker bekommt schwerere Arbeit und andere warten.\n\nParallelität ist daher kein Selbstläufer: Man gewinnt nur, wenn die aufgeteilte Arbeit den Zusatzaufwand rechtfertigt."
+  },
+  {
+    "front": "[2026-02-16] Rechne das Vorlesungsbeispiel nach: Was sagt $T_1=24\\,\\text{s}$ und $T_2=26\\,\\text{s}$ aus?",
+    "back": "Der Speedup ist\n$$\n\\text{Speedup}(2)=\\frac{24}{26}\\approx 0{,}923.\n$$\n\nDas ist **kleiner als $1$**, also war die Ausführung mit zwei Workern langsamer als mit einem.\n\nInterpretation:\n- Die eigentliche Rechenarbeit wurde zwar aufgeteilt,\n- aber **Kommunikation und Koordination** haben mehr Zeit gekostet als eingespart wurde.\n\nDas Beispiel zeigt die zentrale Lektion der Vorlesung: **Parallelisieren ohne Messen ist gefährlich**."
+  },
+  {
+    "front": "[2026-02-16] Warum kann statische Aufteilung trotz mehr Worker zu Leerlauf führen?",
+    "back": "Bei **statischer Aufteilung** bekommt jeder Worker zu Beginn einen festen Block Arbeit. Das ist einfach, aber problematisch, wenn die Blöcke unterschiedlich teuer sind.\n\nDann gilt:\n- Ein Worker mit schwerem Block läuft länger.\n- Schnellere Worker werden früher fertig.\n- Diese Worker warten untätig, obwohl noch Arbeit offen ist.\n\nIm 16-Zahlen-Beispiel mit $p=4$ führte genau das zu **Load-Imbalance**: Ein Worker hatte „größere“ bzw. aufwendigere Zahlen und bestimmte damit die Gesamtlaufzeit."
+  },
+  {
+    "front": "[2026-02-16] Welche Mechanismen verbessern Load Balancing bei vielen kleinen Tasks?",
+    "back": "Statt Arbeit einmalig fest zuzuweisen, sollte man sie **dynamisch** verteilen.\n\nZwei konkrete Strategien aus der Vorlesung:\n- **Zentraler Task-Stapel / Work-Queue**: Worker nehmen sich jeweils den nächsten Task.\n- **Work-Stealing**: Idle Worker stehlen Aufgaben von stärker belasteten Workern.\n\nBeide Ansätze reduzieren Leerlauf, weil die Verteilung an die tatsächliche Laufzeit angepasst wird statt an eine grobe Vorabschätzung."
+  },
+  {
+    "front": "[2026-02-16] Was ist eine Race Condition, und warum reicht „jeder Thread macht lokal das Richtige“ nicht aus?",
+    "back": "Eine **Race Condition** liegt vor, wenn das Ergebnis von der nicht-deterministischen Reihenfolge konkurrierender Zugriffe abhängt.\n\nWichtig:\n- Jeder einzelne Thread kann für sich korrekt programmiert sein.\n- Der Fehler entsteht erst durch das **Zusammenspiel** mehrerer Threads.\n- Ohne Synchronisation können Interleavings auftreten, die zu falschen Zuständen führen.\n\nDarum ist die Aussage „Wenn jede Threadoperation korrekt ist, kann es keine Race Conditions geben“ **falsch**."
+  },
+  {
+    "front": "[2026-02-16] Wie entsteht beim Tafel-Experiment ein verlorenes Update?",
+    "back": "Zwei Worker greifen auf dieselbe gemeinsame Zahl zu, anfangs $0$:\n\n1. Beide lesen $0$.\n2. Beide berechnen lokal $0+1=1$.\n3. Beide schreiben nacheinander $1$ zurück.\n\nEndzustand:\n$$\n1\n$$\nstatt korrekt\n$$\n2.\n$$\n\nDas ist ein **lost update**: Eine Aktualisierung überschreibt die andere, weil Lesen, Rechnen und Schreiben nicht als **atomare** Einheit geschützt wurden."
+  },
+  {
+    "front": "[2026-02-16] Warum braucht eine Critical Section wechselseitigen Ausschluss?",
+    "back": "Eine **Critical Section** ist ein Codebereich, der auf eine **geteilte Ressource** zugreift, etwa ein gemeinsames Speicherwort oder eine Tafel.\n\nOhne **mutual exclusion** können mehrere Threads gleichzeitig:\n- denselben alten Zustand lesen,\n- widersprüchliche Änderungen berechnen,\n- sich gegenseitig überschreiben.\n\nDer wechselseitige Ausschluss stellt sicher, dass kritische Zugriffe so ablaufen, als ob immer nur eine Instanz gleichzeitig die Ressource verändert."
+  },
+  {
+    "front": "[2026-02-16] Was ist der Unterschied zwischen Safety und Liveness?",
+    "back": "**Safety** bedeutet: *Nichts Schlimmes passiert.*\nBeispiel: Nie sind Katze und Hund gleichzeitig im Garten.\n\n**Liveness** bedeutet: *Etwas Gutes passiert irgendwann.*\nBeispiel: Wenn ein Tier hinein will, bekommt es irgendwann Zugang.\n\nEin Protokoll kann das eine erfüllen und das andere verletzen:\n- Safety ohne Liveness: Niemand kollidiert, aber einer wartet für immer.\n- Liveness ohne Safety wäre ebenfalls ungenügend, weil dann zwar Fortschritt entsteht, aber mit falschem Verhalten.\n\nKorrekte Synchronisation braucht typischerweise **beides**."
+  },
+  {
+    "front": "[2026-02-16] Worin unterscheiden sich Deadlock, Livelock und Starvation?",
+    "back": "Die drei Begriffe beschreiben verschiedene **Fehlermodi**:\n\n- **Deadlock**: Alle warten blockiert aufeinander; nichts bewegt sich mehr.\n- **Livelock**: Alle reagieren ständig aufeinander, aber es gibt keinen Fortschritt.\n- **Starvation**: Eine Instanz bekommt dauerhaft keinen Zugang, obwohl andere weiterkommen.\n\nKurz:\n- Deadlock = Stillstand,\n- Livelock = Aktivität ohne Fortschritt,\n- Starvation = unfairer Ausschluss.\n\nDiese Unterscheidung ist wichtig, weil unterschiedliche Protokollfehler zu unterschiedlichen Symptomen führen."
+  },
+  {
+    "front": "[2026-02-16] Warum kann „Flagge setzen und dann prüfen“ zu Deadlock oder Livelock führen?",
+    "back": "Wenn beide Seiten gleichzeitig ihre **Flagge** setzen, sehen anschließend beide, dass die andere Seite ebenfalls hinein will.\n\nDann sind zwei problematische Reaktionen möglich:\n- Beide warten einfach $\\to$ **Deadlock**.\n- Beide ziehen sich zurück, setzen erneut, ziehen sich wieder zurück $\\to$ **Livelock**.\n\nDie Idee wirkt zunächst vernünftig, ist aber nur **fast korrekt**. Genau solche seltenen Gleichzeitigkeitssituationen machen naive Protokolle in der Parallelprogrammierung gefährlich."
+  },
+  {
+    "front": "[2026-02-16] Warum ist ein alternierendes Recht zwar sicher, aber nicht unbedingt lebendig?",
+    "back": "Beim **alternierenden Recht** darf immer nur die gerade „dran“ befindliche Seite eintreten. Das schützt die Ressource gut:\n\n- **Safety**: Beide sind nicht gleichzeitig drin.\n\nAber es kann an **Liveness** fehlen:\n- Wenn die berechtigte Seite nie zurückkommt oder nicht weiterschaltet,\n- bleibt die andere trotz freier Ressource ausgesperrt.\n\nDas Protokoll ist also zu starr: Es verhindert Kollisionen, kann aber **Lockout/Starvation** verursachen."
+  },
+  {
+    "front": "[2026-02-16] Warum ist die angenommene Reihenfolge von Aktionen in parallelen Systemen gefährlich?",
+    "back": "In parallelen Systemen ist die beobachtete **Reihenfolge** von Aktionen nicht immer die, die man intuitiv erwartet. Scheduler, Compiler und Hardware können Effekte anders sichtbar machen.\n\nIm Garten-Beispiel ist das kritisch:\n- Man nimmt an: erst Garten verlassen, dann Flagge heben.\n- Wenn aber die Flagge schon sichtbar wird, bevor das Tier wirklich draußen ist,\n- kann ein anderes Tier eintreten, obwohl die Ressource noch belegt ist.\n\nDeshalb müssen Kausalbeziehungen durch **explizite Synchronisation** oder **atomare Operationen** abgesichert werden."
+  },
+  {
+    "front": "[2026-02-16] Warum können Leser ohne Koordination Zustände sehen, die „nie wirklich existierten“?",
+    "back": "Beim **Readers-Writers**-Problem kann ein Leser mitten in einem Schreibvorgang beobachten, was gerade teilweise aktualisiert wurde.\n\nDann liest er z. B.:\n- einen Teil des alten Zustands,\n- und einen Teil des neuen Zustands.\n\nDas Ergebnis ist eine **inkonsistente Sicht**, die als vollständiger Systemzustand nie korrekt existierte. Genau das zeigte das Whiteboard-Beispiel.\n\nDarum genügt es nicht, nur Schreibende untereinander zu synchronisieren; auch **Lesen und Schreiben** müssen koordiniert werden."
+  },
+  {
+    "front": "[2026-02-17] Warum ist die JVM für parallele Java-Programme mehr als nur ein „Ausführer“ von Bytecode?",
+    "back": "Die **JVM** führt nicht nur Bytecode aus, sondern stellt die gesamte Laufzeitumgebung bereit:\n- **Portabilität**: derselbe Bytecode läuft auf verschiedenen Architekturen.\n- **Sicherheit**: der **Verifier** prüft Bytecode vor der Ausführung.\n- **Leistung**: der **JIT-Compiler** übersetzt heiße Pfade in nativen Code.\n- **Nebenläufigkeit**: Speicherverwaltung, Klassenladen und GC müssen mit mehreren Threads korrekt funktionieren.\n\nFür parallele Programmierung ist das wichtig, weil Korrektheit nicht nur vom Java-Quelltext abhängt, sondern auch davon, wie die JVM Laden, Sichtbarkeit, Speicher und Ausführung organisiert."
+  },
+  {
+    "front": "[2026-02-17] Beschreibe die Ausführungskette von Java-Quelltext bis zu nativen Instruktionen.",
+    "back": "Die Kette ist:\n$$\n\\text{Java-Quelltext} \\xrightarrow{\\texttt{javac}} \\text{Bytecode} \\xrightarrow{\\text{JVM}} \\text{native Instruktionen}\n$$\n\nGenauer:\n1. `javac` erzeugt **`.class`-Dateien** mit Bytecode.\n2. Der **Loader/Resolver** findet und lädt Klassen.\n3. Der **Bytecode-Verifier** prüft Sicherheits- und Typregeln.\n4. Die JVM führt den Bytecode entweder per **Interpreter** aus oder\n5. kompiliert häufig ausgeführte Teile per **JIT** in nativen Code.\n\nDer Vorteil ist, dass der Quelltext nicht für jede Plattform neu auf Maschinenebene übersetzt werden muss."
+  },
+  {
+    "front": "[2026-02-17] Wann ist **lazy loading** besser als **eager loading**?",
+    "back": "**Lazy loading** ist besser, wenn viele Klassen potenziell verfügbar sind, aber nur ein Teil tatsächlich benutzt wird.\n\nVorteile:\n- geringere Startkosten,\n- weniger Speicherverbrauch für unbenutzte Klassen,\n- schnellere Initialisierung großer Programme.\n\nNachteil:\n- der Ladeaufwand tritt erst beim ersten Zugriff auf,\n- in Mehrthread-Programmen muss die JVM verhindern, dass dieselbe Klasse mehrfach oder widersprüchlich geladen/initialisiert wird.\n\nBeispiel: Wenn `LoadMe` erst bei `new LoadMe()` gebraucht wird, lädt eine lazy JVM die Klasse erst dann."
+  },
+  {
+    "front": "[2026-02-17] Was ist das zentrale Nebenläufigkeitsproblem beim Klassenladen durch mehrere Threads?",
+    "back": "Wenn mehrere Threads gleichzeitig dieselbe Klasse erstmals verwenden, könnten sie versuchen, sie gleichzeitig zu laden oder zu initialisieren.\n\nDie JVM muss daher garantieren:\n- **nur eine konsistente Klassendefinition**,\n- **keine doppelte Initialisierung**,\n- **sichtbare, einheitliche Zustände** für alle Threads.\n\nOhne diese Koordination gäbe es Race Conditions, unnötige Arbeit oder inkonsistente Programmausführung. Gerade deshalb ist Klassenladen in der JVM kein triviales Dateilesen, sondern ein synchronisationsrelevanter Laufzeitmechanismus."
+  },
+  {
+    "front": "[2026-02-17] Warum ist der Bytecode-Verifier für Sicherheit wichtig, obwohl Java schon kompiliert wurde?",
+    "back": "Der **Bytecode-Verifier** schützt die JVM davor, unsicheren oder manipulierten Bytecode auszuführen.\n\nEr prüft insbesondere:\n- **Typsicherheit**,\n- zulässige **Zugriffe**,\n- korrekte **Casts**,\n- konsistente **Kontrollflüsse**.\n\nDas ist wichtig, weil die JVM nicht nur Bytecode aus „ehrlichem“ `javac` ausführen kann, sondern grundsätzlich beliebige `.class`-Dateien laden könnte. Der Verifier verhindert also viele Fehler und Angriffe, die auf Bytecode-Ebene möglich wären."
+  },
+  {
+    "front": "[2026-02-17] Warum kann der Bytecode-Verifier auch gültige Programme ablehnen?",
+    "back": "Der **Verifier** ist konservativ: Er soll unsicheren Code zuverlässig erkennen, auch wenn das bedeutet, manche ungewöhnlichen, aber eigentlich korrekten Bytecode-Programme abzulehnen.\n\nDer Grund ist:\n- Sicherheit hat Vorrang,\n- die Analyse muss praktikabel und effizient bleiben,\n- nicht jede subtile Korrektheitseigenschaft lässt sich einfach beweisen.\n\nDaher gilt: „abgelehnt“ bedeutet nicht immer „semantisch falsch“, sondern oft nur „nicht sicher genug nachweisbar“."
+  },
+  {
+    "front": "[2026-02-17] Warum ist die stack-basierte Ausführung des Bytecodes für Race Conditions relevant?",
+    "back": "Die JVM arbeitet als **Stack-Maschine**: Werte werden ständig geladen, auf den Stack gelegt, verarbeitet und wieder zurückgeschrieben.\n\nEine scheinbar einfache Operation wie\n$$\nx = x + 1\n$$\nist daher nicht atomar, sondern besteht aus mehreren Schritten:\n1. `x` laden,\n2. `1` addieren,\n3. Ergebnis zurückschreiben.\n\nWenn zwei Threads diese Schritte verschachtelt ausführen, können Updates verloren gehen. Gerade weil Bytecode viele explizite **load/store**-Operationen enthält, sind Interleavings in parallelen Programmen ein zentrales Problem."
+  },
+  {
+    "front": "[2026-02-17] Was kann bei zwei Threads mit `x = x + 1` auf einem gemeinsamen `static int x` schiefgehen?",
+    "back": "Es kann ein **lost update** auftreten.\n\nBeispiel mit Startwert $x = 0$:\n1. Thread A liest $0$.\n2. Thread B liest ebenfalls $0$.\n3. A berechnet $1$ und schreibt $1$.\n4. B berechnet ebenfalls $1$ und schreibt $1$.\n\nEndergebnis:\n$$\nx = 1\n$$\nstatt\n$$\nx = 2\n$$\n\nDer Grund ist, dass Lesen, Rechnen und Schreiben getrennte Schritte sind. Ohne Synchronisation ist die Operation nicht atomar und daher race-anfällig."
+  },
+  {
+    "front": "[2026-02-17] Warum sind lokale Variablen in parallelem Code meist sicherer als gemeinsame Felder?",
+    "back": "**Lokale Variablen** gehören typischerweise zum Ausführungskontext eines einzelnen Threads und werden nicht automatisch mit anderen Threads geteilt.\n\nDadurch:\n- weniger **Aliasing**,\n- weniger gemeinsame mutable Zustände,\n- weniger Bedarf an Synchronisation,\n- geringeres Risiko für Race Conditions.\n\nGemeinsame Felder, besonders `static`-Felder oder gemeinsam referenzierte Objekte, können dagegen von mehreren Threads gleichzeitig gelesen und geschrieben werden. Deshalb ist „bevorzuge lokale Variablen“ eine praktische Grundregel für nebenläufiges Java."
+  },
+  {
+    "front": "[2026-02-17] Was ist der Unterschied zwischen primitiven Typen und Objekten für das Verständnis von Speicher und Teilen von Daten?",
+    "back": "**Primitive Typen** wie `int` oder `double` speichern ihren Wert direkt. **Objekte** liegen auf dem Heap, und Variablen enthalten nur **Referenzen** auf diese Objekte.\n\nFür Nebenläufigkeit ist das entscheidend:\n- Bei primitiven Werten arbeitet man oft mit dem konkreten Wert.\n- Bei Objekten können mehrere Variablen auf **dasselbe Objekt** zeigen.\n\nDadurch kann eine Änderung über eine Referenz für andere Teile des Programms sichtbar werden. Das macht gemeinsam genutzte Objekte zu einer häufigen Quelle von Datenrennen."
+  },
+  {
+    "front": "[2026-02-17] Was bedeutet „Objekte werden per Referenz übergeben“ praktisch?",
+    "back": "Wird ein Objekt an eine Methode übergeben, erhält die Methode eine **Kopie der Referenz**, nicht eine Kopie des Objekts.\n\nFolge:\n- Änderungen am Objekt innerhalb der Methode betreffen dasselbe Heap-Objekt,\n- der Aufrufer sieht diese Änderungen ebenfalls.\n\nNicht möglich ist jedoch, durch bloßes Neuzuweisen des Parameters das ursprüngliche Objekt beim Aufrufer zu ersetzen.\n\nFür parallele Programme heißt das: Schon ein Methodenaufruf kann unbeabsichtigt **gemeinsamen veränderlichen Zustand** weiterreichen."
+  },
+  {
+    "front": "[2026-02-17] Warum sind `static`-Felder in parallelen Programmen besonders gefährlich?",
+    "back": "Ein **`static`-Feld** gehört zur Klasse, nicht zu einer einzelnen Instanz. Es gibt also typischerweise **eine gemeinsame Kopie** für alle Objekte und Threads.\n\nDas macht `static`-Felder zu natürlichem Shared State:\n- leicht von vielen Stellen erreichbar,\n- oft global sichtbar,\n- daher besonders race-gefährdet.\n\nInstanzfelder sind nur dann gemeinsam, wenn mehrere Threads dieselbe Objektinstanz teilen. Bei `static` ist das Teilen bereits durch das Sprachmodell angelegt."
+  },
+  {
+    "front": "[2026-02-17] Warum sollte ein Schleifenzähler in parallelem Code möglichst lokal sein?",
+    "back": "Ein gemeinsam genutzter Schleifenzähler kann von mehreren Threads gleichzeitig verändert werden. Dann ist unklar,\n- welcher Thread welchen Wert sieht,\n- ob Iterationen übersprungen oder doppelt ausgeführt werden,\n- ob die Schleife überhaupt korrekt terminiert.\n\nEin **lokaler Schleifenzähler** gehört dagegen nur zum jeweiligen Thread-Kontext. Das reduziert Interferenzen und macht die Schleifenlogik deterministischer.\n\nGerade bei `for`- und `while`-Schleifen ist ein geteilter Kontrollzustand eine typische Fehlerquelle."
+  },
+  {
+    "front": "[2026-02-17] Warum ist `finalize` kein verlässlicher Mechanismus für rechtzeitiges Aufräumen?",
+    "back": "Die **Garbage Collection** arbeitet **nicht-deterministisch**. Ein Objekt wird erst dann gesammelt, wenn es nicht mehr erreichbar ist und der GC tatsächlich läuft.\n\nDeshalb ist auch ein möglicher `finalize`-Aufruf nicht planbar:\n- nicht zu einem festen Zeitpunkt,\n- eventuell deutlich später als erwartet,\n- ungeeignet für zeitkritische Freigabe von Ressourcen.\n\nFür parallele Programme ist das besonders problematisch, weil man sich nicht darauf verlassen darf, dass Speicher- oder Ressourcenfreigabe in einer bestimmten Reihenfolge oder zu einem bestimmten Zeitpunkt passiert."
+  },
+  {
+    "front": "[2026-02-17] Warum muss man bei nativen Aufrufen die Thread-Sicherheit separat prüfen?",
+    "back": "Die **Native Interface** verbindet Java mit betriebssystemnahen oder plattformspezifischen Funktionen, etwa für I/O oder Dateisystemzugriffe.\n\nDabei gilt:\n- Java selbst bietet bestimmte Sicherheits- und Laufzeitgarantien,\n- native Bibliotheken müssen diese nicht automatisch einhalten,\n- manche nativen APIs sind thread-sicher, andere nicht.\n\nDeshalb darf man bei nativen Aufrufen nicht annehmen, dass sie sich wie gewöhnlicher Java-Code verhalten. In parallelen Programmen muss die Thread-Sicherheit der konkreten API dokumentiert oder selbst abgesichert werden."
+  },
+  {
+    "front": "[2026-02-23] Warum sind Prozesse für Isolation geeignet, Threads aber nicht?",
+    "back": "Ein **Prozess** besitzt einen **eigenen Adressraum**. Andere Prozesse können daher nicht direkt auf seinen Speicher zugreifen; das Betriebssystem erzwingt diese Trennung.\n\n**Threads** innerhalb desselben Prozesses teilen sich dagegen den **Heap** und globale Objekte. Dadurch ist Kommunikation einfacher, aber auch gefährlicher:\n- direkter gemeinsamer Zugriff auf Daten ist möglich,\n- Fehler in einem Thread können gemeinsame Daten beschädigen,\n- Synchronisation wird nötig.\n\nKurz:\n$$\n\\text{Prozesse} \\Rightarrow \\text{Isolation}, \\qquad\n\\text{Threads} \\Rightarrow \\text{gemeinsamer Speicher}\n$$"
+  },
+  {
+    "front": "[2026-02-23] Warum ist Concurrency auf einem Single-Core möglich, obwohl keine echte Parallelität vorliegt?",
+    "back": "**Concurrency** bedeutet, dass mehrere Aufgaben im selben Zeitintervall Fortschritt machen. Auf einem **Single-Core** geschieht das durch **Scheduling** und **Kontextwechsel**: Das Betriebssystem unterbricht eine Aufgabe und lässt eine andere weiterlaufen.\n\nEs gibt also keine gleichzeitige Instruktionsausführung, aber von außen wirken mehrere Aufgaben „gleichzeitig aktiv“.\n\nBeispiel:\n- $P_1$ rechnet,\n- $P_1$ wartet auf I/O,\n- Scheduler gibt die CPU an $P_2$.\n\nDamit gilt qualitativ:\n$$\n\\exists A,B:\\ \\text{progress}_A(t_0,t_1)>0 \\wedge \\text{progress}_B(t_0,t_1)>0\n$$\n\n**Parallelität** wäre erst gegeben, wenn zwei Kerne wirklich gleichzeitig Instruktionen ausführen."
+  },
+  {
+    "front": "[2026-02-23] Woran erkennt man den Unterschied zwischen Concurrency und Parallelism in einem konkreten System?",
+    "back": "Der entscheidende Unterschied ist:\n- **Concurrency**: mehrere Aufgaben sind zeitlich verflochten,\n- **Parallelism**: mehrere Aufgaben laufen **physisch gleichzeitig**.\n\nKonkrete Einordnung:\n- **Single-Core mit Switching** $\\Rightarrow$ concurrent, aber nicht parallel\n- **Zwei Cores, zwei Prozesse gleichzeitig aktiv** $\\Rightarrow$ parallel\n- **Mehrere Cores plus Scheduling** $\\Rightarrow$ parallel und concurrent zugleich\n\nWichtige Beziehung:\n$$\n\\text{Parallelism} \\Rightarrow \\text{Concurrency}\n$$\naber nicht umgekehrt.\n\nDenn jedes wirklich parallele System macht mehrere Aufgaben gleichzeitig fortschreiten, während Concurrency auch nur durch Umschalten entstehen kann."
+  },
+  {
+    "front": "[2026-02-23] Warum nutzt das Betriebssystem bei I/O-Wartezeiten Multitasking?",
+    "back": "Wenn ein Prozess auf **I/O** wartet, kann er die CPU in dieser Zeit nicht sinnvoll nutzen. Ohne Umschalten würde die CPU untätig bleiben.\n\nDer **Scheduler** nutzt diese Lücke:\n- blockierter Prozess wird nicht weiter ausgeführt,\n- ein anderer bereiter Prozess erhält CPU-Zeit,\n- die **CPU-Auslastung** steigt.\n\nTypischer Ablauf:\n1. $P_1$ startet I/O,\n2. $P_1$ wird **blocked**,\n3. Scheduler wählt $P_2$,\n4. CPU arbeitet weiter statt zu warten.\n\nDas Ziel ist nicht nur Leistung, sondern auch **Fairness** zwischen Aufgaben."
+  },
+  {
+    "front": "[2026-02-23] Was gehört zum Prozesskontext, und warum macht das Kontextwechsel teuer?",
+    "back": "Der **Prozesskontext** enthält alle Informationen, die nötig sind, um einen Prozess später exakt fortzusetzen. Dazu gehören insbesondere:\n- **Register**\n- **Program Counter**\n- Speicherabbild bzw. Adressraum-bezogene Informationen\n- weitere OS-Verwaltungsdaten, z. B. offene Dateien\n\nDiese Informationen liegen im **Process Control Block (PCB)**.\n\nEin Prozesswechsel bedeutet:\n1. Kontext von $P_1$ sichern,\n2. Kontext von $P_2$ laden,\n3. Ausführung von $P_2$ fortsetzen.\n\nWeil Prozesse getrennte Adressräume haben, ist dieser Wechsel relativ aufwendig. Daher gilt qualitativ:\n$$\n\\text{Overhead}_{\\text{process}} \\gg \\text{Overhead}_{\\text{thread}}\n$$"
+  },
+  {
+    "front": "[2026-02-23] Warum ist ein Thread-Wechsel typischerweise billiger als ein Prozess-Wechsel?",
+    "back": "**Threads** desselben Prozesses teilen sich den **Adressraum**. Beim Wechsel zwischen Threads muss daher typischerweise nicht der komplette prozessbezogene Speicher-Kontext umgeschaltet werden.\n\nEin Thread hat vor allem:\n- eigenen **Stack**\n- eigenen **Instruction Stream**\n- eigenen Ausführungszustand\n\nAber er teilt mit anderen Threads desselben Prozesses:\n- **Heap**\n- globale Daten\n\nDadurch ist weniger Zustand zu sichern und wiederherzustellen als bei Prozessen. Deshalb:\n$$\n\\text{Overhead}_{\\text{thread switch}} \\ll \\text{Overhead}_{\\text{process switch}}\n$$\n\nDas ist ein Hauptgrund, warum Multithreading für feingranulare Parallelität attraktiv ist."
+  },
+  {
+    "front": "[2026-02-23] Welche Speicherbereiche sind bei Threads gemeinsam, und welche sind thread-lokal?",
+    "back": "Bei Threads innerhalb desselben Prozesses gilt:\n\n**Gemeinsam:**\n- **Heap**\n- globale bzw. gemeinsam referenzierte Objekte\n\n**Thread-lokal:**\n- **Stack**\n- lokale Variablen eines laufenden Methodenaufrufs\n\nDas ist wichtig für die Fehleranalyse:\n- Schreiben zwei Threads auf dasselbe Heap-Objekt, kann eine **Race Condition** entstehen.\n- Arbeiten sie nur mit lokalen Stack-Variablen, gibt es diesen Konflikt nicht direkt.\n\nDie Vorlesungsintuition ist:\n$$\n\\text{shared heap} \\Rightarrow \\text{Kommunikation möglich, aber Synchronisation nötig}\n$$"
+  },
+  {
+    "front": "[2026-02-23] Warum ist `Runnable` in Java meist besser als `Thread` zu erweitern?",
+    "back": "Bei **`Runnable`** wird die **Aufgabe** von der **Ausführungseinheit** getrennt:\n- Die Logik steckt in `run()`,\n- der eigentliche Thread ist ein separates `Thread`-Objekt.\n\nTypisches Muster:\n$$\n\\texttt{new Thread(task).start()}\n$$\n\nVorteil:\n- klarere Trennung von Verantwortung,\n- flexibleres Design,\n- die Aufgabe ist nicht an Vererbung von `Thread` gebunden.\n\n`Thread` zu erweitern funktioniert zwar auch, koppelt aber Task und Thread-Objekt unnötig eng. Deshalb ist **`Runnable` die empfohlene Variante**."
+  },
+  {
+    "front": "[2026-02-23] Warum startet `run()` keinen neuen Thread, `start()` aber schon?",
+    "back": "`run()` ist nur eine **normale Methode**. Wird sie direkt aufgerufen, läuft ihr Code im **aktuellen Thread** weiter.\n\n`start()` dagegen veranlasst die JVM, einen **neuen Thread** anzulegen. Dieser neue Thread führt dann `run()` aus.\n\nDeshalb ist die Aussage falsch:\n> „`run()` startet parallele Ausführung.“\n\nKorrekt ist:\n- `t.run()` $\\Rightarrow$ kein neuer Thread\n- `t.start()` $\\Rightarrow$ neuer Thread, danach wird `run()` in diesem Thread ausgeführt\n\nDas ist ein klassischer Java-Fehler."
+  },
+  {
+    "front": "[2026-02-23] In welchem Sinn ist `Runnable` in Java kein Garant für echtes Parallellaufen?",
+    "back": "Ein mit `Runnable` definierter Task beschreibt nur, **was** ausgeführt werden soll, nicht **wie die Hardware ihn gleichzeitig ausführt**.\n\nSelbst wenn mehrere Threads gestartet werden, hängt echtes Parallellaufen davon ab:\n- ob mehrere **Cores** vorhanden sind,\n- wie der **Scheduler** plant,\n- wie die JVM Threads auf Kernel-Threads abbildet.\n\nAuf einem Single-Core können viele Java-Threads existieren und trotzdem nur **concurrent**, nicht parallel laufen.\n\nAlso:\n$$\n\\text{mehrere Threads} \\not\\Rightarrow \\text{echter Parallelismus}\n$$"
+  },
+  {
+    "front": "[2026-02-23] Welche Zustände eines Threads sind für Scheduling besonders wichtig?",
+    "back": "Wichtige **Thread-Zustände** sind:\n- **New**\n- **Runnable**\n- **Running**\n- **Blocked**\n- **Waiting**\n- **Timed waiting**\n- **Terminated**\n\nFür Scheduling zentral ist die Unterscheidung:\n- **Runnable/Running**: Thread kann CPU erhalten oder nutzt sie gerade\n- **Blocked/Waiting**: Thread ist momentan nicht ausführbar\n\nWichtiger Java-Hinweis:\nDie API meldet oft **Runnable** für „bereit oder laufend“. Man darf also **Runnable** nicht immer als „läuft gerade auf der CPU“ interpretieren."
+  },
+  {
+    "front": "[2026-02-23] Was passiert typischerweise mit einem Thread, der auf I/O warten muss?",
+    "back": "Ein Thread, der auf **I/O** wartet, kann nicht weiterrechnen und wird typischerweise **blocked** bzw. nicht runnable.\n\nFolge für den Scheduler:\n- dieser Thread bekommt vorerst keine CPU,\n- ein anderer bereiter Thread oder Prozess wird eingeplant.\n\nDas verbessert die Auslastung, weil die CPU nicht auf langsame externe Operationen warten muss.\n\nTypischer Ablauf:\n$$\n\\text{Running} \\to \\text{Blocked} \\to \\text{Runnable} \\to \\text{Running}\n$$\n\nSobald das I/O-Ereignis abgeschlossen ist, kann der Thread wieder in die Menge der ausführbaren Threads zurückkehren."
+  },
+  {
+    "front": "[2026-02-23] Warum ist die globale Ausgabereihenfolge im `ParallelCalc`-Beispiel nicht deterministisch?",
+    "back": "Im Beispiel laufen **10 Threads**, die jeweils ihre Multiplikationstabelle ausgeben. Welcher Thread wann CPU-Zeit oder Zugriff auf die Konsole erhält, entscheidet der **Scheduler**.\n\nDarum kann die globale Reihenfolge zwischen Programmläufen variieren:\n- einmal beginnt Thread $6$,\n- ein anderes Mal Thread $3$,\n- später wechseln sich Threads anders ab.\n\nDie Ursache ist das unterschiedliche **Interleaving** der Ausführungsschritte. Es gibt viele mögliche globale Reihenfolgen, obwohl jeder Thread lokal denselben Code ausführt.\n\nNicht deterministisch ist also die **Mischung der Threads**, nicht notwendigerweise die Logik jedes einzelnen Threads."
+  },
+  {
+    "front": "[2026-02-23] Warum bleibt im `ParallelCalc`-Beispiel die Reihenfolge innerhalb eines einzelnen Threads erhalten?",
+    "back": "Jeder einzelne Thread führt seine eigene Schleife **sequenziell** aus. Für Thread $i$ bleibt daher die lokale Reihenfolge:\n$$\ni \\times 1,\\ i \\times 2,\\ \\dots,\\ i \\times 10\n$$\n\nDer Scheduler kann zwar zwischen Threads umschalten, aber er vertauscht nicht die Programmschritte **innerhalb** eines einzelnen Threads.\n\nDaher gilt:\n- **globale Reihenfolge zwischen Threads**: variabel\n- **lokale Reihenfolge innerhalb eines Threads**: fest\n\nDas erklärt, warum die Ausgabe insgesamt gemischt erscheint, aber jede einzelne Tabellenzeile eines Threads in ihrer internen Ordnung bleibt."
+  },
+  {
+    "front": "[2026-02-23] Warum führt die Konsole im Beispiel nicht zu zerhackten einzelnen Print-Ausgaben?",
+    "back": "Die **Konsole** ist eine **geteilte Ressource**. Mehrere Threads greifen darauf zu. Laut Vorlesung sorgt die JVM hier typischerweise dafür, dass ein einzelner `println`-Aufruf **nicht fragmentiert** erscheint.\n\nDas bedeutet:\n- eine einzelne Ausgabezeile erscheint als zusammenhängende Einheit,\n- aber die Reihenfolge verschiedener Threads ist weiterhin nicht garantiert.\n\nWichtiges Missverständnis:\nDiese scheinbare Atomizität von `println` bedeutet **nicht**, dass allgemein alle gemeinsamen Ressourcen automatisch sicher sind. Es ist nur ein spezieller Fall der Konsolenausgabe."
+  },
+  {
+    "front": "[2026-02-24] Warum zeigt die Multiplikationstabelle mit 10 Threads bei mehreren Läufen unterschiedliche Ausgabereihenfolgen?",
+    "back": "Wegen **nicht-deterministischem Interleaving**. Die Threads werden vom Scheduler in unterschiedlicher Reihenfolge ausgeführt, und die Konsole ist eine **synchronisierte Ressource**, auf die immer nur ein Thread gleichzeitig schreiben kann.\n\nDadurch gilt:\n- Ein Thread kann `RUNNABLE` sein, aber trotzdem nicht sofort schreiben.\n- Andere Threads können auf den Konsolenzugriff **`BLOCKED`** sein.\n- Bei mehr Threads als CPU-Kernen wechseln sich Threads zusätzlich über CPU-Scheduling ab.\n\nDie Ausgabe ist daher nicht durch den Quellcode allein festgelegt, sondern durch das jeweilige Laufzeit-Interleaving."
+  },
+  {
+    "front": "[2026-02-24] Warum macht ein zufälliges `sleep()` nach `print` die Ausgabe anders, aber nicht korrekter?",
+    "back": "**`sleep()`** verändert nur das **Laufzeitverhalten**, nicht die logische Korrektheit oder Deterministik des Programms.\n\nNach dem Schreiben schläft ein Thread und gibt damit CPU-Zeit bzw. die Chance auf weitere Ausführung an andere Threads ab. Das führt oft zu stärker durchmischter Ausgabe. Aber:\n- `sleep()` ist **kein Synchronisationsmechanismus**\n- es garantiert **keine bestimmte Reihenfolge**\n- es kann das Programm nur **langsamer** machen und zusätzliche **Kontextwechsel** erzeugen\n\nMan darf also `sleep()` nicht verwenden, um „richtige“ Parallelität zu erzwingen."
+  },
+  {
+    "front": "[2026-02-24] Was bedeutet `RUNNABLE` im Vergleich zu `BLOCKED` bei Java-Threads?",
+    "back": "**`RUNNABLE`** bedeutet: Der Thread ist ausführbar oder bereit zur Ausführung, braucht aber noch CPU-Zeit.\n\n**`BLOCKED`** bedeutet: Der Thread wartet auf einen Monitor bzw. auf exklusiven Zugriff auf eine synchronisierte Ressource, etwa die Konsole im Vorlesungsbeispiel.\n\nWichtig ist der Unterschied:\n- `RUNNABLE` heißt **nicht**, dass der Thread gerade wirklich auf der CPU läuft\n- `BLOCKED` heißt, dass er wegen einer Ressource **nicht weiterkommt**, selbst wenn CPU frei wäre\n\nIm Konsolenbeispiel waren viele Threads `BLOCKED`, weil immer nur einer gleichzeitig schreiben durfte."
+  },
+  {
+    "front": "[2026-02-24] Warum garantiert `setPriority(Thread.MAX_PRIORITY)` nicht, dass ein Thread zuerst fertig wird?",
+    "back": "Weil **Thread-Prioritäten** in Java nur ein **Hinweis** an JVM und Betriebssystem sind, keine harte Zusage.\n\nDie tatsächliche Ausführung hängt von Scheduler, JVM, Betriebssystem und aktueller Last ab. Deshalb kann auch ein Thread mit niedriger Priorität früher terminieren.\n\nDie Vorlesungsbeobachtung war genau so ein Fall:\n- gerade Threads bekamen `MAX_PRIORITY`\n- ungerade `MIN_PRIORITY`\n- trotzdem konnte ein Thread mit niedriger Priorität zuerst fertig sein\n\n**Priorität ist also ein Wunsch, keine Garantie.**"
+  },
+  {
+    "front": "[2026-02-24] Wozu sind `getId()`, `getName()` und `getState()` nützlich, wenn sie das Scheduling nicht steuern?",
+    "back": "Sie sind vor allem für **Diagnose**, **Logging** und **Beobachtung** nützlich.\n\nDamit kann man:\n- Threads eindeutig identifizieren mit **`getId()`**\n- sprechende Namen vergeben mit **`setName()` / `getName()`**\n- Laufzeitzustände beobachten mit **`getState()`**\n\nDas hilft, wenn man verstehen will:\n- welcher Thread gerade lebt\n- ob Threads noch `NEW`, `RUNNABLE`, `BLOCKED` oder `TERMINATED` sind\n- ob ein Programm wirklich parallel arbeitet oder irgendwo wartet\n\nDie API ist also eher ein Werkzeug zum **Verstehen und Debuggen** als zum Erzwingen einer Reihenfolge."
+  },
+  {
+    "front": "[2026-02-24] Warum ist Busy Waiting mit wiederholtem `getState()` meist die falsche Wahl?",
+    "back": "**Busy Waiting** oder **Polling** verschwendet CPU-Zeit: Der wartende Thread läuft aktiv in einer Schleife, obwohl er eigentlich nur auf das Ende anderer Threads warten will.\n\nTypisches Problem:\n- Main fragt ständig `getState()` ab\n- Main verbraucht dabei selbst Rechenzeit\n- diese Zeit fehlt potenziell den Worker-Threads\n\nDas ist ineffizient, besonders wenn Main nichts Sinnvolles tut außer „schon fertig?“. Besser ist ein blockierender Mechanismus wie **`join()`**, bei dem Main schläft, bis das Ergebnis wirklich da ist."
+  },
+  {
+    "front": "[2026-02-24] Warum ist `join()` semantisch besser als Polling, wenn Main nur auf Worker warten soll?",
+    "back": "**`join()`** drückt genau die gewünschte Semantik aus: *Warte, bis dieser Thread terminiert ist.*\n\nStatt aktiv zu pollen, blockiert der aufrufende Thread effizient. Das hat zwei Vorteile:\n- **klarere Bedeutung** im Code\n- **weniger CPU-Verschwendung**\n\nFormal: Ruft Main `t.join()` auf, dann läuft Main erst weiter, wenn `t` beendet ist. Das ist genau das richtige Werkzeug, wenn keine Zwischenarbeit nötig ist und nur auf Abschluss gewartet werden soll."
+  },
+  {
+    "front": "[2026-02-24] Was macht `t.join()` genau, und warum braucht man dafür `try/catch`?",
+    "back": "**`t.join()`** blockiert den **aufrufenden Thread**, bis der Thread `t` terminiert ist.\n\nIn Java kann dieser Wartezustand unterbrochen werden. Deshalb wirft `join()` eine **`InterruptedException`**, die behandelt oder weitergereicht werden muss.\n\nTypisches Muster:\n- Worker mit `start()` starten\n- danach `join()` aufrufen\n- nach erfolgreichem `join()` auf die Ergebnisse zugreifen\n\nDie Exception ist wichtig, weil auch ein wartender Thread selbst unterbrochen werden kann. `join()` ist also blockierend, aber nicht „ununterbrechbar“."
+  },
+  {
+    "front": "[2026-02-24] Warum zerstört die Reihenfolge `start(); join(); start(); join();` die Parallelität?",
+    "back": "Weil dadurch jeder Thread **vollständig beendet** wird, bevor der nächste überhaupt startet.\n\nBeispiel:\n1. `t1.start()`\n2. `t1.join()` → Main wartet, bis `t1` fertig ist\n3. erst dann `t2.start()`\n4. `t2.join()`\n\nDas ist effektiv **serielle Ausführung**. Für echte Parallelität muss man zuerst **alle Threads starten** und erst danach auf alle warten:\n\n$$\n\\text{start } t_1,\\ t_2,\\ \\dots,\\ t_n \\quad \\text{dann} \\quad \\text{join } t_1,\\ t_2,\\ \\dots,\\ t_n\n$$\n\nNur so können die Worker gleichzeitig laufen."
+  },
+  {
+    "front": "[2026-02-24] Wie funktioniert das Maximum-Beispiel mit zwei Threads korrekt?",
+    "back": "Das Array wird in zwei Hälften geteilt:\n- Thread A sucht das Maximum in $[0, n/2)$\n- Thread B sucht das Maximum in $[n/2, n)$\n\nAblauf:\n1. beide **`start()`**\n2. beide mit **`join()`** abwarten\n3. danach die beiden Teilmaxima vergleichen\n\nAlso etwa:\n$$\n\\max(a) = \\max(\\max(a[0:n/2]),\\ \\max(a[n/2:n]))\n$$\n\nWichtig ist, dass Main die Teilresultate **erst nach den `join()`-Aufrufen** verwendet. Vorher könnten die Worker noch nicht fertig sein."
+  },
+  {
+    "front": "[2026-02-24] Was passiert, wenn `t2` schon fertig ist, bevor Main `t2.join()` aufruft?",
+    "back": "Dann läuft **`t2.join()` sofort weiter**.\n\n`join()` wartet nur dann, wenn der Zielthread noch lebt. Ist der Thread bereits terminiert, gibt es nichts mehr abzuwarten. Das ist ein wichtiger Punkt:\n- `join()` ist korrekt, auch wenn Threads unterschiedlich schnell sind\n- man muss keine Sonderbehandlung für „schon fertig“ einbauen\n\nDadurch ist `join()` robust gegenüber verschiedenen Interleavings und Laufzeiten."
+  },
+  {
+    "front": "[2026-02-24] Warum können im Logfile zwei Trennlinien direkt hintereinander ohne Thread-Infos erscheinen?",
+    "back": "Weil zwischen **Prüfung** und **Beobachtung** andere Threads weiterlaufen können.\n\nIm Vorlesungsbeispiel prüft Main sinngemäß:\n- „Läuft noch mindestens ein Thread?“\n- wenn ja: Trennlinie schreiben und Zustände loggen\n\nDas Problem: Zwischen dieser Entscheidung und dem eigentlichen Schreiben der Thread-Infos können alle Worker bereits terminieren. Dann entsteht ein Logfragment mit:\n- Trennlinie\n- keine sinnvollen Statuszeilen mehr\n- nächste Trennlinie bzw. Abschluss\n\nDie Lehre daraus: In parallelen Programmen darf man Zustände nicht so behandeln, als blieben sie zwischen zwei Instruktionen stabil."
+  },
+  {
+    "front": "[2026-02-24] Warum sieht Main eine Exception in einem Worker-Thread nicht automatisch als eigenen Fehler?",
+    "back": "Weil ein **Worker-Thread** einen eigenen Ausführungskontext hat. Eine Exception in dessen `run()` propagiert nicht automatisch in den Main-Thread.\n\nFolgen:\n- Main kann scheinbar normal weiterlaufen\n- Ergebnisse können trotzdem falsch oder unvollständig sein\n- Fehler bleiben ohne zusätzliche Behandlung leicht unbemerkt\n\nGenau deshalb ist es gefährlich, nach `join()` einfach anzunehmen, alles sei erfolgreich gewesen. Parallelität trennt nicht nur Arbeit, sondern auch Fehlerpfade."
+  },
+  {
+    "front": "[2026-02-24] Wozu dient ein `UncaughtExceptionHandler` bei Worker-Threads?",
+    "back": "Ein **`UncaughtExceptionHandler`** fängt nicht behandelte Exceptions eines Threads zentral ab und ermöglicht **Fehlerkommunikation**.\n\nDamit kann man z. B.:\n- den Fehler loggen\n- ein gemeinsames Fehler-Flag setzen\n- Main nach `join()` prüfen lassen, ob ein Worker fehlgeschlagen ist\n\nDas ist wichtig, weil Exceptions aus Workern sonst nicht automatisch bei Main ankommen. Der Handler macht Fehler also **sichtbar und auswertbar**, statt sie nur im Worker enden zu lassen."
+  },
+  {
+    "front": "[2026-02-24] Was macht `interrupt()` direkt, und was macht es gerade nicht?",
+    "back": "**`interrupt()`** setzt direkt nur das **Interrupt-Flag** des Zielthreads.\n\nEs macht **nicht** automatisch:\n- den Thread sofort beenden\n- beliebigen Code zwangsweise stoppen\n- garantieren, dass der Thread überhaupt reagiert\n\nReaktion entsteht erst, wenn der Zielthread:\n- das Flag selbst prüft, oder\n- in einer unterbrechbaren blockierenden Operation steckt, etwa **`sleep()`**, die dann eine **`InterruptedException`** auslöst\n\n**Interrupt ist also ein Signal, kein Kill-Befehl.**"
+  },
+  {
+    "front": "[2026-03-03] Warum kann $v \\leftarrow v + \\delta$ in Java einen Data Race verursachen, obwohl es wie eine einzelne Operation aussieht?",
+    "back": "Weil die Operation typischerweise **nicht atomar** ist, sondern aus mehreren Schritten besteht:\n$$\n\\text{(1) } r \\leftarrow v,\\qquad\n\\text{(2) } r \\leftarrow r + \\delta,\\qquad\n\\text{(3) } v \\leftarrow r.\n$$\nWenn zwei Threads diese Schritte **interleaved** ausführen, können beide denselben alten Wert lesen und später unterschiedliche neue Werte zurückschreiben. Dann geht ein Update verloren.\n\nDer Fehler ist also nicht die Rechnung $+ \\delta$ selbst, sondern der ungeschützte Zugriff auf den **gemeinsamen Zustand** zwischen Lesen und Schreiben."
+  },
+  {
+    "front": "[2026-03-03] Zwei Threads lesen beide $v=0$; einer addiert $+1$, der andere $-1$. Welcher Endwert ist möglich und warum?",
+    "back": "Möglich sind z. B. $1$ oder $-1$, obwohl man bei gleicher Anzahl Updates $0$ erwarten würde.\n\nEin mögliches Interleaving:\n1. Thread A liest $v=0$\n2. Thread B liest $v=0$\n3. A berechnet lokal $1$\n4. B berechnet lokal $-1$\n5. A schreibt $v \\leftarrow 1$\n6. B schreibt $v \\leftarrow -1$\n\nDann ist der Endwert $-1$. Wenn die letzten beiden Schreibschritte vertauscht sind, ist der Endwert $1$.\n\nDie Ursache ist ein **lost update**: Beide Threads arbeiten mit demselben alten Wert, und am Ende „gewinnt“ der letzte Schreibzugriff."
+  },
+  {
+    "front": "[2026-03-03] Warum garantiert `synchronized` Mutual Exclusion für eine Critical Section?",
+    "back": "Weil ein Java-Objekt einen **intrinsischen Monitor** besitzt, und zu einem Zeitpunkt kann höchstens **ein Thread** diesen Monitor halten.\n\nBetritt ein Thread einen `synchronized`-Block oder eine `synchronized`-Methode auf demselben Objekt, müssen alle anderen Threads warten, bis der Monitor wieder freigegeben wird. Dadurch erscheint die gesamte Critical Section für andere Threads **atomar**.\n\nFür denselben Monitor bleiben damit innerhalb der geschützten Sektion nur serielle Ordnungen übrig:\n- Thread 1 vollständig vor Thread 2\n- oder Thread 2 vollständig vor Thread 1"
+  },
+  {
+    "front": "[2026-03-03] Warum ist der Endwert des Shared Counters mit korrekter Synchronisation wieder deterministisch?",
+    "back": "Weil Synchronisation die problematischen **Interleavings innerhalb der Critical Section** verhindert.\n\nWenn `increment()` und `decrement()` auf demselben Monitor synchronisiert sind, kann nicht mehr passieren, dass beide Threads denselben alten Wert lesen und später überschreiben. Stattdessen wird jede Änderung vollständig abgeschlossen, bevor die nächste beginnt.\n\nDann gilt wieder die gewünschte Rechnung:\n$$\nv_{\\text{final}} = v_{\\text{initial}} + \\sum_i \\delta_i.\n$$\nBei gleich vielen Increments und Decrements ist also der Endwert wieder deterministisch, hier typischerweise\n$$\n0.\n$$"
+  },
+  {
+    "front": "[2026-03-03] Was ist der Unterschied zwischen einer synchronisierten Instanzmethode und einer `static synchronized`-Methode?",
+    "back": "Eine **synchronisierte Instanzmethode** sperrt auf dem Monitor von `this`, also auf der konkreten Objektinstanz.\n\nEine **`static synchronized`-Methode** sperrt auf dem **Class-Objekt** der Klasse. Das ist eine zentrale Sperre für alle Instanzen dieser Klasse.\n\nFolge:\n- Zwei Threads auf **verschiedenen Instanzen** blockieren sich bei einer normalen synchronisierten Instanzmethode nicht unbedingt.\n- Bei **`static synchronized`** blockieren sie sich trotzdem, weil beide dieselbe Klassensperre verwenden."
+  },
+  {
+    "front": "[2026-03-03] Wann erhöht es die Parallelität, mehrere Lock-Objekte statt eines einzigen zu verwenden?",
+    "back": "Wenn die geschützten Daten **unabhängig** voneinander sind.\n\nBeispiel: Zwei unabhängige Counter verwenden zwei verschiedene Monitore, etwa `lock1` und `lock2`. Dann kann ein Thread Counter 1 bearbeiten, während ein anderer gleichzeitig Counter 2 bearbeitet. Mit nur einem globalen Lock würden sich beide unnötig blockieren.\n\nDer Vorteil ist also **feinere Granularität**:\n- mehr Parallelität\n- weniger unnötiges Warten\n\nDer Nachteil: Mit mehreren Locks steigt die Komplexität und damit auch das Risiko für **Deadlocks**."
+  },
+  {
+    "front": "[2026-03-03] Warum sollte man Wrapper-Objekte wie `Integer` nicht als Locks verwenden?",
+    "back": "Weil solche Objekte als Lock-Identität ungeeignet und fehleranfällig sind.\n\nEin Lock sollte ein klar kontrolliertes, privates Objekt sein, z. B.\n$$\n\\texttt{private final Object lock = new Object();}\n$$\nBei Wrappern wie `Integer` ist problematisch, dass sie nicht als dedizierte Sperrobjekte gedacht sind. Dadurch kann versehentlich auf einem Objekt synchronisiert werden, das auch anderswo verwendet oder ersetzt wird.\n\nDie Vorlesungsregel ist daher praktisch:\n- **keine Wrapper als Locks**\n- stattdessen eigene, private Lock-Objekte verwenden"
+  },
+  {
+    "front": "[2026-03-03] Warum sind Java-Monitore reentrant, und was ermöglicht das in verschachtelten Aufrufen?",
+    "back": "**Reentrant** bedeutet: Derselbe Thread darf denselben Monitor mehrfach erwerben.\n\nDas ist wichtig für verschachtelte synchronisierte Aufrufe. Beispiel: Eine synchronisierte Methode $G$ ruft eine andere synchronisierte Methode $F$ auf, beide auf `this`. Ohne Reentrancy würde der Thread sich selbst blockieren.\n\nIntern wird dazu ein Zähler geführt:\n- erneutes Erwerben durch denselben Thread erhöht den Zähler\n- Freigaben verringern ihn wieder\n- erst bei Zählerstand $0$ wird der Monitor wirklich freigegeben\n\nSo funktionieren rekursive oder verschachtelte Aufrufe auf demselben Lock korrekt."
+  },
+  {
+    "front": "[2026-03-03] Was passiert, wenn in einer synchronisierten Sektion eine Exception auftritt?",
+    "back": "Der **Monitor wird freigegeben**, aber es gibt **kein automatisches Rollback** der bereits vorgenommenen Änderungen.\n\nDas heißt:\n- Andere Threads können danach wieder in die synchronisierte Sektion eintreten.\n- Der gemeinsame Zustand kann trotzdem bereits teilweise verändert und damit inkonsistent sein.\n\nDeshalb reicht Synchronisation allein nicht für Konsistenz bei Fehlern. Man braucht zusätzlich sinnvolle Fehlerbehandlung, z. B.:\n- Zustand nur am Ende sichtbar machen\n- explizit aufräumen\n- inkonsistente Zwischenzustände vermeiden"
+  },
+  {
+    "front": "[2026-03-03] Warum muss `wait()` innerhalb eines synchronisierten Blocks aufgerufen werden?",
+    "back": "Weil `wait()` nur erlaubt ist, wenn der aufrufende Thread den **zugehörigen Monitor hält**.\n\nAndernfalls ist der Aufruf illegal und führt zu einer **`IllegalMonitorStateException`**. Das ist logisch, weil `wait()` den aktuellen Thread in den Wartezustand versetzt und dabei genau diesen Monitor **freigibt**.\n\nDas typische Muster ist daher:\n$$\n\\texttt{synchronized(obj) \\{ obj.wait(); \\}}\n$$\nNur so ist klar, auf welchem Monitor gewartet wird und welcher Monitor beim Warten freigegeben werden soll."
+  },
+  {
+    "front": "[2026-03-03] Was ist der entscheidende Unterschied zwischen `wait()` und bloßem Warten in einer synchronisierten Sektion?",
+    "back": "`wait()` setzt den Thread in den **Wartezustand** und gibt dabei den **Monitor frei**.\n\nBloß in einer synchronisierten Sektion „zu warten“ oder zu blockieren, ohne `wait()` zu verwenden, hält den Monitor weiter fest. Dann können andere Threads, die denselben Monitor brauchen, nicht eintreten.\n\nGerade beim Producer–Consumer-Problem ist das entscheidend:\n- Consumer sieht leeren Buffer\n- ohne `wait()` hält er den Lock fest\n- Producer kann den Buffer nicht betreten und nichts produzieren\n\nMit `wait()` wird der Monitor freigegeben, sodass der Producer fortfahren kann."
+  },
+  {
+    "front": "[2026-03-03] Warum muss `wait()` fast immer in einer `while`-Schleife statt in einem `if` stehen?",
+    "back": "Aus zwei Gründen:\n\n1. **Spurious Wakeups**: Ein Thread kann aus `wait()` aufwachen, ohne dass die gewünschte Bedingung wirklich erfüllt ist.\n2. **Verpasste oder konkurrierende Zustandsänderungen**: Nach dem Aufwachen kann ein anderer Thread die Bedingung schon wieder verändert haben, bevor der aktuelle Thread den Monitor zurückerhält.\n\nDarum ist das korrekte Muster:\n$$\n\\texttt{while (!condition) \\{ wait(); \\}}\n$$\nund nicht\n$$\n\\texttt{if (!condition) \\{ wait(); \\}}\n$$\nDie Schleife prüft die Bedingung nach jedem Aufwachen erneut und macht den Code robust."
+  },
+  {
+    "front": "[2026-03-03] Warum ist `notifyAll()` oft sicherer als `notify()`?",
+    "back": "Weil `notify()` nur **einen beliebigen** wartenden Thread weckt, ohne Garantie, dass genau der richtige Thread ausgewählt wird.\n\n`notifyAll()` weckt dagegen **alle** wartenden Threads auf. Danach konkurrieren sie um den Monitor und jeder prüft die Bedingung erneut. Dadurch ist es wahrscheinlicher, dass der Thread weiterläuft, für den die Bedingung tatsächlich erfüllt ist.\n\n`notifyAll()` ist oft sicherer, wenn:\n- mehrere verschiedene Wartebedingungen existieren\n- unklar ist, welcher Thread geweckt werden sollte\n\nDer Preis ist mehr Aufweck- und Scheduling-Aufwand."
+  },
+  {
+    "front": "[2026-03-03] Warum garantiert `notify()` nicht, dass ein bestimmter wartender Thread weiterläuft?",
+    "back": "Weil `notify()` nur einen **beliebigen** wartenden Thread auswählt.\n\nAußerdem läuft der geweckte Thread nicht sofort weiter. Er ist nur wieder **bereit**, muss aber den Monitor erst erneut erwerben. In der Zwischenzeit kann ein anderer Thread den Zustand wieder ändern.\n\nDeshalb garantiert `notify()` weder:\n- **welcher** Thread geweckt wird,\n- noch **wann** er tatsächlich weiterläuft,\n- noch dass die gewünschte Bedingung beim Weiterlaufen noch gilt.\n\nGenau deshalb muss nach dem Aufwachen die Bedingung erneut geprüft werden."
+  },
+  {
+    "front": "[2026-03-03] Welche Interleavings bleiben übrig, wenn zwei Threads auf demselben Objekt synchronisierte Blöcke ausführen?",
+    "back": "Innerhalb der synchronisierten Bereiche bleiben nur zwei Gesamtordnungen:\n- Thread 1 vollständig vor Thread 2\n- oder Thread 2 vollständig vor Thread 1\n\nEin Mischen der Einzelschritte **innerhalb** dieser Blöcke ist nicht möglich, solange beide auf **denselben Monitor** synchronisieren.\n\nDas ist genau der Kern von **Mutual Exclusion**: Die Critical Section wird gegenüber konkurrierenden Threads unteilbar.\n\nWichtig: Das gilt nur für denselben Lock. Bei verschiedenen Lock-Objekten sind wieder deutlich mehr Interleavings möglich."
+  },
+  {
+    "front": "[2026-03-09] Warum mussten Programmierer nach etwa 2003–2005 stärker explizit parallelisieren?",
+    "back": "Früher wurden **sequentielle Programme** oft automatisch schneller, weil Single-Core-Prozessoren durch höhere Taktfrequenzen und aggressivere Hardware-Optimierungen zulegten. Diese Entwicklung stieß aber an physikalische Grenzen wie **Leistungsaufnahme** und **Wärme**.\n\nDie Folge war der Wechsel zu **Multicore** und damit zu **Thread-Level Parallelism (TLP)**:\n- mehr Kerne statt nur schnellerer einzelner Kerne,\n- mehrere unabhängige Instruction Streams statt nur mehr Optimierung innerhalb eines Streams.\n\nKonsequenz: Wer zusätzliche Performance will, muss Arbeit oft explizit auf **Threads/Tasks** aufteilen, statt nur auf die nächste CPU-Generation zu warten."
+  },
+  {
+    "front": "[2026-03-09] Warum ist sequentielles Durchlaufen eines `int`-Arrays meist viel schneller als Zugriff mit großem Stride?",
+    "back": "Weil **Caches** ganze **Cache-Lines** laden, nicht nur einzelne Werte. Bei einem sequentiellen Zugriff nutzt man viele Werte aus derselben geladenen Cache-Line und erzeugt daher viele **Cache-Hits**.\n\nBei großem **Stride** springt man oft direkt in eine andere Cache-Line:\n- jede Iteration verursacht eher einen **Cache-Miss**,\n- die CPU muss häufiger auf langsameren Speicher warten,\n- die bereits geladene Line wird kaum ausgenutzt.\n\nIm Vorlesungsbeispiel war deshalb `stride = 1` mit etwa $0.3\\,\\text{s}$ deutlich schneller als `stride = 64` mit etwa $2.44\\,\\text{s}$."
+  },
+  {
+    "front": "[2026-03-09] Wie viele 32-bit-Integer passen in eine 64-Byte-Cache-Line, und warum ist das praktisch wichtig?",
+    "back": "Es passen\n\n$$\n\\frac{64\\ \\text{Bytes}}{4\\ \\text{Bytes/int}} = 16\n$$\n\n**32-bit-Integer** in eine Cache-Line.\n\nPraktische Bedeutung:\n- Liest man ein `int`, wird oft gleich die ganze Line geladen.\n- Bei sequentiellem Zugriff kann man danach bis zu **15 weitere benachbarte ints** mit hoher Wahrscheinlichkeit aus dem Cache lesen.\n- Deshalb sind **räumliche Lokalität** und zusammenhängende Datenlayouts so wichtig."
+  },
+  {
+    "front": "[2026-03-09] Was ist der entscheidende Unterschied zwischen Cache-Hit und Cache-Miss?",
+    "back": "Ein **Cache-Hit** bedeutet, dass die angeforderte Speicherstelle bereits in einem nahen Cache liegt; der Zugriff ist daher schnell.\n\nEin **Cache-Miss** bedeutet, dass die Daten dort nicht vorhanden sind; dann muss zuerst eine Cache-Line aus einer tieferen Ebene der **Memory Hierarchy** oder aus dem RAM geholt werden. Das ist deutlich langsamer.\n\nDer Unterschied ist für Performance zentral, weil viele Programme nicht an Rechenoperationen, sondern an **Speicherlatenz** hängen."
+  },
+  {
+    "front": "[2026-03-09] Warum ist die Memory Hierarchy für Multicore-Programme relevant und nicht nur für Performance-Tuning?",
+    "back": "Die **Memory Hierarchy** bestimmt nicht nur die Geschwindigkeit, sondern auch, **wo** Daten gerade liegen: in privaten L1/L2-Caches einzelner Kerne, in gemeinsamem L3 oder im RAM.\n\nIn Multicore-Systemen ist das relevant, weil:\n- verschiedene Threads auf verschiedenen Kernen laufen,\n- jeder Kern eigene Cache-Kopien haben kann,\n- dadurch die Frage entsteht, **welcher Wert für andere Threads sichtbar ist**.\n\nDeshalb braucht man neben Hardware-Mechanismen wie **Cache Coherence** auch Sprach- und Synchronisationskonstrukte, um korrekte Sichtbarkeit sicherzustellen."
+  },
+  {
+    "front": "[2026-03-09] Warum reicht Cache-Coherence allein nicht aus, um ein Multithread-Programm korrekt zu machen?",
+    "back": "**Cache-Coherence-Protokolle** sorgen hardwareseitig dafür, dass Caches nicht dauerhaft widersprüchliche Werte halten. Das ist aber nicht dasselbe wie eine saubere **Programmiersemantik** für Threads.\n\nOhne Synchronisation bleibt unklar:\n- **wann** ein anderer Thread eine Änderung sehen darf,\n- in welcher Reihenfolge Schreib- und Lesezugriffe sichtbar werden,\n- ob Reorderings von Compiler oder CPU beobachtbar werden.\n\nDarum braucht man Synchronisation wie **`synchronized`**: nicht nur für Mutual Exclusion, sondern auch für definierte **Memory Visibility**."
+  },
+  {
+    "front": "[2026-03-09] Was garantiert `synchronized` in Java zusätzlich zur gegenseitigen Ausschließung?",
+    "back": "**`synchronized`** garantiert nicht nur **Mutual Exclusion**, sondern auch **Sichtbarkeit von Speicherzugriffen** zwischen Threads.\n\nVereinfacht:\n- beim **Freigeben** eines Locks werden Änderungen für andere Threads sichtbar gemacht,\n- beim **Erwerben** eines Locks sieht ein Thread aktuelle Werte statt veralteter Cache-Kopien.\n\nDas ist entscheidend, weil sonst ein Thread trotz logisch „fertiger“ Berechnung noch alte Werte lesen könnte."
+  },
+  {
+    "front": "[2026-03-09] Warum ist Busy-Waiting in einem großen `synchronized`-Block problematisch, und was ist oft besser?",
+    "back": "**Busy-Waiting** in einem großen kritischen Bereich ist problematisch, weil ein Thread dabei das Lock hält, obwohl er eigentlich nur wartet. Dadurch blockiert er andere Threads unnötig und verschlechtert Parallelität und Effizienz.\n\nOft besser ist **`wait`/`notify`**:\n- der wartende Thread gibt das Lock frei,\n- andere Threads können weiterarbeiten,\n- bei relevanter Zustandsänderung wird der wartende Thread wieder geweckt.\n\nDas ist besonders wichtig, wenn Wartezustände länger dauern oder häufig auftreten."
+  },
+  {
+    "front": "[2026-03-09] Wann kann ein Compiler einen Loop automatisch vektorisieren, und wann eher nicht?",
+    "back": "Automatische **Vektorisierung** funktioniert vor allem dann gut, wenn der Loop:\n- einfach strukturiert ist,\n- keine problematischen Datenabhängigkeiten enthält,\n- keine komplizierten bedingten Pfade hat.\n\nSie scheitert eher bei:\n- komplexen `if`-Strukturen,\n- unklaren Alias- oder Speicherabhängigkeiten,\n- Schleifen, deren Iterationen nicht unabhängig sind.\n\nDer Compiler vektorisiert also **nicht jeden Loop automatisch**, sondern nur dann, wenn die Transformation sicher und sinnvoll ist."
+  },
+  {
+    "front": "[2026-03-09] Wie viel Parallelität bringt ein 128-bit-SIMD-Register bei 32-bit-Integern?",
+    "back": "Ein **128-bit-SIMD-Register** kann bei **32-bit-Integern** genau\n\n$$\n128\\ \\text{bits} = 4 \\times 32\\text{-bit}\n$$\n\nalso **4 Integer gleichzeitig** verarbeiten.\n\nBei einer passenden Operation wie Array-Addition kann eine SIMD-Instruktion daher vier Additionen auf einmal ausführen. Das erhöht den Durchsatz gegenüber skalaren Instruktionen, die nur ein Element pro Instruktion verarbeiten."
+  },
+  {
+    "front": "[2026-03-09] Wie würde man die SIMD-Kapazität für 256-bit-Register und 32-bit-Floats berechnen?",
+    "back": "Man teilt die Registerbreite durch die Breite eines Elements:\n\n$$\n\\frac{256\\ \\text{bits}}{32\\ \\text{bits/float}} = 8\n$$\n\nAlso verarbeitet eine SIMD-Instruktion **8 Floats gleichzeitig**.\n\nDas ist genau dieselbe Idee wie beim 128-bit-Beispiel: SIMD beschleunigt datenparallele Operationen, indem dieselbe Instruktion auf mehrere Elemente parallel angewendet wird."
+  },
+  {
+    "front": "[2026-03-09] Was ist der Unterschied zwischen SIMD und ILP?",
+    "back": "**SIMD** und **Instruction-Level Parallelism (ILP)** erhöhen beide den Durchsatz, aber auf unterschiedliche Weise:\n\n- **SIMD**: eine Instruktion arbeitet auf **mehreren Datenwerten gleichzeitig**.\n- **ILP**: mehrere **unabhängige Instruktionen** aus demselben Instruction Stream werden parallel auf verschiedenen Execution Units ausgeführt.\n\nBeispiel:\n- SIMD: `C[i] = A[i] + B[i]` für mehrere `i` gleichzeitig.\n- ILP: unabhängige Berechnungen wie $x^2$, $y^2$, $z^2$ parallel ausführen.\n\nSIMD nutzt also **Datenparallelität**, ILP **Instruktionsunabhängigkeit**."
+  },
+  {
+    "front": "[2026-03-09] Warum erhöht Pipelining den Durchsatz, obwohl eine einzelne Instruktion nicht unbedingt schneller wird?",
+    "back": "Beim **Pipelining** wird die Instruktionsausführung in Stufen wie **Fetch**, **Decode**, **Execute** und **Writeback** zerlegt. Mehrere Instruktionen können dadurch gleichzeitig in verschiedenen Stufen sein.\n\nDas erhöht den **Durchsatz**, weil die Hardware besser ausgelastet wird:\n- während eine Instruktion dekodiert wird,\n- kann die nächste schon geholt werden,\n- und eine frühere bereits ausgeführt werden.\n\nDie Latenz einer einzelnen Instruktion sinkt dadurch nicht zwingend stark, aber die Zahl der fertiggestellten Instruktionen pro Zeit steigt."
+  },
+  {
+    "front": "[2026-03-09] Warum können Out-of-Order- und spekulative Ausführung in Multithread-Programmen gefährlich wirken?",
+    "back": "**Out-of-Order Execution** und **spekulative Ausführung** verbessern den Durchsatz, weil die CPU freie Execution Units mit unabhängigen oder vermuteten zukünftigen Operationen auslastet.\n\nGefährlich wird das ohne Synchronisation in Multithread-Programmen, weil dadurch scheinbar „unlogische“ Beobachtungen möglich werden:\n- ein Thread sieht ein **Flag** schon auf `true`,\n- aber den dazugehörigen berechneten Wert noch nicht.\n\nFür einen einzelnen Thread bleibt das sequentielle Ergebnis zwar korrekt, aber zwischen Threads können ohne Synchronisation **Sichtbarkeits- und Reihenfolgeprobleme** auftreten."
+  },
+  {
+    "front": "[2026-03-09] Warum darf Compiler/CPU Instruktionen umordnen, obwohl das für Threads problematisch sein kann?",
+    "back": "Compiler und CPU dürfen **Instruktionen umordnen**, solange das **beobachtbare Ergebnis im sequentiellen Einzelthread-Fall** gleich bleibt. Das ist eine wichtige Optimierung für Performance.\n\nDas Problem entsteht erst im **Multithread-Kontext**:\n- andere Threads können Zwischenzustände beobachten,\n- die im Quelltext so nicht „offensichtlich“ erscheinen,\n- wenn keine Synchronisation die Sichtbarkeit und Reihenfolge festlegt.\n\nDie Umordnung ist also nicht grundsätzlich falsch; sie wird erst dann gefährlich, wenn man fälschlich annimmt, dass Quelltextreihenfolge automatisch auch **threadübergreifende Sichtbarkeitsreihenfolge** bedeutet."
+  },
+  {
+    "front": "[2026-03-10] Warum erhöht Pipelining den Durchsatz, obwohl die Latenz eines einzelnen Arbeitspakets nicht unbedingt sinkt?",
+    "back": "**Pipelining** überlappt die Bearbeitung mehrerer Pakete in verschiedenen Stages. Dadurch arbeiten mehrere Stages gleichzeitig, statt dass ein Paket erst komplett fertig sein muss, bevor das nächste startet.\n\nWichtig ist der Unterschied:\n- **Durchsatz** steigt, weil häufiger Ergebnisse fertig werden.\n- **Latenz** eines einzelnen Pakets bleibt ungefähr die Summe der Stage-Zeiten bzw. bei balancierter Pipeline $L \\approx k \\cdot \\max_i t_i$.\n\nPipelining macht also nicht unbedingt *ein* Paket schneller, sondern sorgt dafür, dass bei vielen Paketen insgesamt mehr Arbeit pro Zeit erledigt wird."
+  },
+  {
+    "front": "[2026-03-10] Warum ist der Durchsatz einer Pipeline durch die langsamste Stage begrenzt?",
+    "back": "Der **Flaschenhals** bestimmt, wie oft ein neues Ergebnis die Pipeline verlassen kann. Wenn eine Stage $\\max_i t_i$ Sekunden braucht, kann kein stabiler Ausgabetakt schneller als alle $\\max_i t_i$ Sekunden sein.\n\nFormal:\n$$\n\\text{Throughput} \\le \\frac{1}{\\max_i t_i}.\n$$\n\nIntuition in der Wäsche-Analogie:\n- Wenn **Trocknen** $10\\,\\text{s}$ dauert, können fertige Ladungen höchstens alle $10\\,\\text{s}$ weiterfließen.\n- Schnellere Stages davor oder danach ändern daran nichts; sie warten nur."
+  },
+  {
+    "front": "[2026-03-10] Wie unterscheiden sich Throughput und Latenz an einer balancierten 4-Stage-Pipeline mit je $3\\,\\text{s}$?",
+    "back": "Bei einer **balancierten Pipeline** mit $k=4$ und $t_1=\\dots=t_4=3\\,\\text{s}$ gilt:\n\n- **Throughput-Bound**:\n$$\n\\frac{1}{3\\,\\text{s}}\n$$\nalso im Volllastbereich ein Ergebnis alle $3\\,\\text{s}$.\n\n- **Latenzabschätzung**:\n$$\nL \\approx 4 \\cdot 3\\,\\text{s} = 12\\,\\text{s}.\n$$\n\nDas zeigt den Kernunterschied:\n- **Throughput** fragt: Wie oft kommt *irgendein* Ergebnis heraus?\n- **Latenz** fragt: Wie lange braucht *ein bestimmtes* Paket von Anfang bis Ende?\n\nEin Paket braucht hier etwa $12\\,\\text{s}$, aber nach dem Füllen der Pipeline kommt trotzdem alle $3\\,\\text{s}$ ein neues Ergebnis."
+  },
+  {
+    "front": "[2026-03-10] Warum unterschätzt der ideale Throughput-Blick bei wenigen Inputs die reale Laufzeit?",
+    "back": "Der ideale Throughput betrachtet nur den **Volllastbereich** und ignoriert **Lead-in** und **Lead-out**.\n\nBei wenigen Inputs ist genau das problematisch:\n- Am Anfang ist die Pipeline noch nicht voll.\n- Am Ende leeren sich die Stages wieder.\n- In beiden Phasen sind nicht alle Stages ausgelastet.\n\nDeshalb kann man nicht einfach für $n$ Inputs mit\n$$\nn \\cdot \\max_i t_i\n$$\nrechnen. Im Vorlesungsbeispiel mit 7 Inputs und $3\\,\\text{s}$ pro Stage wäre das idealisiert $21\\,\\text{s}$, der gezeichnete Ablauf brauchte aber $30\\,\\text{s}$.\n\n**Merke:** Der Throughput-Bound ist für lange Läufe nützlich, aber bei kleinen Eingabemengen oft zu optimistisch."
+  },
+  {
+    "front": "[2026-03-10] Warum wird die Abschätzung $L \\approx k \\cdot \\max_i t_i$ bei unbalancierten Pipelines unzuverlässig?",
+    "back": "Die Formel\n$$\nL \\approx k \\cdot \\max_i t_i\n$$\nsetzt implizit voraus, dass die Pipeline **balanciert** ist oder sich zumindest regelmäßig verhält.\n\nBei **unbalancierten Stages** entstehen jedoch **Wartefenster** oder **Bubbles**:\n- schnellere Stages liefern Arbeit schneller ab,\n- langsamere Stages sind noch belegt,\n- Pakete stauen sich vor dem Flaschenhals.\n\nDadurch wächst die tatsächliche Zeit einzelner Pakete über die einfache Abschätzung hinaus. Im Wäsche-Beispiel mit Zeiten $5,10,5,10\\,\\text{s}$ ergibt\n$$\n4 \\cdot 10\\,\\text{s} = 40\\,\\text{s},\n$$\naber für spätere Ladungen lag die reale Latenz schon bei etwa $50\\,\\text{s}$.\n\nDie Formel ist also eher eine brauchbare Näherung für **balancierte**, nicht für stark **unbalancierte** Pipelines."
+  },
+  {
+    "front": "[2026-03-10] Was geht bei der Wäsche-Pipeline mit Zeiten $5,10,5,10\\,\\text{s}$ konkret schief?",
+    "back": "Die Stages sind **unbalanciert**:\n- Waschen: $5\\,\\text{s}$\n- Trocknen: $10\\,\\text{s}$\n- Falten: $5\\,\\text{s}$\n- Schrank: $10\\,\\text{s}$\n\nProblem:\n- Nach $5\\,\\text{s}$ ist Ladung 2 mit Waschen fertig,\n- aber der **Trockner** ist noch für weitere $5\\,\\text{s}$ belegt,\n- also muss Ladung 2 warten.\n\nDiese Wartezeit setzt sich fort und erzeugt einen **Stau hinter dem Flaschenhals**. Die Pipeline ist dann nicht sauber getaktet; schnellere Stages sind immer wieder untätig, obwohl noch Arbeit vorhanden ist.\n\nFolge:\n- schlechtere Auslastung,\n- unzuverlässige Latenzabschätzung,\n- reale Laufzeit wächst stärker als die einfache Formel erwarten lässt."
+  },
+  {
+    "front": "[2026-03-10] Warum kann künstliches Balancieren eine Pipeline vorhersagbarer, aber langsamer machen?",
+    "back": "Beim **künstlichen Balancieren** werden kürzere Stages absichtlich auf die Dauer der längsten Stage gestreckt. Dadurch gilt näherungsweise\n$$\nt_1=\\dots=t_k=\\max_i t_i.\n$$\n\nVorteil:\n- keine zusätzlichen Wartefenster durch Ungleichgewicht,\n- die Latenzabschätzung wird wieder stabil,\n- das Verhalten der Pipeline wird leichter vorhersagbar.\n\nNachteil:\n- man verlangsamt absichtlich schnelle Stages,\n- dadurch kann die **Gesamtlaufzeit steigen**.\n\nIm Vorlesungsbeispiel verschwand zwar das Ungleichgewicht, aber die Gesamtdauer stieg von $70\\,\\text{s}$ auf $80\\,\\text{s}$.\n\n**Merke:** Balance verbessert nicht automatisch die Performance; sie verbessert oft zuerst die **Regelmäßigkeit**."
+  },
+  {
+    "front": "[2026-03-10] Warum ist das Aufsplitten einer langen Stage nicht dasselbe wie Datenparallelität?",
+    "back": "Beim **Aufsplitten einer Stage** wird eine lange Stage in mehrere **sequenzielle Sub-Stages** zerlegt. Eine einzelne Ladung durchläuft diese neuen Stages nacheinander.\n\nBeispiel:\n- aus **Trocknen** wird **Trockner 1 $\\to$ Trockner 2**.\n\nDas ist **keine Datenparallelität**, denn dieselbe Ladung wird nicht gleichzeitig von zwei Trocknern bearbeitet. Stattdessen wird eine lange Bearbeitungsphase in kleinere Schritte zerlegt, um\n- die maximale Stage-Zeit zu senken,\n- die Pipeline besser zu balancieren,\n- den Durchsatz zu verbessern.\n\nDatenparallelität wäre dagegen: dieselbe Art Arbeit auf verschiedenen Daten gleichzeitig ausführen."
+  },
+  {
+    "front": "[2026-03-10] Wann verbessert das Vertiefen einer Pipeline den Durchsatz, und was begrenzt diesen Trick?",
+    "back": "Das **Vertiefen der Pipeline** hilft, wenn eine lange Stage der Flaschenhals ist und sich sinnvoll in kürzere Teilstufen zerlegen lässt. Dann sinkt $\\max_i t_i$, also verbessert sich der Throughput-Bound:\n$$\n\\text{Throughput} \\le \\frac{1}{\\max_i t_i}.\n$$\n\nIm Beispiel wurden lange Stages aufgesplittet und auf etwa $6\\,\\text{s}$ balanciert; dadurch wurde die Pipeline schneller als zuvor.\n\nDie Grenze ist **Overhead**:\n- zusätzliche Übergänge,\n- Umladen,\n- Koordination,\n- mehr Verwaltungsaufwand.\n\nDeshalb kann man Stages nicht beliebig fein zerlegen. Irgendwann frisst der Overhead den Gewinn auf oder macht die Pipeline sogar langsamer."
+  },
+  {
+    "front": "[2026-03-10] Welche Rolle spielt die CPU-Pipeline als Modell für Parallelität auf einem einzelnen Core?",
+    "back": "Die **CPU-Pipeline** zeigt, dass Parallelität nicht erst bei mehreren Cores beginnt. Schon auf einem einzelnen Core können mehrere Instruktionen gleichzeitig in verschiedenen Stages sein, z.B.:\n1. Fetch\n2. Decode\n3. Execute\n4. Memory Access\n5. Write Back\n\nDas erklärt, warum **Instruktionsdurchsatz** steigen kann, obwohl ein Core nur eine logische Recheneinheit zu sein scheint.\n\nFür die Parallelprogrammierung ist das wichtig, weil **Code-Struktur** beeinflussen kann, wie gut die Hardware optimiert:\n- Prefetching,\n- superskalare Ausführung,\n- SIMD/Vector Units,\n- Cache-Verhalten.\n\nMan steuert diese Mechanismen nicht direkt vollständig, aber man kann der CPU durch geeignete Struktur helfen, ihre interne Parallelität besser auszunutzen."
+  },
+  {
+    "front": "[2026-03-10] Warum ist Speedup nicht dasselbe wie Effizienz?",
+    "back": "**Speedup** misst, wie viel schneller ein Programm mit $p$ Prozessoren läuft:\n$$\nS(p)=\\frac{T_1}{T_p}.\n$$\n\n**Effizienz** misst, wie gut diese Hardware im Vergleich zur idealen linearen Skalierung genutzt wird:\n$$\nE(p)=\\frac{S(p)}{p}.\n$$\n\nEin hoher Speedup bedeutet also nicht automatisch gute Ausnutzung. Beispiel:\n- $S(8)=4$ klingt gut,\n- aber\n$$\nE(8)=\\frac{4}{8}=0{,}5.\n$$\n\nDann wird nur die Hälfte der ideal möglichen Beschleunigung erreicht.\n\n**Merke:** Speedup beantwortet „Wie viel schneller?“, Effizienz beantwortet „Wie sinnvoll waren die zusätzlichen Ressourcen?“."
+  },
+  {
+    "front": "[2026-03-10] Rechne das Vorlesungsbeispiel: $T_1=10$, $f=0{,}2$, $p=8$.",
+    "back": "Gegeben:\n- **sequentieller Anteil** $f=0{,}2$\n- **paralleler Anteil** $1-f=0{,}8$\n- $T_1=10$\n- $p=8$\n\nZuerst die Laufzeit auf 8 Cores:\n- sequentieller Teil:\n$$\n10 \\cdot 0{,}2 = 2\n$$\n- paralleler Teil:\n$$\n\\frac{10 \\cdot 0{,}8}{8} = 1\n$$\n\nAlso:\n$$\nT_8 = 2 + 1 = 3\n$$\n\nDann:\n$$\nS(8)=\\frac{10}{3}\\approx 3{,}33\n$$\n\nUnd die Effizienz:\n$$\nE(8)=\\frac{3{,}33}{8}\\approx 0{,}42\n$$\n\nInterpretation: Trotz 8 Cores erhält man nur etwa den Faktor $3{,}33$, und die Effizienz liegt schon deutlich unter $50\\%$."
+  },
+  {
+    "front": "[2026-03-10] Warum begrenzt Amdahl’s Law den maximalen Speedup selbst bei unendlich vielen Cores?",
+    "back": "**Amdahl’s Law** trennt ein Programm in\n- sequentiellen Anteil $f$,\n- parallelisierbaren Anteil $1-f$.\n\nDer Speedup ist\n$$\nS(p)=\\frac{1}{f+\\frac{1-f}{p}}.\n$$\n\nFür unendlich viele Prozessoren verschwindet nur der parallele Anteil:\n$$\nS(\\infty)=\\frac{1}{f}.\n$$\n\nDer sequentielle Teil bleibt immer bestehen und setzt damit eine harte Obergrenze. Beispiel:\n- bei $f=0{,}2$ gilt\n$$\nS(\\infty)=5.\n$$\n\nAlso kann man selbst mit beliebig vielen Cores nie schneller als um den Faktor $5$ werden. Genau deshalb ist ein kleiner sequentieller Rest oft entscheidender als viele zusätzliche Prozessoren."
+  },
+  {
+    "front": "[2026-03-10] Warum ist die Aussage „Wenn $99\\%$ parallelisierbar sind, ist der Speedup praktisch unbegrenzt“ falsch?",
+    "back": "Bei $99\\%$ Parallelanteil ist der **sequentielle Anteil** immer noch\n$$\nf=0{,}01.\n$$\n\nNach **Amdahl** gilt dann:\n$$\nS(\\infty)=\\frac{1}{0{,}01}=100.\n$$\n\nDas ist groß, aber **nicht unbegrenzt**. Außerdem sinkt die **Effizienz** mit wachsendem $p$ oft stark, weil immer mehr Hardware auf den kleinen sequentiellen Rest warten muss.\n\nDie Aussage ist also falsch aus zwei Gründen:\n- mathematisch gibt es eine feste Obergrenze,\n- praktisch kommen zusätzlich Overheads wie Kommunikation, Synchronisation und Scheduling dazu."
+  },
+  {
+    "front": "[2026-03-10] Warum sind Speedup-Zahlen ohne klare Definition von $T_1$ potenziell irreführend?",
+    "back": "Der **Speedup**\n$$\nS(p)=\\frac{T_1}{T_p}\n$$\nhängt stark davon ab, was als **Baseline** $T_1$ gewählt wird.\n\nMögliche Baselines:\n- **ursprüngliches sequentielles Programm**,\n- **paralleles Programm auf 1 Core** ($T_1'$), oft langsamer wegen Overhead,\n- **algorithmisch optimierte sequentielle Version** ($T_1'''$), oft deutlich schneller.\n\nJe nach Wahl kann derselbe Parallelcode sehr unterschiedlich aussehen:\n- mit schwacher Baseline wirkt der Speedup beeindruckend,\n- mit fairer optimierter Baseline oft deutlich kleiner.\n\nDeshalb muss man bei jeder Speedup-Angabe fragen: **Gegen was wurde verglichen?**"
+  },
+  {
+    "front": "[2026-03-16] Warum setzt der sequentielle Anteil $f$ nach Amdahl eine harte Obergrenze für den Speedup?",
+    "back": "Bei **Amdahls Gesetz** ist die Problemgröße fix. Der parallelisierbare Anteil kann mit wachsendem $p$ immer weiter schrumpfen, der **sequentielle Anteil** $f$ aber nicht.\n\nFormal:\n$$\nT_p \\approx fT_1 + \\frac{(1-f)T_1}{p}\n$$\nalso\n$$\nS(p)=\\frac{T_1}{T_p}=\\frac{1}{f+\\frac{1-f}{p}}.\n$$\n\nFür $p\\to\\infty$ verschwindet nur der parallele Term:\n$$\n\\lim_{p\\to\\infty} S(p)=\\frac{1}{f}.\n$$\n\nDer Rest ist die unvermeidbare sequentielle Zeit. Deshalb kann selbst ein kleines $f$ die Skalierbarkeit stark begrenzen."
+  },
+  {
+    "front": "[2026-03-16] Wann passt Amdahl und wann Gustafson? Formuliere den Unterschied als Modellierungsentscheidung.",
+    "back": "Der Unterschied ist nicht nur eine Formel, sondern die Frage, **was konstant gehalten wird**:\n\n- **Amdahl**: **fixe Arbeit**  \n  Frage: *Wie viel schneller wird genau dieses Problem mit mehr Hardware?*\n- **Gustafson**: **fixe Zeit**  \n  Frage: *Wie viel mehr Arbeit kann ich in derselben Zeit mit mehr Hardware schaffen?*\n\nMan verwendet also:\n- **Amdahl**, wenn die Eingabegröße vorgegeben ist.\n- **Gustafson**, wenn ein festes Zeitbudget zählt und man die Problemgröße/Qualität mit mehr Hardware erhöhen will.\n\nDas ist die zentrale Prüfungsheuristik: erst das Szenario klassifizieren, dann das passende Gesetz anwenden."
+  },
+  {
+    "front": "[2026-03-16] Warum ist Gustafson für ein Computerspiel pro Frame oft passender als Amdahl?",
+    "back": "Bei einem Spiel ist die **Wall-Clock-Zeit pro Frame** fest, z.B.\n$$\n\\frac{1}{30}\\,\\text{s}.\n$$\n\nMit mehr Cores will man typischerweise nicht nur früher fertig sein, sondern in **derselben Frame-Zeit** mehr schaffen:\n- mehr Raytracing-Strahlen,\n- bessere Physik,\n- höhere Rendering-Qualität.\n\nDas ist genau die Sicht von **Gustafson**: **fixe Zeit**, aber wachsende Problemgröße bzw. Qualität.  \n**Amdahl** wäre hier weniger passend, weil es dort um eine feste Arbeitsmenge geht und nur gefragt wird, wie schnell diese fertig wird."
+  },
+  {
+    "front": "[2026-03-16] Wie lautet die Definition von Speedup und Effizienz, und was misst jede Größe?",
+    "back": "**Speedup** misst, wie viel schneller ein Programm mit $p$ Ressourcen läuft:\n$$\nS(p)=\\frac{T_1}{T_p}.\n$$\n\n**Effizienz** misst, wie gut die $p$ Ressourcen ausgenutzt werden:\n$$\nE(p)=\\frac{S(p)}{p}=\\frac{T_1}{pT_p}.\n$$\n\nInterpretation:\n- hoher **Speedup** $\\Rightarrow$ starke Beschleunigung,\n- hohe **Effizienz** $\\Rightarrow$ die zusätzliche Hardware wird gut genutzt.\n\nEin Speedup nahe $p$ bedeutet fast lineare Skalierung; sinkende Effizienz zeigt, dass Overhead oder sequentielle Anteile dominieren."
+  },
+  {
+    "front": "[2026-03-16] Warum braucht die parallele Array-Summe einen assoziativen Operator?",
+    "back": "Bei paralleler Ausführung werden Teilergebnisse in **nicht fest vorgegebener Reihenfolge** kombiniert. Damit das Endergebnis trotzdem korrekt bleibt, muss die Verknüpfung **assoziativ** sein:\n$$\n(a \\circ b)\\circ c = a \\circ (b \\circ c).\n$$\n\nFür die Array-Summe ist die Operation **Addition**, und die ist assoziativ:\n$$\n(a+b)+c = a+(b+c).\n$$\n\nDeshalb darf man Teilintervalle unabhängig berechnen und später beliebig zusammenführen. Ohne Assoziativität könnte eine andere Klammerung ein anderes Ergebnis liefern, und die Parallelisierung wäre semantisch problematisch."
+  },
+  {
+    "front": "[2026-03-16] Warum ist die sequentielle Referenzversion vor einer Parallelisierung wichtig?",
+    "back": "Die **sequentielle Version** erfüllt zwei Rollen:\n\n- **Korrektheitsreferenz**: Die parallele Version ist komplexer; ihr Ergebnis wird gegen die bekannte korrekte sequentielle Lösung geprüft.\n- **Performance-Baseline**: Für den Speedup braucht man $T_1$:\n  $$\n  S(p)=\\frac{T_1}{T_p}.\n  $$\n\nOhne saubere sequentielle Referenz weiß man weder, ob die Parallelisierung korrekt ist, noch ob sie sich überhaupt lohnt."
+  },
+  {
+    "front": "[2026-03-16] Warum ist manuelle Aufteilung in gleich große Segmente kein gutes allgemeines Load Balancing?",
+    "back": "**Gleich große Datenblöcke** bedeuten nicht automatisch **gleich viel Arbeit**. Das funktioniert bei einfacher Array-Summe oft noch gut, aber nicht allgemein.\n\nWenn pro Element eine unterschiedlich teure Operation läuft, z.B. eine **Primzahlberechnung**, dann kann ein Segment viel aufwendiger sein als ein anderes. Folge:\n- einige Threads sind früh fertig,\n- andere laufen noch lange,\n- Cores bleiben untätig.\n\nSchlechtes **Load Balancing** senkt die Auslastung und damit Speedup und Effizienz. Deshalb will man Arbeitsaufteilung und Scheduling möglichst automatisieren."
+  },
+  {
+    "front": "[2026-03-16] Wie funktioniert Divide-and-Conquer als Arbeitsaufteilung für die Array-Summe?",
+    "back": "**Divide-and-Conquer** zerlegt das Problem rekursiv:\n\n1. **Base case**: kleines Intervall direkt lösen.\n2. Sonst: Intervall in zwei Hälften splitten.\n3. Beide Teilprobleme lösen.\n4. Ergebnisse kombinieren.\n\nFür ein Intervall $[low, high)$:\n- wenn die Größe klein genug ist, direkt summieren,\n- sonst mit Mitte\n  $$\n  mid=\\left\\lfloor \\frac{low+high}{2}\\right\\rfloor\n  $$\n  in links und rechts teilen und die beiden Teilsummen addieren.\n\nDer Vorteil ist nicht nur algorithmische Struktur, sondern auch: Diese Rekursion erzeugt viele **Subtasks**, also potenzielle Parallelität."
+  },
+  {
+    "front": "[2026-03-16] Was ist bei Divide-and-Conquer mit Java-Threads die falsche Reihenfolge von `start()` und `join()`, und warum?",
+    "back": "Falsch ist sinngemäß:\n- `t1.start();`\n- `t1.join();`\n- `t2.start();`\n- `t2.join();`\n\nWarum? Weil der zweite Subtask erst startet, **nachdem** der erste vollständig fertig ist. Der rechte Teilbaum wartet also unnötig; die Ausführung wird weitgehend sequentiell.\n\nRichtig ist:\n- beide starten,\n- dann auf beide warten.\n\nAlso erst:\n- `t1.start();`\n- `t2.start();`\n\nund danach:\n- `t1.join();`\n- `t2.join();`\n\nNur so können beide Teilprobleme tatsächlich gleichzeitig laufen."
+  },
+  {
+    "front": "[2026-03-16] Rechne das Mikro-Beispiel nach: Warum entstehen bei Arraygröße $4$ schon $7$ Tasks im binären Divide-and-Conquer-Baum?",
+    "back": "Bei Base Case auf Elementebene hat jedes Array-Element ein Blatt. Für $n=4$ gibt es also $4$ Blätter.\n\nEin voller binärer Baum mit $n$ Blättern hat insgesamt:\n$$\n2n-1\n$$\nKnoten.\n\nDamit ergibt sich:\n$$\n2\\cdot 4 - 1 = 7.\n$$\n\nKonkret:\n- $1$ Wurzel für das ganze Array,\n- $2$ innere Knoten für die beiden Hälften,\n- $4$ Blätter für die einzelnen Elemente.\n\nWenn man naiv **pro Subtask einen Java-Thread** erzeugt, wären das schon bei $4$ Elementen $7$ Threads. Für große $n$ explodiert diese Zahl schnell."
+  },
+  {
+    "front": "[2026-03-16] Warum ist „ein Java-Thread pro Subtask“ bei rekursivem Divide-and-Conquer nicht praktikabel?",
+    "back": "Weil die Zahl der Subtasks bei rekursiver Zerlegung sehr schnell wächst. Bei Element-Base-Case entstehen für $n$ Blätter insgesamt\n$$\n2n-1\n$$\nTasks.\n\nJava-Threads sind dabei **Heavyweights**:\n- typischerweise 1:1 auf **Kernel-Threads** abgebildet,\n- jeder braucht Stack-Speicher,\n- zusätzlich OS-Verwaltungsstrukturen.\n\nDadurch stößt man bei vielen Threads an Ressourcenlimits und riskiert Fehler wie:\n**`OutOfMemoryError: unable to create native thread`**.\n\nDie Arbeitsaufteilung durch Divide-and-Conquer ist also gut, aber das **Thread Assignment** über „neuer Thread pro Subtask“ ist nicht skalierbar."
+  },
+  {
+    "front": "[2026-03-16] Warum ist `run()` bei Java-Threads für Ergebnisberechnung unpraktisch, und was ist der Unterschied zu `Callable<T>`?",
+    "back": "Bei einem klassischen Java-Thread bzw. **Runnable** liefert `run()` **keinen Rückgabewert**. Ergebnisse müssen daher indirekt über Felder oder gemeinsame Objekte bereitgestellt werden.\n\nDas ist unpraktisch für Divide-and-Conquer, weil Teilaufgaben natürliche Rückgabewerte haben, z.B. eine Teilsumme.\n\n**Callable<T>** ist dafür besser geeignet:\n- implementiert `call()`,\n- liefert ein Ergebnis vom Typ $T$ zurück.\n\nMit einem **Executor Service** bekommt man dazu ein **Future**, also einen Platzhalter für das spätere Ergebnis."
+  },
+  {
+    "front": "[2026-03-16] Was übernimmt ein Executor Service, und warum ist das besser als manuelles Thread-Management?",
+    "back": "Ein **Executor Service** trennt **Tasks** von **Threads**:\n\n- Der Code erzeugt Aufgaben.\n- Der Executor verwaltet einen **Threadpool**.\n- Tasks landen in einer **Queue**.\n- Freie Worker-Threads holen sich Tasks und führen sie aus.\n\nVorteile:\n- keine manuelle Thread-Erzeugung pro Aufgabe,\n- bessere Portabilität,\n- begrenzte Zahl von Threads statt unkontrollierter Explosion,\n- der Fokus bleibt auf dem Algorithmus statt auf Thread-Verwaltung.\n\nDas ist besonders gut für viele unabhängige Aufgaben mit flacher Struktur."
+  },
+  {
+    "front": "[2026-03-16] Was ist ein `Future`, und warum ist `get()` zugleich nützlich und gefährlich?",
+    "back": "Ein **Future** ist ein Platzhalter für ein Ergebnis, das später verfügbar sein wird.\n\nWichtige Operationen:\n- `get()` wartet blockierend auf das Ergebnis,\n- `isDone()` prüft, ob das Ergebnis schon fertig ist.\n\n`get()` ist **nützlich**, weil man Ergebnisse sauber synchronisieren kann.  \n`get()` ist **gefährlich**, weil es einen Thread blockiert. In einem begrenzten Threadpool kann das problematisch werden, wenn blockierte Tasks auf weitere Tasks warten, die selbst noch keinen freien Thread bekommen haben."
+  },
+  {
+    "front": "[2026-03-16] Warum funktioniert Executor Service gut für Webserver-artige Workloads, aber schlecht für rekursives Divide-and-Conquer?",
+    "back": "Bei **Webserver-Requests** hat man oft viele **unabhängige** Tasks:\n- Request kommt rein,\n- ein Pool-Thread bearbeitet ihn,\n- danach ist der Thread wieder frei.\n\nDas passt perfekt zu **Work Queue + Worker Threads**.\n\nBei rekursivem **Divide-and-Conquer** erzeugt ein Task dagegen neue Subtasks und wartet dann oft auf deren Ergebnisse. Dadurch entstehen Abhängigkeiten innerhalb desselben Pools. Wenn viele Pool-Threads blockieren, können wartende Subtasks nicht mehr gestartet werden.\n\nKurz:\n- **flache, unabhängige Tasks** $\\Rightarrow$ Executor Service gut,\n- **tiefe, rekursive, blockierende Task-Bäume** $\\Rightarrow$ Executor Service ungeeignet."
+  }
+]
