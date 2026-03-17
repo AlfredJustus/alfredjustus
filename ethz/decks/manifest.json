@@ -1,8 +1,5 @@
 {
-  "generated": "2026-03-17T21:34:42.959Z",
-  "model": "gpt-5.4",
-  "cardsPerLectureTarget": 15,
-  "format": "markdown->parser->json",
+  "generated": "2026-03-17T21:36:08.001Z",
   "courses": [
     {
       "id": "227-0003-10L",
@@ -33,8 +30,8 @@
       "name": "Analysis I",
       "file": "401-0212-16L.json",
       "apkg": null,
-      "lectures": 8,
-      "cards": 120
+      "lectures": 9,
+      "cards": 135
     }
   ]
 }

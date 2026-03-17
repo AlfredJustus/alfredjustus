@@ -478,5 +478,65 @@
   {
     "front": "[2026-03-11] Wann konvergiert eine Reihe $\\sum_{k=1}^\\infty b_k$?",
     "back": "Eine Reihe wird über ihre **Partialsummen**\n$$\nS_n=\\sum_{k=1}^n b_k\n$$\ndefiniert. Die Reihe\n$$\n\\sum_{k=1}^\\infty b_k\n$$\nkonvergiert genau dann, wenn die Folge $(S_n)$ konvergiert.\n\nAuf $\\mathbb{R}$ ist das äquivalent dazu, dass $(S_n)$ eine **Cauchy-Folge** ist. Praktisch prüft man also oft:\n$$\n|S_n-S_m|=\\left|\\sum_{k=m+1}^n b_k\\right|\n$$\nfür große $m,n$."
+  },
+  {
+    "front": "[2026-03-16] Wie wird eine Reihe $\\sum_{n=0}^{\\infty} a_n$ formal definiert, und was bedeutet ihre Konvergenz?",
+    "back": "Eine **Reihe** wird über ihre **Partialsummenfolge** definiert:\n$$\ns_n=\\sum_{k=0}^{n} a_k.\n$$\nDie Reihe\n$$\n\\sum_{n=0}^{\\infty} a_n\n$$\nheißt **konvergent**, wenn die Folge $(s_n)$ konvergiert. Ihr Wert ist dann\n$$\n\\sum_{n=0}^{\\infty} a_n=\\lim_{n\\to\\infty} s_n.\n$$\nSie heißt **divergent**, wenn $(s_n)$ keinen Grenzwert besitzt.\n\nDer Ausdruck einer „unendlichen Summe“ ist also nicht direkt definiert, sondern nur über den Grenzwert der endlichen Zwischensummen."
+  },
+  {
+    "front": "[2026-03-16] Warum ist $a_n\\to 0$ notwendig, wenn $\\sum a_n$ konvergiert?",
+    "back": "Ist\n$$\ns_n=\\sum_{k=0}^{n} a_k\n$$\nkonvergent, dann gilt auch $s_{n-1}\\to s$ für denselben Grenzwert. Daher\n$$\na_n=s_n-s_{n-1}\\to s-s=0.\n$$\nAlso folgt aus der Konvergenz der Reihe zwingend:\n$$\n\\sum a_n \\text{ konvergent } \\Rightarrow a_n\\to 0.\n$$\n\nDas ist ein schnelles **Ausschlusskriterium**: Wenn die Summanden keine Nullfolge sind, kann die Reihe nicht konvergieren."
+  },
+  {
+    "front": "[2026-03-16] Warum reicht $a_n\\to 0$ nicht aus, um die Konvergenz von $\\sum a_n$ zu zeigen?",
+    "back": "Das **Nullfolgenkriterium** ist nur notwendig, nicht hinreichend. Ein Gegenbeispiel ist die **harmonische Reihe**\n$$\n\\sum_{n=1}^{\\infty}\\frac{1}{n}.\n$$\nZwar gilt\n$$\n\\frac{1}{n}\\to 0,\n$$\naber die Reihe divergiert trotzdem.\n\nDagegen konvergiert\n$$\n\\sum_{n=1}^{\\infty}\\frac{1}{n^2}.\n$$\nBeide Folgen haben also Summanden, die gegen $0$ gehen, aber nur eine der beiden Reihen konvergiert. Das zeigt: Das Verhalten der einzelnen Summanden allein genügt nicht."
+  },
+  {
+    "front": "[2026-03-16] Wie erkennt man sofort, dass $\\sum a_n$ divergiert, wenn $(a_n)$ keine Nullfolge ist?",
+    "back": "Man verwendet den **Kontrapositiv** des Nullfolgenkriteriums:\n$$\n\\sum a_n \\text{ konvergent } \\Rightarrow a_n\\to 0.\n$$\nDaraus folgt:\n$$\na_n \\not\\to 0 \\Rightarrow \\sum a_n \\text{ divergiert}.\n$$\n\nDas ist oft der schnellste Test. Beispiel:\n$$\n\\sum_{n=0}^{\\infty} 1\n$$\ndivergiert, weil die Summanden $a_n=1$ nicht gegen $0$ gehen.\n\nWichtig: Dieser Test kann nur Divergenz nachweisen, nie Konvergenz."
+  },
+  {
+    "front": "[2026-03-16] Wie lautet die Partialsummenformel der geometrischen Reihe, und wann konvergiert sie?",
+    "back": "Für $q\\neq 1$ gilt für die **geometrische Partialsumme**\n$$\n\\sum_{k=0}^{n-1} q^k=\\frac{1-q^n}{1-q}.\n$$\nDaraus folgt für\n$$\n\\sum_{n=0}^{\\infty} a q^n:\n$$\nWenn $|q|<1$, dann ist $q^n\\to 0$, also\n$$\n\\sum_{n=0}^{\\infty} a q^n=\\frac{a}{1-q}.\n$$\n\nDie geometrische Reihe konvergiert also genau im Fall\n$$\n|q|<1.\n$$"
+  },
+  {
+    "front": "[2026-03-16] Was geht bei der geometrischen Reihe in den Grenzfällen $q=1$ und $q=-1$ schief?",
+    "back": "Für $q=1$ erhält man\n$$\n1+1+1+\\dots\n$$\nDie Partialsummen wachsen unbegrenzt, also divergiert die Reihe.\n\nFür $q=-1$ erhält man\n$$\n1-1+1-1+\\dots\n$$\nDie Partialsummen sind\n$$\n1,0,1,0,\\dots\n$$\nund besitzen keinen Grenzwert. Auch diese Reihe divergiert.\n\nDie Bedingung $|q|<1$ ist also wesentlich: Nur dann verschwindet der Restterm $q^n$."
+  },
+  {
+    "front": "[2026-03-16] Wie berechnet man im Medikamentenmodell die Menge unmittelbar nach der $n$-ten Einnahme?",
+    "back": "Nach jeder Einnahme kommen $250\\,\\mathrm{mg}$ dazu, und von älteren Dosen bleibt jeweils ein Faktor $0{,}04$ pro Intervall übrig. Unmittelbar nach der $n$-ten Einnahme ist daher die Menge\n$$\n250\\left(1+0{,}04+0{,}04^2+\\dots+0{,}04^{\\,n-1}\\right).\n$$\nMit der geometrischen Summenformel:\n$$\n250\\cdot \\frac{1-0{,}04^n}{1-0{,}04}.\n$$\nFür $n\\to\\infty$ folgt wegen $0{,}04^n\\to 0$ der Grenzwert\n$$\n250\\cdot \\frac{1}{1-0{,}04}.\n$$\nDas ist das obere **Plateau** direkt nach der Einnahme."
+  },
+  {
+    "front": "[2026-03-16] Wie berechnet man im Medikamentenmodell die Menge kurz vor der nächsten Einnahme?",
+    "back": "Kurz vor der nächsten Einnahme ist die neueste Tablette schon ein Intervall alt. Daher bleibt von ihr nur\n$$\n250\\cdot 0{,}04\n$$\nübrig, von der davor\n$$\n250\\cdot 0{,}04^2,\n$$\nusw. Insgesamt:\n$$\n250\\left(0{,}04+0{,}04^2+\\dots+0{,}04^{\\,n-1}\\right).\n$$\nDas ergibt\n$$\n250\\cdot 0{,}04\\cdot \\frac{1-0{,}04^{\\,n-1}}{1-0{,}04}.\n$$\nFür $n\\to\\infty$ erhält man\n$$\n250\\cdot 0{,}04\\cdot \\frac{1}{1-0{,}04}.\n$$\nDas ist das untere Plateau vor der nächsten Dosis."
+  },
+  {
+    "front": "[2026-03-16] Warum entsteht im Medikamentenmodell ein Plateau statt unbegrenzten Wachstums?",
+    "back": "Die Restmengen bilden eine **geometrische Reihe** mit Quotienten\n$$\nq=0{,}04.\n$$\nDa\n$$\n|0{,}04|<1,\n$$\nwerden ältere Beiträge exponentiell klein. Zwar kommen ständig neue Dosen hinzu, aber die alten verschwinden so schnell, dass die Gesamtsumme beschränkt bleibt.\n\nDeshalb nähern sich die Mengen vor und nach der Einnahme festen Grenzwerten an, statt unbegrenzt zu wachsen. Das Plateau ist also genau ein Konvergenzeffekt der geometrischen Reihe."
+  },
+  {
+    "front": "[2026-03-16] Warum sind Reihen mit nichtnegativen Summanden besonders gutmütig?",
+    "back": "Wenn\n$$\na_n\\ge 0 \\quad \\text{für alle } n,\n$$\ndann gilt für die Partialsummen\n$$\ns_{n+1}=s_n+a_{n+1}\\ge s_n.\n$$\nDie Folge $(s_n)$ ist also **monoton wachsend**.\n\nDamit reduziert sich die Konvergenzfrage auf ein Folgenresultat:\n- **monoton wachsend + nach oben beschränkt** $\\Rightarrow$ konvergent,\n- nicht nach oben beschränkt $\\Rightarrow$ Divergenz gegen $+\\infty$.\n\nFür nichtnegative Reihen ist Konvergenz daher oft eine Frage der richtigen oberen Schranke."
+  },
+  {
+    "front": "[2026-03-16] Wie lautet das Majorantenkriterium, und warum funktioniert es?",
+    "back": "Das **Majorantenkriterium** lautet:\n\nGibt es ein $N\\in\\mathbb{N}$ mit\n$$\n0\\le b_n\\le a_n \\quad \\text{für alle } n\\ge N,\n$$\nund konvergiert\n$$\n\\sum_{n=0}^{\\infty} a_n,\n$$\ndann konvergiert auch\n$$\n\\sum_{n=0}^{\\infty} b_n.\n$$\n\nWarum? Für nichtnegative Summanden sind die Partialsummen von $\\sum b_n$ monoton wachsend. Wegen $b_n\\le a_n$ sind sie außerdem nach oben durch die Partialsummen von $\\sum a_n$ beschränkt. Also sind sie monoton und beschränkt, somit konvergent."
+  },
+  {
+    "front": "[2026-03-16] Wie lautet das Minorantenkriterium, und wann benutzt man es?",
+    "back": "Das **Minorantenkriterium** lautet:\n\nGibt es ein $N\\in\\mathbb{N}$ mit\n$$\n0\\le c_n\\le b_n \\quad \\text{für alle } n\\ge N,\n$$\nund divergiert\n$$\n\\sum_{n=0}^{\\infty} c_n,\n$$\ndann divergiert auch\n$$\n\\sum_{n=0}^{\\infty} b_n.\n$$\n\nMan benutzt es, um **Divergenz nachzuweisen**: Wenn eine kleinere nichtnegative Reihe schon divergiert, kann die größere erst recht nicht konvergieren.\n\nTypischer Einsatz: Vergleich mit der harmonischen Reihe\n$$\n\\sum \\frac1n.\n$$"
+  },
+  {
+    "front": "[2026-03-16] Warum ist die Bedingung „ab einem Index“ bei Vergleichskriterien ausreichend?",
+    "back": "Vergleichskriterien verlangen oft nur\n$$\n0\\le b_n\\le a_n \\quad \\text{für alle } n\\ge N.\n$$\nDas genügt, weil **endlich viele Anfangsterme** das Konvergenzverhalten nicht ändern. Der Anfang trägt nur eine endliche Zahl bei; entscheidend ist der **Tail**\n$$\n\\sum_{n=N}^{\\infty} a_n.\n$$\n\nDeshalb darf man bei Vergleichen problematische Anfangsterme ignorieren, solange die Abschätzung ab einem festen Index gilt."
+  },
+  {
+    "front": "[2026-03-16] Warum ändert das Entfernen endlich vieler Summanden das Konvergenzverhalten nicht?",
+    "back": "Für ein festes $N$ gilt:\n$$\n\\sum_{n=0}^{\\infty} a_n\n=\n\\sum_{n=0}^{N-1} a_n+\\sum_{n=N}^{\\infty} a_n.\n$$\nDer erste Teil ist nur eine **endliche Summe** und daher eine feste Zahl. Das Hinzufügen oder Entfernen einer festen Zahl ändert nicht, ob der Rest einen Grenzwert besitzt.\n\nAlso:\n$$\n\\sum_{n=0}^{\\infty} a_n \\text{ konvergiert } \\iff \\sum_{n=N}^{\\infty} a_n \\text{ konvergiert}.\n$$\nKonvergenz ist also eine Eigenschaft des „langen Endes“ der Reihe, nicht des Anfangs."
+  },
+  {
+    "front": "[2026-03-16] Wie verhalten sich p-Reihen $\\sum_{k=1}^{\\infty}\\frac{1}{k^s}$ in Abhängigkeit von $s$?",
+    "back": "Für die **p-Reihe**\n$$\n\\sum_{k=1}^{\\infty}\\frac{1}{k^s}\n$$\ngilt:\n- **konvergent** für\n  $$\n  s>1,\n  $$\n- **divergent** für\n  $$\n  s\\le 1.\n  $$\n\nWichtige Spezialfälle:\n- $s=1$:\n  $$\n  \\sum_{k=1}^{\\infty}\\frac{1}{k}\n  $$\n  ist die harmonische Reihe und divergiert.\n- $s=2$:\n  $$\n  \\sum_{k=1}^{\\infty}\\frac{1}{k^2}\n  $$\n  konvergiert.\n\nDie Schwelle liegt also genau bei $s=1$."
   }
 ]
