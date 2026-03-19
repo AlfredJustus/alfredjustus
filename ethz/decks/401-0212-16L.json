@@ -538,5 +538,65 @@
   {
     "front": "[2026-03-16] Wie verhalten sich p-Reihen $\\sum_{k=1}^{\\infty}\\frac{1}{k^s}$ in Abhängigkeit von $s$?",
     "back": "Für die **p-Reihe**\n$$\n\\sum_{k=1}^{\\infty}\\frac{1}{k^s}\n$$\ngilt:\n- **konvergent** für\n  $$\n  s>1,\n  $$\n- **divergent** für\n  $$\n  s\\le 1.\n  $$\n\nWichtige Spezialfälle:\n- $s=1$:\n  $$\n  \\sum_{k=1}^{\\infty}\\frac{1}{k}\n  $$\n  ist die harmonische Reihe und divergiert.\n- $s=2$:\n  $$\n  \\sum_{k=1}^{\\infty}\\frac{1}{k^2}\n  $$\n  konvergiert.\n\nDie Schwelle liegt also genau bei $s=1$."
+  },
+  {
+    "front": "[2026-03-18] Warum darf man $\\sum_{n=0}^\\infty \\frac{1}{n!}$ mit einer geometrischen Reihe vergleichen?",
+    "back": "Weil alle Summanden **nichtnegativ** sind und daher das **Majorantenkriterium** anwendbar ist. Für $n\\ge 2$ gilt\n$$\nn! \\ge 2^{\\,n-1},\n$$\nalso\n$$\n\\frac{1}{n!}\\le \\frac{1}{2^{n-1}}.\n$$\nDamit wird der Rest der Reihe durch eine geometrische Reihe majorisiert:\n$$\n\\sum_{n=2}^\\infty \\frac{1}{n!}\\le \\sum_{n=1}^\\infty \\frac{1}{2^n}=1.\n$$\nZusammen mit den ersten beiden Termen folgt\n$$\n\\sum_{n=0}^\\infty \\frac{1}{n!}\\le 1+1+1=3.\n$$\nDer Vergleich zeigt also **Konvergenz**, weil die Reihe nach oben durch eine konvergente Reihe beschränkt wird."
+  },
+  {
+    "front": "[2026-03-18] Warum reicht die Abschätzung $0\\le \\sum_{n=0}^\\infty \\frac{1}{n!}\\le 3$ nicht aus, um den Summenwert zu bestimmen?",
+    "back": "Die Abschätzung liefert nur, dass die Partialsummen **beschränkt** sind und wegen der nichtnegativen Summanden monoton wachsen. Daraus folgt die **Existenz eines Grenzwerts**.\n\nAber die Schranken $0$ und $3$ bestimmen diesen Grenzwert nicht eindeutig: Jede Zahl in $[0,3]$ wäre damit vereinbar. Man weiß also nur\n$$\n\\sum_{n=0}^\\infty \\frac{1}{n!}\\in [0,3],\n$$\nnicht aber, dass der Wert gleich $3$ oder einer anderen konkreten Zahl ist.\n\nFür den exakten Summenwert braucht man zusätzliche Information, hier etwa den Zusammenhang mit der Exponentialfunktion:\n$$\n\\sum_{n=0}^\\infty \\frac{1}{n!}=e.\n$$"
+  },
+  {
+    "front": "[2026-03-18] Warum ist $\\sum_{n=0}^\\infty \\frac{(-1)^n}{n!}$ absolut konvergent?",
+    "back": "Eine Reihe ist **absolut konvergent**, wenn die Betragsreihe konvergiert:\n$$\n\\sum_{n=0}^\\infty |a_n|.\n$$\nHier ist\n$$\na_n=\\frac{(-1)^n}{n!},\n\\qquad |a_n|=\\frac{1}{n!}.\n$$\nAlso ist die Betragsreihe\n$$\n\\sum_{n=0}^\\infty \\left|\\frac{(-1)^n}{n!}\\right|\n=\n\\sum_{n=0}^\\infty \\frac{1}{n!}.\n$$\nDiese Reihe konvergiert. Daher konvergiert auch\n$$\n\\sum_{n=0}^\\infty \\frac{(-1)^n}{n!}\n$$\n**absolut**.\n\nWichtig: Absolute Konvergenz bedeutet nicht, dass beide Reihen denselben Summenwert haben. Hier gilt sogar\n$$\n\\sum_{n=0}^\\infty \\frac{1}{n!}=e,\n\\qquad\n\\sum_{n=0}^\\infty \\frac{(-1)^n}{n!}=e^{-1}.\n$$"
+  },
+  {
+    "front": "[2026-03-18] Warum ist die alternierende harmonische Reihe nur bedingt konvergent?",
+    "back": "Die Reihe\n$$\n\\sum_{k=1}^\\infty \\frac{(-1)^{k+1}}{k}\n=\n1-\\frac12+\\frac13-\\frac14+\\cdots\n$$\nkonvergiert nach dem **Leibniz-Kriterium**, weil\n$$\na_k=\\frac1k\n$$\nnichtnegativ, monoton fallend und eine Nullfolge ist.\n\nFür **absolute Konvergenz** müsste aber auch\n$$\n\\sum_{k=1}^\\infty \\left|\\frac{(-1)^{k+1}}{k}\\right|\n=\n\\sum_{k=1}^\\infty \\frac1k\n$$\nkonvergieren. Das ist die **harmonische Reihe**, und sie divergiert.\n\nAlso gilt:\n- die ursprüngliche Reihe konvergiert,\n- die Betragsreihe divergiert.\n\nGenau das ist die Definition von **bedingter Konvergenz**."
+  },
+  {
+    "front": "[2026-03-18] Was ist der entscheidende Unterschied zwischen absoluter und bedingter Konvergenz?",
+    "back": "Der Unterschied ist, ob die **Betragsreihe** konvergiert.\n\n- **Absolute Konvergenz**:\n  $$\n  \\sum a_n \\text{ ist absolut konvergent } \\iff \\sum |a_n| \\text{ konvergiert.}\n  $$\n- **Bedingte Konvergenz**:\n  $$\n  \\sum a_n \\text{ konvergiert, aber } \\sum |a_n| \\text{ divergiert.}\n  $$\n\nDer inhaltlich wichtige Unterschied: **absolute Konvergenz ist stabil**, insbesondere unter Umordnungen; **bedingte Konvergenz ist nicht stabil**.\n\nBeispiele:\n- \n$$\n\\sum_{n=0}^\\infty \\frac{(-1)^n}{n!}\n$$\nist absolut konvergent.\n- \n$$\n\\sum_{k=1}^\\infty \\frac{(-1)^{k+1}}{k}\n$$\nist bedingt konvergent."
+  },
+  {
+    "front": "[2026-03-18] Warum ist absolute Konvergenz bei Umordnungen „robust“?",
+    "back": "Wenn\n$$\n\\sum a_n\n$$\n**absolut konvergiert**, dann konvergiert auch\n$$\n\\sum |a_n|.\n$$\nDadurch kann man die „Größe“ jedes Rests kontrollieren, unabhängig davon, in welcher Reihenfolge die Summanden auftreten. Mit der verallgemeinerten Dreiecksungleichung\n$$\n\\left|\\sum_{k=m+1}^n a_k\\right|\n\\le\n\\sum_{k=m+1}^n |a_k|\n$$\nwerden Restsummen klein, sobald genug Betragssumme verbraucht wurde.\n\nFolge: **Jede Umordnung** einer absolut konvergenten Reihe konvergiert, und zwar zum **gleichen Summenwert**.\n\nDas ist bei unendlichen Reihen nicht selbstverständlich; es ist eine spezielle Stärke der absoluten Konvergenz."
+  },
+  {
+    "front": "[2026-03-18] Was sagt der Riemann’sche Umordnungssatz für bedingt konvergente Reihen?",
+    "back": "Für eine **bedingt konvergente** Reihe kann man durch geeignete **Umordnung** der Summanden jeden vorgegebenen Grenzwert\n$$\nL\\in\\mathbb{R}\n$$\nerzwingen.\n\nDie Idee:\n- addiere positive Summanden, bis die Partialsumme größer als $L$ ist,\n- addiere dann negative Summanden, bis sie kleiner als $L$ ist,\n- wiederhole das.\n\nWarum funktioniert das? Weil die Summanden einer konvergenten Reihe gegen $0$ gehen. Dadurch werden die Über- und Unterschreitungen immer kleiner.\n\nDas zeigt: Bei bedingter Konvergenz ist die Reihenfolge der Summanden **entscheidend**. Anders als bei endlichen Summen ist Umordnen also nicht harmlos."
+  },
+  {
+    "front": "[2026-03-18] Warum ist $1-1+1-1+\\cdots$ kein Gegenbeispiel zum Umordnungssatz?",
+    "back": "Die Reihe\n$$\n1-1+1-1+\\cdots\n$$\nist **gar nicht konvergent**. Ihre Partialsummen sind\n$$\n1,0,1,0,1,0,\\dots\n$$\nund oszillieren zwischen $1$ und $0$.\n\nDer Riemann’sche Umordnungssatz gilt aber nur für **bedingt konvergente** Reihen, also für Reihen, die bereits konvergieren, aber nicht absolut.\n\nAußerdem verletzt diese Reihe schon eine notwendige Bedingung für Konvergenz:\n$$\na_n \\to 0\n$$\ngilt hier nicht, denn $a_n=\\pm 1$ hat keinen Grenzwert $0$.\n\nAlso: Das Problem bei $1-1+1-1+\\cdots$ ist nicht „gefährliches Umordnen“, sondern schon fehlende Konvergenz der Ausgangsreihe."
+  },
+  {
+    "front": "[2026-03-18] Unter welchen Voraussetzungen liefert das Leibniz-Kriterium Konvergenz?",
+    "back": "Für eine Reihe der Form\n$$\n\\sum_{n=0}^\\infty (-1)^n a_n\n$$\nliefert das **Leibniz-Kriterium** Konvergenz, wenn gilt:\n\n- $a_n\\ge 0$,\n- $(a_n)$ ist monoton fallend,\n- $a_n\\to 0$.\n\nDann konvergiert die alternierende Reihe.\n\nDie Bedingungen haben klare Rollen:\n- **Monotonie** sorgt dafür, dass gerade und ungerade Partialsummen monotone Teilfolgen bilden.\n- **$a_n\\to 0$** sorgt dafür, dass der Abstand dieser Teilfolgen verschwindet.\n\nOhne diese Bedingungen kann das Kriterium nicht angewendet werden."
+  },
+  {
+    "front": "[2026-03-18] Warum ist die Bedingung $a_n\\to 0$ im Leibniz-Kriterium unverzichtbar?",
+    "back": "Im Leibniz-Beweis betrachtet man die Partialsummen\n$$\ns_n=\\sum_{k=0}^n (-1)^k a_k.\n$$\nGerade und ungerade Partialsummen nähern sich nur dann demselben Grenzwert, wenn ihr Abstand verschwindet. Dieser Abstand ist im Wesentlichen ein später Summand:\n$$\ns_{2n}-s_{2n+1}=a_{2n+1}.\n$$\nDamit beide Teilfolgen denselben Grenzwert haben, braucht man also\n$$\na_{2n+1}\\to 0.\n$$\n\nOhne diese Bedingung kann die Reihe oszillieren. Das Standardbeispiel ist\n$$\n1-1+1-1+\\cdots,\n$$\nalso $a_n=1$. Hier ist $(a_n)$ zwar monoton, aber keine Nullfolge, und die Partialsummen konvergieren nicht."
+  },
+  {
+    "front": "[2026-03-18] Wie liefern gerade und ungerade Partialsummen beim Leibniz-Kriterium Schranken?",
+    "back": "Für\n$$\ns_n=\\sum_{k=0}^n (-1)^k a_k\n$$\nmit fallender Folge $a_n\\ge 0$ gilt:\n\n- die **geraden Partialsummen** $(s_{2n})$ sind monoton fallend,\n- die **ungeraden Partialsummen** $(s_{2n+1})$ sind monoton wachsend.\n\nAußerdem gilt stets\n$$\ns_{2n+1}\\le s \\le s_{2n},\n$$\nwobei $s$ der Grenzwert der Reihe ist.\n\nDie Reihe wird also durch gerade und ungerade Partialsummen **eingesperrt**. Das ist nicht nur ein Konvergenzbeweis, sondern auch eine praktische Fehlerabschätzung: Nach endlich vielen Summanden liegt der wahre Wert zwischen zwei benachbarten Partialsummen."
+  },
+  {
+    "front": "[2026-03-18] Warum konvergiert $1-\\frac12+\\frac13-\\frac14+\\cdots$, obwohl $\\sum \\frac1k$ divergiert?",
+    "back": "Hier machen die **Vorzeichen** den Unterschied. Die Reihe\n$$\n\\sum_{k=1}^\\infty \\frac1k\n$$\ndivergiert, weil die positiven Summanden zu langsam abfallen.\n\nBei der alternierenden Reihe\n$$\n1-\\frac12+\\frac13-\\frac14+\\cdots\n$$\nheben sich aufeinanderfolgende Terme teilweise weg. Da\n$$\na_k=\\frac1k\n$$\nmonoton fallend ist und gegen $0$ geht, greift das **Leibniz-Kriterium** und liefert Konvergenz.\n\nDas zeigt: Konvergenz hängt nicht nur von den Beträgen $\\frac1k$ ab, sondern auch von den **Vorzeichen**. Genau deshalb ist diese Reihe nur **bedingt** und nicht absolut konvergent."
+  },
+  {
+    "front": "[2026-03-18] Was ist das Cauchy-Kriterium für Reihen, und warum steht dort ein Betrag?",
+    "back": "Eine Reihe\n$$\n\\sum_{k=0}^\\infty a_k\n$$\nkonvergiert genau dann, wenn für jedes $\\varepsilon>0$ ein $N$ existiert, sodass für alle $n>m\\ge N$ gilt:\n$$\n\\left|\\sum_{k=m+1}^n a_k\\right|<\\varepsilon.\n$$\n\nDas bedeutet: Jede genügend späte **Restsumme** ist beliebig klein.\n\nDer Betrag ist wesentlich. Ohne Betrag könnte eine große negative Zahl automatisch „kleiner als $\\varepsilon$“ sein, obwohl sie betragsmäßig riesig ist. Das wäre als Konvergenzkriterium sinnlos.\n\nDas Cauchy-Kriterium misst also die tatsächliche Größe der Reststücke, nicht nur ihr Vorzeichen."
+  },
+  {
+    "front": "[2026-03-18] Wie nutzt man die verallgemeinerte Dreiecksungleichung bei absoluter Konvergenz?",
+    "back": "Für endliche Summen gilt\n$$\n\\left|\\sum_{k=m+1}^n a_k\\right|\n\\le\n\\sum_{k=m+1}^n |a_k|.\n$$\nWenn\n$$\n\\sum |a_k|\n$$\nkonvergiert, dann werden die rechten Restsummen\n$$\n\\sum_{k=m+1}^n |a_k|\n$$\nfür große $m,n$ klein. Also werden auch die linken Restsummen klein.\n\nDamit folgt über das **Cauchy-Kriterium**, dass\n$$\n\\sum a_k\n$$\nkonvergiert.\n\nDie Ungleichung ist also das Standardwerkzeug, um von **absoluter Konvergenz** auf gewöhnliche Konvergenz zu schließen."
+  },
+  {
+    "front": "[2026-03-18] Wie entscheidet das Quotientenkriterium über $\\sum_{n=1}^\\infty n^4 e^{-n}$?",
+    "back": "Setze\n$$\na_n=n^4 e^{-n}.\n$$\nDann ist\n$$\n\\left|\\frac{a_{n+1}}{a_n}\\right|\n=\n\\frac{(n+1)^4 e^{-(n+1)}}{n^4 e^{-n}}\n=\n\\left(1+\\frac1n\\right)^4\\frac1e.\n$$\nFür $n\\to\\infty$ folgt\n$$\n\\left(1+\\frac1n\\right)^4\\frac1e \\to \\frac1e.\n$$\nDa\n$$\n\\frac1e<1,\n$$\nliefert das **Quotientenkriterium**:\n$$\n\\sum_{n=1}^\\infty n^4 e^{-n}\n$$\nkonvergiert **absolut**.\n\nDie Exponentialabnahme $e^{-n}$ dominiert also das polynomielle Wachstum $n^4$."
   }
 ]
