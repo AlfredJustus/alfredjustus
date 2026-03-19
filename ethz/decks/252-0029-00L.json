@@ -478,5 +478,65 @@
   {
     "front": "[2026-03-16] Warum funktioniert Executor Service gut für Webserver-artige Workloads, aber schlecht für rekursives Divide-and-Conquer?",
     "back": "Bei **Webserver-Requests** hat man oft viele **unabhängige** Tasks:\n- Request kommt rein,\n- ein Pool-Thread bearbeitet ihn,\n- danach ist der Thread wieder frei.\n\nDas passt perfekt zu **Work Queue + Worker Threads**.\n\nBei rekursivem **Divide-and-Conquer** erzeugt ein Task dagegen neue Subtasks und wartet dann oft auf deren Ergebnisse. Dadurch entstehen Abhängigkeiten innerhalb desselben Pools. Wenn viele Pool-Threads blockieren, können wartende Subtasks nicht mehr gestartet werden.\n\nKurz:\n- **flache, unabhängige Tasks** $\\Rightarrow$ Executor Service gut,\n- **tiefe, rekursive, blockierende Task-Bäume** $\\Rightarrow$ Executor Service ungeeignet."
+  },
+  {
+    "front": "[2026-03-17] Warum ist ein `ExecutorService` für rekursives Divide-and-Conquer problematisch, obwohl er einen Threadpool hat?",
+    "back": "Bei rekursivem **Divide-and-Conquer** erzeugen Tasks weitere Tasks und warten dann oft auf deren Resultate, z.B. per `get()`.\n\nIm **ExecutorService** bedeutet dieses Warten typischerweise: Ein Pool-Thread **blockiert**. Wenn viele Threads gleichzeitig auf Kind-Tasks warten, aber keine freien Threads mehr übrig sind, können die noch ausstehenden Tasks nicht mehr ausgeführt werden.\n\nDann entsteht eine **Starvation-/Deadlock-artige Situation**:\n- Eltern-Tasks warten auf Kinder,\n- Kinder liegen in der Queue,\n- aber kein Thread ist frei, um sie abzuarbeiten.\n\nDarum ist der ExecutorService laut Vorlesung gut für **flache, unabhängige Tasks**, aber ungeeignet für rekursive Abhängigkeitsstrukturen."
+  },
+  {
+    "front": "[2026-03-17] Warum können naive Java-Threads bei Divide-and-Conquer in `OutOfMemory` enden?",
+    "back": "Bei rekursivem **Divide-and-Conquer** kann jede Rekursionsstufe neue Threads erzeugen. Die Anzahl Threads wächst dann sehr schnell.\n\nIm Vortrag wurde Java so modelliert, dass **Java-Threads 1:1 auf Kernel-Threads** abgebildet werden. Jeder Thread braucht eigenen Speicher und Verwaltungsaufwand.\n\nWenn zu viele Threads erzeugt werden:\n- steigt der Speicherverbrauch stark,\n- das Betriebssystem/JVM muss immer mehr Threads verwalten,\n- schließlich kann eine **`OutOfMemory`-Exception** auftreten.\n\nDas Problem ist also nicht die Rekursion an sich, sondern die Kombination aus **zu feingranularer Parallelisierung** und **manuellem Thread-Management**."
+  },
+  {
+    "front": "[2026-03-17] Wann ist ein `ExecutorService` die richtige Wahl statt Fork-Join?",
+    "back": "Ein **ExecutorService** passt gut zu **flachen Task-Strukturen** mit vielen unabhängigen Aufgaben.\n\nTypischer Fall:\n- Problem einmal in mehrere Chunks zerlegen,\n- jeden Chunk als Task einreichen,\n- Ergebnisse später einsammeln.\n\nBeispiel aus der Vorlesungsidee: Ein Array wird **nicht rekursiv**, sondern direkt in mehrere Teilbereiche aufgeteilt, und jeder Teilbereich wird separat verarbeitet.\n\n**Fork-Join** ist dagegen besser, wenn:\n- Tasks rekursiv neue Tasks erzeugen,\n- eine Baumstruktur von Abhängigkeiten entsteht,\n- Worker beim Warten sinnvoll weiterarbeiten sollen.\n\nKurz:\n- **ExecutorService** $\\rightarrow$ viele unabhängige Tasks\n- **Fork-Join** $\\rightarrow$ rekursive Divide-and-Conquer-Tasks"
+  },
+  {
+    "front": "[2026-03-17] Welche Task-Typen gibt es im Fork-Join-Framework, und wann verwendet man welchen?",
+    "back": "Es gibt zwei zentrale Task-Typen:\n\n- **`RecursiveTask<V>`**: für Tasks **mit Rückgabewert**\n- **`RecursiveAction`**: für Tasks **ohne Rückgabewert**\n\nBeide überschreiben die Methode `compute()`.\n\nVerwendung:\n- Nimm **`RecursiveTask<V>`**, wenn Teilresultate berechnet und später kombiniert werden, z.B. Summe eines Array-Intervalls.\n- Nimm **`RecursiveAction`**, wenn nur ein Effekt ausgeführt wird, z.B. ein Array-Bereich wird in-place verändert.\n\nDer Unterschied ist also nicht die Parallelisierungsstrategie, sondern ob ein **Resultatwert** zurückgegeben wird."
+  },
+  {
+    "front": "[2026-03-17] Wie startet man eine Fork-Join-Berechnung korrekt?",
+    "back": "Typischerweise erstellt man einen **`ForkJoinPool`** und startet die Wurzelaufgabe mit `invoke(...)` auf dem Pool:\n\n$$\n\\texttt{pool.invoke(task)}\n$$\n\nWichtig ist:\n- `compute()` enthält die eigentliche Logik,\n- `fork()` startet Teilaufgaben,\n- `join()` wartet auf deren Resultat,\n- **`invoke` wird auf dem Pool** aufgerufen.\n\nDie Vorlesung betonte explizit die Korrektur:\nNicht “einfach auf dem Task starten”, sondern über den **Pool**, weil dieser die Worker-Threads und das Scheduling verwaltet."
+  },
+  {
+    "front": "[2026-03-17] Warum ist ein direkter Aufruf von `compute()` im Fork-Join-Framework erlaubt, obwohl ein direkter `run()`-Aufruf bei Java-Threads problematisch ist?",
+    "back": "Bei klassischen **Java-Threads** umgeht ein direkter Aufruf von `run()` das eigentliche Thread-Scheduling; der Code läuft dann einfach sequentiell im aktuellen Thread. Das ist meist nicht gewollt.\n\nIm **Fork-Join-Framework** ist ein direkter Aufruf von `compute()` dagegen eine **bewusste Optimierung**:\n- Der Task wird nicht extra in eine Queue gelegt,\n- es entsteht weniger Scheduling- und Queue-Overhead,\n- die Arbeit wird sofort im aktuellen Worker ausgeführt.\n\nTypisches Muster:\n- einen Teiltask `fork()`en,\n- den anderen direkt mit `compute()` ausführen,\n- danach `join()`.\n\nHier ist der direkte Aufruf also kein Fehler, sondern oft die effizientere Variante."
+  },
+  {
+    "front": "[2026-03-17] Warum arbeitet ein Fork-Join-Worker lokal LIFO, aber stiehlt fremde Tasks FIFO?",
+    "back": "Die lokale Queue eines Workers ist eine **Deque**.\n\n**Lokal LIFO** bedeutet:\n- der Worker nimmt den zuletzt erzeugten Task zuerst,\n- das verhält sich wie ein Stack.\n\nVorteil:\n- bessere **Cache-Lokalität**,\n- bei rekursivem Divide-and-Conquer liegen zusammengehörige Daten oft nah beieinander.\n\n**Beim Stealing FIFO** bedeutet:\n- ein fremder Worker nimmt den **ältesten** Task aus einer anderen Deque.\n\nVorteil:\n- ältere Tasks sind oft **größer** und enthalten mehr verbleibende Rekursion,\n- dadurch verbessert sich die **Lastverteilung**,\n- und man vermeidet, nur winzige Restarbeiten zu stehlen."
+  },
+  {
+    "front": "[2026-03-17] Was ist Work-Stealing, und warum passt es besonders gut zu rekursivem Divide-and-Conquer?",
+    "back": "**Work-Stealing** bedeutet: Wenn ein Worker keine lokalen Tasks mehr hat, nimmt er sich Arbeit aus den Queues anderer Worker.\n\nDas passt gut zu rekursivem **Divide-and-Conquer**, weil:\n- Arbeit dynamisch entsteht,\n- Teilprobleme unterschiedlich groß sein können,\n- die Last daher nicht perfekt im Voraus verteilt werden kann.\n\nStatt dass ein Worker untätig bleibt, kann er:\n1. in die globale Queue schauen,\n2. falls nötig Arbeit aus einer fremden lokalen Deque stehlen.\n\nSo wird die Auslastung verbessert, ohne dass der Programmierer die Verteilung aller Teilprobleme manuell planen muss."
+  },
+  {
+    "front": "[2026-03-17] Warum ist die Optimierung `left.fork(); right.compute(); left.join();` oft besser als beide Teilaufgaben zu forken?",
+    "back": "Wenn beide Teilaufgaben geforkt werden, entstehen mehr:\n- Queue-Operationen,\n- Verwaltungsaufwand,\n- potenzielle Stealing-Vorgänge.\n\nBeim Muster\n\n$$\n\\texttt{left.fork();\\ right.compute();\\ left.join();}\n$$\n\npassiert Folgendes:\n- **`left`** wird in die lokale Queue gelegt und kann gestohlen werden,\n- **`right`** wird sofort im aktuellen Worker berechnet,\n- danach wird **`left`** gejoint.\n\nVorteil:\n- weniger Overhead,\n- trotzdem bleibt Parallelität erhalten,\n- ein anderer Worker kann weiterhin `left` übernehmen.\n\nDie Vorlesung betonte, dass diese Optimierung den **logischen Task-Graphen nicht ändert**, nur die konkrete Ausführung effizienter macht."
+  },
+  {
+    "front": "[2026-03-17] Warum ist ein `sequentialThreshold = 1` im Summenbeispiel meist eine schlechte Idee?",
+    "back": "Dann verarbeitet jeder Task nur **ein einziges Array-Element**. Die eigentliche Arbeit pro Task ist extrem klein.\n\nDadurch dominiert der **Overhead**:\n- Task-Erzeugung,\n- Queue-Verwaltung,\n- Scheduling,\n- `fork()`/`join()`-Kosten.\n\nSelbst wenn viele Cores vorhanden sind, bringt zusätzliche Parallelität dann kaum etwas oder macht das Programm sogar langsamer.\n\nDie Vorlesung nannte als Faustregel: Ein Task sollte ungefähr **100 bis 10000 Basisoperationen** enthalten. Der Threshold sollte also so gewählt werden, dass ein Basisfall **genug Arbeit** enthält."
+  },
+  {
+    "front": "[2026-03-17] Was beschreibt ein Task-Graph im Fork-Join-Modell, und was gerade nicht?",
+    "back": "Ein **Task-Graph** ist ein **gerichteter azyklischer Graph (DAG)**, in dem:\n- Knoten die Tasks darstellen,\n- Kanten die **logischen Abhängigkeiten** beschreiben, etwa durch `fork` und `join`.\n\nWichtig ist, was er **nicht** beschreibt:\n- nicht die konkrete zeitliche Ausführung,\n- nicht, welcher Worker welchen Task tatsächlich ausführt,\n- nicht den beobachteten Schedule.\n\nDer Task-Graph modelliert also die **Struktur der möglichen Parallelität**, nicht die reale Laufzeitspur."
+  },
+  {
+    "front": "[2026-03-17] Warum bleibt der Task-Graph gleich, auch wenn man statt zweier `fork()`-Aufrufe die `compute()`-Optimierung benutzt?",
+    "back": "Der **Task-Graph** beschreibt die **logischen Abhängigkeiten** des Programms, nicht die Implementationsdetails des Schedulings.\n\nOb man:\n- beide Teilprobleme forkt, oder\n- ein Teilproblem forkt und das andere direkt mit `compute()` ausführt,\n\nändert nicht die fachliche Struktur:\n- es gibt dieselben zwei Teilprobleme,\n- beide müssen berechnet werden,\n- danach werden ihre Resultate zusammengeführt.\n\nDarum bleibt der DAG gleich. Geändert wird nur, **wie** die Arbeit zur Laufzeit auf Worker und Queues verteilt wird."
+  },
+  {
+    "front": "[2026-03-17] Was bedeuten $T_1$, $T_P$ und $T_\\infty$ in einem Task-Graphen?",
+    "back": "Die drei Größen beschreiben unterschiedliche Sichtweisen auf die Laufzeit:\n\n- **$T_1$**: gesamte **Work** bzw. sequentielle Laufzeit  \n  $$T_1 = \\text{Summe der Kosten aller Knoten}$$\n\n- **$T_P$**: Laufzeit mit **$P$ Worker-Threads**\n\n- **$T_\\infty$**: **Span**, also die Länge des **kritischen Pfads**  \n  Das ist die längste Abhängigkeitskette im Graphen.\n\nInterpretation:\n- $T_1$ misst, wie viel Gesamtarbeit anfällt,\n- $T_\\infty$ misst, wie viel davon unvermeidbar “hintereinander” passieren muss,\n- $T_P$ ist die tatsächlich erreichte Laufzeit bei gegebener Parallelität."
+  },
+  {
+    "front": "[2026-03-17] Wie berechnet man den maximalen Speedup aus $T_1$ und $T_\\infty$, und was bedeutet er?",
+    "back": "Der maximale theoretische Speedup bei unendlich vielen Ressourcen ist\n\n$$\nS_\\infty = \\frac{T_1}{T_\\infty}.\n$$\n\nEr gibt an, wie stark ein Programm **höchstens** beschleunigt werden kann, wenn nur noch die Abhängigkeiten im Task-Graphen limitieren.\n\nBeispiel aus der Vorlesung:\n$$\nT_1 = 18,\\qquad T_\\infty = 9\n$$\n\nDann gilt:\n$$\nS_\\infty = \\frac{18}{9} = 2.\n$$\n\nBedeutung:\nSelbst mit beliebig vielen Prozessoren ist **mehr als Faktor 2** nicht möglich, weil der kritische Pfad 9 Zeiteinheiten lang bleibt."
+  },
+  {
+    "front": "[2026-03-17] Warum kann derselbe Task-Graph bei gleichem $P$ zu unterschiedlichem $T_P$ führen?",
+    "back": "Weil **$T_P$ vom Scheduler abhängt**.\n\nAuch wenn der DAG dieselben Abhängigkeiten vorgibt, gibt es oft mehrere zulässige Ausführungsreihenfolgen. Manche Schedules nutzen verfügbare Parallelität früh aus, andere weniger gut.\n\nDie Vorlesung nannte ein Beispiel mit $P=2$, bei dem derselbe Graph zu\n$$\nT_2 = 4\n$$\noder\n$$\nT_2 = 5\n$$\nführen kann.\n\nDer Graph bestimmt also die **Grenzen** der Parallelität, aber nicht die exakte Laufzeit. Diese hängt zusätzlich davon ab, **welche Tasks wann auf welche Worker gelegt werden**."
   }
 ]
