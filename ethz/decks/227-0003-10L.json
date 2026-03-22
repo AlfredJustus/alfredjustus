@@ -418,5 +418,65 @@
   {
     "front": "[2026-03-12] Which instruction-processing phases does a load use that a register-to-register ADD does not?",
     "back": "Common phases are:\n\n1. **Fetch**\n2. **Decode**\n3. **Evaluate Address**\n4. **Fetch Operands**\n5. **Execute**\n6. **Store Result**\n\nA **load** needs **Evaluate Address** to compute the memory address and then a memory read during operand fetch. A register-to-register **ADD** does not need address evaluation, because its operands already come from registers.\n\nSo the extra distinguishing step is the memory-address computation and memory access required by the load."
+  },
+  {
+    "front": "[2026-03-20] Why is a microarchitecture allowed to use intermediate internal states even though the ISA describes only $AS \\to AS'$?",
+    "back": "Because the ISA constrains only the **programmer-visible architectural state** transition, not the internal implementation steps.\n\nA correct **microarchitecture** may use hidden registers, FSM states, or multiple cycles as long as:\n- starting from architectural state $AS$,\n- executing instruction $I$,\n- it eventually produces the same visible next state $AS'$\nas required by the ISA.\n\nSo the ISA is an **abstract FSM** over visible states, while the hardware may refine one ISA transition into many **programmer-invisible** steps."
+  },
+  {
+    "front": "[2026-03-20] In a single-cycle processor, why does the slowest instruction determine the clock period?",
+    "back": "Because every instruction must complete all of its work within exactly **one clock cycle**.\n\nThat means the combinational path from state elements to state elements must be long enough for the worst-case instruction:\n$$\nT_{\\text{clk}} \\ge T_{\\text{critical path}}.\n$$\n\nIn a single-cycle datapath, this path may include:\n- instruction fetch,\n- register read,\n- ALU work,\n- data memory access,\n- write-back.\n\nEven a simple ALU instruction must wait for that same clock edge, so fast instructions are forced to run at the speed required by the slowest one."
+  },
+  {
+    "front": "[2026-03-20] What tradeoff distinguishes single-cycle from multi-cycle execution?",
+    "back": "The key tradeoff is between **CPI** and **clock period**.\n\n- **Single-cycle**:\n  - $\\text{CPI}=1$\n  - $T_{\\text{clk}}$ is set by the slowest **instruction**\n- **Multi-cycle**:\n  - $\\text{CPI}$ varies by instruction\n  - $T_{\\text{clk}}$ is set by the slowest **stage**\n\nSo single-cycle fixes CPI but often makes the clock slow, while multi-cycle allows more flexibility by spreading work across cycles."
+  },
+  {
+    "front": "[2026-03-20] Why must control generation be part of the critical path in a single-cycle design?",
+    "back": "Because the processor must both **decode** the instruction and **execute** it in the same cycle.\n\nThe control signals—such as `RegWrite`, `ALUSrc`, `MemWrite`, and ALU operation selects—must be produced early enough to steer the datapath before the clock edge. Therefore, decode/control delay is part of the same combinational path as fetch, ALU, memory, and write-back.\n\nA consequence is that large or complex control logic can itself contribute to the **critical path**."
+  },
+  {
+    "front": "[2026-03-20] Why is datapath design usually done before control design?",
+    "back": "Because **control logic** only makes sense relative to a specific **datapath**.\n\nFirst design the hardware structures that can carry out the needed operations:\n- register file,\n- ALU,\n- memories,\n- muxes,\n- adders,\n- PC update paths.\n\nThen define control signals that steer those structures correctly for each instruction. Without a datapath, there is nothing concrete for control to select or enable."
+  },
+  {
+    "front": "[2026-03-20] For `add $s0, $s1, $s2`, which instruction fields drive the register file, and what gets written back?",
+    "back": "For the R-type instruction `add $s0, $s1, $s2`:\n\n- **read register 1** comes from `rs = instruction[25:21]`\n- **read register 2** comes from `rt = instruction[20:16]`\n- **write register** comes from `rd = instruction[15:11]`\n\nThe ALU adds the two register outputs and the **ALU result** is written back to register `rd`.\n\nSemantically:\n$$\n\\text{GPR}[rd] \\leftarrow \\text{GPR}[rs] + \\text{GPR}[rt], \\qquad \\text{PC} \\leftarrow \\text{PC}+4.\n$$"
+  },
+  {
+    "front": "[2026-03-20] Why are two muxes needed when extending the datapath from R-type `add` to I-type `addi`?",
+    "back": "Because `addi` differs from R-type instructions in **two independent ways**:\n\n1. The destination register is `rt`, not `rd`.\n2. The second ALU operand is the **sign-extended immediate**, not the second register value.\n\nSo the datapath needs:\n- a **destination-register mux** choosing between `rd` and `rt`,\n- an **ALU-input mux** choosing between register read data 2 and $\\text{signext}(\\text{imm})$.\n\nWithout both muxes, the same datapath could not support both formats."
+  },
+  {
+    "front": "[2026-03-20] What exactly does sign extension accomplish for `addi` and address-based instructions like `lw`/`sw`?",
+    "back": "It converts the 16-bit immediate into a 32-bit value while preserving its signed meaning.\n\nFor example, in\n$$\n\\text{addi } rt, rs, imm,\n$$\nthe operation is\n$$\n\\text{GPR}[rt] \\leftarrow \\text{GPR}[rs] + \\text{signext}(imm).\n$$\n\nThis matters because immediates and offsets may be negative. The same idea is used for `lw` and `sw` address calculation:\n$$\n\\text{addr} = \\text{GPR}[rs] + \\text{signext}(imm).\n$$\n\nWithout sign extension, negative constants and negative offsets would be interpreted incorrectly."
+  },
+  {
+    "front": "[2026-03-20] Trace `lw`: which datapath path is used, and why does it need an extra write-back mux choice?",
+    "back": "For `lw`, the datapath does:\n\n1. Fetch instruction.\n2. Read base register `rs`.\n3. Sign-extend the immediate.\n4. Use the ALU to compute the address:\n   $$\n   \\text{addr} = \\text{GPR}[rs] + \\text{signext}(imm)\n   $$\n5. Read data memory at that address.\n6. Write the **memory data** into register `rt`.\n\nSo unlike ALU instructions, the value written back is **not** the ALU result. That is why a **write-back mux** is needed:\n- one input = ALU result,\n- other input = memory read data.\n\nFor `lw`, control selects memory data and asserts `RegWrite=1`."
+  },
+  {
+    "front": "[2026-03-20] Why is the write-register selection a “don’t care” for `sw`, but `MemWrite` is not?",
+    "back": "For `sw`, no register is written, so if\n$$\n\\text{RegWrite}=0,\n$$\nthe chosen write-register input has no effect on architectural state. That makes it a **don’t care** for correctness.\n\nBut memory must be updated correctly, so\n$$\n\\text{MemWrite}=1\n$$\nis essential. If it were wrong, the store would fail. More generally, mux settings can often be “don’t care” when the destination write-enable is off, but write-enables themselves must be correct to avoid unintended state changes."
+  },
+  {
+    "front": "[2026-03-20] Why must the jump target for `j` use the upper 4 bits of $(\\text{PC}+4)$ rather than $\\text{PC}$?",
+    "back": "Because the MIPS jump target is defined as:\n$$\n\\text{PC} \\leftarrow \\{(\\text{PC}+4)[31:28],\\ \\text{instr}[25:0],\\ 2'b00\\}.\n$$\n\nThe ISA semantics use the upper bits of the **next sequential address**, not the current PC. Using the top 4 bits of $\\text{PC}$ is therefore incorrect and can produce the wrong jump target near address-region boundaries.\n\nThis is a classic datapath pitfall: the adder for $\\text{PC}+4$ is not just for fall-through execution; its result is also needed for correct jump formation."
+  },
+  {
+    "front": "[2026-03-20] Worked micro-example: if $(\\text{PC}+4)=0x12345678$ and `instr[25:0]=0x0000003`, what jump target is formed?",
+    "back": "Use:\n$$\n\\text{target}=\\{(\\text{PC}+4)[31:28],\\ \\text{instr}[25:0],\\ 2'b00\\}.\n$$\n\nSteps:\n- upper 4 bits of $(\\text{PC}+4)=0x12345678$ are `0x1`\n- 26-bit immediate is `0x0000003`\n- append `00`, which shifts left by 2:\n  $$\n  0x0000003 \\ll 2 = 0x000000C\n  $$\n\nNow concatenate with upper nibble `0x1`, giving:\n$$\n\\text{target} = 0x1000000C.\n$$\n\nSo the jump target is **$0x1000000C$**."
+  },
+  {
+    "front": "[2026-03-20] How does `beq` use the datapath to make a control decision?",
+    "back": "`beq` is interesting because control depends not only on the opcode, but also on a **datapath result**.\n\nThe processor:\n1. reads `rs` and `rt`,\n2. subtracts them in the ALU,\n3. checks whether the ALU result is zero via a **`Z` flag**.\n\nThe branch target is:\n$$\n(\\text{PC}+4) + (\\text{signext}(imm) \\ll 2).\n$$\n\nThen the PC-select logic uses something like:\n$$\n\\text{TakeBranch} = \\text{Branch} \\land Z.\n$$\n\nSo the opcode says “this is a branch,” but the ALU result decides whether the branch is actually taken."
+  },
+  {
+    "front": "[2026-03-20] Why is the branch offset shifted left by 2 in `beq`?",
+    "back": "Because MIPS instruction addresses are **word-aligned** while memory is **byte-addressed**.\n\nThe immediate in `beq` represents an offset in units of instructions/words, so to convert it into a byte offset for the PC, the hardware multiplies by 4:\n$$\n\\text{offset bytes} = \\text{signext}(imm) \\ll 2.\n$$\n\nThus the target becomes:\n$$\n\\text{target} = (\\text{PC}+4) + (\\text{signext}(imm) \\ll 2).\n$$\n\nWithout the shift, the branch would move by the wrong number of bytes."
+  },
+  {
+    "front": "[2026-03-20] Given the lecture latencies, why is `lw` the critical path while an R-type instruction is not?",
+    "back": "Using the lecture’s simplified delays:\n\n- instruction memory read: $200\\ \\text{ps}$\n- register file read: $50\\ \\text{ps}$\n- ALU: $100\\ \\text{ps}$\n- data memory read/write: $200\\ \\text{ps}$\n- register write-back: $50\\ \\text{ps}$\n\nR-type path:\n$$\n200 + 50 + 100 + 50 = 400\\ \\text{ps}\n$$\n\n`lw` path:\n$$\n200 + 50 + 100 + 200 + 50 = 600\\ \\text{ps}\n$$\n\n`lw` is longer because it needs **both** ALU address calculation and a **data memory read** before write-back. Therefore it sets the single-cycle clock period:\n$$\nT_{\\text{clk}} \\ge 600\\ \\text{ps}.\n$$"
   }
 ]

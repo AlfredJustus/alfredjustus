@@ -538,5 +538,65 @@
   {
     "front": "[2026-03-17] Wie korrigiert man bei zwei überlappenden Ereignissen die Doppelzählung?",
     "back": "Für beliebige Ereignisse $A$ und $B$ gilt:\n$$\nP(A\\cup B)=P(A)+P(B)-P(A\\cap B).\n$$\n\nWarum? In\n$$\nP(A)+P(B)\n$$\nwerden alle Ergebnisse aus $A\\cap B$ **zweimal** gezählt:\n- einmal in $P(A)$,\n- einmal in $P(B)$.\n\nDeshalb muss man\n$$\nP(A\\cap B)\n$$\neinmal abziehen, um auf den exakten Wert zu kommen.\n\nDiese Formel ist die einfachste Form des **Inklusions-Exklusions-Prinzips**."
+  },
+  {
+    "front": "[2026-03-19] Warum ist ein Ereignis im diskreten Wahrscheinlichkeitsraum eine Teilmenge von $\\Omega$ und nicht ein einzelnes Ergebnis?",
+    "back": "Ein **Ereignis** beschreibt typischerweise mehrere mögliche Ausgänge gleichzeitig. Deshalb modelliert man es als Teilmenge $A\\subseteq \\Omega$.\n\nIm diskreten Fall gilt dann:\n$$\nP(A)=\\sum_{\\omega\\in A} P(\\omega).\n$$\n\nBeispiel beim Würfel:\n- $\\Omega=\\{1,2,3,4,5,6\\}$\n- “gerade Zahl” ist\n$$\nA=\\{2,4,6\\}.\n$$\n\nEin einzelnes Ergebnis wie $\\{4\\}$ ist nur ein Spezialfall eines Ereignisses. Die Teilmengen-Sicht ist wichtig, weil spätere Operationen wie **Komplement** $A^c$, **Vereinigung** $A\\cup B$ und **Schnitt** $A\\cap B$ genau auf Mengen definiert sind."
+  },
+  {
+    "front": "[2026-03-19] Wann ist ein Wahrscheinlichkeitsraum ein Laplace-Raum, und was vereinfacht sich dann?",
+    "back": "Ein **Laplace-Raum** liegt vor, wenn alle Elementarereignisse gleich wahrscheinlich sind.\n\nDann gilt für jedes Ereignis $A\\subseteq \\Omega$:\n$$\nP(A)=\\frac{|A|}{|\\Omega|}.\n$$\n\nDer Vorteil ist, dass Wahrscheinlichkeiten auf reines **Zählen** reduziert werden. Man muss keine einzelnen Gewichte $P(\\omega)$ mehr aufsummieren.\n\nBeispiel beim fairen Würfel:\n$$\nP(\\{2,4,6\\})=\\frac{3}{6}=\\frac{1}{2}.\n$$\n\nDas funktioniert aber nur, wenn wirklich alle Ausgänge gleich wahrscheinlich sind. Ist das nicht der Fall, darf man nicht einfach mit Mächtigkeiten rechnen."
+  },
+  {
+    "front": "[2026-03-19] Warum reicht für $P(A\\cup B)$ meist nicht die Summe $P(A)+P(B)$?",
+    "back": "Weil die Summe die Ausgänge in $A\\cap B$ **doppelt zählt**.\n\nKorrekt ist:\n$$\nP(A\\cup B)=P(A)+P(B)-P(A\\cap B).\n$$\n\nDie Logik:\n- zuerst zählt man alles aus $A$,\n- dann alles aus $B$ dazu,\n- aber die gemeinsamen Fälle wurden zweimal erfasst,\n- daher zieht man $P(A\\cap B)$ einmal ab.\n\nGenau dieses Prinzip verallgemeinert die **Siebformel** auf mehr als zwei Ereignisse. Sie ist besonders nützlich, wenn die Schnittwahrscheinlichkeiten leichter zu berechnen sind als die Vereinigung selbst."
+  },
+  {
+    "front": "[2026-03-19] Wie lautet die Siebformel, und welche Idee steckt hinter den alternierenden Vorzeichen?",
+    "back": "Für Ereignisse $A_1,\\dots,A_n$ gilt:\n$$\nP\\!\\left(\\bigcup_{i=1}^n A_i\\right)\n=\\sum_{k=1}^n (-1)^{k+1}\\!\\!\\sum_{\\substack{S\\subseteq\\{1,\\dots,n\\}\\\\ |S|=k}} P\\!\\left(\\bigcap_{i\\in S} A_i\\right).\n$$\n\nDie Idee der **Siebformel**:\n- Einzelwahrscheinlichkeiten addieren,\n- paarweise Überlappungen abziehen,\n- dreifache Überlappungen wieder addieren,\n- usw.\n\nDie alternierenden Vorzeichen korrigieren also systematisch das Über- und Unterzählen. Ohne diese Korrektur würde ein Ergebnis, das in mehreren $A_i$ liegt, nicht genau einmal gezählt."
+  },
+  {
+    "front": "[2026-03-19] Warum ist die Siebformel besonders nützlich, wenn Schnitte leichter als Vereinigungen sind?",
+    "back": "Die Vereinigung\n$$\nA_1\\cup\\cdots\\cup A_n\n$$\nist oft schwer direkt zu beschreiben, weil viele Überlappungen auftreten. Dagegen haben Schnitte\n$$\n\\bigcap_{i\\in S} A_i\n$$\nhäufig eine einfache Struktur.\n\nIm Kartenbeispiel ist “mindestens eine Karte bleibt fix” kompliziert, aber “diese $k$ konkreten Karten bleiben fix” ist leicht zu zählen. Genau dafür ist die **Siebformel** gemacht: Sie ersetzt eine schwierige Vereinigungswahrscheinlichkeit durch viele oft einfachere Schnittwahrscheinlichkeiten.\n\nDer Preis ist, dass man mehrere Terme berechnen muss. Der Gewinn ist, dass diese Terme oft kombinatorisch sauber zählbar sind."
+  },
+  {
+    "front": "[2026-03-19] Warum gilt im Kartenmisch-Beispiel für $|S|=k$ die Wahrscheinlichkeit $P(A_S)=\\frac{(n-k)!}{n!}$?",
+    "back": "Sei\n$$\nA_S=\\bigcap_{i\\in S} A_i,\n$$\nalso das Ereignis, dass alle Karten in $S$ an ihrer ursprünglichen Position bleiben.\n\nIn einem **Laplace-Raum** über allen Permutationen gibt es insgesamt\n$$\nn!\n$$\ngleich wahrscheinliche Mischungen.\n\nWenn $|S|=k$, dann sind diese $k$ Positionen fest vorgegeben. Nur die übrigen $n-k$ Karten dürfen noch beliebig permutiert werden. Dafür gibt es\n$$\n(n-k)!\n$$\nMöglichkeiten.\n\nAlso:\n$$\nP(A_S)=\\frac{(n-k)!}{n!}.\n$$\n\nDer wichtige Punkt ist: Das Fixieren von $k$ Karten reduziert das Problem genau auf eine Permutation der restlichen $n-k$ Karten."
+  },
+  {
+    "front": "[2026-03-19] Wie vereinfacht sich die Siebformel im Fixpunkt-Beispiel zu einer Summe mit $\\frac{1}{k!}$?",
+    "back": "Für das Ereignis “mindestens eine Karte bleibt an ihrem Platz” gilt:\n$$\nA=\\bigcup_{i=1}^n A_i.\n$$\n\nFür jede Menge $S$ mit $|S|=k$ ist\n$$\nP(A_S)=\\frac{(n-k)!}{n!},\n$$\nund es gibt\n$$\n\\binom{n}{k}\n$$\nsolche Mengen.\n\nDaher:\n$$\nP(A)=\\sum_{k=1}^n (-1)^{k+1}\\binom{n}{k}\\frac{(n-k)!}{n!}.\n$$\n\nNun setzt man\n$$\n\\binom{n}{k}=\\frac{n!}{k!(n-k)!}\n$$\nein und erhält:\n$$\n\\binom{n}{k}\\frac{(n-k)!}{n!}=\\frac{1}{k!}.\n$$\n\nAlso:\n$$\nP(A)=\\sum_{k=1}^n (-1)^{k+1}\\frac{1}{k!}.\n$$\n\nDie ganze Kombinatorik des Mischens steckt damit am Ende in einer sehr einfachen alternierenden Reihe."
+  },
+  {
+    "front": "[2026-03-19] Gegen welchen Wert konvergiert im Kartenmisch-Beispiel die Wahrscheinlichkeit für mindestens einen Fixpunkt, und was bedeutet das?",
+    "back": "Für $n$ Karten ist\n$$\nP(\\text{mindestens ein Fixpunkt})\n=\\sum_{k=1}^n (-1)^{k+1}\\frac{1}{k!}.\n$$\n\nFür großes $n$ konvergiert diese Summe gegen\n$$\n\\frac{1}{e}\\approx 0{,}368.\n$$\n\nDas bedeutet: Bei einer zufälligen Permutation bleibt mit Wahrscheinlichkeit von ungefähr $36{,}8\\%$ **mindestens eine** Karte an ihrer ursprünglichen Position.\n\nWichtig ist die Einordnung: Dieser Wert ist **nicht** universell, sondern entsteht aus genau diesem Modell und den dortigen Schnittwahrscheinlichkeiten. Er folgt aus der speziellen Struktur von Permutationen und Fixpunkten."
+  },
+  {
+    "front": "[2026-03-19] Wie zeigt der Beweis der Siebformel mit einem festen $\\omega$, dass jedes Element genau einmal gezählt wird?",
+    "back": "Man fixiert ein **Elementarereignis** $\\omega$, das in genau $k$ der Ereignisse $A_i$ liegt.\n\nDann erscheint $P(\\omega)$ auf der rechten Seite der Siebformel mit dem Koeffizienten\n$$\nN_k=\\binom{k}{1}-\\binom{k}{2}+\\binom{k}{3}-\\cdots+(-1)^{k+1}\\binom{k}{k}.\n$$\n\nMit der Binomialformel aus\n$$\n(1-1)^k=0\n$$\nfolgt:\n$$\n0=\\binom{k}{0}-\\binom{k}{1}+\\binom{k}{2}-\\cdots+(-1)^k\\binom{k}{k}.\n$$\n\nDaraus erhält man\n$$\nN_k=1.\n$$\n\nAlso wird jedes $\\omega$, das in der Vereinigung liegt, rechts genau einmal gezählt — genauso wie links. Das ist die Kernidee des Beweises."
+  },
+  {
+    "front": "[2026-03-19] Warum ist $P(A\\mid B)=\\frac{P(A\\cap B)}{P(B)}$ die richtige Definition für bedingte Wahrscheinlichkeit?",
+    "back": "Die Bedingung “$B$ ist eingetreten” bedeutet: Nur die Fälle in $B$ sind noch relevant. Man **beschränkt** also den Raum auf $B$.\n\nInnerhalb dieses eingeschränkten Raums sind genau die Fälle günstig, die zusätzlich in $A$ liegen, also in\n$$\nA\\cap B.\n$$\n\nDeshalb ist die relative Häufigkeit innerhalb von $B$:\n$$\nP(A\\mid B)=\\frac{P(A\\cap B)}{P(B)},\n$$\nvorausgesetzt $P(B)>0$.\n\nDie Division durch $P(B)$ ist die **Renormalisierung**: Im neuen, auf $B$ eingeschränkten Raum sollen die Wahrscheinlichkeiten wieder insgesamt $1$ ergeben."
+  },
+  {
+    "front": "[2026-03-19] Welche drei Sofortfolgen der Definition von bedingter Wahrscheinlichkeit sollte man direkt kennen?",
+    "back": "Aus\n$$\nP(A\\mid B)=\\frac{P(A\\cap B)}{P(B)}\n$$\nfolgen sofort:\n\n- **Keine Zusatzinformation**:\n$$\nP(A\\mid \\Omega)=P(A).\n$$\n\n- **Auf sich selbst bedingt**:\n$$\nP(A\\mid A)=1 \\quad \\text{(falls } P(A)>0\\text{)}.\n$$\n\n- **Auf das Komplement bedingt**:\n$$\nP(A\\mid A^c)=0 \\quad \\text{(falls } P(A^c)>0\\text{)}.\n$$\n\nAußerdem erhält man durch Umstellen den zentralen Zusammenhang\n$$\nP(A\\cap B)=P(A\\mid B)\\,P(B)=P(B\\mid A)\\,P(A).\n$$\n\nDiese Umformung ist die Grundlage für Multiplikationssatz und viele Rechnungen mit bedingten Wahrscheinlichkeiten."
+  },
+  {
+    "front": "[2026-03-19] Was geht schief, wenn man $P(A\\mid B)$ für $P(B)=0$ definieren will?",
+    "back": "Dann müsste man in\n$$\nP(A\\mid B)=\\frac{P(A\\cap B)}{P(B)}\n$$\ndurch $0$ teilen. Das ist mathematisch nicht definiert.\n\nAber auch inhaltlich ist das problematisch: Ein Ereignis mit Wahrscheinlichkeit $0$ ist im Modell kein sinnvoller “neuer Grundraum”, auf den man einfach renormalisieren könnte. Die Intuition “wir beschränken uns auf $B$” bricht also ebenfalls zusammen.\n\nDeshalb ist die Bedingung\n$$\nP(B)>0\n$$\nwesentlich und keine bloße technische Nebensache."
+  },
+  {
+    "front": "[2026-03-19] Wie rechnet man das Klicker-Beispiel $P(\\text{Augenzahl}\\ge 5 \\mid \\text{Augenzahl gerade})$?",
+    "back": "Sei\n- $A=\\{\\text{Augenzahl}\\ge 5\\}=\\{5,6\\}$,\n- $B=\\{\\text{gerade}\\}=\\{2,4,6\\}$.\n\nDann ist\n$$\nA\\cap B=\\{6\\}.\n$$\n\nMit der Definition:\n$$\nP(A\\mid B)=\\frac{P(A\\cap B)}{P(B)}\n=\\frac{P(\\{6\\})}{P(\\{2,4,6\\})}\n=\\frac{1/6}{3/6}\n=\\frac{1}{3}.\n$$\n\nDie Zusatzinformation “gerade” schließt also die $5$ aus; unter den drei geraden Ergebnissen bleibt nur die $6$ günstig."
+  },
+  {
+    "front": "[2026-03-19] Warum ergibt das 2-Kinder-Problem bei der Information „mindestens ein Mädchen“ den Wert $\\frac{1}{3}$ und nicht $\\frac{1}{2}$?",
+    "back": "Im Modell\n$$\n\\Omega=\\{(m,m),(m,w),(w,m),(w,w)\\}\n$$\nsind alle vier Fälle gleich wahrscheinlich.\n\nSei\n- $A=\\{(w,w)\\}$: beide Kinder sind Mädchen,\n- $B=\\{(m,w),(w,m),(w,w)\\}$: mindestens ein Mädchen.\n\nDann:\n$$\nP(A\\mid B)=\\frac{P(A)}{P(B)}=\\frac{1/4}{3/4}=\\frac{1}{3}.\n$$\n\nDer Fehler bei $\\frac{1}{2}$ ist, die drei verbleibenden Fälle nach der Bedingung nicht korrekt zu berücksichtigen. “Mindestens ein Mädchen” lässt **drei** gleich wahrscheinliche Möglichkeiten übrig, nicht zwei."
+  },
+  {
+    "front": "[2026-03-19] Warum ist „mindestens ein Mädchen“ nicht dasselbe wie „das ältere Kind ist ein Mädchen“?",
+    "back": "Die Information ist unterschiedlich fein.\n\n- Bei “**mindestens ein Mädchen**” bleiben die Fälle\n$$\n(m,w),(w,m),(w,w),\n$$\nalso drei Möglichkeiten. Dann ist\n$$\nP(\\text{beide Mädchen}\\mid \\text{mindestens ein Mädchen})=\\frac{1}{3}.\n$$\n\n- Bei “**das ältere Kind ist ein Mädchen**” bleiben nur\n$$\n(w,m),(w,w),\n$$\nalso zwei Möglichkeiten. Dann ist\n$$\nP(\\text{beide Mädchen}\\mid \\text{älteres Kind ist Mädchen})=\\frac{1}{2}.\n$$\n\nDie bedingte Wahrscheinlichkeit hängt also nicht nur davon ab, **welches Thema** die Information betrifft, sondern von der **genauen Formulierung** der Information."
   }
 ]
