@@ -70,15 +70,14 @@ a { color: inherit; }
 }
 
 .brand-badge {
-  width: 34px;
-  height: 34px;
-  border-radius: 12px;
-  display: grid;
-  place-items: center;
-  background: linear-gradient(135deg, rgba(212, 115, 74, 0.14), rgba(255, 255, 255, 0.92));
-  border: 1px solid rgba(212, 115, 74, 0.22);
-  box-shadow: var(--shadow);
-  color: var(--accent);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  background: none;
+  border: none;
+  box-shadow: none;
+  border-radius: 0;
 }
 
 .nav-links {
@@ -549,4 +548,8 @@ a { color: inherit; }
   .container { padding: 56px 18px; }
   .section { padding: 58px 0; }
   .type-card.code { transform: none; }
+
+  .logo-row { gap: 10px; }
+  .logo-chip { padding: 10px 14px; font-size: 16px; }
+  .logo-chip img { width: 20px; height: 20px; }
 }
