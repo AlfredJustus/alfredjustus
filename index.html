@@ -1,139 +1,132 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>alfredjustus.com</title>
+ <meta charset="UTF-8">
+ <meta name="viewport" content="width=device-width, initial-scale=1.0">
+ <title>alfredjustus.com</title>
 
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Geist+Mono:wght@400;500&family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
-  <script data-goatcounter="https://alfredjustus.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>
+ <link rel="preconnect" href="https://fonts.googleapis.com">
+ <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+ <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Geist+Mono:wght@400;500&family=DM+Sans:wght@400;500&display=swap" rel="stylesheet">
+ <script data-goatcounter="https://alfredjustus.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>
+ 
+ <style>
+ *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
 
-  <style>
-    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+ :root {
+ --text-primary: #2d2416;
+ --text-secondary: rgba(45, 36, 22, 0.6);
+ --text-tertiary: rgba(45, 36, 22, 0.38);
+ --border: rgba(45, 36, 22, 0.1);
+ --bg: #fef9f3;
+ --tag-bg: rgba(212, 115, 74, 0.1);
+ --tag-color: #d4734a;
+ }
 
-    :root {
-      --text-primary: #2d2416;
-      --text-secondary: rgba(45, 36, 22, 0.6);
-      --text-tertiary: rgba(45, 36, 22, 0.38);
-      --border: rgba(45, 36, 22, 0.1);
-      --bg: #fef9f3;
-      --tag-bg: rgba(212, 115, 74, 0.1);
-      --tag-color: #d4734a;
-    }
+ body {
+ font-family: 'DM Sans', sans-serif;
+ -webkit-font-smoothing: antialiased;
+ background: var(--bg);
+ color: var(--text-primary);
+ min-height: 100vh;
+ display: flex;
+ align-items: flex-start;
+ justify-content: center;
+ padding: 72px 24px 80px;
+ }
 
-    body {
-      font-family: 'DM Sans', sans-serif;
-      -webkit-font-smoothing: antialiased;
-      background: var(--bg);
-      color: var(--text-primary);
-      min-height: 100vh;
-      display: flex;
-      align-items: flex-start;
-      justify-content: center;
-      padding: 72px 24px 80px;
-    }
+ main {
+ width: 100%;
+ max-width: 560px;
+ }
 
-    main {
-      width: 100%;
-      max-width: 620px;
-    }
+ header {
+ margin-bottom: 52px;
+ }
 
-    header {
-      margin-bottom: 44px;
-    }
+ h1 {
+ font-family: 'Instrument Serif', serif;
+ font-size: clamp(36px, 8vw, 44px);
+ line-height: 1.0;
+ letter-spacing: -0.3px;
+ color: var(--text-primary);
+ margin-bottom: 10px;
+ }
 
-    h1 {
-      font-family: 'Instrument Serif', serif;
-      font-size: clamp(38px, 8vw, 52px);
-      line-height: 1.0;
-      letter-spacing: -0.4px;
-      color: var(--text-primary);
-      margin-bottom: 12px;
-    }
+ .bio {
+ font-size: 15px;
+ color: var(--text-secondary);
+ line-height: 1.6;
+ }
 
-    .bio {
-      font-size: 15px;
-      color: var(--text-secondary);
-      line-height: 1.65;
-      max-width: 52ch;
-    }
+ .section-label {
+ font-family: 'Geist Mono', monospace;
+ font-size: 11px;
+ font-weight: 500;
+ letter-spacing: 1.5px;
+ text-transform: uppercase;
+ color: var(--text-tertiary);
+ margin-bottom: 16px;
+ }
 
-    .section-label {
-      font-family: 'Geist Mono', monospace;
-      font-size: 11px;
-      font-weight: 500;
-      letter-spacing: 1.5px;
-      text-transform: uppercase;
-      color: var(--text-tertiary);
-      margin-bottom: 16px;
-    }
+ ul {
+ list-style: none;
+ border-top: 0.5px solid var(--border);
+ }
 
-    ul {
-      list-style: none;
-      border-top: 0.5px solid var(--border);
-    }
+ li {
+ border-bottom: 0.5px solid var(--border);
+ }
 
-    li {
-      border-bottom: 0.5px solid var(--border);
-    }
+ a {
+ display: flex;
+ align-items: center;
+ justify-content: space-between;
+ gap: 16px;
+ padding: 20px 0;
+ text-decoration: none;
+ color: inherit;
+ }
 
-    a {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 16px;
-      padding: 20px 0;
-      text-decoration: none;
-      color: inherit;
-    }
+ a:hover .item-title {
+ opacity: 0.55;
+ }
 
-    a:hover .item-title { opacity: 0.6; }
+ .item-title {
+ font-family: 'Instrument Serif', serif;
+ font-size: 22px;
+ line-height: 1.2;
+ color: var(--text-primary);
+ transition: opacity 0.15s ease;
+ display: block;
+ margin-bottom: 3px;
+ }
 
-    .item-title {
-      font-family: 'Instrument Serif', serif;
-      font-size: 24px;
-      line-height: 1.15;
-      color: var(--text-primary);
-      transition: opacity 0.15s ease;
-      display: block;
-      margin-bottom: 4px;
-    }
+ .item-desc {
+ font-size: 13px;
+ color: var(--text-secondary);
+ line-height: 1.4;
+ display: block;
+ }
 
-    .item-desc {
-      font-size: 13px;
-      color: var(--text-secondary);
-      line-height: 1.5;
-      display: block;
-      max-width: 52ch;
-    }
+ .tag {
+ font-family: 'Geist Mono', monospace;
+ font-size: 10px;
+ font-weight: 500;
+ letter-spacing: 0.4px;
+ padding: 3px 8px;
+ border-radius: 4px;
+ background: var(--tag-bg);
+ color: var(--tag-color);
+ white-space: nowrap;
+ flex-shrink: 0;
+ }
 
-    .tag {
-      font-family: 'Geist Mono', monospace;
-      font-size: 10px;
-      font-weight: 500;
-      letter-spacing: 0.4px;
-      padding: 4px 9px;
-      border-radius: 6px;
-      background: var(--tag-bg);
-      color: var(--tag-color);
-      white-space: nowrap;
-      flex-shrink: 0;
-    }
-
-    footer {
-      margin-top: 42px;
-      font-family: 'Geist Mono', monospace;
-      font-size: 11px;
-      color: var(--text-tertiary);
-    }
-
-    @media (max-width: 480px) {
-      body { padding: 52px 20px 64px; }
-      .tag { display: none; }
-    }
-  </style>
+ @media (max-width: 480px) {
+ body { padding: 52px 20px 64px; }
+ .tag { display: none; }
+ }
+ </style>
 </head>
 <body>
   <main>
@@ -174,10 +167,6 @@
         </a>
       </li>
     </ul>
-
-    <footer>
-      &copy; 2026 Alfred Justus
-    </footer>
   </main>
 </body>
 </html>
