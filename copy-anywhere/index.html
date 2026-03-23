@@ -33,31 +33,69 @@
 
   <main class="container">
     <section class="section">
-      <div class="banner gap-lg">
-        <h1 class="title">Copy anything.<br />Paste anywhere.</h1>
+      <div class="banner gap-md">
         <p class="subtitle">Math, tables, code, and formatted text for your document editor.</p>
 
-        <div class="hero-types" aria-label="Supported content types">
-          <div class="type-card math">
-            <div class="math-badge">x² + y²</div>
-          </div>
-          <div class="type-card code">
-            <div class="code-badge"><span>&lt;</span><span>/&gt;</span></div>
-          </div>
-          <div class="type-card table">
-            <div class="table-badge" aria-hidden="true">
-              <span></span><span></span><span></span><span></span>
-              <span></span><span></span><span></span><span></span>
-              <span></span><span></span><span></span><span></span>
-            </div>
-          </div>
-        </div>
+        <div class="promo-preview" aria-label="Hero promo tile">
+          <section class="promo-tile promo-hero flat">
+            <h1 class="promo-title">Copy anything.<br />Paste anywhere.</h1>
 
-        <div class="logo-row" aria-label="Works in your editor">
-          <div class="logo-chip">Google Docs</div>
-          <div class="logo-chip">Notion</div>
-          <div class="logo-chip">Obsidian</div>
-          <div class="logo-chip">Any editor</div>
+            <div class="promo-type-row" aria-label="Supported content types">
+              <div class="promo-type-card math">
+                <div class="promo-math-badge" aria-label="x squared plus y squared">x<sup>2</sup> + y<sup>2</sup></div>
+              </div>
+
+              <div class="promo-type-card code">
+                <div class="promo-code-badge" aria-hidden="true">
+                  <svg stroke="currentColor" fill="currentColor" height="24" width="24" viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg">
+                    <title>code</title>
+                    <polygon points="31 16 24 23 22.59 21.59 28.17 16 22.59 10.41 24 9 31 16"/>
+                    <polygon points="1 16 8 9 9.41 10.41 3.83 16 9.41 21.59 8 23 1 16"/>
+                    <rect x="5.91" y="15" width="20.17" height="2" transform="translate(-3.6 27.31) rotate(-75)"/>
+                  </svg>
+                </div>
+              </div>
+
+              <div class="promo-type-card table">
+                <div class="promo-table-badge" aria-hidden="true">
+                  <svg viewBox="0 0 64 44" xmlns="http://www.w3.org/2000/svg" fill="none">
+                    <rect x="1.5" y="1.5" width="61" height="41" rx="10" fill="#FCFEFF" stroke="#A9BBCB" stroke-width="2"/>
+                    <path d="M6 16.5H58" stroke="#A9BBCB" stroke-width="2" stroke-linecap="round"/>
+                    <path d="M6 27.5H58" stroke="#A9BBCB" stroke-width="2" stroke-linecap="round"/>
+                    <path d="M23.5 6V38" stroke="#A9BBCB" stroke-width="2" stroke-linecap="round"/>
+                    <path d="M40.5 6V38" stroke="#A9BBCB" stroke-width="2" stroke-linecap="round"/>
+                    <rect x="8.5" y="8.5" width="12.5" height="5" rx="2.5" fill="#E7F0F8"/>
+                    <rect x="26" y="8" width="12" height="6" rx="3" fill="#D4734A"/>
+                    <rect x="43" y="8.5" width="11.5" height="5" rx="2.5" fill="#E7F0F8"/>
+                    <rect x="8.5" y="19.5" width="12.5" height="5" rx="2.5" fill="#EEF4F9"/>
+                    <rect x="26" y="19.5" width="12" height="5" rx="2.5" fill="#EEF4F9"/>
+                    <rect x="43" y="19.5" width="11.5" height="5" rx="2.5" fill="#E7F0F8"/>
+                    <rect x="8.5" y="30.5" width="12.5" height="5" rx="2.5" fill="#EEF4F9"/>
+                    <rect x="26" y="30.5" width="12" height="5" rx="2.5" fill="#EEF4F9"/>
+                    <rect x="43" y="30.5" width="11.5" height="5" rx="2.5" fill="#EEF4F9"/>
+                  </svg>
+                </div>
+              </div>
+            </div>
+
+            <div class="promo-editor-row" aria-label="Supported editors">
+              <div class="promo-editor-chip">
+                <img src="./assets/docs.svg" alt="">
+                <span>Google Docs</span>
+              </div>
+              <div class="promo-editor-chip">
+                <img src="./assets/notion-logo.svg" alt="">
+                <span>Notion</span>
+              </div>
+              <div class="promo-editor-chip">
+                <img src="./assets/obsidian-logo.svg" alt="">
+                <span>Obsidian</span>
+              </div>
+              <div class="promo-editor-chip">
+                <span>Any editor</span>
+              </div>
+            </div>
+          </section>
         </div>
 
         <div class="button-row" aria-label="Actions">
