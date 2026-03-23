@@ -46,9 +46,8 @@ a { color: inherit; }
   position: sticky;
   top: 0;
   z-index: 50;
-  backdrop-filter: blur(10px);
-  background: color-mix(in srgb, var(--bg) 78%, transparent);
-  border-bottom: 1px solid color-mix(in srgb, var(--line) 65%, transparent);
+  background: var(--bg);
+  border-bottom: 1px solid var(--line);
 }
 
 .site-nav-inner {
@@ -195,32 +194,33 @@ a { color: inherit; }
 
 .code-badge span { color: #8ad2ff; }
 
+.code-badge svg {
+  width: 24px;
+  height: 24px;
+  display: block;
+}
+
+.math-badge img {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+
 .table-badge {
   width: 112px;
   height: 74px;
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 4px;
+  place-items: center;
   padding: 8px;
   border-radius: 16px;
   background: linear-gradient(180deg, rgba(240, 247, 255, 0.96), rgba(255, 255, 255, 0.96));
   border: 1px solid rgba(96, 126, 156, 0.18);
 }
 
-.table-badge span {
-  border-radius: 6px;
-  background: rgba(137, 162, 187, 0.18);
-}
-
-.table-badge span:nth-child(1),
-.table-badge span:nth-child(2),
-.table-badge span:nth-child(3),
-.table-badge span:nth-child(4) {
-  background: rgba(96, 126, 156, 0.3);
-}
-
-.table-badge span:nth-child(4n + 1) {
-  background: rgba(212, 115, 74, 0.18);
+.table-badge svg {
+  width: 92px;
+  height: 56px;
+  display: block;
 }
 
 .logo-row {
@@ -313,7 +313,7 @@ a { color: inherit; }
 .document-layer {
   width: 100%;
   height: 100%;
-  background-image: url('/mathPDF.png');
+  background-image: url('/assets/mathPDF.png');
   background-size: cover;
   background-position: center 20%;
 }
@@ -391,19 +391,27 @@ a { color: inherit; }
   display: flex;
   flex-wrap: wrap;
   justify-content: center;
-  gap: 16px;
-  max-width: 880px;
+  gap: 28px;
+  max-width: 920px;
 }
 
 .tool-chip {
-  min-width: 0;
-  padding: 16px 18px;
-  border-radius: 999px;
+  width: 156px;
+  height: 132px;
+  display: grid;
+  place-items: center;
+  padding: 20px;
+  border-radius: 28px;
   background: var(--panel);
   border: 1px solid var(--line);
   box-shadow: var(--shadow);
-  font-size: 16px;
-  font-weight: 800;
+}
+
+.tool-chip img {
+  width: 72px;
+  height: 72px;
+  display: block;
+  object-fit: contain;
 }
 
 /* Privacy typography */
@@ -541,148 +549,4 @@ a { color: inherit; }
   .container { padding: 56px 18px; }
   .section { padding: 58px 0; }
   .type-card.code { transform: none; }
-}
-
-/* Promo tile (updated hero styling) */
-.promo-preview {
-  display: grid;
-  place-items: center;
-  width: 100%;
-}
-
-.promo-tile {
-  position: relative;
-  width: min(560px, 100%);
-  padding: 26px 26px;
-  border-radius: 28px;
-  background:
-    radial-gradient(circle at top right, rgba(212, 115, 74, 0.12), transparent 34%),
-    linear-gradient(180deg, rgba(255, 252, 247, 0.98), rgba(250, 247, 242, 1));
-  border: 1px solid var(--line);
-  box-shadow: var(--shadow);
-  overflow: hidden;
-}
-
-.promo-tile.flat {
-  background: #faf7f2;
-}
-
-.promo-hero {
-  display: grid;
-  justify-items: center;
-  gap: 16px;
-  text-align: center;
-}
-
-.promo-title {
-  margin: 0;
-  font-size: clamp(34px, 5.2vw, 42px);
-  font-weight: 800;
-  line-height: 0.93;
-  letter-spacing: -0.06em;
-}
-
-.promo-type-row {
-  display: flex;
-  justify-content: center;
-  align-items: flex-end;
-  gap: 10px;
-}
-
-.promo-type-card {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border-radius: 20px;
-  border: 1px solid var(--line);
-  background: rgba(255, 255, 255, 0.98);
-  box-shadow: var(--shadow);
-}
-
-.promo-type-card.math {
-  width: 118px;
-  height: 62px;
-  transform: rotate(-4deg);
-}
-
-.promo-type-card.code {
-  width: 94px;
-  height: 62px;
-  background: #1f2430;
-  border-color: rgba(31, 36, 48, 0.2);
-  transform: translateY(8px);
-}
-
-.promo-type-card.table {
-  width: 96px;
-  height: 64px;
-  background: linear-gradient(180deg, rgba(255, 255, 255, 0.98), rgba(247, 251, 255, 0.98));
-  border-color: rgba(169, 187, 203, 0.45);
-  transform: rotate(2.5deg);
-}
-
-.promo-math-badge {
-  font-family: "Source Serif 4", serif;
-  font-size: 31px;
-  font-style: italic;
-  font-weight: 600;
-  letter-spacing: -0.05em;
-  color: var(--ink);
-}
-
-.promo-math-badge sup {
-  font-size: 0.65em;
-  vertical-align: super;
-}
-
-.promo-code-badge {
-  width: 24px;
-  height: 24px;
-  display: block;
-  color: #8ad2ff;
-}
-
-.promo-code-badge svg,
-.promo-table-badge svg {
-  width: 100%;
-  height: 100%;
-  display: block;
-}
-
-.promo-table-badge {
-  width: 62px;
-  height: 44px;
-  display: grid;
-  place-items: center;
-}
-
-.promo-editor-row {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  gap: 8px;
-}
-
-.promo-editor-chip {
-  display: inline-flex;
-  align-items: center;
-  gap: 7px;
-  min-height: 30px;
-  padding: 7px 11px;
-  border-radius: 999px;
-  background: rgba(255, 255, 255, 0.95);
-  border: 1px solid var(--line);
-  box-shadow: 0 8px 20px rgba(35, 25, 18, 0.06);
-  color: var(--ink);
-  font-size: 12px;
-  font-weight: 800;
-  letter-spacing: -0.02em;
-  white-space: nowrap;
-}
-
-.promo-editor-chip img {
-  width: 14px;
-  height: 14px;
-  display: block;
-  object-fit: contain;
 }
