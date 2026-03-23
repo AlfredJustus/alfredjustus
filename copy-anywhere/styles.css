@@ -568,14 +568,20 @@ a { color: inherit; }
   text-align: center;
 }
 
-/* Scale it up slightly (requested) */
+/* Make the hero tile/title match the visual weight of the following sections */
 .promo-tile {
-  transform: scale(1.08);
-  transform-origin: top center;
+  width: 560px;
+  height: 340px;
+  padding: 28px 30px;
+}
+
+.promo-title {
+  font-size: 54px;
 }
 
 @media (max-width: 560px) {
-  .promo-tile { transform: scale(1.03); }
+  .promo-tile { width: 100%; height: auto; }
+  .promo-title { font-size: 46px; }
 }
 
 /* Privacy typography */
