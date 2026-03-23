@@ -742,6 +742,10 @@ a { color: inherit; }
   .section { padding: 58px 0; }
   .type-card.code { transform: none; }
 
+  /* Keep the screenshot tool button safely inside the frame on small screens */
+  .ai-toolbar { bottom: 12px; right: 12px; }
+  .extract-btn { padding: 12px 16px; border-radius: 12px; }
+
   .logo-row { gap: 10px; }
   .logo-chip { padding: 10px 14px; font-size: 16px; }
   .logo-chip img { width: 20px; height: 20px; }
