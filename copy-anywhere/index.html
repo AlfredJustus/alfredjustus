@@ -34,7 +34,7 @@
     <section class="section">
       <div class="banner gap-md">
         <div class="promo-preview" aria-label="Copy Anywhere hero">
-          <section class="promo-tile promo-hero flat" aria-label="Copy Anywhere promo tile">
+          <section class="promo-tile promo-hero flat reveal" style="--d: 60ms" aria-label="Copy Anywhere promo tile">
             <h1 class="promo-title">Copy anything.<br>Paste anywhere.</h1>
 
             <div class="promo-type-row" aria-label="Supported content types">
@@ -93,9 +93,9 @@
           </section>
         </div>
 
-        <p class="subtitle">Math, tables, code, and formatted text for your document editor.</p>
+        <p class="subtitle reveal" style="--d: 140ms">Math, tables, code, and formatted text for your document editor.</p>
 
-        <div class="button-row" aria-label="Actions">
+        <div class="button-row reveal" style="--d: 220ms" aria-label="Actions">
           <a class="btn primary" href="mailto:info@alfredjustus.com?subject=Copy%20Anywhere">Get the extension</a>
         </div>
       </div>
@@ -103,24 +103,24 @@
 
     <section class="section">
       <div class="banner gap-md">
-        <div class="key-combo" aria-label="Copy shortcut">
+        <div class="key-combo reveal" style="--d: 40ms" aria-label="Copy shortcut">
           <div class="key">⌘</div>
           <span class="key-sep">/</span>
           <div class="key">Ctrl</div>
           <div class="key">C</div>
         </div>
 
-        <h2 class="title simple">Install it once.<br />Forget about it.</h2>
-        <p class="subtitle">Works in the background. Just paste and it’s done.</p>
+        <h2 class="title simple reveal" style="--d: 120ms">Install it once.<br />Forget about it.</h2>
+        <p class="subtitle reveal" style="--d: 200ms">Works in the background. Just paste and it’s done.</p>
       </div>
     </section>
 
     <section class="section">
       <div class="banner gap-md">
-        <h2 class="title simple">Capture images and PDFs.</h2>
-        <p class="subtitle">Select what you need. AI extracts clean text, math, and structure.</p>
+        <h2 class="title simple reveal" style="--d: 60ms">Capture images and PDFs.</h2>
+        <p class="subtitle reveal" style="--d: 140ms">Select what you need. AI extracts clean text, math, and structure.</p>
 
-        <div class="capture-stage" role="img" aria-label="AI extraction preview">
+        <div class="capture-stage reveal" style="--d: 220ms" role="img" aria-label="AI extraction preview">
           <div class="document-layer" aria-hidden="true"></div>
           <div class="selection-box" aria-hidden="true">
             <div class="ai-toolbar">
@@ -129,7 +129,7 @@
           </div>
         </div>
 
-        <div class="features-row" aria-label="Highlights">
+        <div class="features-row reveal" style="--d: 320ms" aria-label="Highlights">
           <div class="feature-pill">PDFs and Slides</div>
           <div class="feature-pill">Smart OCR</div>
           <div class="feature-pill">Perfect Formatting</div>
@@ -139,10 +139,10 @@
 
     <section class="section">
       <div class="banner gap-md">
-        <h2 class="title simple">Works with AI chats too.</h2>
-        <p class="subtitle">Fully functional with Gemini, xAI, DeepSeek, Claude, and ChatGPT.</p>
+        <h2 class="title simple reveal" style="--d: 60ms">Works with AI chats too.</h2>
+        <p class="subtitle reveal" style="--d: 140ms">Fully functional with Gemini, xAI, DeepSeek, Claude, and ChatGPT.</p>
 
-        <div class="tool-grid" aria-label="Supported AI tools">
+        <div class="tool-grid reveal" style="--d: 220ms" aria-label="Supported AI tools">
           <div class="tool-chip" aria-label="Gemini"><img src="/assets/gemini.svg" alt="Gemini"></div>
           <div class="tool-chip" aria-label="xAI"><img src="/assets/xai.svg" alt="xAI"></div>
           <div class="tool-chip" aria-label="DeepSeek"><img src="/assets/deepseek.svg" alt="DeepSeek"></div>
@@ -160,10 +160,30 @@
 
   <script>
     document.addEventListener('DOMContentLoaded', function () {
-      if (!window.katex) return;
-      window.katex.render('x^2 + y^2', document.getElementById('promoHeroMath'), {
-        throwOnError: false
-      });
+      // KaTeX math (promo hero)
+      if (window.katex) {
+        window.katex.render('x^2 + y^2', document.getElementById('promoHeroMath'), {
+          throwOnError: false
+        });
+      }
+
+      // Scroll reveal
+      const els = document.querySelectorAll('.reveal');
+      const io = new IntersectionObserver(
+        (entries) => {
+          for (const entry of entries) {
+            if (!entry.isIntersecting) continue;
+            entry.target.classList.add('in');
+            io.unobserve(entry.target);
+          }
+        },
+        {
+          threshold: 0.12,
+          rootMargin: '0px 0px -10% 0px'
+        }
+      );
+
+      els.forEach((el) => io.observe(el));
     });
   </script>
 </body>
