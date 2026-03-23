@@ -10,6 +10,10 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700;800&family=Source+Serif+4:opsz,wght@8..60,600;8..60,700&display=swap" rel="stylesheet" />
 
+  <!-- KaTeX (for promo hero math) -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css">
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js"></script>
+
   <script data-goatcounter="https://alfredjustus.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>
   <link rel="stylesheet" href="./styles.css" />
 </head>
@@ -18,7 +22,7 @@
     <div class="site-nav-inner">
       <a class="brand" href="/">
         <span class="brand-badge" aria-hidden="true">
-          <img src="/assets/icon.svg" alt="" style="width: 18px; height: 18px; display: block;" />
+          <img src="/assets/icon.svg" alt="" style="width: 32px; height: 32px; display: block;" />
         </span>
         <span>Copy Anywhere</span>
       </a>
@@ -26,65 +30,70 @@
   </header>
 
   <main class="container">
+    <!-- HERO: imported from assets/promo-tile-01-hero-trio.html (with small scale-up + logo in header) -->
     <section class="section">
-      <div class="banner gap-lg">
-        <h1 class="title">Copy anything.<br />Paste anywhere.</h1>
+      <div class="banner gap-md">
+        <div class="promo-preview" aria-label="Copy Anywhere hero">
+          <section class="promo-tile promo-hero flat" aria-label="Copy Anywhere promo tile">
+            <h1 class="promo-title">Copy anything.<br>Paste anywhere.</h1>
+
+            <div class="promo-type-row" aria-label="Supported content types">
+              <div class="promo-type-card math">
+                <div class="promo-math-badge" id="promoHeroMath" aria-label="x squared plus y squared"></div>
+              </div>
+              <div class="promo-type-card code">
+                <div class="promo-code-badge" aria-hidden="true">
+                  <svg stroke="currentColor" fill="currentColor" height="24" width="24" viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg">
+                    <title>code</title>
+                    <polygon points="31 16 24 23 22.59 21.59 28.17 16 22.59 10.41 24 9 31 16"/>
+                    <polygon points="1 16 8 9 9.41 10.41 3.83 16 9.41 21.59 8 23 1 16"/>
+                    <rect x="5.91" y="15" width="20.17" height="2" transform="translate(-3.6 27.31) rotate(-75)"/>
+                  </svg>
+                </div>
+              </div>
+              <div class="promo-type-card table">
+                <div class="promo-table-badge" aria-hidden="true">
+                  <svg viewBox="0 0 64 44" xmlns="http://www.w3.org/2000/svg" fill="none">
+                    <rect x="1.5" y="1.5" width="61" height="41" rx="10" fill="#FCFEFF" stroke="#A9BBCB" stroke-width="2"/>
+                    <path d="M6 16.5H58" stroke="#A9BBCB" stroke-width="2" stroke-linecap="round"/>
+                    <path d="M6 27.5H58" stroke="#A9BBCB" stroke-width="2" stroke-linecap="round"/>
+                    <path d="M23.5 6V38" stroke="#A9BBCB" stroke-width="2" stroke-linecap="round"/>
+                    <path d="M40.5 6V38" stroke="#A9BBCB" stroke-width="2" stroke-linecap="round"/>
+                    <rect x="8.5" y="8.5" width="12.5" height="5" rx="2.5" fill="#E7F0F8"/>
+                    <rect x="26" y="8" width="12" height="6" rx="3" fill="#D4734A"/>
+                    <rect x="43" y="8.5" width="11.5" height="5" rx="2.5" fill="#E7F0F8"/>
+                    <rect x="8.5" y="19.5" width="12.5" height="5" rx="2.5" fill="#EEF4F9"/>
+                    <rect x="26" y="19.5" width="12" height="5" rx="2.5" fill="#EEF4F9"/>
+                    <rect x="43" y="19.5" width="11.5" height="5" rx="2.5" fill="#E7F0F8"/>
+                    <rect x="8.5" y="30.5" width="12.5" height="5" rx="2.5" fill="#EEF4F9"/>
+                    <rect x="26" y="30.5" width="12" height="5" rx="2.5" fill="#EEF4F9"/>
+                    <rect x="43" y="30.5" width="11.5" height="5" rx="2.5" fill="#EEF4F9"/>
+                  </svg>
+                </div>
+              </div>
+            </div>
+
+            <div class="promo-editor-row" aria-label="Supported editors">
+              <div class="promo-editor-chip">
+                <img src="/assets/docs.svg" alt="">
+                <span>Google Docs</span>
+              </div>
+              <div class="promo-editor-chip">
+                <img src="/assets/notion-logo.svg" alt="">
+                <span>Notion</span>
+              </div>
+              <div class="promo-editor-chip">
+                <img src="/assets/obsidian-logo.svg" alt="">
+                <span>Obsidian</span>
+              </div>
+              <div class="promo-editor-chip">
+                <span>Any editor</span>
+              </div>
+            </div>
+          </section>
+        </div>
+
         <p class="subtitle">Math, tables, code, and formatted text for your document editor.</p>
-
-        <div class="hero-types" aria-label="Supported content types">
-          <div class="type-card math">
-            <div class="math-badge" aria-label="x squared plus y squared">
-              <img src="/assets/copy-anywhere-index-latex.png" alt="x squared plus y squared" />
-            </div>
-          </div>
-
-          <div class="type-card code">
-            <div class="code-badge" aria-label="Code">
-              <svg stroke="currentColor" fill="currentColor" viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-                <polygon points="31 16 24 23 22.59 21.59 28.17 16 22.59 10.41 24 9 31 16"/>
-                <polygon points="1 16 8 9 9.41 10.41 3.83 16 9.41 21.59 8 23 1 16"/>
-                <rect x="5.91" y="15" width="20.17" height="2" transform="translate(-3.6 27.31) rotate(-75)"/>
-              </svg>
-            </div>
-          </div>
-
-          <div class="type-card table">
-            <div class="table-badge" aria-label="Table">
-              <svg viewBox="0 0 64 44" xmlns="http://www.w3.org/2000/svg" fill="none" aria-hidden="true">
-                <rect x="1.5" y="1.5" width="61" height="41" rx="10" fill="#FCFEFF" stroke="#A9BBCB" stroke-width="2"/>
-                <path d="M6 16.5H58" stroke="#A9BBCB" stroke-width="2" stroke-linecap="round"/>
-                <path d="M6 27.5H58" stroke="#A9BBCB" stroke-width="2" stroke-linecap="round"/>
-                <path d="M23.5 6V38" stroke="#A9BBCB" stroke-width="2" stroke-linecap="round"/>
-                <path d="M40.5 6V38" stroke="#A9BBCB" stroke-width="2" stroke-linecap="round"/>
-                <rect x="8.5" y="8.5" width="12.5" height="5" rx="2.5" fill="#E7F0F8"/>
-                <rect x="26" y="8" width="12" height="6" rx="3" fill="#D4734A"/>
-                <rect x="43" y="8.5" width="11.5" height="5" rx="2.5" fill="#E7F0F8"/>
-                <rect x="8.5" y="19.5" width="12.5" height="5" rx="2.5" fill="#EEF4F9"/>
-                <rect x="26" y="19.5" width="12" height="5" rx="2.5" fill="#EEF4F9"/>
-                <rect x="43" y="19.5" width="11.5" height="5" rx="2.5" fill="#E7F0F8"/>
-                <rect x="8.5" y="30.5" width="12.5" height="5" rx="2.5" fill="#EEF4F9"/>
-                <rect x="26" y="30.5" width="12" height="5" rx="2.5" fill="#EEF4F9"/>
-                <rect x="43" y="30.5" width="11.5" height="5" rx="2.5" fill="#EEF4F9"/>
-              </svg>
-            </div>
-          </div>
-        </div>
-
-        <div class="logo-row" aria-label="Supported editors">
-          <div class="logo-chip">
-            <img src="/assets/docs.svg" alt="">
-            <span>Google Docs</span>
-          </div>
-          <div class="logo-chip">
-            <img src="/assets/notion-logo.svg" alt="">
-            <span>Notion</span>
-          </div>
-          <div class="logo-chip">
-            <img src="/assets/obsidian-logo.svg" alt="">
-            <span>Obsidian</span>
-          </div>
-          <div class="logo-chip"><span>Any editor</span></div>
-        </div>
 
         <div class="button-row" aria-label="Actions">
           <a class="btn primary" href="mailto:ajustus@student.ethz.ch?subject=Copy%20Anywhere">Get the extension</a>
@@ -148,5 +157,14 @@
       </footer>
     </section>
   </main>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+      if (!window.katex) return;
+      window.katex.render('x^2 + y^2', document.getElementById('promoHeroMath'), {
+        throwOnError: false
+      });
+    });
+  </script>
 </body>
 </html>

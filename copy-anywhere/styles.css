@@ -413,6 +413,171 @@ a { color: inherit; }
   object-fit: contain;
 }
 
+/* Promo tile hero (imported from /assets/styles.css) */
+.promo-preview {
+  display: grid;
+  place-items: center;
+}
+
+.promo-tile {
+  position: relative;
+  width: 440px;
+  height: 280px;
+  padding: 22px 24px;
+  border-radius: 28px;
+  background:
+    radial-gradient(circle at top right, rgba(212, 115, 74, 0.12), transparent 34%),
+    linear-gradient(180deg, rgba(255, 252, 247, 0.98), rgba(250, 247, 242, 1));
+  border: 1px solid transparent;
+  box-shadow: none;
+  overflow: hidden;
+}
+
+.promo-tile.flat {
+  background: #faf7f2;
+}
+
+.promo-title {
+  margin: 0;
+  font-size: 42px;
+  font-weight: 800;
+  line-height: 0.93;
+  letter-spacing: -0.06em;
+}
+
+.promo-subtitle {
+  margin: 0;
+  color: var(--muted);
+  font-size: 14px;
+  line-height: 1.35;
+}
+
+.promo-type-row {
+  display: flex;
+  justify-content: center;
+  align-items: flex-end;
+  gap: 10px;
+}
+
+.promo-type-card {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 20px;
+  border: 1px solid var(--line);
+  background: rgba(255, 255, 255, 0.98);
+  box-shadow: var(--shadow);
+}
+
+.promo-type-card.math {
+  width: 118px;
+  height: 62px;
+  transform: rotate(-4deg);
+}
+
+.promo-type-card.code {
+  width: 94px;
+  height: 62px;
+  background: #1f2430;
+  border-color: rgba(31, 36, 48, 0.2);
+  transform: translateY(8px);
+}
+
+.promo-type-card.table {
+  width: 96px;
+  height: 64px;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.98), rgba(247, 251, 255, 0.98));
+  border-color: rgba(169, 187, 203, 0.45);
+  transform: rotate(2.5deg);
+}
+
+.promo-math-badge {
+  font-family: "Source Serif 4", serif;
+  font-size: 31px;
+  font-style: italic;
+  font-weight: 600;
+  letter-spacing: -0.05em;
+  color: var(--ink);
+}
+
+.promo-math-badge .katex {
+  font-size: 1em;
+}
+
+.promo-code-badge {
+  width: 24px;
+  height: 24px;
+  display: block;
+  color: #8ad2ff;
+}
+
+.promo-code-badge svg {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+.promo-table-badge {
+  width: 62px;
+  height: 44px;
+  display: grid;
+  place-items: center;
+}
+
+.promo-table-badge svg {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+.promo-editor-row {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 8px;
+}
+
+.promo-editor-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  min-height: 30px;
+  padding: 7px 11px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.95);
+  border: 1px solid var(--line);
+  box-shadow: 0 8px 20px rgba(35, 25, 18, 0.06);
+  color: var(--ink);
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  white-space: nowrap;
+}
+
+.promo-editor-chip img {
+  width: 14px;
+  height: 14px;
+  display: block;
+  object-fit: contain;
+}
+
+.promo-hero {
+  display: grid;
+  justify-items: center;
+  gap: 16px;
+  text-align: center;
+}
+
+/* Scale it up slightly (requested) */
+.promo-tile {
+  transform: scale(1.08);
+  transform-origin: top center;
+}
+
+@media (max-width: 560px) {
+  .promo-tile { transform: scale(1.03); }
+}
+
 /* Privacy typography */
 .policy {
   max-width: 860px;
