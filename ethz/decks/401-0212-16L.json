@@ -598,5 +598,65 @@
   {
     "front": "[2026-03-18] Wann entscheidet das Wurzelkriterium, und wann versagt es?",
     "back": "Für eine Reihe $\\sum a_n$ setze\n$$\n\\rho=\\limsup_{n\\to\\infty}\\sqrt[n]{|a_n|}.\n$$\nDann gilt:\n\n- Falls $\\rho<1$, konvergiert die Reihe **absolut**.\n- Falls $\\rho>1$, divergiert die Reihe.\n- Falls $\\rho=1$, ist das Kriterium **nicht entscheidend**.\n\nDie Idee: $\\sqrt[n]{|a_n|}$ misst, ob $|a_n|$ asymptotisch wie eine geometrische Folge mit Quotient kleiner oder größer als $1$ abfällt.\n\nDer Grenzfall $\\rho=1$ ist die typische Falle:\n- Für\n  $$\\sum \\frac1{n^2}$$\n  ist $\\rho=1$, aber die Reihe konvergiert.\n- Für\n  $$\\sum \\frac1n$$\n  ist ebenfalls $\\rho=1$, aber die Reihe divergiert.\n\nAlso darf man bei $\\rho=1$ **keine** Schlussfolgerung ziehen."
+  },
+  {
+    "front": "[2026-03-23] Warum folgt aus $\\rho=\\limsup_{n\\to\\infty}\\sqrt[n]{|a_n|}<1$ im Wurzelkriterium absolute Konvergenz?",
+    "back": "Wähle eine Zahl\n$$\n\\alpha \\quad\\text{mit}\\quad \\rho<\\alpha<1,\n$$\nzum Beispiel $\\alpha=\\frac{1+\\rho}{2}$.\n\nAus der Definition des **$\\limsup$** folgt dann: Für alle hinreichend großen $n$ gilt\n$$\n\\sqrt[n]{|a_n|}\\le \\alpha.\n$$\nDurch Potenzieren erhält man\n$$\n|a_n|\\le \\alpha^n.\n$$\n\nDa $0<\\alpha<1$, konvergiert die **geometrische Reihe**\n$$\n\\sum_{n=N}^\\infty \\alpha^n.\n$$\nMit dem **Majorantenkriterium** folgt daher\n$$\n\\sum_{n=N}^\\infty |a_n|\n$$\nkonvergiert. Also konvergiert $\\sum a_n$ **absolut**.\n\nDer endliche Anfang der Reihe ist für die Konvergenz irrelevant."
+  },
+  {
+    "front": "[2026-03-23] Warum reicht bei $\\rho>1$ im Wurzelkriterium schon die Nullfolgen-Bedingung zur Divergenz?",
+    "back": "Für jede konvergente Reihe\n$$\n\\sum_{n=0}^\\infty a_n\n$$\nist notwendig, dass\n$$\na_n\\to 0.\n$$\n\nWenn nun\n$$\n\\rho=\\limsup_{n\\to\\infty}\\sqrt[n]{|a_n|}>1,\n$$\ndann gibt es entlang einer Teilfolge Indizes mit\n$$\n\\sqrt[n]{|a_n|}>1.\n$$\nDaraus folgt für diese Indizes\n$$\n|a_n|>1.\n$$\n\nAlso ist $(a_n)$ **keine Nullfolge**. Damit ist die notwendige Bedingung für Reihenkonvergenz verletzt, also kann\n$$\n\\sum a_n\n$$\nnicht konvergieren.\n\nDer Punkt ist: Man muss nicht die ganze Divergenzstruktur analysieren; es genügt zu zeigen, dass die Summanden nicht gegen $0$ gehen."
+  },
+  {
+    "front": "[2026-03-23] Warum ist der Fall $\\rho=1$ beim Wurzelkriterium ein echter Grenzfall?",
+    "back": "Das **Wurzelkriterium** sagt nur:\n\n- $\\rho<1$ $\\Rightarrow$ absolute Konvergenz,\n- $\\rho>1$ $\\Rightarrow$ Divergenz.\n\nFür\n$$\n\\rho=1\n$$\nliefert es **keine Entscheidung**.\n\nWarum das kein technischer Zufall ist: Es gibt Reihen mit demselben Wert $\\rho=1$, die sich unterschiedlich verhalten:\n\n- **harmonische Reihe**\n  $$\n  \\sum_{n=1}^\\infty \\frac1n\n  $$\n  divergiert,\n- **alternierende harmonische Reihe**\n  $$\n  \\sum_{n=1}^\\infty \\frac{(-1)^{n+1}}n\n  $$\n  konvergiert.\n\nFür beide gilt\n$$\n\\sqrt[n]{\\frac1n}\\to 1.\n$$\n\nAlso kann aus $\\rho=1$ allein weder Konvergenz noch Divergenz folgen; man braucht dann andere Kriterien."
+  },
+  {
+    "front": "[2026-03-23] Wann benutzt man das Majoranten- bzw. Minorantenkriterium bei Reihen?",
+    "back": "Diese Vergleichskriterien sind besonders nützlich für Reihen mit **nichtnegativen Summanden**.\n\n- **Majorantenkriterium**: Gilt\n  $$\n  0\\le a_n\\le b_n\n  $$\n  und konvergiert\n  $$\n  \\sum b_n,\n  $$\n  dann konvergiert auch\n  $$\n  \\sum a_n.\n  $$\n\n- **Minorantenkriterium**: Gilt\n  $$\n  a_n\\ge b_n\\ge 0\n  $$\n  und divergiert\n  $$\n  \\sum b_n,\n  $$\n  dann divergiert auch\n  $$\n  \\sum a_n.\n  $$\n\nDie Idee ist: Man ersetzt eine schwer verständliche Reihe durch eine einfachere Vergleichsreihe, oft eine **geometrische Reihe**. Genau das steckt auch hinter dem Wurzelkriterium."
+  },
+  {
+    "front": "[2026-03-23] Warum ist die geometrische Reihe das zentrale Vergleichsobjekt hinter dem Wurzelkriterium?",
+    "back": "Die **geometrische Reihe**\n$$\n\\sum_{n=0}^\\infty q^n\n$$\nkonvergiert genau dann, wenn\n$$\n|q|<1.\n$$\n\nIm Wurzelkriterium versucht man, die Summanden asymptotisch in die Form\n$$\n|a_n|\\le \\alpha^n\n$$\nmit $\\alpha<1$ zu bringen. Dann verhält sich die Reihe ab einem gewissen Index wie eine geometrische Reihe und ist daher beherrschbar.\n\nUmgekehrt zeigt $\\sqrt[n]{|a_n|}>1$ entlang einer Teilfolge, dass die Summanden nicht klein werden. Auch das ist geometrisches Verhalten, nur auf der divergenten Seite.\n\nDie geometrische Reihe ist also das Modell, auf das kompliziertere Reihen asymptotisch zurückgeführt werden."
+  },
+  {
+    "front": "[2026-03-23] Was ist eine Potenzreihe, und warum hängt ihre Konvergenz von $x$ ab?",
+    "back": "Eine **Potenzreihe** hat die Form\n$$\n\\sum_{n=0}^\\infty c_n(x-a)^n,\n$$\nwobei $a$ der **Entwicklungspunkt** und $(c_n)$ die Koeffizienten sind.\n\nFür festes $x$ wird daraus eine gewöhnliche Reihe in $n$. Die Konvergenz hängt von $x$ ab, weil der Faktor\n$$\n(x-a)^n\n$$\nje nach Abstand von $a$ ganz unterschiedlich wirkt:\n\n- ist $|x-a|<1$, dann werden die Potenzen eher klein,\n- ist $|x-a|>1$, dann wachsen sie eher stark.\n\nDeshalb erzeugen dieselben Koeffizienten $c_n$ je nach Wahl von $x$ konvergente oder divergente Reihen. Der **Konvergenzradius** fasst genau diese Abhängigkeit in einer Zahl zusammen."
+  },
+  {
+    "front": "[2026-03-23] Wie lautet das Konvergenzradius-Ergebnis für Potenzreihen?",
+    "back": "Für jede Potenzreihe\n$$\n\\sum_{n=0}^\\infty c_n(x-a)^n\n$$\ngibt es einen **Konvergenzradius** $R\\in[0,\\infty]$ mit:\n\n- für\n  $$\n  |x-a|<R\n  $$\n  konvergiert die Reihe,\n- für\n  $$\n  |x-a|>R\n  $$\n  divergiert die Reihe.\n\nDer Randfall\n$$\n|x-a|=R\n$$\nist damit **nicht** entschieden und muss separat untersucht werden.\n\nDas ist der entscheidende Nutzen von $R$: Statt für jedes $x$ eine neue Reihenuntersuchung zu machen, kennt man sofort das Verhalten im Inneren und Äußeren des Konvergenzbereichs."
+  },
+  {
+    "front": "[2026-03-23] Warum muss man bei Potenzreihen die Randpunkte $|x-a|=R$ immer separat prüfen?",
+    "back": "Der **Konvergenzradius** entscheidet nur über die Bereiche\n\n- **innen**:\n  $$\n  |x-a|<R,\n  $$\n- **außen**:\n  $$\n  |x-a|>R.\n  $$\n\nAm Rand\n$$\n|x-a|=R\n$$\nkann alles Mögliche passieren:\n\n- beide Randpunkte konvergieren,\n- beide divergieren,\n- ein Randpunkt konvergiert, der andere divergiert.\n\nDer Grund ist, dass am Rand das Wurzelkriterium typischerweise auf den Grenzfall\n$$\n\\rho=1\n$$\nführt und damit keine Entscheidung mehr liefert.\n\nDeshalb ist das Konvergenzintervall einer Potenzreihe oft von der Form „offenes Intervall plus separat geprüfte Endpunkte“."
+  },
+  {
+    "front": "[2026-03-23] Warum ist die Formel für den Konvergenzradius der Kehrwert",
+    "back": "$$R=\\frac{1}{\\limsup \\sqrt[n]{|c_n|}}?$$\n\nSetze für die Potenzreihe\n$$\na_n=c_n(x-a)^n.\n$$\nDann gilt\n$$\n\\sqrt[n]{|a_n|}=\\sqrt[n]{|c_n|}\\,|x-a|.\n$$\n\nDas Wurzelkriterium verlangt für Konvergenz heuristisch\n$$\n\\limsup_{n\\to\\infty}\\sqrt[n]{|a_n|}<1.\n$$\nAlso\n$$\n\\left(\\limsup_{n\\to\\infty}\\sqrt[n]{|c_n|}\\right)|x-a|<1.\n$$\n\nNach $|x-a|$ aufgelöst ergibt das\n$$\n|x-a|<\\frac{1}{\\limsup_{n\\to\\infty}\\sqrt[n]{|c_n|}}.\n$$\n\nDarum erscheint der **Kehrwert**. Der Faktor $(x-a)^n$ kommt zusätzlich zu den Koeffizienten dazu, und beim Auflösen nach dem erlaubten Abstand $|x-a|$ dreht sich die Ungleichung in diese Form."
+  },
+  {
+    "front": "[2026-03-23] Berechne den Konvergenzradius für $c_n=\\frac{(-1)^{n+1}}{n}$.",
+    "back": "Für die Potenzreihe\n$$\n\\sum_{n=1}^\\infty \\frac{(-1)^{n+1}}{n}x^n\n$$\ngilt\n$$\n|c_n|=\\frac1n.\n$$\nAlso\n$$\n\\sqrt[n]{|c_n|}=\\sqrt[n]{\\frac1n}=\\frac{1}{\\sqrt[n]{n}}.\n$$\nDa\n$$\n\\sqrt[n]{n}\\to 1,\n$$\nfolgt\n$$\n\\limsup_{n\\to\\infty}\\sqrt[n]{|c_n|}=1.\n$$\n\nDamit ist der **Konvergenzradius**\n$$\nR=\\frac11=1.\n$$\n\nAlso konvergiert die Reihe für\n$$\n|x|<1\n$$\nund divergiert für\n$$\n|x|>1.\n$$\nDie Randpunkte $x=\\pm1$ müssen separat geprüft werden."
+  },
+  {
+    "front": "[2026-03-23] Warum verhalten sich bei",
+    "back": "$$\\sum_{n=1}^\\infty \\frac{(-1)^{n+1}}{n}x^n$$\ndie Endpunkte $x=1$ und $x=-1$ unterschiedlich?\n\nSetzt man $x=1$, erhält man\n$$\n\\sum_{n=1}^\\infty \\frac{(-1)^{n+1}}{n},\n$$\nalso die **alternierende harmonische Reihe**, die konvergiert.\n\nSetzt man $x=-1$, dann ist\n$$\nx^n=(-1)^n,\n$$\nalso\n$$\n\\frac{(-1)^{n+1}}{n}x^n\n=\n\\frac{(-1)^{n+1}}{n}(-1)^n\n=\n-\\frac1n.\n$$\nDamit entsteht bis auf ein Vorzeichen die **harmonische Reihe**\n$$\n\\sum_{n=1}^\\infty \\frac1n,\n$$\nund diese divergiert.\n\nDas zeigt den typischen Randfall bei Potenzreihen: Obwohl beide Punkte denselben Abstand $R=1$ vom Entwicklungspunkt haben, kann das Konvergenzverhalten verschieden sein."
+  },
+  {
+    "front": "[2026-03-23] Was macht eine Zuordnung zu einer Funktion, und was geht bei „zwei Pfeilen“ schief?",
+    "back": "Eine **Funktion** ist eine eindeutige Zuordnung:\nJedem Element des **Definitionsbereichs** wird **genau ein** Element des **Zielbereichs** zugeordnet.\n\nEntscheidend ist also nicht, dass verschiedene Inputs verschiedene Outputs haben müssen, sondern dass **ein Input nicht mehrere Outputs** haben darf.\n\nWenn ein Element des Definitionsbereichs auf zwei verschiedene Werte zeigt, ist die Zuordnung **keine Funktion**. Genau das ist der typische „zwei Pfeile von einem Punkt“-Fehler.\n\nMehrere verschiedene Inputs dürfen dagegen durchaus denselben Output haben; das wäre dann nur ein Problem für **Injektivität**, nicht für den Funktionsbegriff selbst."
+  },
+  {
+    "front": "[2026-03-23] Was ist der Unterschied zwischen Definitionsbereich, Zielbereich und Wertebereich?",
+    "back": "Bei einer Funktion\n$$\nf:D\\to Z\n$$\nsind drei Mengen zu unterscheiden:\n\n- **Definitionsbereich** $D$: die erlaubten Eingaben,\n- **Zielbereich** $Z$: die vorgegebene Ausgabemenge,\n- **Wertebereich**: die tatsächlich angenommenen Werte\n  $$\n  f(D)\\subseteq Z.\n  $$\n\nWichtig ist:\nDer **Wertebereich** kann echt kleiner sein als der **Zielbereich**.\n\nBeispiel:\n$$\n\\sin:\\mathbb{R}\\to\\mathbb{R}.\n$$\nHier ist der Zielbereich $\\mathbb{R}$, aber der Wertebereich ist nur\n$$\n[-1,1].\n$$\n\nDiese Unterscheidung ist zentral für **Surjektivität**: Surjektiv ist eine Funktion genau dann, wenn Zielbereich und Wertebereich übereinstimmen."
+  },
+  {
+    "front": "[2026-03-23] Warum ist",
+    "back": "$$f:\\mathbb{R}\\to\\mathbb{R},\\quad f(x)=x^2$$\nweder injektiv noch surjektiv?\n\n**Nicht injektiv** ist $f$, weil verschiedene Inputs denselben Output liefern:\n$$\nf(2)=4=f(-2).\n$$\nAlso folgt aus\n$$\nf(x_1)=f(x_2)\n$$\nnicht immer\n$$\nx_1=x_2.\n$$\n\n**Nicht surjektiv** ist $f$, weil negative Zahlen im Zielbereich $\\mathbb{R}$ nie getroffen werden:\n$$\nx^2\\ge 0 \\quad\\text{für alle } x\\in\\mathbb{R}.\n$$\nDer Wertebereich ist also\n$$\n[0,\\infty),\n$$\nnicht ganz $\\mathbb{R}$.\n\nDieses Beispiel zeigt, dass dieselbe Formel je nach Definitions- und Zielbereich unterschiedliche Eigenschaften haben kann."
+  },
+  {
+    "front": "[2026-03-23] Wie macht die Einschränkung",
+    "back": "$$\\tilde f:\\mathbb{R}_{\\ge 0}\\to\\mathbb{R}_{\\ge 0},\\quad \\tilde f(x)=x^2$$\naus $x^2$ eine bijektive Funktion?\n\nDurch die **Einschränkung** des Definitionsbereichs auf\n$$\n\\mathbb{R}_{\\ge 0}\n$$\nverschwindet das Problem\n$$\nx \\text{ und } -x\n$$\nhaben denselben Funktionswert, denn negative Zahlen sind nicht mehr erlaubt.\n\nDamit ist $\\tilde f$ **injektiv**.\n\nDurch die Wahl des Zielbereichs\n$$\n\\mathbb{R}_{\\ge 0}\n$$\nist $\\tilde f$ außerdem **surjektiv**, denn zu jedem $y\\ge 0$ gibt es ein\n$$\nx=\\sqrt y\\ge 0\n$$\nmit\n$$\nx^2=y.\n$$\n\nAlso ist $\\tilde f$ **bijektiv**. Das zeigt: Nicht nur die Formel, sondern auch Definitions- und Zielbereich gehören wesentlich zur Funktion."
   }
 ]

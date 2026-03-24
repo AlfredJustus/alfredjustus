@@ -538,5 +538,65 @@
   {
     "front": "[2026-03-17] Warum kann derselbe Task-Graph bei gleichem $P$ zu unterschiedlichem $T_P$ führen?",
     "back": "Weil **$T_P$ vom Scheduler abhängt**.\n\nAuch wenn der DAG dieselben Abhängigkeiten vorgibt, gibt es oft mehrere zulässige Ausführungsreihenfolgen. Manche Schedules nutzen verfügbare Parallelität früh aus, andere weniger gut.\n\nDie Vorlesung nannte ein Beispiel mit $P=2$, bei dem derselbe Graph zu\n$$\nT_2 = 4\n$$\noder\n$$\nT_2 = 5\n$$\nführen kann.\n\nDer Graph bestimmt also die **Grenzen** der Parallelität, aber nicht die exakte Laufzeit. Diese hängt zusätzlich davon ab, **welche Tasks wann auf welche Worker gelegt werden**."
+  },
+  {
+    "front": "[2026-03-23] Warum reichen „mehr Kerne“ allein oft nicht für große Beschleunigung?",
+    "back": "Weil die **Gesamtlaufzeit** nicht nur von Rechenleistung, sondern auch von **sequentiellen Anteilen** und **Latenz** bestimmt wird. Nach **Amdahls Gesetz** gilt\n$$\nS(N)=\\frac{1}{s+\\frac{p}{N}}, \\qquad s+p=1.\n$$\nSelbst wenn der parallele Anteil $p$ groß ist, begrenzt der sequentielle Anteil $s$ die maximale Beschleunigung:\n$$\n\\lim_{N\\to\\infty} S(N)=\\frac{1}{s}.\n$$\nDas heißt: Bei $s=0{,}05$ ist selbst mit „unendlich vielen“ Prozessoren nur etwa\n$$\n\\frac{1}{0{,}05}=20\n$$\nmöglich. In der Praxis zählt zur „sequentiellen“ Bremse oft auch **Datenbewegung**: Warten auf RAM, SSD, Netzwerk oder CPU$\\leftrightarrow$GPU-Transfers."
+  },
+  {
+    "front": "[2026-03-23] Warum liefern $95\\%$ Parallelisierbarkeit nach Amdahl nur etwa $20\\times$ Speedup?",
+    "back": "Setze in **Amdahls Gesetz** den sequentiellen Anteil auf $s=0{,}05$ und den parallelen Anteil auf $p=0{,}95$:\n$$\nS(N)=\\frac{1}{0{,}05+\\frac{0{,}95}{N}}.\n$$\nFür sehr großes $N$ verschwindet $\\frac{0{,}95}{N}$ fast:\n$$\nS(N)\\approx \\frac{1}{0{,}05}=20.\n$$\nDie Kernaussage ist: **$95\\%$ parallel** klingt viel, aber die verbleibenden **$5\\%$** setzen eine harte Obergrenze. Für ungefähr $100\\times$ Speedup müsste der sequentielle Anteil eher bei\n$$\ns\\approx 0{,}01\n$$\nliegen."
+  },
+  {
+    "front": "[2026-03-23] Worin unterscheidet sich **Datenparallelität** von **Task-/Algorithmusparallelität**?",
+    "back": "**Datenparallelität** bedeutet: dieselbe Operation läuft auf verschiedenen Datenteilen. Beispiel aus der Vorlesung: Ein großes Zahlenarray wird in Blöcke geteilt, und jeder Thread prüft in seinem Block Primzahlen.\n\n**Task-/Algorithmusparallelität** bedeutet: verschiedene Verarbeitungsschritte oder Teilalgorithmen laufen parallel. Beispiel: Ein schneller Filter trennt erst gerade/ungerade Zahlen, während ein anderer, aufwendigerer Schritt Primzahltests ausführt.\n\nDer Unterschied ist also:\n- **Datenparallelität**: gleiche Rechnung, andere Daten\n- **Taskparallelität**: unterschiedliche Rechnungen, evtl. auf denselben oder verbundenen Daten"
+  },
+  {
+    "front": "[2026-03-23] Warum passen neuronale Netze besonders gut auf GPUs?",
+    "back": "Weil viele Schritte in neuronalen Netzen auf **wiederholte Matrix- bzw. Vektor-Matrix-Operationen** hinauslaufen, also auf viele gleichartige Rechenoperationen über große Datenmengen. Das passt gut zu **SIMD/SIMT-artiger** Ausführung auf GPUs.\n\nEine Schicht kann informell als wiederholtes\n$$\n\\text{Daten} \\times \\text{Gewichte}\n$$\nplus Aktivierungsfunktion gesehen werden. GPUs sind dafür geeignet, weil sie viele einfache Kerne besitzen, die denselben Rechenschritt auf viele Elemente anwenden.\n\nDer Haken: Die Recheneinheiten sind nur dann ausgelastet, wenn die Daten schnell genug geliefert werden. Deshalb wird oft nicht die Arithmetik, sondern die **Speicherbandbreite/Latenz** zum Engpass."
+  },
+  {
+    "front": "[2026-03-23] Was ist der praktische Unterschied zwischen CPU und GPU für parallele Programme?",
+    "back": "Eine **CPU** hat wenige, dafür allgemeinere und leistungsfähige Kerne. Eine **GPU** hat sehr viele, aber einfachere Kerne und ist auf hohen **Durchsatz** bei stark strukturierter Parallelität optimiert.\n\nTypisch:\n- **CPU**: gut für komplexe Kontrolllogik, unregelmäßige Aufgaben\n- **GPU**: gut für große, gleichförmige Datenoperationen wie Matrixrechnungen\n\nFür parallele Programmierung heißt das: Wenn ein Problem als viele gleichartige Operationen auf großen Arrays formulierbar ist, ist eine GPU oft stark. Wenn aber viele Verzweigungen, unregelmäßige Zugriffe oder kleine Aufgaben dominieren, ist eine CPU oft geeigneter."
+  },
+  {
+    "front": "[2026-03-23] Warum ist **Datenlokalität** so wichtig für Performance?",
+    "back": "Weil Zugriffe in der **Speicherhierarchie** extrem unterschiedliche Kosten haben. Daten in **Registern** oder **Caches** sind viel schneller als Daten in **RAM**, **SSD** oder gar im **Netzwerk**.\n\n**Datenlokalität** bedeutet, Daten so zu verwenden, dass sie nach dem Laden mehrfach wiederverwendet werden und im Cache bleiben. Dann vermeidet man teure Zugriffe auf tiefere Ebenen der Hierarchie.\n\nBest Case:\n- Daten passen in den Cache\n- viele Wiederverwendungen\n- wenige langsame Speicherzugriffe\n\nWorst Case:\n- ständig neue Daten\n- dauernde Cache-Misses\n- häufige Zugriffe auf langsame Ebenen\n\nMehr Kerne helfen wenig, wenn alle auf langsame Daten warten."
+  },
+  {
+    "front": "[2026-03-23] Welche Maßnahmen helfen gegen Latenz in der Speicherhierarchie?",
+    "back": "Wichtige Gegenmaßnahmen aus der Vorlesung sind:\n\n- **Caching/Prefetching**: Daten frühzeitig in schnellere Ebenen holen\n- **Batching**: größere Blöcke lesen statt viele kleine Zugriffe\n- **Asynchrones I/O**: Lesen und Rechnen überlappen\n- **Parallele Reads**: mehrere Quellen, z. B. mehrere Disks, gleichzeitig nutzen\n- **Kommunikation minimieren**: Daten möglichst nahe an der Berechnung halten\n\nDie gemeinsame Idee ist: nicht nur Rechenzeit optimieren, sondern vor allem **Wartezeit auf Daten** reduzieren oder verstecken."
+  },
+  {
+    "front": "[2026-03-23] Was bedeuten $T_1$, $T_\\infty$ und $T_P$, und warum ist $T_\\infty$ so wichtig?",
+    "back": "- **$T_1$**: gesamte Arbeit, also Laufzeit auf einem Prozessor\n- **$T_\\infty$**: **Span** bzw. **kritischer Pfad**, also die Länge der längsten Abhängigkeitskette\n- **$T_P$**: Laufzeit auf $P$ Prozessoren/Threads\n\n$T_\\infty$ ist zentral, weil es eine harte Untergrenze für jede parallele Ausführung ist: Selbst mit beliebig vielen Prozessoren kann man nicht schneller sein als der längste Abhängigkeitspfad.\n\nDie theoretische Parallelität ist\n$$\n\\frac{T_1}{T_\\infty}.\n$$\nEin kleiner Span ist daher entscheidend für gute Skalierung. Genau deshalb sind Muster wie **Reduction** und **Map** wichtig: Sie formen lineare Arbeit oft in einen Baum mit kleinerem Span um."
+  },
+  {
+    "front": "[2026-03-23] Warum hat die parallele Arraysumme $T_\\infty=O(\\log n)$ statt $O(n)$?",
+    "back": "Bei einer **Divide-and-Conquer-Reduction** wird das Array rekursiv halbiert und Teilergebnisse werden baumförmig zusammengeführt. Die Höhe dieses Baums ist\n$$\nO(\\log n).\n$$\nDie gesamte Arbeit bleibt\n$$\nT_1=O(n),\n$$\nweil alle Elemente weiterhin verarbeitet werden. Aber der **kritische Pfad** folgt nur einer Wurzel-Blatt-Kette im Rekursionsbaum und hat deshalb Länge\n$$\nT_\\infty=O(\\log n).\n$$\nDie Parallelität ist damit\n$$\n\\frac{T_1}{T_\\infty}=\\frac{n}{\\log n}.\n$$\nDas ist der Grund, warum Summieren ein Standardbeispiel für erfolgreiche Parallelisierung ist."
+  },
+  {
+    "front": "[2026-03-23] Wann ist eine Operation wirklich eine **Reduction**, und welche Eigenschaft muss der Merge-Operator haben?",
+    "back": "Eine **Reduction** fasst viele Eingaben zu weniger Ausgaben zusammen, oft zu genau einer. Entscheidend ist, dass Teilresultate mit einem **assoziativen Operator** kombiniert werden können.\n\n**Assoziativ** heißt:\n$$\n(a \\circ b)\\circ c = a \\circ (b \\circ c).\n$$\nNur dann darf man die Eingaben in Teilblöcke zerlegen, unabhängig reduzieren und die Teilresultate später korrekt zusammenführen.\n\nBeispiele:\n- Summe: assoziativ\n- Maximum: assoziativ\n- Logisches OR: assoziativ\n\nNicht geeignet:\n- Subtraktion im Allgemeinen, denn\n$$\n(a-b)-c \\ne a-(b-c).\n$$\nOhne Assoziativität hängt das Ergebnis von der Klammerung ab, und paralleles Zusammenfassen wird problematisch oder falsch."
+  },
+  {
+    "front": "[2026-03-23] Warum ist „linkestes Element mit Eigenschaft“ kein ganz normales OR-Reduction-Problem?",
+    "back": "Bei „**gibt es ein Element mit Eigenschaft?**“ reicht ein boolesches Ergebnis, und der Merge kann mit **OR** erfolgen.\n\nBeim „**linkesten Element mit Eigenschaft**“ genügt OR nicht, weil nicht nur Existenz, sondern auch die **Position** wichtig ist. Der Rückgabewert ist typischerweise ein Index oder $-1$, und der Merge muss **links bevorzugen**:\n- wenn links ein gültiger Index existiert, nimm ihn\n- sonst nimm den rechten\n\nDas ist also ebenfalls ein Reduction-artiges Muster, aber mit anderem Rückgabetyp und spezieller Merge-Logik. Die Falle ist, es fälschlich wie eine reine Existenzabfrage zu behandeln."
+  },
+  {
+    "front": "[2026-03-23] Warum kann auch ein Histogramm mit Ausgabegröße $>1$ eine Reduction sein?",
+    "back": "Weil **Reduction** nicht bedeutet, dass genau ein Skalar herauskommen muss, sondern dass viele Eingaben zu **weniger** Ausgaben aggregiert werden.\n\nBeim Histogramm eines Schwarz-Weiß-Bilds wird über alle Pixel aggregiert, aber das Ergebnis hat z. B. zwei Komponenten:\n$$\n(\\#\\text{schwarz}, \\#\\text{weiß}).\n$$\nJeder Teilbereich liefert ein Teilhistogramm, und diese werden komponentenweise addiert:\n$$\n(h_1^{(L)}, h_2^{(L)}) + (h_1^{(R)}, h_2^{(R)})\n= (h_1^{(L)}+h_1^{(R)},\\, h_2^{(L)}+h_2^{(R)}).\n$$\nDie Ausgabe hat also Dimension $2$, ist aber trotzdem eine **Reduction**, weil über viele Eingaben zusammengefasst wird."
+  },
+  {
+    "front": "[2026-03-23] Was unterscheidet **Map**, **Zip-Map** und **Stencil** anhand ihrer Datenabhängigkeiten?",
+    "back": "Der Unterschied liegt darin, von welchen Eingabewerten ein Ausgabeelement abhängt:\n\n- **Map**:\n  $$\n  \\text{out}[i]=f(\\text{in}[i])\n  $$\n  Jedes Ausgabeelement hängt nur vom Element mit demselben Index ab.\n\n- **Zip-Map**:\n  $$\n  \\text{out}[i]=f(\\text{inA}[i],\\text{inB}[i])\n  $$\n  Jedes Ausgabeelement hängt von mehreren, aber index-alignten Eingaben ab.\n\n- **Stencil**:\n  $$\n  \\text{out}[i]=f(\\text{in}[i-1],\\text{in}[i],\\text{in}[i+1])\n  $$\n  oder in 2D von einer ganzen Nachbarschaft.\n\n**Map** und **Zip-Map** sind elementweise; **Stencil** ist nachbarschaftsbasiert. Dadurch ist Stencil oft speicher- und lokalitätskritischer."
+  },
+  {
+    "front": "[2026-03-23] Warum hat eine Map nur dann $T_\\infty=O(\\log n)$, wenn die Elementfunktion $O(1)$ ist?",
+    "back": "Die Fork-Join-Struktur der **Map** erzeugt zwar einen balancierten Rekursionsbaum mit Tiefe\n$$\nO(\\log n),\n$$\naber die Arbeit im Blattknoten verschwindet nicht. Wenn die pro Element angewandte Funktion $f$ Laufzeit $T_f$ hat, dann trägt sie zum Span bei.\n\nIst\n$$\nT_f=O(1),\n$$\ndann bleibt\n$$\nT_\\infty=O(\\log n).\n$$\nIst $f$ aber teuer, z. B.\n$$\nT_f=O(g(n)),\n$$\ndann wächst der Span entsprechend mit. Die Baumtiefe allein reicht also nicht; man muss auch die Kosten der Blattoperationen betrachten."
+  },
+  {
+    "front": "[2026-03-23] Wie zerlegt sich HDR-Tone-Mapping in parallele Muster?",
+    "back": "Das Beispiel kombiniert zwei Muster:\n\n1. **Globale Helligkeit bestimmen**  \n   Dazu berechnet man die maximale Helligkeit aller Pixel:\n   $$\n   m=\\max_i I[i]\n   $$\n   Das ist eine **Reduction**.\n\n2. **Alle Pixel normalisieren**  \n   Danach wird jedes Pixel mit diesem globalen Wert transformiert, z. B. durch Normierung:\n   $$\n   \\text{out}[i]=g(I[i],m)\n   $$\n   Das ist eine **Map**.\n\nDie Einsicht ist: Viele reale Anwendungen bestehen nicht aus einem einzigen Muster, sondern aus einer **Komposition** von Reduction und Map."
   }
 ]
