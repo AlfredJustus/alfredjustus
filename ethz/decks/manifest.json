@@ -1,5 +1,5 @@
 {
-  "generated": "2026-03-24T19:57:48.505Z",
+  "generated": "2026-03-24T20:05:06.285Z",
   "model": "gpt-5.4",
   "cardsPerLectureTarget": 15,
   "format": "markdown->parser->json",
