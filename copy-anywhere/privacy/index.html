@@ -64,21 +64,6 @@
         <li><strong>Crucially:</strong> This data is <strong>transient</strong>. Once the extraction is returned to you, the image and text are discarded by our server. They are <strong>not stored</strong> in our database unless you manually submit a feedback report regarding that specific capture.</li>
       </ul>
 
-      <h3>D. Hosted Content (Manual Screenshot Feature)</h3>
-      <p>When you use the manual screenshot feature to capture a portion of your browser tab, we host the image so it can be displayed in your document editor.</p>
-      <ul>
-        <li><strong>What is collected:</strong> A JPEG image containing only the pixel content of your selected screen area. We do not collect metadata, user identifiers, cookies, or browsing history alongside this image.</li>
-        <li><strong>Where it is stored:</strong> Images are uploaded to a publicly accessible Supabase Storage bucket (backed by AWS S3).</li>
-        <li><strong>Access &amp; Security:</strong> Images are assigned a random, unguessable UUID filename. While the URL is publicly readable, only someone with the exact URL can access it.</li>
-        <li><strong>Retention &amp; Deletion:</strong>
-          <ul>
-            <li><strong>Active Cleanup:</strong> If you delete a screenshot from the extension editor or clear your session, the uncopied image is automatically deleted from our servers.</li>
-            <li><strong>Permanent Storage:</strong> Once you click "Copy" in the extension, the image may need to be retained indefinitely so your document does not break.</li>
-            <li><strong>Orphaned Images:</strong> If you uninstall the extension before copying an uploaded image, our servers can no longer identify it for deletion, and it will persist in storage indefinitely.</li>
-          </ul>
-        </li>
-      </ul>
-
       <h2>2. Third-Party Services</h2>
       <p>We use a select few trusted third-party services to provide functionality. We do not use third-party analytics (like Google Analytics) or tracking SDKs.</p>
 
