@@ -478,5 +478,125 @@
   {
     "front": "[2026-03-20] Given the lecture latencies, why is `lw` the critical path while an R-type instruction is not?",
     "back": "Using the lecture’s simplified delays:\n\n- instruction memory read: $200\\ \\text{ps}$\n- register file read: $50\\ \\text{ps}$\n- ALU: $100\\ \\text{ps}$\n- data memory read/write: $200\\ \\text{ps}$\n- register write-back: $50\\ \\text{ps}$\n\nR-type path:\n$$\n200 + 50 + 100 + 50 = 400\\ \\text{ps}\n$$\n\n`lw` path:\n$$\n200 + 50 + 100 + 200 + 50 = 600\\ \\text{ps}\n$$\n\n`lw` is longer because it needs **both** ALU address calculation and a **data memory read** before write-back. Therefore it sets the single-cycle clock period:\n$$\nT_{\\text{clk}} \\ge 600\\ \\text{ps}.\n$$"
+  },
+  {
+    "front": "[2026-03-26] Why can a single-cycle processor have $\\text{CPI}=1$ and still be slow?",
+    "back": "Because **performance** depends on both CPI and clock period:\n$$\\text{CPU time} = \\text{Instruction count} \\times \\text{CPI} \\times T_{\\text{clk}}.$$\n\nIn a **single-cycle** design, every instruction must finish in one cycle, so\n$$T_{\\text{clk}} \\ge \\text{delay of the slowest instruction}.$$\n\nThat means a short instruction like `j` still waits for the worst-case path, often `lw` with instruction fetch plus data memory access. So $\\text{CPI}=1$ is offset by a very large $T_{\\text{clk}}$."
+  },
+  {
+    "front": "[2026-03-26] Why does single-cycle violate the common-case design principle?",
+    "back": "Because **rare slow instructions** determine the clock period for **all** instructions.\n\nIf `lw` is the slowest instruction, then even common fast instructions such as simple ALU ops or jumps must run with the same long cycle time. This is the opposite of **bread-and-butter design**, which says to optimize the operations that dominate execution time.\n\nSo single-cycle overpays for the worst case on every instruction."
+  },
+  {
+    "front": "[2026-03-26] Why does a single-cycle datapath often need duplicated resources, while a multicycle datapath can reuse them?",
+    "back": "In a **single-cycle** processor, a hardware unit can only be used once within the combinational work of that one cycle. If an instruction needs memory for both instruction fetch and data access in the same cycle, you typically need separate instruction and data memories.\n\nIn a **multicycle** processor, the same hardware can be reused across different cycles:\n- one memory can serve fetch in one state and data access in another,\n- one ALU can compute $PC+4$ in one state and an address or arithmetic result later.\n\nThis improves **balanced design** and reduces hardware cost."
+  },
+  {
+    "front": "[2026-03-26] What is the key idea of a multicycle microarchitecture?",
+    "back": "A **multicycle microarchitecture** splits instruction execution into several clocked states, so each cycle performs only part of the work.\n\nAs a result:\n- the clock period is based on a shorter per-state delay, not the slowest full instruction,\n- different instructions take different numbers of cycles,\n- $\\text{CPI}$ is no longer fixed at $1$.\n\nSo multicycle trades a variable CPI for a much shorter clock period and better hardware reuse."
+  },
+  {
+    "front": "[2026-03-26] What is the difference between architectural state and microarchitectural state?",
+    "back": "**Architectural state** is the programmer-visible machine state, such as:\n- PC,\n- register file contents,\n- memory-visible effects.\n\n**Microarchitectural state** is internal state used to carry work across cycles, such as:\n- **IR**,\n- **MDR**,\n- temporary operand latches,\n- **ALUOut**-style registers,\n- controller state.\n\nThe ISA defines the architectural state; the implementation chooses the microarchitectural state."
+  },
+  {
+    "front": "[2026-03-26] Why is an Instruction Register (IR) necessary in a multicycle datapath with one unified memory?",
+    "back": "Because the instruction must remain stable across multiple cycles, while the same memory may later be reused for data access.\n\nWithout an **IR**, the memory output could change when the processor switches from instruction fetch to a later data-memory operation. Then the opcode and register fields being executed would be lost or corrupted.\n\nSo the IR latches the fetched instruction once and preserves it for the rest of the instruction’s execution."
+  },
+  {
+    "front": "[2026-03-26] How does the ALU get reused during instruction fetch in a multicycle processor?",
+    "back": "During **fetch**, the ALU is used to compute\n$$PC + 4.$$\n\nThis requires control/muxing so that:\n- ALU input A can select **PC**,\n- ALU input B can select the constant **$4$**,\n- ALU operation is **add**.\n\nThis is a good example of multicycle reuse: the same ALU later computes effective addresses, branch comparisons, or R-type results in other states."
+  },
+  {
+    "front": "[2026-03-26] Trace the multicycle execution of `lw` in 5 states.",
+    "back": "A typical `lw` sequence is:\n\n1. **Fetch**  \n   Read memory at address PC into **IR** and compute/update $PC+4$.\n\n2. **Decode / register fetch**  \n   Read base register `rs`; sign-extend the immediate.\n\n3. **Address compute**  \n   Use ALU to compute\n   $$\\text{addr} = R[rs] + \\text{signext}(imm).$$\n   Store result in a temporary register.\n\n4. **Memory read**  \n   Access unified memory at that effective address; latch result into **MDR**.\n\n5. **Writeback**  \n   Write **MDR** into register `rt`.\n\nThis takes more cycles than single-cycle, but each cycle is much shorter."
+  },
+  {
+    "front": "[2026-03-26] What extra datapath support does `sw` need compared with `lw`?",
+    "back": "`sw` needs not only the computed address, but also the **data to store**.\n\nSo besides reading the base register for address calculation, the datapath must also read `rt` and preserve that value in an internal latch until the memory-write state. In the final store state:\n- memory address comes from the computed effective address,\n- memory write data comes from the latched `rt` value,\n- `MemWrite` is asserted.\n\nThe address-generation part is the same as `lw`; the key addition is carrying store data across cycles."
+  },
+  {
+    "front": "[2026-03-26] Why does an R-type instruction need a destination-register mux in the multicycle datapath?",
+    "back": "Because the destination register depends on instruction format.\n\n- For **I-type** instructions like `lw`, the destination is `rt` (bits 20–16).\n- For **R-type** instructions, the destination is `rd` (bits 15–11).\n\nSo the datapath needs a **destination-register mux** controlled by something like **RegDst** to choose between `rt` and `rd` before writeback.\n\nWithout that mux, the processor could not correctly support both instruction classes with one write port."
+  },
+  {
+    "front": "[2026-03-26] How does `beq` use the ALU’s `Zero` signal, and what else must be computed?",
+    "back": "For `beq`, the ALU compares the two source registers by subtracting them:\n$$R[rs] - R[rt].$$\n\nIf the result is zero, the ALU asserts **Zero = 1**, meaning the operands are equal and the branch condition is true.\n\nBut equality alone is not enough. The processor must also compute the **branch target**:\n$$PC + 4 + (\\text{signext}(imm) \\ll 2).$$\n\nThen control decides whether the next PC becomes the branch target or remains sequential."
+  },
+  {
+    "front": "[2026-03-26] Why is the multicycle controller naturally modeled as an FSM?",
+    "back": "Because instruction execution proceeds through a sequence of discrete **states**, and each state corresponds to a specific set of control signals.\n\nSo in an **FSM**:\n- the **current state** determines which control signals are asserted now,\n- the **next state** depends on the current state plus inputs such as opcode, `Zero`, or memory-ready.\n\nThis matches multicycle execution exactly: fetch, decode, execute, memory, writeback, with opcode-dependent branching between them."
+  },
+  {
+    "front": "[2026-03-26] In microprogramming terms, what are microinstruction, microsequencing, and control store?",
+    "back": "- A **microinstruction** is the set of control signals asserted in one control state.\n- **Microsequencing** is the process of choosing which control state / microinstruction comes next.\n- The **control store** is the memory that holds those microinstructions.\n\nSo microprogramming reframes control as “running a small program” that drives the datapath, rather than hardwiring all control directly as logic."
+  },
+  {
+    "front": "[2026-03-26] Why does the lecture emphasize generating control “one cycle earlier”?",
+    "back": "Because if control signals are generated too late in the same cycle they are needed, the **control logic delay** gets added to the datapath’s critical path.\n\nBy deriving the next state’s control from the current state and inputs ahead of time, the implementation avoids stretching the cycle unnecessarily. This helps preserve the main benefit of multicycle design: a shorter clock period.\n\nSo this is a timing optimization for the controller itself."
+  },
+  {
+    "front": "[2026-03-26] How can a multicycle processor handle variable-latency memory?",
+    "back": "It can **stay in the memory-access state** until memory signals that the operation is complete.\n\nThat means the controller’s next-state logic depends not only on opcode/state, but also on a **memory ready** input. Conceptually:\n\n- if `ready = 0`, remain in the current memory state,\n- if `ready = 1`, advance to the next state.\n\nThis is much easier in multicycle than in single-cycle, because the design already expects instructions to span multiple cycles."
+  },
+  {
+    "front": "[2026-03-27] Why can pipelining improve throughput without reducing the latency of one instruction?",
+    "back": "**Pipelining** overlaps different instructions in different stages, so more instructions are in flight at once. That improves **throughput**: in steady state, an ideal $K$-stage pipeline can complete about $1$ instruction per cycle.\n\nBut one instruction still has to pass through all $K$ stages, so its **latency** remains about $K$ cycles. The benefit is overlap, not making the instruction itself do less work.\n\nThe laundry analogy captures this: multiple loads can be washed/dried/folded in parallel across stages, but one load still needs all steps in order."
+  },
+  {
+    "front": "[2026-03-27] Under the lecture model, how does pipeline depth affect throughput, and why doesn't making $K$ huge help forever?",
+    "back": "With total combinational delay $T$, sequencing overhead $S$, and $K$ equal stages:\n\n- single-cycle throughput:  \n  $$\\frac{1}{T+S}$$\n- $K$-stage pipeline throughput:  \n  $$\\frac{1}{\\frac{T}{K}+S}$$\n\nAs $K$ increases, $\\frac{T}{K}$ shrinks, so throughput improves. But it cannot improve without bound, because the limit is\n\n$$\\lim_{K\\to\\infty}\\frac{1}{\\frac{T}{K}+S}=\\frac{1}{S}.$$\n\nSo very deep pipelines eventually spend most of their time paying **sequencing overhead** rather than useful logic delay. Deeper pipelines also increase hardware cost and usually worsen hazard penalties such as branch mispredictions."
+  },
+  {
+    "front": "[2026-03-27] Why does the 5-stage example achieve only $4\\times$ speedup instead of the ideal $5\\times$?",
+    "back": "The stage delays are:\n\n- IF: $200$ ps\n- ID: $100$ ps\n- EX: $200$ ps\n- MEM: $200$ ps\n- WB: $100$ ps\n\nA single-cycle load takes\n\n$$200+100+200+200+100=800\\text{ ps}.$$\n\nIn the pipeline, the clock period must match the **slowest stage**, so it is $200$ ps. In steady state, one instruction completes every $200$ ps, giving speedup\n\n$$\\frac{800}{200}=4.$$\n\nIt is not $5\\times$ because the stages are **imbalanced**: the $100$ ps stages must still wait for the $200$ ps stages. This is **internal fragmentation**."
+  },
+  {
+    "front": "[2026-03-27] What is the difference between internal and external fragmentation in a pipeline?",
+    "back": "**Internal fragmentation** means stage times are unbalanced. Some stages are shorter than the slowest stage, so part of each cycle is wasted. Example: a $100$ ps stage in a pipeline clocked at $200$ ps.\n\n**External fragmentation** means not every instruction uses every stage meaningfully, but the linear pipeline still forces it through them. Example: an ALU instruction still passes through MEM even if no data memory access is needed.\n\nSo:\n\n- **internal** = wasted time inside a stage slot,\n- **external** = wasted stage occupancy by an instruction type."
+  },
+  {
+    "front": "[2026-03-27] Why must values like $PC+4$ and the destination register number be carried through pipeline registers?",
+    "back": "In a pipeline, several instructions are active at once. A value computed for instruction $A$ in one cycle would be overwritten by instruction $B$'s value in the next cycle unless it is stored.\n\nSo values such as **$PC+4$**, ALU results, memory data, control bits, and the **destination register number** must be latched in pipeline registers like IF/ID, ID/EX, EX/MEM, and MEM/WB.\n\nA key gotcha: you cannot use an early-stage destination field directly at writeback time, because by then a different instruction is in that earlier stage. The writeback stage must receive the destination register number that belongs to the instruction currently reaching WB."
+  },
+  {
+    "front": "[2026-03-27] Why are control signals in a pipeline \"the same as single-cycle, but time-shifted\"?",
+    "back": "The instruction still needs the same kinds of control decisions: ALU operation, memory read/write, register writeback, etc. The difference is that these actions happen in different cycles as the instruction moves through stages.\n\nSo one common design is:\n\n- decode the instruction once,\n- generate the needed control bits,\n- carry those control bits through pipeline registers,\n- consume each group in the stage where it is needed.\n\nThus the control is logically the same as in a single-cycle datapath, but **time-shifted** to match the instruction's progress through the pipeline."
+  },
+  {
+    "front": "[2026-03-27] What makes an instruction pipeline non-ideal compared with the \"ideal pipeline\" assumptions?",
+    "back": "An ideal pipeline assumes:\n\n- repeated **identical** operations,\n- repeated **independent** operations,\n- operations that can be split into **balanced** stages.\n\nReal instruction pipelines violate all three:\n\n- instructions are not identical: loads, ALU ops, and branches use stages differently,\n- instructions are not independent: they have **data** and **control dependences**,\n- stages are not perfectly balanced: some stages are slower than others.\n\nThese violations create stalls, wasted stage time, and reduced speedup."
+  },
+  {
+    "front": "[2026-03-27] What is resource contention, and what are the two main ways to handle it?",
+    "back": "**Resource contention** occurs when two pipeline stages need the same hardware resource in the same cycle, even though the program itself does not require that conflict.\n\nTwo main solutions:\n\n1. **Eliminate the contention**\n   - duplicate the resource,\n   - increase its throughput,\n   - e.g. separate instruction and data memory, multi-ported structures.\n\n2. **Detect it and stall**\n   - one instruction waits while the other uses the resource.\n\nA classic example is register-file access. With careful timing, a write can happen in the **first half** of the cycle and a read in the **second half**, avoiding a stall."
+  },
+  {
+    "front": "[2026-03-27] Why is $RAW$ a true dependence, while $WAR$ and $WAW$ are name dependences?",
+    "back": "- **$RAW$ (read after write)**: a later instruction needs the actual value produced by an earlier one. This is a **true dependence** on data flow.\n- **$WAR$ (write after read)**: a later instruction must not overwrite a register before an earlier instruction reads it.\n- **$WAW$ (write after write)**: two instructions write the same architectural destination, so write order matters.\n\nThe key difference is that $WAR$ and $WAW$ arise because multiple instructions reuse the same **architectural name** (register identifier), not because one instruction needs the value computed by the other. That is why they are called **name dependences**."
+  },
+  {
+    "front": "[2026-03-27] In a simple in-order 5-stage pipeline, why are $WAR$ and $WAW$ usually less problematic than $RAW$?",
+    "back": "In the simple in-order pipeline from the lecture, instructions:\n\n- read operands early,\n- write results only in the final stage,\n- complete writes in program order.\n\nBecause of that ordering:\n\n- an earlier instruction will already have read before a later one writes, so **$WAR$** is naturally avoided,\n- writes occur in order, so **$WAW$** is also naturally avoided.\n\nBut **$RAW$** remains a real problem: the consumer may reach decode or execute before the producer's value is available."
+  },
+  {
+    "front": "[2026-03-27] How does a stall preserve correctness when a dependent instruction arrives too early?",
+    "back": "A **stall** makes the dependent instruction wait until its needed value or resource is available.\n\nTypical mechanism:\n\n- freeze the **PC**,\n- freeze upstream pipeline registers such as **IF/ID**,\n- let older instructions continue downstream,\n- inject a **bubble** into the next stage by clearing control signals so it behaves like a $NOP$.\n\nThis preserves correctness because the consumer instruction does not advance to the point where it would read or use stale data. Meanwhile, earlier instructions can drain out of the pipeline."
+  },
+  {
+    "front": "[2026-03-27] Why can scoreboarding with valid bits over-stall compared with explicit dependence-check logic?",
+    "back": "In a simple **scoreboard** scheme, each register has a valid bit:\n\n- when an instruction will write a register, that register is marked invalid,\n- decode stalls if a needed register is invalid.\n\nThis is simple, but it does not distinguish why the register is involved. It can stall on cases related to **$WAR$** or **$WAW$**, even when those would not actually break correctness in the simple in-order pipeline.\n\nBy contrast, explicit combinational compare logic can check whether there is a real **$RAW$** conflict that truly requires waiting. So scoreboarding is simpler, but less precise."
+  },
+  {
+    "front": "[2026-03-27] How does forwarding reduce stalls, and why must the most recent matching producer win?",
+    "back": "**Forwarding** (or **bypassing**) sends a result directly from a later pipeline stage to the ALU inputs of an instruction that needs it, instead of waiting for register writeback.\n\nTypical paths include forwarding from:\n\n- **EX/MEM** to EX,\n- **MEM/WB** to EX.\n\nThis avoids many unnecessary stalls for ALU-to-ALU dependences.\n\nIf both later stages appear to provide the same source register, the pipeline must choose the **most recent** value, i.e. the producer closest to the consumer in program order. In practice, that means prioritizing the match from the stage nearer to EX, because it contains the newer result."
+  },
+  {
+    "front": "[2026-03-27] Why does a load-use dependence usually still require at least one stall even with forwarding?",
+    "back": "For an ALU instruction, the result is typically ready at the end of **EX**, so it can often be forwarded to the next instruction's EX stage.\n\nFor a **load**, the value is not available until the end of **MEM**, because memory must first be accessed. The immediately following instruction would need that value at the beginning of its EX stage, which is too early.\n\nSo even with forwarding, the consumer usually must wait **one cycle**. This is the classic **load-use hazard**."
+  },
+  {
+    "front": "[2026-03-27] Under an \"always not taken\" policy, what happens on a taken branch?",
+    "back": "With **always not taken** prediction, the fetch stage assumes the next PC is\n\n$$PC+4.$$\n\nSo the processor keeps fetching sequential instructions after the branch. If the branch later turns out to be **taken**, those fetched instructions are on the wrong path.\n\nThe pipeline must then **flush** those wrong-path instructions and redirect fetch to the correct branch target. The number of flushed instructions is the **misprediction penalty**."
   }
 ]

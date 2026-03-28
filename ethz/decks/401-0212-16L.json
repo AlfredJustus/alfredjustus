@@ -658,5 +658,65 @@
   {
     "front": "[2026-03-23] Wie macht die Einschränkung",
     "back": "$$\\tilde f:\\mathbb{R}_{\\ge 0}\\to\\mathbb{R}_{\\ge 0},\\quad \\tilde f(x)=x^2$$\naus $x^2$ eine bijektive Funktion?\n\nDurch die **Einschränkung** des Definitionsbereichs auf\n$$\n\\mathbb{R}_{\\ge 0}\n$$\nverschwindet das Problem\n$$\nx \\text{ und } -x\n$$\nhaben denselben Funktionswert, denn negative Zahlen sind nicht mehr erlaubt.\n\nDamit ist $\\tilde f$ **injektiv**.\n\nDurch die Wahl des Zielbereichs\n$$\n\\mathbb{R}_{\\ge 0}\n$$\nist $\\tilde f$ außerdem **surjektiv**, denn zu jedem $y\\ge 0$ gibt es ein\n$$\nx=\\sqrt y\\ge 0\n$$\nmit\n$$\nx^2=y.\n$$\n\nAlso ist $\\tilde f$ **bijektiv**. Das zeigt: Nicht nur die Formel, sondern auch Definitions- und Zielbereich gehören wesentlich zur Funktion."
+  },
+  {
+    "front": "[2026-03-25] Warum ist Bijektivität genau die richtige Bedingung für eine Umkehrfunktion als Funktion?",
+    "back": "Für eine **Umkehrfunktion** $f^{-1}:Y\\to X$ muss jedes $y\\in Y$ auf genau ein $x\\in X$ zurückgeführt werden können.\n\n- **Surjektivität** ist nötig, damit jedes $y\\in Y$ überhaupt getroffen wird.\n- **Injektivität** ist nötig, damit dieses Urbild eindeutig ist.\n\nFehlt Surjektivität, gibt es Zielwerte ohne Urbild. Fehlt Injektivität, gibt es Zielwerte mit mehreren Urbildern, also keine eindeutige Rückzuordnung.\n\nGenau bei **Bijektivität** kann man daher definieren:\n$$\nf^{-1}(y)=\\text{das eindeutige }x\\in X\\text{ mit }f(x)=y.\n$$\n\nDann gilt außerdem\n$$\nf^{-1}\\circ f=\\mathrm{id}_X,\\qquad f\\circ f^{-1}=\\mathrm{id}_Y.\n$$"
+  },
+  {
+    "front": "[2026-03-25] Warum ist $f(x)=x^2$ auf $\\mathbb{R}$ nicht invertierbar als Funktion, und wie repariert man das?",
+    "back": "Auf $\\mathbb{R}$ ist $f(x)=x^2$ **nicht injektiv**, denn\n$$\nf(1)=1=f(-1),\n$$\nobwohl $1\\neq -1$.\n\nDamit wäre eine Umkehrung bei $y=1$ mehrdeutig: Soll $f^{-1}(1)=1$ oder $f^{-1}(1)=-1$ sein? Also existiert auf ganz $\\mathbb{R}$ keine Umkehrfunktion als Funktion.\n\nMan **repariert** das durch eine **Restriktion** des Definitionsbereichs, z.B. auf $[0,\\infty)$:\n$$\nf:[0,\\infty)\\to [0,\\infty),\\quad x\\mapsto x^2.\n$$\nDann ist $f$ bijektiv und die Umkehrfunktion ist\n$$\nf^{-1}(y)=\\sqrt{y}.\n$$\n\nDie Idee: Durch Einschränkung entfernt man die Mehrdeutigkeit."
+  },
+  {
+    "front": "[2026-03-25] Was muss bei einer Komposition $g\\circ f$ erfüllt sein, damit sie überhaupt definiert ist?",
+    "back": "Die Komposition\n$$\ng\\circ f\n$$\nist nur dann sinnvoll, wenn der **Zielbereich** von $f$ zum **Definitionsbereich** von $g$ passt.\n\nFormal: Für\n$$\nf:X\\to Y,\\qquad g:U\\to V\n$$\nmuss gelten:\n$$\nY\\subseteq U\n$$\n(bzw. mindestens müssen alle von $f$ angenommenen Werte in $U$ liegen).\n\nDann ist\n$$\n(g\\circ f)(x)=g(f(x))\n$$\nfür alle $x\\in X$ definiert.\n\nDas ist besonders wichtig bei Umkehrfunktionen, weil die Gleichungen\n$$\nf^{-1}\\circ f=\\mathrm{id}_X,\\qquad f\\circ f^{-1}=\\mathrm{id}_Y\n$$\nnur Sinn ergeben, wenn die beteiligten Definitions- und Zielbereiche korrekt gewählt sind."
+  },
+  {
+    "front": "[2026-03-25] Warum folgt aus strenger Monotonie immer Injektivität?",
+    "back": "Sei $f$ **streng monoton**. Dann gilt für $x_1<x_2$ entweder\n\n- bei streng wachsend:\n  $$\n  f(x_1)<f(x_2),\n  $$\n- oder bei streng fallend:\n  $$\n  f(x_1)>f(x_2).\n  $$\n\nAngenommen, $f$ wäre nicht injektiv. Dann gäbe es $x_1\\neq x_2$ mit\n$$\nf(x_1)=f(x_2).\n$$\nOhne Einschränkung sei $x_1<x_2$. Strenge Monotonie liefert dann aber zwingend\n$$\nf(x_1)\\neq f(x_2),\n$$\ngenauer sogar $<$ oder $>$. Das ist ein Widerspruch.\n\nAlso ist jede **streng monotone Funktion injektiv**.\n\nWichtig: Für bloß monotone Funktionen gilt das nicht, weil dort Plateaus erlaubt sind."
+  },
+  {
+    "front": "[2026-03-25] Was ist der entscheidende Unterschied zwischen monoton und streng monoton?",
+    "back": "Bei **monotonen** Funktionen sind gleiche Funktionswerte auf einem Intervallstück erlaubt, bei **streng monotonen** nicht.\n\nFormal für $x_1<x_2$:\n\n- **monoton wachsend**:\n  $$\n  f(x_1)\\le f(x_2)\n  $$\n- **streng monoton wachsend**:\n  $$\n  f(x_1)< f(x_2)\n  $$\n\nAnalog:\n\n- **monoton fallend**:\n  $$\n  f(x_1)\\ge f(x_2)\n  $$\n- **streng monoton fallend**:\n  $$\n  f(x_1)> f(x_2)\n  $$\n\nDer Unterschied sind also die **Plateaus**:\n- bei monoton: erlaubt,\n- bei streng monoton: ausgeschlossen.\n\nDeshalb impliziert strenge Monotonie Injektivität, gewöhnliche Monotonie aber nicht."
+  },
+  {
+    "front": "[2026-03-25] Gib ein Beispiel für eine monotone, aber nicht injektive Funktion.",
+    "back": "Ein einfaches Beispiel ist eine **konstante Funktion**, etwa\n$$\nf(x)=3 \\quad \\text{für alle }x\\in \\mathbb{R}.\n$$\n\nSie ist **monoton wachsend** und auch **monoton fallend**, denn für alle $x_1<x_2$ gilt\n$$\nf(x_1)=3\\le 3=f(x_2)\n$$\nund zugleich\n$$\nf(x_1)=3\\ge 3=f(x_2).\n$$\n\nAber sie ist **nicht injektiv**, weil verschiedene Eingaben denselben Wert liefern:\n$$\nf(0)=3=f(1),\\qquad 0\\neq 1.\n$$\n\nDas zeigt: Monotonie ohne „streng“ reicht nicht aus, um Injektivität zu garantieren."
+  },
+  {
+    "front": "[2026-03-25] Wann ist eine Funktion nach oben, nach unten oder insgesamt beschränkt?",
+    "back": "Für eine Funktion $f$ auf einem betrachteten Bereich gilt:\n\n- **nach oben beschränkt**:\n  $$\n  \\exists M\\in\\mathbb{R}\\ \\forall x:\\ f(x)\\le M\n  $$\n- **nach unten beschränkt**:\n  $$\n  \\exists m\\in\\mathbb{R}\\ \\forall x:\\ f(x)\\ge m\n  $$\n- **beschränkt**:\n  $$\n  \\exists M\\in\\mathbb{R}\\ \\forall x:\\ |f(x)|\\le M\n  $$\n\n„Beschränkt“ bedeutet also: sowohl nach oben als auch nach unten beschränkt.\n\nDie Formulierung mit $|f(x)|\\le M$ ist oft am praktischsten, weil sie beide Richtungen gleichzeitig erfasst.\n\nWichtig ist immer: Beschränktheit bezieht sich auf den **betrachteten Bereich**, nicht automatisch auf den maximal möglichen Definitionsbereich."
+  },
+  {
+    "front": "[2026-03-25] Warum kann eine Funktion auf einem Intervall beschränkt sein, obwohl sie es auf ganz $\\mathbb{R}$ nicht ist?",
+    "back": "Beschränktheit hängt vom **betrachteten Bereich** ab. Dieselbe Funktion kann auf einem kleinen Intervall beschränkt, auf ganz $\\mathbb{R}$ aber unbeschränkt sein.\n\nBeispiel:\n$$\nf(x)=x.\n$$\n\nAuf $\\mathbb{R}$ ist $f$ weder nach oben noch nach unten beschränkt.\n\nAuf dem Intervall $[0,L]$ gilt dagegen\n$$\n0\\le f(x)\\le L \\qquad \\text{für alle }x\\in [0,L].\n$$\nAlso ist $f$ dort beschränkt.\n\nDas ist in Anwendungen wichtig: Bei Optimierungsproblemen betrachtet man oft nur physikalisch sinnvolle Werte, etwa Längen mit\n$$\n0\\le x\\le L.\n$$\nDann untersucht man Eigenschaften wie Beschränktheit nicht global, sondern auf diesem relevanten Intervall."
+  },
+  {
+    "front": "[2026-03-25] Wie erkennt man, ob eine Funktion gerade oder ungerade ist?",
+    "back": "Man prüft, was beim Ersetzen von $x$ durch $-x$ passiert:\n\n- **gerade**:\n  $$\n  f(-x)=f(x)\n  $$\n- **ungerade**:\n  $$\n  f(-x)=-f(x)\n  $$\n\nTypische Beispiele:\n- **gerade**: $\\cos(x)$, $x^{2k}$\n- **ungerade**: $\\sin(x)$, $x^{2k+1}$\n\nGeometrisch bedeutet das:\n- gerade Funktionen sind achsensymmetrisch zur $y$-Achse,\n- ungerade Funktionen sind punktsymmetrisch zum Ursprung.\n\nDie Definition ist aber die algebraische Bedingung oben; auf sie sollte man sich verlassen."
+  },
+  {
+    "front": "[2026-03-25] Warum ist $x^n$ genau dann gerade bzw. ungerade, wenn $n$ gerade bzw. ungerade ist?",
+    "back": "Betrachte\n$$\nf(x)=x^n.\n$$\nDann gilt\n$$\nf(-x)=(-x)^n.\n$$\n\n- Ist $n=2k$ **gerade**, so\n  $$\n  (-x)^{2k}=x^{2k}=f(x),\n  $$\n  also ist $f$ **gerade**.\n- Ist $n=2k+1$ **ungerade**, so\n  $$\n  (-x)^{2k+1}=-x^{2k+1}=-f(x),\n  $$\n  also ist $f$ **ungerade**.\n\nDie Parität des Exponenten entscheidet also direkt über die Symmetrieeigenschaft der Potenzfunktion.\n\nDas erklärt auch die Standardbeispiele:\n$$\nx^2 \\text{ ist gerade},\\qquad x^3 \\text{ ist ungerade}.\n$$"
+  },
+  {
+    "front": "[2026-03-25] Was ist der Graph einer Funktion, und warum ist diese Sichtweise nützlich?",
+    "back": "Der **Graph** einer Funktion $f$ ist die Punktmenge\n$$\n\\operatorname{Graph}(f)=\\{(x,f(x))\\mid x \\text{ im Definitionsbereich}\\}.\n$$\n\nEr übersetzt die Zuordnung $x\\mapsto f(x)$ in eine geometrische Form in der Ebene.\n\nDiese Sicht ist nützlich, weil man viele Eigenschaften direkt geometrisch lesen kann, etwa:\n\n- **Monotonie**: steigt oder fällt der Graph?\n- **Beschränktheit**: bleibt der Graph in einem horizontalen Streifen?\n- **Symmetrie**: gerade/ungerade Funktionen\n- **Konvexität/Konkavität**: Lage relativ zu Sekanten\n- **Grenzwerte**: Verhalten nahe einer Stelle oder im Unendlichen\n\nDer Graph ist also nicht nur ein Bild, sondern ein präzises Werkzeug zum Verständnis funktionaler Eigenschaften."
+  },
+  {
+    "front": "[2026-03-25] Wie unterscheidet man geometrisch konvexe und konkave Funktionen mit Sekanten?",
+    "back": "Auf einem Intervall ist eine Funktion **konvex**, wenn ihr Graph zwischen zwei Punkten **unterhalb jeder Sekante** liegt. Sie ist **konkav**, wenn der Graph **oberhalb jeder Sekante** liegt.\n\nAnschaulich:\n- **konvex**: wie eine „Schüssel“\n- **konkav**: wie ein „Dach“\n\nBeispiele aus der Vorlesung:\n- $f(x)=x^2$ ist **konvex**\n- $f(x)=-x^2$ ist **konkav**\n\nWichtig ist das Wort **jede**: Es reicht nicht, dass eine geschickt gewählte Sekante passt. Die Eigenschaft muss für alle Punktpaare des betrachteten Intervalls gelten.\n\nAußerdem kann eine Funktion auf verschiedenen Intervallen unterschiedlich sein, also z.B. auf einem Intervall konvex und auf einem anderen konkav."
+  },
+  {
+    "front": "[2026-03-25] Was bedeutet $\\lim_{x\\to x_0} f(x)=L$ im $\\varepsilon$–$\\delta$-Sinn?",
+    "back": "Die Aussage\n$$\n\\lim_{x\\to x_0} f(x)=L\n$$\nbedeutet:\n\nZu jedem $\\varepsilon>0$ gibt es ein $\\delta>0$, so dass für alle $x$ im Definitionsbereich mit\n$$\n|x-x_0|<\\delta\n$$\ngilt:\n$$\n|f(x)-L|<\\varepsilon.\n$$\n\nBedeutung:\n- Wenn $x$ nahe genug bei $x_0$ liegt,\n- dann liegt $f(x)$ beliebig nahe bei $L$.\n\nDabei geht es um das Verhalten **nahe** $x_0$, nicht zwingend **an** der Stelle $x_0$ selbst.\n\nVoraussetzung ist, dass in der Nähe von $x_0$ überhaupt genügend Punkte des Definitionsbereichs liegen, damit „Annäherung“ Sinn ergibt."
+  },
+  {
+    "front": "[2026-03-25] Warum kann ein Grenzwert existieren, obwohl $f(x_0)$ gar nicht definiert ist?",
+    "back": "Der Grenzwert betrachtet nur das Verhalten von $f(x)$ für $x$ **nahe** bei $x_0$, nicht zwingend den Wert an der Stelle selbst.\n\nTypisches Beispiel:\n$$\nf(x)=\\frac{x^2-4}{x+2}\\qquad (x\\neq -2).\n$$\nFür $x\\neq -2$ kann man kürzen:\n$$\nf(x)=x-2.\n$$\nDaher gilt\n$$\n\\lim_{x\\to -2} f(x)=\\lim_{x\\to -2}(x-2)=-4.\n$$\n\nTrotzdem ist $f(-2)$ in der ursprünglichen Definition **nicht definiert**, weil der Nenner dort $0$ ist.\n\nDas ist eine **hebbare Definitionslücke**: Der Grenzwert existiert endlich, und man könnte die Funktion durch geeignetes Setzen von $f(-2)$ fortsetzen."
+  },
+  {
+    "front": "[2026-03-25] Woran erkennt man eine hebbare Definitionslücke, und was darf man dann tun?",
+    "back": "Eine **hebbare Definitionslücke** liegt an $x_0$ vor, wenn\n\n- $f$ an $x_0$ nicht definiert ist,\n- aber der Grenzwert\n  $$\n  \\lim_{x\\to x_0} f(x)\n  $$\n  existiert und endlich ist.\n\nDann fehlt nur „ein Punkt“ im Graphen. Man kann die Lücke schließen, indem man eine neue Funktion definiert:\n$$\nf^\\ast(x)=\n\\begin{cases}\nf(x), & x\\neq x_0,\\\\\nL, & x=x_0,\n\\end{cases}\n$$\nwobei\n$$\nL=\\lim_{x\\to x_0} f(x).\n$$\n\nWichtig: Algebraisches Kürzen zeigt oft die Struktur, ändert aber nicht automatisch den ursprünglichen Definitionsbereich. Ein ursprünglich ausgeschlossener Nenner-Nullpunkt bleibt zunächst ausgeschlossen."
   }
 ]

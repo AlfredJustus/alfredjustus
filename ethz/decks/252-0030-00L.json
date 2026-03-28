@@ -598,5 +598,125 @@
   {
     "front": "[2026-03-19] Warum ist „mindestens ein Mädchen“ nicht dasselbe wie „das ältere Kind ist ein Mädchen“?",
     "back": "Die Information ist unterschiedlich fein.\n\n- Bei “**mindestens ein Mädchen**” bleiben die Fälle\n$$\n(m,w),(w,m),(w,w),\n$$\nalso drei Möglichkeiten. Dann ist\n$$\nP(\\text{beide Mädchen}\\mid \\text{mindestens ein Mädchen})=\\frac{1}{3}.\n$$\n\n- Bei “**das ältere Kind ist ein Mädchen**” bleiben nur\n$$\n(w,m),(w,w),\n$$\nalso zwei Möglichkeiten. Dann ist\n$$\nP(\\text{beide Mädchen}\\mid \\text{älteres Kind ist Mädchen})=\\frac{1}{2}.\n$$\n\nDie bedingte Wahrscheinlichkeit hängt also nicht nur davon ab, **welches Thema** die Information betrifft, sondern von der **genauen Formulierung** der Information."
+  },
+  {
+    "front": "[2026-03-24] Warum ist",
+    "back": "$$\nP(A\\mid B)=\\frac{P(A\\cap B)}{P(B)}\n$$\neine sinnvolle Formalisierung von „$A$ unter der Zusatzinformation $B$“?\n\n**Bedingte Wahrscheinlichkeit** beschränkt den Blick auf die Fälle, in denen $B$ bereits eingetreten ist. Innerhalb dieser „reduzierten Welt“ sind genau die Fälle günstig, in denen zusätzlich auch $A$ gilt, also $A\\cap B$.\n\nDarum:\n- $P(B)$ misst die Größe der betrachteten Teilwelt,\n- $P(A\\cap B)$ misst die günstigen Fälle darin,\n- der Quotient ist der Anteil der $B$-Fälle, in denen auch $A$ eintritt.\n\nSo wird Wissen über $B$ als **Renormalisierung** des Wahrscheinlichkeitsraums modelliert."
+  },
+  {
+    "front": "[2026-03-24] Wie leitet man den Satz von Bayes aus Definition und totaler Wahrscheinlichkeit her?",
+    "back": "Für paarweise disjunkte Ereignisse $A_1,\\dots,A_n$ mit $P(B)>0$ gilt:\n$$\nP(A_i\\mid B)=\\frac{P(B\\mid A_i)\\,P(A_i)}{\\sum_{j=1}^n P(B\\mid A_j)\\,P(A_j)}.\n$$\n\nHerleitung:\n1. Aus der Definition der bedingten Wahrscheinlichkeit:\n   $$\n   P(B\\mid A_i)=\\frac{P(B\\cap A_i)}{P(A_i)}\n   $$\n   also\n   $$\n   P(B\\cap A_i)=P(B\\mid A_i)P(A_i).\n   $$\n2. Wegen der disjunkten Fallunterscheidung gilt\n   $$\n   P(B)=\\sum_{j=1}^n P(B\\cap A_j)=\\sum_{j=1}^n P(B\\mid A_j)P(A_j).\n   $$\n3. Setze das in\n   $$\n   P(A_i\\mid B)=\\frac{P(A_i\\cap B)}{P(B)}\n   $$\n   ein.\n\nBayes „dreht“ also $P(B\\mid A_i)$ zu $P(A_i\\mid B)$ um."
+  },
+  {
+    "front": "[2026-03-24] Warum garantiert ein Test mit hoher Sensitivität und Spezifität noch keine hohe Wahrscheinlichkeit",
+    "back": "$$\nP(\\text{krank}\\mid +)?\n$$\n\nWeil **$P(\\text{krank}\\mid +)$** nicht nur vom Test, sondern auch von der **Grundrate** $P(\\text{krank})$ abhängt.\n\nMit Bayes:\n$$\nP(\\text{krank}\\mid +)=\\frac{P(+\\mid \\text{krank})P(\\text{krank})}{P(+\\mid \\text{krank})P(\\text{krank})+P(+\\mid \\text{nicht krank})P(\\text{nicht krank})}.\n$$\n\nWenn die Krankheit selten ist, gibt es sehr viele Nicht-Kranke. Dann kann selbst eine kleine **Falsch-Positiv-Rate** viele positive Tests unter Gesunden erzeugen. Diese können die wenigen echten Positiven zahlenmäßig übertreffen.\n\nDer zentrale Punkt ist also: **Posterioren** hängen stark von **Priors** ab."
+  },
+  {
+    "front": "[2026-03-24] Rechne das Testbeispiel für $p=0{,}01$ aus. Warum ist ein positives Ergebnis dann noch kein starker Beweis für Krankheit?",
+    "back": "Gegeben:\n- $P(+\\mid \\text{krank})=0{,}72$,\n- $P(+\\mid \\text{nicht krank})=0{,}02$,\n- $p=P(\\text{krank})=0{,}01$.\n\nDann:\n$$\nP(\\text{krank}\\mid +)=\\frac{0{,}72\\cdot 0{,}01}{0{,}72\\cdot 0{,}01+0{,}02\\cdot 0{,}99}\n=\\frac{0{,}0072}{0{,}0072+0{,}0198}\n=\\frac{0{,}0072}{0{,}027}\n\\approx 0{,}267.\n$$\n\nAlso:\n$$\nP(\\text{krank}\\mid +)\\approx 26{,}7\\%.\n$$\n\nDas ist deutlich höher als die Grundrate von $1\\%$, aber immer noch unter $50\\%$. Ein positiver Test macht Krankheit also **wahrscheinlicher**, aber „nicht krank“ bleibt sogar noch wahrscheinlicher."
+  },
+  {
+    "front": "[2026-03-24] Was passiert im selben Testbeispiel bei einer extrem kleinen Grundrate $p=0{,}0002$?",
+    "back": "Setze $p=0{,}0002$ in\n$$\nP(\\text{krank}\\mid +)=\\frac{0{,}72p}{0{,}72p+0{,}02(1-p)}\n$$\nein:\n$$\nP(\\text{krank}\\mid +)=\\frac{0{,}72\\cdot 0{,}0002}{0{,}72\\cdot 0{,}0002+0{,}02\\cdot 0{,}9998}.\n$$\n\nZähler:\n$$\n0{,}72\\cdot 0{,}0002=0{,}000144.\n$$\n\nNenner:\n$$\n0{,}000144+0{,}019996=0{,}02014.\n$$\n\nAlso:\n$$\nP(\\text{krank}\\mid +)\\approx \\frac{0{,}000144}{0{,}02014}\\approx 0{,}00715.\n$$\n\nDamit ist\n$$\nP(\\text{krank}\\mid +)\\approx 0{,}715\\%<1\\%.\n$$\n\n**Interpretation:** Bei extrem seltenen Krankheiten dominieren die vielen Gesunden. Schon wenige Falsch-Positive reichen dann, damit ein positives Ergebnis meist trotzdem von einer gesunden Person stammt."
+  },
+  {
+    "front": "[2026-03-24] Was ist der Unterschied zwischen Sensitivität, Spezifität und Falsch-Positiv-Rate?",
+    "back": "- **Sensitivität**:\n  $$\n  P(+\\mid \\text{krank})\n  $$\n  Wahrscheinlichkeit für einen positiven Test bei kranker Person.\n\n- **Spezifität**:\n  $$\n  P(-\\mid \\text{nicht krank})\n  $$\n  Wahrscheinlichkeit für einen negativen Test bei gesunder Person.\n\n- **Falsch-Positiv-Rate**:\n  $$\n  P(+\\mid \\text{nicht krank})=1-\\text{Spezifität}.\n  $$\n\nWichtiger Stolperstein: **Spezifität ist nicht** $P(+\\mid \\text{nicht krank})$. Genau diese Verwechslung wurde im Vortrag korrigiert."
+  },
+  {
+    "front": "[2026-03-24] Warum misst man bei medizinischen Tests eher Sensitivität und Spezifität als direkt",
+    "back": "$$\nP(\\text{krank}\\mid +)?\n$$\n\nWeil **$P(\\text{krank}\\mid +)$** stark von der **Grundrate** $P(\\text{krank})$ abhängt, und diese kann sich mit Population, Zeit oder Situation ändern.\n\nBeispiel:\n- während einer Grippewelle ist $P(\\text{krank})$ höher,\n- außerhalb davon niedriger.\n\nDann ändert sich auch\n$$\nP(\\text{krank}\\mid +),\n$$\nselbst wenn der Test unverändert bleibt.\n\n**Sensitivität** und **Spezifität** sind dagegen eher **test-intrinsische Eigenschaften**: Sie beschreiben, wie der Test bei Kranken bzw. Nicht-Kranken reagiert, unabhängig davon, wie häufig die Krankheit gerade ist."
+  },
+  {
+    "front": "[2026-03-24] Wann sind zwei Ereignisse unabhängig, und warum ist diese Definition besser als nur über $P(A\\mid B)=P(A)$ zu argumentieren?",
+    "back": "Zwei Ereignisse $A$ und $B$ sind **unabhängig**, genau dann wenn\n$$\nP(A\\cap B)=P(A)\\,P(B).\n$$\n\nDiese Definition passt zur Intuition „Wissen über $B$ ändert nichts an $A$“, denn falls $P(B)>0$:\n$$\nP(A\\mid B)=\\frac{P(A\\cap B)}{P(B)}=P(A).\n$$\n\nDie Produktform ist aber robuster:\n- sie funktioniert auch bei Randfällen wie $P(B)=0$,\n- sie vermeidet Division durch $0$,\n- sie ist die Standarddefinition für weitere Verallgemeinerungen."
+  },
+  {
+    "front": "[2026-03-24] Zeige am Würfelbeispiel, dass Unabhängigkeit nicht dasselbe ist wie „hat mit denselben Größen zu tun“.",
+    "back": "Beim Wurf von zwei Würfeln sei:\n- $A$: „Die Summe ist $7$“,\n- $B$: „Der zweite Würfel ist gerade“.\n\nDann:\n- Insgesamt gibt es $36$ Ergebnisse.\n- Für $A$ gibt es $6$ günstige Paare:\n  $$\n  P(A)=\\frac{6}{36}.\n  $$\n- Für $B$ ist der zweite Würfel in $3$ von $6$ Fällen gerade:\n  $$\n  P(B)=\\frac{18}{36}.\n  $$\n- In $A\\cap B$ liegen die Paare $(6,1),(4,3),(2,5)$ nicht, aber $(1,6),(3,4),(5,2)$ schon; also\n  $$\n  P(A\\cap B)=\\frac{3}{36}.\n  $$\n\nProdukt:\n$$\nP(A)P(B)=\\frac{6}{36}\\cdot\\frac{18}{36}=\\frac{3}{36}=P(A\\cap B).\n$$\n\nAlso sind $A$ und $B$ **unabhängig**, obwohl beide Ereignisse informell „mit dem zweiten Würfel zu tun haben“."
+  },
+  {
+    "front": "[2026-03-24] Warum reicht für drei Ereignisse die Bedingung",
+    "back": "$$\nP(A\\cap B\\cap C)=P(A)P(B)P(C)\n$$\nallein nicht aus?\n\nWeil diese eine Gleichung zu schwach ist. Gegenbeispiel auf $\\{1,\\dots,8\\}$ gleichverteilt:\n- $A=\\{1,2,3,4\\}$,\n- $B=\\{1,5,6,7\\}$,\n- $C=B$.\n\nDann:\n$$\nP(A)=P(B)=P(C)=\\frac12.\n$$\n\nAußerdem:\n$$\nA\\cap B\\cap C=A\\cap B=\\{1\\},\n$$\nalso\n$$\nP(A\\cap B\\cap C)=\\frac18=\\frac12\\cdot\\frac12\\cdot\\frac12.\n$$\n\nDie Dreifach-Produktregel stimmt also. Trotzdem sind $B$ und $C$ identisch und daher sicher nicht unabhängig im eigentlichen Sinn.\n\nFür **gemeinsame Unabhängigkeit** braucht man die Produktregel für **alle Teilmengen**, nicht nur für den Gesamtschnitt."
+  },
+  {
+    "front": "[2026-03-24] Warum reicht paarweise Unabhängigkeit nicht für gemeinsame Unabhängigkeit?",
+    "back": "Gegenbeispiel mit zwei Münzen:\n- $A$: „Münze 1 ist Kopf“,\n- $B$: „Münze 2 ist Kopf“,\n- $C$: „Die Münzen zeigen verschiedene Ergebnisse“.\n\nDann sind alle drei Paare unabhängig:\n- $A$ und $B$ wegen unabhängiger Münzen,\n- ebenso $A$ und $C$,\n- ebenso $B$ und $C$.\n\nAber gemeinsam sind sie **nicht** unabhängig, denn wenn $A$ und $B$ eintreten, dann sind beide Münzen Kopf, also kann $C$ nicht eintreten. Daher:\n$$\nP(A\\cap B\\cap C)=0.\n$$\n\nAndererseits:\n$$\nP(A)P(B)P(C)=\\frac12\\cdot\\frac12\\cdot\\frac12=\\frac18.\n$$\n\nAlso:\n$$\nP(A\\cap B\\cap C)\\ne P(A)P(B)P(C).\n$$"
+  },
+  {
+    "front": "[2026-03-24] Was ist die korrekte Definition der Unabhängigkeit von $A_1,\\dots,A_n$?",
+    "back": "Die Ereignisse $A_1,\\dots,A_n$ sind **unabhängig**, wenn für jede Teilmenge\n$$\nI\\subseteq \\{1,\\dots,n\\}\n$$\ngilt:\n$$\nP\\Big(\\bigcap_{i\\in I} A_i\\Big)=\\prod_{i\\in I} P(A_i).\n$$\n\nWichtig:\n- Man prüft **alle** Teilmengen, nicht nur Paare.\n- Man prüft auch nicht nur den Schnitt aller $n$ Ereignisse.\n\nGenau diese Definition verhindert die beiden typischen Fehler:\n1. nur die Produktregel für den Gesamtschnitt zu verlangen,\n2. nur paarweise Unabhängigkeit zu prüfen."
+  },
+  {
+    "front": "[2026-03-24] Wenn $A\\perp B$ gilt, warum folgt dann auch",
+    "back": "$$\n\\overline{A}\\perp B?\n$$\n\nMan rechnet direkt mit der Produktdefinition:\n$$\nP(\\overline{A}\\cap B)=P(B)-P(A\\cap B).\n$$\n\nDa $A$ und $B$ unabhängig sind:\n$$\nP(A\\cap B)=P(A)P(B).\n$$\n\nAlso:\n$$\nP(\\overline{A}\\cap B)=P(B)-P(A)P(B)=(1-P(A))P(B).\n$$\n\nUnd weil\n$$\nP(\\overline{A})=1-P(A),\n$$\nfolgt:\n$$\nP(\\overline{A}\\cap B)=P(\\overline{A})P(B).\n$$\n\nDamit sind $\\overline{A}$ und $B$ unabhängig.\n\nDer Vorteil dieser Rechnung: Sie funktioniert auch dann sauber, wenn bedingte Wahrscheinlichkeiten wegen Division durch $0$ problematisch wären."
+  },
+  {
+    "front": "[2026-03-24] Was besagt das Lemma mit Komplementen zur Unabhängigkeit mehrerer Ereignisse?",
+    "back": "Mit der Notation\n$$\nA_i^0=\\overline{A_i},\\qquad A_i^1=A_i\n$$\ngilt:\n\nDie Ereignisse $A_1,\\dots,A_n$ sind genau dann unabhängig, wenn für alle\n$$\n(s_1,\\dots,s_n)\\in\\{0,1\\}^n\n$$\ngilt:\n$$\nP\\Big(\\bigcap_{i=1}^n A_i^{s_i}\\Big)=\\prod_{i=1}^n P(A_i^{s_i}).\n$$\n\nDie Aussage ist nützlich, weil sie Unabhängigkeit nicht nur für die Ereignisse selbst, sondern zugleich auch für beliebige Kombinationen mit ihren **Komplementen** charakterisiert.\n\nTypischer Denkfehler: Das ist nicht eine andere, schwächere Bedingung, sondern **äquivalent** zur gewöhnlichen Definition."
+  },
+  {
+    "front": "[2026-03-24] Warum bleiben bei unabhängigen $A,B,C$ auch $(A\\cap B)$ und $C$ unabhängig?",
+    "back": "Wenn $A,B,C$ gemeinsam unabhängig sind, dann gilt:\n$$\nP((A\\cap B)\\cap C)=P(A\\cap B\\cap C).\n$$\n\nWegen gemeinsamer Unabhängigkeit:\n$$\nP(A\\cap B\\cap C)=P(A)P(B)P(C).\n$$\n\nAußerdem folgt aus derselben Unabhängigkeit für die Teilmenge $\\{A,B\\}$:\n$$\nP(A\\cap B)=P(A)P(B).\n$$\n\nDamit:\n$$\nP((A\\cap B)\\cap C)=P(A\\cap B)P(C).\n$$\n\nAlso sind **$(A\\cap B)$ und $C$ unabhängig**.\n\nWichtig: Dafür braucht man die passende Unabhängigkeit aller beteiligten Ereignisse, nicht bloß irgendeine lose Intuition."
+  },
+  {
+    "front": "[2026-03-26] Warum ist der **Wertebereich** einer Zufallsvariable mehr als nur Formalismus?",
+    "back": "Der **Wertebereich** einer Zufallsvariable $X$ ist\n$$\n\\mathrm{range}(X)=\\{X(\\omega)\\mid \\omega\\in\\Omega\\}.\n$$\nEr ist wichtig, weil im diskreten Fall genau über diese Werte summiert wird, etwa bei\n$$\n\\mathbb{E}[X]=\\sum_{\\alpha\\in\\mathrm{range}(X)} \\alpha\\,\\Pr[X=\\alpha].\n$$\nBeim Beispiel „3 Münzwürfe, $X=$ Anzahl Köpfe“ ist\n$$\n\\mathrm{range}(X)=\\{0,1,2,3\\}.\n$$\nWerte außerhalb davon haben automatisch Wahrscheinlichkeit $0$ und müssen in Rechnungen nicht berücksichtigt werden."
+  },
+  {
+    "front": "[2026-03-26] Was ist der Unterschied zwischen **Dichtefunktion** $f_X$ und **Verteilungsfunktion** $F_X$ im diskreten Fall?",
+    "back": "Die **Dichtefunktion** im Vortrag ist die Punktwahrscheinlichkeit\n$$\nf_X(\\alpha)=\\Pr[X=\\alpha].\n$$\nDie **Verteilungsfunktion** ist die kumulierte Wahrscheinlichkeit\n$$\nF_X(\\alpha)=\\Pr[X\\le \\alpha].\n$$\n$f_X$ sagt also, wie wahrscheinlich ein einzelner Wert ist; $F_X$ summiert alle Wahrscheinlichkeiten bis $\\alpha$ auf. Im diskreten Fall enthalten beide dieselbe Information, aber in anderer Form:\n$$\nF_X(\\alpha)=\\sum_{\\beta\\le \\alpha} f_X(\\beta).\n$$\nTypisch ist $F_X$ eine monoton steigende Treppenfunktion."
+  },
+  {
+    "front": "[2026-03-26] Berechne für $Y=$ Anzahl ungerader Augen bei 3 Würfen die Werte von $F_Y(0),F_Y(1),F_Y(2),F_Y(3)$.",
+    "back": "Es gilt\n$$\n\\Pr[Y=0]=\\frac18,\\quad \\Pr[Y=1]=\\frac38,\\quad \\Pr[Y=2]=\\frac38,\\quad \\Pr[Y=3]=\\frac18.\n$$\nDaraus folgt durch Aufsummieren:\n$$\nF_Y(0)=\\Pr[Y\\le 0]=\\frac18,\n$$\n$$\nF_Y(1)=\\Pr[Y\\le 1]=\\frac18+\\frac38=\\frac12,\n$$\n$$\nF_Y(2)=\\Pr[Y\\le 2]=\\frac18+\\frac38+\\frac38=\\frac78,\n$$\n$$\nF_Y(3)=1.\n$$\nDie Rechnung zeigt den Kernunterschied: $F_Y$ entsteht aus den Punktwahrscheinlichkeiten durch Kumulation."
+  },
+  {
+    "front": "[2026-03-26] Warum kann der **Erwartungswert** trotz vorhandener Wahrscheinlichkeiten undefiniert sein?",
+    "back": "Für eine diskrete Zufallsvariable ist\n$$\n\\mathbb{E}[X]=\\sum_{\\alpha\\in\\mathrm{range}(X)} \\alpha\\,\\Pr[X=\\alpha]\n$$\nnur dann sinnvoll definiert, wenn die Summe **absolut konvergiert**. Wenn positive und negative Beiträge nur „bedingt“ konvergieren oder die Summe nicht wohldefiniert ist, ist der Erwartungswert **undefiniert**.\n\nDer Punkt ist: Man darf bei unendlichen Reihen nicht beliebig umordnen. Ohne absolute Konvergenz könnte derselbe Ausdruck je nach Gruppierung zu verschiedenen Werten führen. Deshalb reicht es nicht, dass die Wahrscheinlichkeiten existieren; auch die gewichtete Summe muss mathematisch sauber konvergieren."
+  },
+  {
+    "front": "[2026-03-26] Warum sind die beiden Formeln für den Erwartungswert äquivalent?",
+    "back": "$$\n\\mathbb{E}[X]=\\sum_{\\alpha} \\alpha\\,\\Pr[X=\\alpha]\n\\qquad\\text{und}\\qquad\n\\mathbb{E}[X]=\\sum_{\\omega\\in\\Omega} X(\\omega)\\Pr[\\omega]\n$$\n\nDie erste Formel gruppiert nach **Werten** $\\alpha$, die zweite nach **Elementarereignissen** $\\omega$. Der Zusammenhang ist\n$$\n\\Pr[X=\\alpha]=\\sum_{\\omega:\\,X(\\omega)=\\alpha}\\Pr[\\omega].\n$$\nSetzt man das in die erste Formel ein, erhält man\n$$\n\\sum_{\\alpha}\\alpha\\sum_{\\omega:\\,X(\\omega)=\\alpha}\\Pr[\\omega].\n$$\nNach Umordnen der Summen wird aus jedem $\\alpha$ genau der Wert $X(\\omega)$:\n$$\n\\sum_{\\omega\\in\\Omega} X(\\omega)\\Pr[\\omega].\n$$\nDie beiden Formeln beschreiben also dieselbe Rechnung, nur mit unterschiedlicher Gruppierung."
+  },
+  {
+    "front": "[2026-03-26] Wann ist die **Tail-Sum-Formel** nützlicher als die direkte Erwartungswertformel?",
+    "back": "Für Zufallsvariablen mit Werten in $\\mathbb{N}_0$ gilt\n$$\n\\mathbb{E}[X]=\\sum_{i=1}^{\\infty}\\Pr[X\\ge i].\n$$\nSie ist besonders nützlich, wenn $X$ eine **Anzahl** oder **Wartezeit** zählt und die Wahrscheinlichkeiten $\\Pr[X\\ge i]$ leichter zu bestimmen sind als die exakten Punktwahrscheinlichkeiten $\\Pr[X=i]$.\n\nTypischer Fall: „Wie lange wartet man bis etwas passiert?“ Dann ist „mindestens $i$ Schritte warten“ oft direkt beschreibbar. Die Tail-Sum-Formel ersetzt also eine oft komplizierte Verteilung durch einfachere Schwanzwahrscheinlichkeiten."
+  },
+  {
+    "front": "[2026-03-26] Berechne mit der Tail-Sum-Formel den Erwartungswert der geometrischen Wartezeit.",
+    "back": "Sei $X$ die Anzahl Würfe bis zum ersten Kopf bei einer Münze mit\n$$\n\\Pr[\\text{Kopf}]=p.\n$$\nDann gilt für $i\\ge 1$:\n$$\n\\Pr[X\\ge i]=(1-p)^{i-1},\n$$\ndenn dafür müssen die ersten $i-1$ Würfe Zahl sein.\n\nMit der **Tail-Sum-Formel**:\n$$\n\\mathbb{E}[X]=\\sum_{i=1}^{\\infty}\\Pr[X\\ge i]\n=\\sum_{i=1}^{\\infty}(1-p)^{i-1}.\n$$\nDas ist eine geometrische Reihe:\n$$\n\\mathbb{E}[X]=\\sum_{j=0}^{\\infty}(1-p)^j=\\frac{1}{p}.\n$$\nHier ist die Tail-Sum-Formel deutlich bequemer als das Summieren von $i\\Pr[X=i]$."
+  },
+  {
+    "front": "[2026-03-26] Warum gilt für ein Ereignis $A$:",
+    "back": "$$\n\\mathbb{E}[\\mathbf{1}_A]=\\Pr[A]?\n$$\n\nDie **Indikatorvariable** $\\mathbf{1}_A$ nimmt nur zwei Werte an:\n$$\n\\mathbf{1}_A=\n\\begin{cases}\n1,& A\\text{ tritt ein}\\\\\n0,& \\text{sonst.}\n\\end{cases}\n$$\nDaher ist ihr Erwartungswert\n$$\n\\mathbb{E}[\\mathbf{1}_A]\n=0\\cdot \\Pr[\\mathbf{1}_A=0]+1\\cdot \\Pr[\\mathbf{1}_A=1].\n$$\nDa $\\mathbf{1}_A=1$ genau dann gilt, wenn $A$ eintritt, folgt\n$$\n\\mathbb{E}[\\mathbf{1}_A]=\\Pr[A].\n$$\nDas macht Indikatorvariablen so nützlich: Wahrscheinlichkeiten werden zu Erwartungswerten, und Zählprobleme lassen sich als Summen von Indikatoren formulieren."
+  },
+  {
+    "front": "[2026-03-26] Warum braucht die **Linearität des Erwartungswerts** keine Unabhängigkeit?",
+    "back": "Für Zufallsvariablen $X_1,\\dots,X_n$ und Konstanten $a_1,\\dots,a_n,b$ gilt immer\n$$\n\\mathbb{E}\\!\\left[\\sum_{k=1}^n a_kX_k+b\\right]\n=\\sum_{k=1}^n a_k\\mathbb{E}[X_k]+b.\n$$\nDer Grund: Die Herleitung benutzt nur das Aufspalten von Summen und das Herausziehen von Konstanten, etwa über\n$$\n\\mathbb{E}[X]=\\sum_{\\omega\\in\\Omega} X(\\omega)\\Pr[\\omega].\n$$\nDabei wird **nirgends** vorausgesetzt, dass die $X_k$ unabhängig sind. Unabhängigkeit ist nur dann relevant, wenn man Wahrscheinlichkeiten von gemeinsamen Ereignissen faktorisieren will, also z.B.\n$$\n\\Pr[A\\cap B]=\\Pr[A]\\Pr[B].\n$$\nFür Erwartungswerte von Summen ist sie nicht nötig."
+  },
+  {
+    "front": "[2026-03-26] Warum sind die Indikatorvariablen im „HHH“-Beispiel abhängig, aber die Erwartungswertrechnung funktioniert trotzdem?",
+    "back": "Definiere für $i=1,\\dots,m-2$:\n$$\nX_i=\\mathbf{1}_{\\{\\text{an Position }i\\text{ beginnt HHH}\\}}.\n$$\nDann ist\n$$\nX=\\sum_{i=1}^{m-2} X_i\n$$\ndie Anzahl der „HHH“-Teilfolgen.\n\nDie $X_i$ sind **abhängig**, weil sich benachbarte Dreierblöcke überlappen. Wenn bei Position $i$ „HHH“ beginnt, beeinflusst das die Chance für Position $i+1$.\n\nTrotzdem gilt\n$$\n\\mathbb{E}[X]=\\sum_{i=1}^{m-2}\\mathbb{E}[X_i],\n$$\nweil die **Linearität des Erwartungswerts** keine Unabhängigkeit braucht. Genau das macht den Indikatortrick so stark: Die Verteilung von $X$ kann kompliziert sein, aber der Erwartungswert bleibt leicht berechenbar."
+  },
+  {
+    "front": "[2026-03-26] Berechne die erwartete Anzahl von „HHH“-Teilfolgen in $m$ fairen Münzwürfen.",
+    "back": "Für jede Startposition $i\\in\\{1,\\dots,m-2\\}$ sei\n$$\nX_i=\\mathbf{1}_{\\{\\text{an }i\\text{ beginnt HHH}\\}}.\n$$\nDann ist\n$$\nX=\\sum_{i=1}^{m-2} X_i.\n$$\nFür eine feste Position gilt\n$$\n\\mathbb{E}[X_i]=\\Pr[X_i=1]=\\left(\\frac12\\right)^3=\\frac18,\n$$\ndenn die drei betreffenden Würfe müssen alle Kopf sein.\n\nMit Linearität:\n$$\n\\mathbb{E}[X]=\\sum_{i=1}^{m-2}\\mathbb{E}[X_i]\n=\\sum_{i=1}^{m-2}\\frac18\n=\\frac{m-2}{8}.\n$$\nDie Überlappungen machen die Verteilung kompliziert, aber nicht den Erwartungswert."
+  },
+  {
+    "front": "[2026-03-26] Warum gilt im MIS-Algorithmus nur",
+    "back": "$$\n|S|\\ge X-Y\n$$\nund nicht notwendigerweise $|S|=X-Y$?\n\nHier ist $X$ die Anzahl ausgewählter Knoten nach Schritt 1 und $Y$ die Anzahl konfliktbehafteter Kanten mit beiden Endpunkten in der Auswahl.\n\nPro solcher Kante wird in Schritt 2 **höchstens ein** Knoten entfernt. Deshalb können insgesamt höchstens $Y$ Knoten entfernt werden, also\n$$\n|S|\\ge X-Y.\n$$\nGleichheit muss aber nicht gelten, weil **derselbe Knoten mehrere Konfliktkanten gleichzeitig auflösen kann**. Ein einziger entfernter Knoten kann also mehrere betrachtete Kanten „abdecken“. Dann werden weniger als $Y$ Knoten entfernt.\n\nDie Ungleichung ist daher die korrekte robuste Abschätzung."
+  },
+  {
+    "front": "[2026-03-26] Warum ist im MIS-Beispiel Unabhängigkeit genau bei",
+    "back": "$$\n\\Pr[s_u=1\\wedge s_v=1]=p^2\n$$\nnötig, aber nicht bei der restlichen Erwartungswertrechnung?\n\nFür eine Kante $uv$ wird\n$$\n\\Pr[s_u=1\\wedge s_v=1]=\\Pr[s_u=1]\\Pr[s_v=1]=p^2\n$$\nnur dann korrekt, wenn die Zufallsentscheidungen der Knoten $u$ und $v$ in Schritt 1 **unabhängig** sind.\n\nDagegen benutzt man für\n$$\n\\mathbb{E}[X]=\\sum_v \\mathbb{E}[X_v]\n\\qquad\\text{und}\\qquad\n\\mathbb{E}[Y]=\\sum_e \\mathbb{E}[Y_e]\n$$\nnur die **Linearität des Erwartungswerts**. Dafür ist keine Unabhängigkeit nötig.\n\nMerksatz:\n- **Summen von Erwartungswerten:** keine Unabhängigkeit nötig.\n- **Produkte/Faktorisierung von Wahrscheinlichkeiten:** Unabhängigkeit oft nötig."
+  },
+  {
+    "front": "[2026-03-26] Wie erhält man im MIS-Algorithmus die Schranke",
+    "back": "$$\n\\mathbb{E}[|S|]\\ge np-mp^2?\n$$\n\nSei $X$ die Anzahl ausgewählter Knoten nach Schritt 1 und $Y$ die Anzahl konfliktbehafteter Kanten. Dann gilt\n$$\n|S|\\ge X-Y.\n$$\nAlso\n$$\n\\mathbb{E}[|S|]\\ge \\mathbb{E}[X]-\\mathbb{E}[Y].\n$$\n\nFür $X$:\n$$\nX=\\sum_{v\\in V} X_v,\\qquad \\mathbb{E}[X_v]=p,\n$$\nalso\n$$\n\\mathbb{E}[X]=np.\n$$\n\nFür $Y$:\n$$\nY=\\sum_{e\\in E} Y_e.\n$$\nFür eine Kante $e=uv$ gilt wegen Unabhängigkeit der Knotenauswahlen\n$$\n\\mathbb{E}[Y_e]=\\Pr[s_u=1\\wedge s_v=1]=p^2.\n$$\nMit $m=|E|$ folgt\n$$\n\\mathbb{E}[Y]=mp^2.\n$$\n\nZusammen:\n$$\n\\mathbb{E}[|S|]\\ge np-mp^2.\n$$"
+  },
+  {
+    "front": "[2026-03-26] Wie wählt man $p$ im MIS-Algorithmus, und was folgt für $d$-reguläre Graphen?",
+    "back": "Man maximiert die untere Schranke\n$$\nnp-mp^2.\n$$\nAls quadratische Funktion in $p$ liegt das Maximum bei\n$$\np=\\frac{n}{2m}.\n$$\nDann erhält man\n$$\n\\mathbb{E}[|S|]\\ge n\\cdot \\frac{n}{2m}-m\\left(\\frac{n}{2m}\\right)^2\n=\\frac{n^2}{4m}.\n$$\n\nFür einen **$d$-regulären Graphen** gilt\n$$\nm=\\frac{dn}{2}.\n$$\nEinsetzen liefert\n$$\n\\mathbb{E}[|S|]\\ge \\frac{n^2}{4\\cdot dn/2}=\\frac{n}{2d}.\n$$\nDas ist nicht nur eine Analyse des Algorithmus, sondern auch ein **Existenzresultat**: Es gibt eine stabile Menge mindestens dieser Größe."
   }
 ]

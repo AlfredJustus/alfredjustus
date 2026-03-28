@@ -598,5 +598,65 @@
   {
     "front": "[2026-03-23] Wie zerlegt sich HDR-Tone-Mapping in parallele Muster?",
     "back": "Das Beispiel kombiniert zwei Muster:\n\n1. **Globale Helligkeit bestimmen**  \n   Dazu berechnet man die maximale Helligkeit aller Pixel:\n   $$\n   m=\\max_i I[i]\n   $$\n   Das ist eine **Reduction**.\n\n2. **Alle Pixel normalisieren**  \n   Danach wird jedes Pixel mit diesem globalen Wert transformiert, z. B. durch Normierung:\n   $$\n   \\text{out}[i]=g(I[i],m)\n   $$\n   Das ist eine **Map**.\n\nDie Einsicht ist: Viele reale Anwendungen bestehen nicht aus einem einzigen Muster, sondern aus einer **Komposition** von Reduction und Map."
+  },
+  {
+    "front": "[2026-03-24] Warum braucht ein paralleler Prefix-Sum-Algorithmus zwei Passes statt nur einer Reduction?",
+    "back": "Eine reine **Reduction** liefert nur die Gesamtsumme, aber keine Prefix-Werte pro Position. Für **Prefix Sum / Scan** braucht man daher zwei Phasen:\n\n- **Up-Pass**: baut bottom-up einen Summenbaum und speichert in jedem inneren Knoten die Summe seines Teilarrays.\n- **Down-Pass**: propagiert top-down für jedes Teilproblem den Korrekturwert `fromLeft`, also die Summe aller Elemente links davon.\n\nErst die Kombination beider Informationen ergibt die finalen Prefix-Werte.  \nDer Up-Pass beantwortet: „Wie groß ist jedes Segment?“  \nDer Down-Pass beantwortet: „Was liegt links von diesem Segment?“\n\nSo sinkt der Span von einer sequentiellen Kette auf insgesamt $O(\\log n)$."
+  },
+  {
+    "front": "[2026-03-24] Was speichert der Up-Pass im Baum, und was propagiert der Down-Pass?",
+    "back": "Im **Up-Pass** speichert jeder innere Knoten die **Teilsumme** seines Bereichs. Das ist dieselbe Information wie bei einer parallelen Summenreduktion.\n\nIm **Down-Pass** wird dagegen kein neuer Summenbaum aufgebaut, sondern ein **Offset/Korrekturwert** weitergegeben, oft als `fromLeft` bezeichnet:\n\n- Wurzel: `fromLeft = 0`\n- Linkes Kind: bekommt denselben Wert wie der Parent\n- Rechtes Kind: bekommt `fromLeft + \\text{sum(leftChild)}`\n\nAlso formal bei Parent-Korrektur $c$ und linker Teilsumme $S_L$:\n$$\nc_L = c, \\qquad c_R = c + S_L\n$$\n\nDamit kennt jedes Blatt die Summe aller Elemente links von sich und kann daraus seinen Prefix-Wert berechnen."
+  },
+  {
+    "front": "[2026-03-24] Warum hat der Zwei-Pass-Prefix-Sum-Algorithmus Span $O(\\log n)$?",
+    "back": "Beide Passes arbeiten auf einem **balancierten Rekursionsbaum**:\n\n- Im **Up-Pass** werden Teilprobleme rekursiv halbiert und beim Zurückkehren kombiniert.\n- Im **Down-Pass** wird derselbe Baum top-down traversiert.\n\nDie Höhe eines solchen Baums ist bei $n$ Elementen:\n$$\nO(\\log n)\n$$\n\nJeder Pass hat also Span $O(\\log n)$. Da es nur eine konstante Anzahl Passes gibt, bleibt der Gesamtspan:\n$$\nO(\\log n)\n$$\n\nWichtig: Die Arbeit $T_1$ ist nicht kleiner als sequentiell, oft sogar etwas größer wegen Baumstruktur und Zusatzspeicher. Der Gewinn liegt im kleineren **kritischen Pfad**."
+  },
+  {
+    "front": "[2026-03-24] Warum ist die Parallelität des Prefix-Sum ungefähr $\\frac{n}{\\log n}$?",
+    "back": "Die **Parallelität** ist grob das Verhältnis\n$$\n\\frac{T_1}{T_\\infty}\n$$\n\nBeim Prefix-Sum ist die Arbeit typischerweise linear:\n$$\nT_1 = O(n)\n$$\n\nDer Span des Zwei-Pass-Verfahrens ist:\n$$\nT_\\infty = O(\\log n)\n$$\n\nDaraus folgt:\n$$\n\\frac{T_1}{T_\\infty} = \\frac{O(n)}{O(\\log n)} = O\\!\\left(\\frac{n}{\\log n}\\right)\n$$\n\nDas bedeutet: Der Algorithmus bietet viel nutzbare Parallelität. Selbst mit sehr vielen Prozessoren kann man aber nie schneller werden als durch den Span erlaubt."
+  },
+  {
+    "front": "[2026-03-24] Wie berechnet der Down-Pass die Korrekturwerte für linkes und rechtes Kind?",
+    "back": "Der **Down-Pass** verteilt die Information „Was liegt links von diesem Teilproblem?“.\n\nHat ein Parent den Korrekturwert $c$ und die Summe des linken Kindes ist $S_L$, dann gilt:\n\n- Linkes Kind: links davon kommt nichts Neues dazu  \n  $$\n  c_L = c\n  $$\n- Rechtes Kind: links davon liegen zusätzlich alle Elemente des linken Geschwisters  \n  $$\n  c_R = c + S_L\n  $$\n\nDas ist die zentrale Regel des Down-Pass. Sie macht aus den im Up-Pass gespeicherten Segment-Summen die nötigen Offsets für alle Blätter."
+  },
+  {
+    "front": "[2026-03-24] Warum verwendet man im Fork-Join-Framework für den Up-Pass `RecursiveTask`, für den Down-Pass aber `RecursiveAction`?",
+    "back": "Der **Up-Pass** muss ein Ergebnis zurückliefern: die Summe des bearbeiteten Teilbereichs. Deshalb passt **`RecursiveTask`**, weil diese Klasse einen Rückgabewert hat.\n\nDer **Down-Pass** berechnet keine neue Summe, sondern propagiert Offsets und schreibt direkt in ein Output-Array. Dafür ist kein Rückgabewert nötig. Deshalb verwendet man **`RecursiveAction`**.\n\nFaustregel:\n\n- **`RecursiveTask<V>`**: wenn ein Teilproblem einen Wert zurückgibt\n- **`RecursiveAction`**: wenn ein Teilproblem nur Seiteneffekte hat, z.B. Schreiben ins Ergebnisarray"
+  },
+  {
+    "front": "[2026-03-24] Warum ist Pack ein gutes Beispiel für die Kombination aus Map und Prefix?",
+    "back": "**Pack** filtert alle Elemente, die ein Prädikat erfüllen, und schreibt sie kompakt ins Output-Array. Das funktioniert elegant als Kombination zweier Patterns:\n\n1. **Map** erzeugt einen Bitvektor\n   $$\n   b[i] \\in \\{0,1\\}\n   $$\n   der markiert, ob $a[i]$ behalten wird.\n2. **Prefix** über $b$ berechnet für jedes markierte Element seinen Rang.\n3. Eine zweite **Map-artige Schreibphase** schreibt jedes behaltene Element an seinen eindeutigen Zielindex.\n\nDie wichtige Einsicht: Prefix macht aus lokalen Ja/Nein-Entscheidungen globale Positionen."
+  },
+  {
+    "front": "[2026-03-24] Gegeben $b = [1,0,1,1,0]$: Wie lauten Prefix-Summe und Zielindizes beim Pack?",
+    "back": "Die inklusive Prefix-Summe ist:\n$$\np = [1,1,2,3,3]\n$$\n\nFür jedes $i$ mit $b[i]=1$ ist der 0-basierte Zielindex:\n$$\np[i]-1\n$$\n\nAlso:\n\n- $i=0$: $p[0]-1 = 0$\n- $i=2$: $p[2]-1 = 1$\n- $i=3$: $p[3]-1 = 2$\n\nDie behaltenen Elemente würden also genau auf die Positionen $0,1,2$ geschrieben.  \nDarum gibt es beim Pack keine Schreibkonflikte: Jedes ausgewählte Element bekommt einen eindeutigen Index."
+  },
+  {
+    "front": "[2026-03-24] Warum kann die Schreibphase von Pack parallel erfolgen, obwohl viele Threads gleichzeitig ins Output schreiben?",
+    "back": "Die Schreibphase ist parallel sicher, weil jedes Element mit $b[i]=1$ einen **eindeutigen Zielindex** erhält:\n$$\n\\text{out}[p[i]-1]\n$$\n\nDa die Prefix-Summe jedem behaltenen Element einen anderen Rang zuweist, schreiben nie zwei Threads auf dieselbe Position. Es gibt also keine Kollisionen im Output-Array.\n\nDie Parallelität entsteht dadurch, dass:\n\n- die Markierung unabhängig pro Element erfolgt,\n- die Prefix-Berechnung span-effizient ist,\n- das finale Schreiben disjunkte Zielpositionen nutzt.\n\nPack ist deshalb ein klassisches Beispiel für „erst globale Koordination, dann konfliktfreies paralleles Schreiben“."
+  },
+  {
+    "front": "[2026-03-24] Warum hat paralleler Quicksort mit nur parallelisierter Rekursion trotzdem Span $O(n)$?",
+    "back": "Wenn nur die beiden rekursiven Aufrufe parallel laufen, bleibt das **Partitioning** auf jeder Ebene ein sequentieller Engpass mit Kosten proportional zur Teilarraygröße.\n\nEntlang eines Pfads im Rekursionsbaum fallen daher Kosten an:\n$$\nn + \\frac{n}{2} + \\frac{n}{4} + \\cdots\n$$\n\nDiese geometrische Reihe summiert sich zu:\n$$\nO(n)\n$$\n\nAlso ist der Span:\n$$\nT_\\infty = O(n)\n$$\n\nObwohl links und rechts parallel sortiert werden, bleibt auf dem kritischen Pfad pro Ebene ein lineares Partitioning. Genau deshalb ist die Rekursionsparallelisierung allein nur begrenzt wirksam."
+  },
+  {
+    "front": "[2026-03-24] Warum verbessert Pack das Partitioning in Quicksort asymptotisch?",
+    "back": "Das Quicksort-Partitioning ist inhaltlich genau ein **Pack-Problem**:\n\n- alle Elemente $< \\text{pivot}$ nach links,\n- alle Elemente $> \\text{pivot}$ nach rechts,\n- Pivot dazwischen.\n\nWenn man dieses Partitioning mit **Pack via Prefix** implementiert, sinkt der Span pro Ebene von linear auf:\n$$\nO(\\log n)\n$$\n\nBei idealem Pivot gibt es $\\log n$ Ebenen. Entlang eines Pfads summieren sich damit logarithmische Kosten:\n$$\n\\log n + \\log(n/2) + \\log(n/4) + \\cdots = O(\\log^2 n)\n$$\n\nSo wird aus dem sequentiellen Engpass ein span-effizienter Schritt."
+  },
+  {
+    "front": "[2026-03-24] Warum steigt die Parallelität von Quicksort durch paralleles Partitioning auf etwa $\\frac{n}{\\log n}$?",
+    "back": "Unter idealem Pivot gilt für Quicksort weiterhin:\n$$\nT_1 = O(n \\log n)\n$$\n\nMit parallelem Partitioning per Pack sinkt der Span auf:\n$$\nT_\\infty = O(\\log^2 n)\n$$\n\nDamit ist die Parallelität:\n$$\n\\frac{T_1}{T_\\infty}\n= \\frac{n \\log n}{\\log^2 n}\n= \\frac{n}{\\log n}\n$$\n\nDas ist deutlich besser als bei nur parallelisierter Rekursion, wo nur\n$$\nO(\\log n)\n$$\nherauskommt.\n\nDie zentrale Lektion: Nicht nur Rekursion parallelisieren, sondern den **seriellen Engpass** selbst durch ein geeignetes Pattern ersetzen."
+  },
+  {
+    "front": "[2026-03-24] Warum löst ein selbstgebautes Busy-Flag keine Mutual Exclusion?",
+    "back": "Ein naiver Ansatz wäre:\n- prüfe `busy`\n- wenn `false`, setze `busy = true`\n- betrete die Critical Section\n\nDas Problem: **Prüfen und Setzen sind nicht atomar**. Zwei Threads können beide gleichzeitig `busy == false` sehen und dann beide `busy = true` setzen. Beide betreten dann die Critical Section.\n\nDer Fehler liegt also in einem klassischen **check-then-set**-Race.  \nMutual Exclusion braucht atomare Hardware-/Runtime-Unterstützung, z.B. Compare-and-Swap oder Sprachprimitiven wie:\n\n- `synchronized`\n- `ReentrantLock`"
+  },
+  {
+    "front": "[2026-03-24] Wann ist `synchronized` die bessere Wahl, und wann ein externer Lock?",
+    "back": "**`synchronized`** ist meist die bessere Standardwahl, wenn ein einfacher kritischer Abschnitt geschützt werden soll:\n\n- einfacher zu lesen,\n- weniger fehleranfällig,\n- Freigabe automatisch auch bei Exceptions.\n\n**Externe Locks** wie **`ReentrantLock`** lohnen sich, wenn zusätzliche Features gebraucht werden, z.B.:\n\n- `tryLock(...)` mit Timeout,\n- mehr Kontrolle über wartende Threads,\n- Locking über Methodengrenzen hinweg.\n\nTrade-off:\n- mehr Flexibilität,\n- aber auch mehr Fehlerpotenzial, besonders wenn `unlock()` vergessen wird.\n\nFaustregel der Vorlesung: Erst **`synchronized`**, externe Locks nur bei echtem Bedarf."
+  },
+  {
+    "front": "[2026-03-24] Warum muss `unlock()` bei `ReentrantLock` in einen `finally`-Block?",
+    "back": "Bei **externen Locks** wird das Lock nicht automatisch freigegeben. Wenn zwischen `lock()` und `unlock()` eine Exception auftritt, bleibt das Lock sonst möglicherweise dauerhaft gehalten.\n\nDas korrekte Muster ist daher:\n\n- `lock()` vor der Critical Section\n- Arbeit im `try`\n- `unlock()` im `finally`\n\nSo wird das Lock garantiert freigegeben, egal ob die Critical Section normal endet oder mit Fehler abbricht.\n\nDas ist ein zentraler Unterschied zu **`synchronized`**, wo die JVM das Verlassen des Monitors automatisch handhabt."
   }
 ]
