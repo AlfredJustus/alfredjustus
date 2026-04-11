@@ -660,6 +660,66 @@
     "back": "Bei **externen Locks** wird das Lock nicht automatisch freigegeben. Wenn zwischen `lock()` und `unlock()` eine Exception auftritt, bleibt das Lock sonst möglicherweise dauerhaft gehalten.\n\nDas korrekte Muster ist daher:\n\n- `lock()` vor der Critical Section\n- Arbeit im `try`\n- `unlock()` im `finally`\n\nSo wird das Lock garantiert freigegeben, egal ob die Critical Section normal endet oder mit Fehler abbricht.\n\nDas ist ein zentraler Unterschied zu **`synchronized`**, wo die JVM das Verlassen des Monitors automatisch handhabt."
   },
   {
+    "front": "[2026-03-30] Warum ist die Reihenfolge „thread-lokal $\\rightarrow$ immutable $\\rightarrow$ synchronisiert teilen“ eine gute Entwurfsregel?",
+    "back": "Sie minimiert **shared mutable state**, also genau den Zustand, der Synchronisation braucht.\n\n- **Thread-lokal**: kein Sharing $\\Rightarrow$ keine **Data Races**\n- **Immutable**: keine Schreibzugriffe nach Konstruktion $\\Rightarrow$ konkurrierende Reads sind sicher\n- **Shared mutable**: nur dieser Rest braucht Locks, atomare Operationen oder thread-sichere Datenstrukturen\n\nDie Regel ist deshalb stark, weil sie Korrektheit und Performance gleichzeitig verbessert: weniger geteilte veränderliche Daten bedeuten weniger Fehlerquellen und weniger Blocking."
+  },
+  {
+    "front": "[2026-03-30] Warum sind Data Races laut Vorlesung immer ein Fehler und nicht nur „manchmal gefährlich“?",
+    "back": "Eine **Data Race** liegt vor, wenn zwei konkurrierende Zugriffe auf dieselbe Variable ohne **happens-before**-Beziehung stattfinden und mindestens einer davon schreibt.\n\nDann ist das Verhalten nicht zuverlässig kontrolliert: Threads können veraltete oder widersprüchliche Zustände sehen. Die Vorlesung betont deshalb: **ohne Synchronisation darf man sich nie auf eine „glückliche“ Reihenfolge verlassen**.\n\nWichtig ist auch die Abgrenzung: Nicht jede Race Condition ist eine Data Race, aber **jede Data Race ist ein Korrektheitsfehler** und muss verhindert werden."
+  },
+  {
+    "front": "[2026-03-30] Woran erkennt man eine High-Level Race Condition, obwohl keine Data Race vorliegt?",
+    "back": "An einer verletzten **Invariante über mehrere Schritte**.\n\nBei einer **High-Level Race Condition** sind einzelne Speicherzugriffe vielleicht korrekt synchronisiert, aber die Gesamtoperation ist nicht als Einheit geschützt. Dann kann ein „schlechtes“ Interleaving einen logisch falschen Zustand erzeugen.\n\nTypisches Muster ist **check-then-act**:\n1. Thread prüft eine Bedingung\n2. anderer Thread verändert den relevanten Zustand\n3. erster Thread handelt auf Basis einer veralteten Annahme\n\nEs gibt also keine unsynchronisierten Einzelzugriffe, aber trotzdem ein falsches Ergebnis."
+  },
+  {
+    "front": "[2026-03-30] Warum schließen thread-lokale Daten Data Races vollständig aus?",
+    "back": "Weil **kein anderer Thread** auf denselben Zustand zugreift.\n\nEine Data Race braucht konkurrierende Zugriffe mehrerer Threads auf dieselbe Speicherzelle, wobei mindestens einer schreibt. Bei **thread-lokalem** Zustand fehlt genau dieses Sharing.\n\nDeshalb ist thread-lokaler Zustand die sicherste und oft einfachste Lösung: Man braucht weder Locks noch atomare Operationen, solange die Daten wirklich nicht zwischen Threads weitergereicht werden."
+  },
+  {
+    "front": "[2026-03-30] Warum sind immutable Objekte für konkurrierenden Zugriff meist unproblematisch?",
+    "back": "Weil nach der Konstruktion **keine Schreibzugriffe** mehr stattfinden.\n\nEine Data Race benötigt mindestens einen Schreibzugriff. Wenn ein Objekt **immutable** ist, können mehrere Threads es gleichzeitig lesen, ohne dass Zwischenzustände oder Überschreibungen entstehen.\n\nDer zentrale Vorteil ist: Sicherheit ohne Locking. Immutable Daten sind daher oft die beste Wahl für gemeinsam genutzte Konfigurationen, berechnete Ergebnisse oder read-mostly Daten."
+  },
+  {
+    "front": "[2026-03-30] Wie reduziert das Dictionary-Beispiel den Synchronisationsbedarf?",
+    "back": "Indem jeder Thread mit einer **lokalen Kopie** arbeitet statt direkt auf einer gemeinsam geteilten Struktur.\n\nDie Idee:\n- das Dictionary ist meistens read-only\n- jeder Thread liest aus seiner eigenen Kopie und ergänzt lokal\n- nur an geeigneten Zeitpunkten werden Kopien abgeglichen\n\nDadurch wird Sharing stark reduziert. Die meisten Operationen laufen **thread-lokal** und brauchen keine Synchronisation. Synchronisation wird nur noch für den Abgleich benötigt.\n\nDas illustriert die Leitlinie: **nicht mehr teilen als für Kommunikation wirklich nötig ist**."
+  },
+  {
+    "front": "[2026-03-30] Was bedeutet eine Locking-Strategie, und warum reicht „irgendwo synchronized“ nicht aus?",
+    "back": "Eine **Locking-Strategie** legt fest, **welcher Lock welche Felder oder Objekte schützt**.\n\nDas ist wichtig, weil Korrektheit nicht nur von einzelnen Locks abhängt, sondern von einer konsistenten Zuordnung. Ein Lock kann mehrere Felder schützen, wenn deren gemeinsame Invariante atomar erhalten werden muss.\n\n„Irgendwo `synchronized`“ reicht nicht, weil sonst:\n- manche Zugriffe ungeschützt bleiben,\n- verschiedene Threads unterschiedliche Locks für denselben Zustand verwenden,\n- High-Level-Invarianten über mehrere Felder nicht gemeinsam geschützt werden.\n\nIn Java wird oft das Objekt selbst als Lock verwendet, z.B. über `synchronized(obj)`."
+  },
+  {
+    "front": "[2026-03-30] Wann ist grobkörniges Locking die bessere Wahl als feinkörniges Locking?",
+    "back": "Wenn **Korrektheit und Einfachheit** wichtiger sind als maximale Parallelität.\n\n**Grobkörniges Locking** verwendet z.B. einen Lock für eine ganze Liste oder Hashtable. Das ist oft sinnvoll:\n- am Anfang einer Implementierung,\n- wenn die Datenstruktur nicht stark umkämpft ist,\n- wenn Fehlerkosten hoch sind.\n\nDer Nachteil ist mehr Blocking: auch unabhängige Operationen warten aufeinander. Trotzdem ist die Vorlesungs-Guideline klar: **zuerst grob locken, dann nur bei echtem Performance-Bedarf verfeinern**."
+  },
+  {
+    "front": "[2026-03-30] Warum erhöht feinkörniges Locking die Parallelität, aber auch die Fehleranfälligkeit?",
+    "back": "Weil verschiedene Threads auf **unabhängigen Teilen** einer Datenstruktur gleichzeitig arbeiten können.\n\nBeispiel: ein Lock pro Bankkonto oder pro Array-Element. Dann blockieren sich Operationen auf verschiedenen Konten/Elementen nicht gegenseitig.\n\nDer Preis ist höhere Komplexität:\n- mehr Locks müssen korrekt zugeordnet werden,\n- Invarianten über mehrere Teile werden schwieriger zu schützen,\n- die Wahrscheinlichkeit für Locking-Fehler steigt.\n\nFeinkörniges Locking ist also ein Performance-Werkzeug, aber kein guter Startpunkt für eine erste korrekte Lösung."
+  },
+  {
+    "front": "[2026-03-30] Warum sollten Critical Sections klein sein, aber nicht zu klein?",
+    "back": "Eine **Critical Section** sollte nur den Code enthalten, der wirklich atomar sein muss.\n\n- **Zu groß**: andere Threads werden unnötig blockiert; teure Operationen wie I/O oder aufwendige Berechnungen verlängern die Wartezeit\n- **Zu klein**: verbotene Zwischenzustände werden sichtbar; Invarianten über mehrere Schritte können brechen\n\nDie richtige Regel ist daher nicht „so klein wie möglich“, sondern:\n$$\\text{so klein wie möglich, aber so groß wie nötig für Atomarität}.$$\n\nErst muss klar sein, **welche Operationen eine Einheit bilden**, danach optimiert man die Lock-Grenzen."
+  },
+  {
+    "front": "[2026-03-30] Was geht im Hashtable-Beispiel schief, wenn die teure Berechnung außerhalb des Locks passiert?",
+    "back": "Dann können zwei Threads denselben alten Wert $v_1$ lesen, beide unabhängig $v_2 = f(v_1)$ berechnen und anschließend nacheinander zurückschreiben.\n\nDas Problem ist nicht unbedingt eine Data Race, sondern ein **veralteter Read** innerhalb eines größeren Update-Protokolls. Die Gesamtoperation „lesen, berechnen, zurückschreiben“ ist nicht mehr atomar.\n\nDadurch kann ein Thread auf Basis eines Zustands schreiben, der inzwischen schon geändert wurde. Die Invariante „Update basiert auf aktuellem Wert“ ist verletzt."
+  },
+  {
+    "front": "[2026-03-30] Wie kann man das ausgelagerte Hashtable-Update reparieren, ohne die teure Berechnung komplett unter dem Lock zu halten?",
+    "back": "Mit einem **erneuten Prüfen vor dem Zurückschreiben**.\n\nAblauf:\n1. unter Lock alten Wert $v_1$ lesen\n2. außerhalb des Locks $v_2 = f(v_1)$ berechnen\n3. vor dem Schreiben unter Lock prüfen, ob der aktuelle Wert noch $v_1$ ist\n4. falls nein: abbrechen und neu starten\n\nDas ist eine Form von **retry bei Konflikt**. Sie reduziert die Lock-Haltezeit, erhöht aber die Komplexität und kann doppelte Arbeit verursachen."
+  },
+  {
+    "front": "[2026-03-30] Warum muss man zuerst Atomarität festlegen und erst danach die Locking-Strategie optimieren?",
+    "back": "Weil sonst leicht eine schnelle, aber falsche Lösung entsteht.\n\nZuerst muss man bestimmen:\n- welche Instruktionen eine **Einheit** bilden,\n- welche Zwischenzustände kein anderer Thread sehen darf,\n- welche Invarianten geschützt werden müssen.\n\nErst danach kann man entscheiden, ob ein grober oder feiner Lock sinnvoll ist. Ohne diese Reihenfolge optimiert man möglicherweise genau die Stellen weg, die für Korrektheit atomar bleiben müssten."
+  },
+  {
+    "front": "[2026-03-30] Warum sind Concurrent Collections oft besser als selbst geschriebenes manuelles Locking?",
+    "back": "Weil sie **Thread-Safety** bereits korrekt und oft effizienter implementieren.\n\nBibliotheken aus `java.util.concurrent`:\n- kapseln die Synchronisation intern,\n- verwenden häufig feinere oder spezialisierte Strategien,\n- vermeiden unnötige sequentielle Bottlenecks,\n- reduzieren die Gefahr von Locking-Fehlern im Anwendungscode\n\nIn der Praxis sollte man solche Datenstrukturen oft bevorzugen. In der Lehre implementiert man vieles trotzdem selbst, um die zugrunde liegenden Probleme und Trade-offs zu verstehen."
+  },
+  {
+    "front": "[2026-03-30] Wie hängen grob vs. fein locken und Task-Granularität aus Fork/Join zusammen?",
+    "back": "Beides ist derselbe Grundkonflikt zwischen **Parallelität** und **Overhead/Komplexität**.\n\n- **Zu grob**: wenig Verwaltungsaufwand, aber verschenkte Parallelität\n- **Zu fein**: mehr Parallelität, aber mehr Koordinationskosten und höhere Fehleranfälligkeit\n\nBei Locks bedeutet das mehr Blocking vs. mehr Lock-Komplexität. Bei Tasks bedeutet es größere Aufgaben vs. Scheduling- und Verwaltungsaufwand.\n\nDie gemeinsame Einsicht ist: Man sucht eine Granularität, die genug Parallelität freilegt, ohne dass der Verwaltungsaufwand den Gewinn auffrisst."
+  },
+  {
     "front": "[2026-03-31] Wann ist **Amdahls Gesetz** das richtige Modell, und wann **Gustafsons Gesetz**?",
     "back": "**Amdahl** verwendet man bei **fester Problemgröße**: Man löst dieselbe Aufgabe mit mehr Prozessoren, und der sequentielle Anteil $f$ begrenzt den Speedup.\n\n**Gustafson** verwendet man bei **fester Laufzeit**: Mit mehr Prozessoren wird ein **größeres Problem in derselben Zeit** bearbeitet.\n\nMerksatz:\n- **Amdahl**: „Wie viel schneller wird dieselbe Arbeit?“\n- **Gustafson**: „Wie viel mehr Arbeit schaffe ich in derselben Zeit?“"
   },

@@ -598,5 +598,65 @@
   {
     "front": "[2026-03-27] Under an \"always not taken\" policy, what happens on a taken branch?",
     "back": "With **always not taken** prediction, the fetch stage assumes the next PC is\n\n$$PC+4.$$\n\nSo the processor keeps fetching sequential instructions after the branch. If the branch later turns out to be **taken**, those fetched instructions are on the wrong path.\n\nThe pipeline must then **flush** those wrong-path instructions and redirect fetch to the correct branch target. The number of flushed instructions is the **misprediction penalty**."
+  },
+  {
+    "front": "[2026-04-02] Why does a later `add` writing back before an earlier `divide` violate the ISA model even if the two instructions are independent?",
+    "back": "Because **sequential semantics** require the machine to appear as if instructions update the **architectural state** in program order.\n\nIf an earlier `divide` is still running but a younger `add` already writes its result into the architectural register file, software can observe a state that could not arise from sequential execution:\n- instruction $I_{k+1}$ has become visible,\n- while earlier instruction $I_k$ has not.\n\nIndependence is irrelevant here. The problem is not data dependence, but **visibility order**. Once the architectural register file is updated out of order, the processor no longer presents a clean von Neumann instruction-by-instruction state."
+  },
+  {
+    "front": "[2026-04-02] What makes an exception or interrupt **precise**?",
+    "back": "A **precise exception/interrupt** means the architectural state matches a clean instruction boundary.\n\nThe two required conditions are:\n1. **All older instructions have retired.**\n2. **No younger instruction has retired.**\n\nFormally, if handling occurs at instruction $I_k$, the visible state must equal the state after sequentially executing\n$$I_1, I_2, \\dots, I_{k-1},$$\nwith no committed effects from\n$$I_{k+1}, I_{k+2}, \\dots$$\n\nThis guarantees that the handler sees a state consistent with the ISA’s sequential model."
+  },
+  {
+    "front": "[2026-04-02] Why are imprecise exceptions especially bad for debugging and recovery?",
+    "back": "Debugging and recovery assume the machine can stop at a **clean architectural state**.\n\nIf a faulting instruction has not retired but younger instructions already updated registers or memory, then the visible state is mixed:\n- some later effects are present,\n- the faulting instruction may not be,\n- the state matches no legal sequential prefix of the program.\n\nThat breaks:\n- **breakpoints**, which should expose a sequentially meaningful state,\n- **restartability**, because it is unclear where execution can safely resume,\n- **software emulation/traps**, because the handler cannot trust the visible machine state.\n\nPrecise exceptions solve this by ensuring the handler sees exactly one well-defined instruction boundary."
+  },
+  {
+    "front": "[2026-04-02] What is the difference between an **exception** and an **interrupt**, and when are they typically handled?",
+    "back": "An **exception** is an internal event caused by the executing program, such as:\n- divide-by-zero,\n- overflow,\n- undefined opcode,\n- page fault.\n\nAn **interrupt** is an external event, such as:\n- I/O service request,\n- timer tick,\n- power failure,\n- machine check.\n\nHandling differs:\n- **Exceptions** should be handled when detected and known to be **non-speculative**, because handling a fault from an instruction that may later be flushed would be wrong.\n- **Interrupts** can often be handled **when convenient**, except high-priority ones like power failure or machine check.\n\nSo the key distinction is **internal vs external source**, plus different urgency and timing constraints."
+  },
+  {
+    "front": "[2026-04-02] Why is “handle the exception as soon as it is detected” wrong in a speculative pipeline?",
+    "back": "Because the faulting instruction may be **speculative** and later get flushed.\n\nFor example, an instruction after a mispredicted branch might detect divide-by-zero. If the processor immediately handles that exception, it would expose an event from an instruction that should never have become architecturally visible.\n\nTherefore, exceptions are typically checked when the instruction is the **oldest** one ready to retire. At that point:\n- all older instructions are known,\n- younger wrong-path instructions can still be discarded,\n- the exception is guaranteed to be architecturally relevant.\n\nThis is essential for maintaining **precise exceptions**."
+  },
+  {
+    "front": "[2026-04-02] In a pipeline, what are the conceptual steps for servicing an exception precisely?",
+    "back": "A precise exception is handled in this order:\n\n1. Check the **oldest instruction** when it is ready to retire.\n2. If it has an exception, do **not** commit its architectural effects.\n3. **Flush** all younger in-flight instructions.\n4. Save the required state, especially the **PC** of the faulting instruction and the **cause**.\n5. Redirect the PC to the exception handler entry point.\n6. Let software inspect the cause, handle the event, and possibly resume execution.\n\nThe key idea is that the exception is taken at **retirement time**, not merely at execution completion time."
+  },
+  {
+    "front": "[2026-04-02] Why are precise exceptions easy in a single-cycle machine but harder in a variable-latency pipeline?",
+    "back": "In a **single-cycle** machine, each instruction completes before the next one begins, so every cycle boundary is automatically a precise instruction boundary.\n\nIn a **variable-latency pipeline**, many instructions are in flight at once, and younger ones may finish before older ones. Then:\n- completion order can differ from program order,\n- writeback can become out of order,\n- exceptions may arise while later instructions have already produced visible effects.\n\nSo simple sequential timing no longer guarantees precise state. Extra mechanisms are needed to separate:\n- **finishing execution**, from\n- **making results architecturally visible**.\n\nThat is exactly why structures like the **reorder buffer (ROB)** are introduced."
+  },
+  {
+    "front": "[2026-04-02] In a multi-cycle MIPS-style design, how can the control FSM preserve precise exceptions?",
+    "back": "The control FSM adds special exception paths at points where an instruction would otherwise update architectural state.\n\nExamples from the lecture:\n- If **overflow** is detected after an R-type execute step, branch to an exception-handling state.\n- If an **undefined opcode** is detected during decode, branch to another exception state.\n\nThe crucial rule is:\n- **do not write the destination register** for the faulting instruction,\n- instead write **EPC** and **Cause**,\n- then set the PC to the handler entry.\n\nThis preserves precision because the machine diverts to the handler before fetching/committing the next architectural instruction."
+  },
+  {
+    "front": "[2026-04-02] What are **EPC** and **Cause**, and why are both needed?",
+    "back": "**EPC** (**Exception Program Counter**) stores the PC of the instruction associated with the exception.\n\n**Cause** stores an encoded description of what happened, such as:\n- overflow,\n- undefined instruction,\n- other exception/interrupt types.\n\nBoth are needed because the handler must know:\n- **where** the event occurred: from **EPC**,\n- **what** event occurred: from **Cause**.\n\nWithout EPC, the handler cannot reliably resume or inspect the faulting location. Without Cause, it cannot decide which recovery action to take."
+  },
+  {
+    "front": "[2026-04-02] Why is “make every operation take the worst-case latency” a bad solution to precise exceptions?",
+    "back": "It preserves ordering only by sacrificing almost all performance.\n\nIf every instruction were forced to take the latency of the slowest operation, then a fast integer add might wait as long as a long divide or even a memory access. That means the design is optimized for the **worst case**, not the common case.\n\nThis is especially bad when loads can take very long, e.g. on the order of\n$$100 \\text{ cycles}.$$\n\nThe lecture’s point is that we want:\n- fast operations to stay fast,\n- long operations to overlap with other work,\n- but still preserve precise architectural state.\n\nThat requires a smarter mechanism like a **ROB**, not uniform worst-case timing."
+  },
+  {
+    "front": "[2026-04-02] What problem does a **reorder buffer (ROB)** solve?",
+    "back": "A **reorder buffer (ROB)** lets instructions **complete out of order** but **commit in order**.\n\nIt solves the core conflict between:\n- performance from overlapping variable-latency execution, and\n- correctness of the ISA’s sequential architectural state.\n\nMechanism:\n- on decode, each instruction gets a ROB entry,\n- when execution finishes, the result is written into that entry,\n- only the **oldest ready** instruction may **retire/commit** its result to the architectural register file or memory.\n\nSo the ROB acts as a staging area between execution and architectural visibility, restoring in-order updates without forcing in-order completion."
+  },
+  {
+    "front": "[2026-04-02] What is the difference between an instruction **completing** and **retiring/committing** in a ROB-based machine?",
+    "back": "**Completing** means the instruction has finished execution and produced its result.\n\n**Retiring/committing** means that result is now written to the **architectural state** in program order.\n\nIn a ROB machine:\n- completion may happen **out of order**,\n- retirement must happen **in order** from the ROB head.\n\nSo a completed instruction may still wait in the ROB until all older instructions retire first.\n\nThis distinction is what allows high throughput without violating precise exceptions or sequential semantics."
+  },
+  {
+    "front": "[2026-04-02] How does a ROB enable precise exceptions when the oldest instruction has faulted?",
+    "back": "Each ROB entry stores enough information to delay architectural updates until retirement, including:\n- result or store data,\n- destination,\n- PC,\n- exception status and cause.\n\nIf the **oldest** ROB entry has its exception bit set, the processor can:\n1. stop retirement,\n2. flush all younger instructions,\n3. use the saved PC/cause to enter the handler.\n\nBecause younger instructions never committed, the architectural state still reflects only older retired instructions. That is exactly the definition of a **precise exception**.\n\nThe ROB therefore turns “fault detected during execution” into “fault handled at a clean retirement boundary.”"
+  },
+  {
+    "front": "[2026-04-02] Why must stores also wait for in-order commit in a ROB design?",
+    "back": "Memory is part of the **architectural state**, so stores cannot become visible out of order any more than register writes can.\n\nIf a younger store updated memory before an older instruction retired, then an exception in that older instruction would leave memory in an architecturally impossible state.\n\nTherefore, ROB entries for stores keep:\n- the **store address**,\n- the **store data**,\n- readiness information,\n\nand the actual memory update happens only when the store reaches the ROB head and commits.\n\nThis ensures memory, not just registers, obeys in-order architectural visibility."
+  },
+  {
+    "front": "[2026-04-02] Why is “just search the ROB for the latest producer of $R3$” a CAM-like problem?",
+    "back": "Because the ROB is organized by **instruction age**, not by architectural register number.\n\nTo find the current producer of $R3$, hardware would need to:\n- compare $R3$ against the destination register field of **every ROB entry** in parallel,\n- ignore invalid entries,\n- choose the **youngest matching** entry,\n- handle circular wrap-around between head and tail.\n\nThat is essentially a **content-addressable memory (CAM)** style lookup with extra age-selection logic.\n\nIt is much more complex than a normal register file read, where the register number is simply the array index."
   }
 ]

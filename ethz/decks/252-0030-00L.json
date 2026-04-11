@@ -720,6 +720,66 @@
     "back": "Man maximiert die untere Schranke\n$$\nnp-mp^2.\n$$\nAls quadratische Funktion in $p$ liegt das Maximum bei\n$$\np=\\frac{n}{2m}.\n$$\nDann erhält man\n$$\n\\mathbb{E}[|S|]\\ge n\\cdot \\frac{n}{2m}-m\\left(\\frac{n}{2m}\\right)^2\n=\\frac{n^2}{4m}.\n$$\n\nFür einen **$d$-regulären Graphen** gilt\n$$\nm=\\frac{dn}{2}.\n$$\nEinsetzen liefert\n$$\n\\mathbb{E}[|S|]\\ge \\frac{n^2}{4\\cdot dn/2}=\\frac{n}{2d}.\n$$\nDas ist nicht nur eine Analyse des Algorithmus, sondern auch ein **Existenzresultat**: Es gibt eine stabile Menge mindestens dieser Größe."
   },
   {
+    "front": "[2026-03-31] Warum ist $\\mathrm{Var}(X+b)=\\mathrm{Var}(X)$, aber $\\mathrm{Var}(aX)=a^2\\mathrm{Var}(X)$?",
+    "back": "**Verschiebung** um $b$ ändert nur den Ort, nicht die Abstände zum Erwartungswert:\n$$\n(X+b)-\\mathbb{E}[X+b]=(X+b)-(\\mathbb{E}[X]+b)=X-\\mathbb{E}[X].\n$$\nDaher bleibt die Varianz gleich.\n\n**Skalierung** mit $a$ vergrößert alle Abstände um den Faktor $a$:\n$$\naX-\\mathbb{E}[aX]=a(X-\\mathbb{E}[X]).\n$$\nDa in der Varianz quadriert wird, entsteht\n$$\n\\mathrm{Var}(aX)=a^2\\mathrm{Var}(X).\n$$\n\nIntuition: Verschieben verändert keine Streuung, Strecken oder Stauchen schon."
+  },
+  {
+    "front": "[2026-03-31] Wann ist die alternative Formel $\\mathrm{Var}(X)=\\mathbb{E}[X^2]-(\\mathbb{E}[X])^2$ nützlicher als die Definition?",
+    "back": "Sie ist besonders nützlich, wenn **$\\mathbb{E}[X]$ und $\\mathbb{E}[X^2]$ leicht berechenbar** sind, aber die direkte Rechnung mit\n$$\n\\mathbb{E}\\big[(X-\\mathbb{E}[X])^2\\big]\n$$\numständlich wäre.\n\nBeispiel: Für **Bernoulli** gilt $X^2=X$, also sofort\n$$\n\\mathrm{Var}(X)=\\mathbb{E}[X]-\\big(\\mathbb{E}[X]\\big)^2.\n$$\n\nDie Definitionsform ist dagegen oft besser, wenn man die **Abweichung vom Mittelwert direkt versteht**, etwa bei einer Zufallsvariable, die immer genau um $1$ vom Erwartungswert abweicht."
+  },
+  {
+    "front": "[2026-03-31] Warum ist das 1. zentrale Moment immer $0$, und was zeigt das über Streuung?",
+    "back": "Das **1. zentrale Moment** ist\n$$\n\\mathbb{E}[X-\\mathbb{E}[X]]=\\mathbb{E}[X]-\\mathbb{E}[X]=0.\n$$\n\nDas zeigt: Wenn man Abweichungen vom Erwartungswert **ohne Betrag oder Quadrat** mittelt, heben sich positive und negative Abweichungen weg.\n\nDeshalb taugt das 1. zentrale Moment **nicht als Streuungsmaß**. Für Streuung braucht man eine Größe, die Vorzeichen nicht wegkürzt, z.B.\n- **Varianz**: Quadrat der Abweichung,\n- oder alternativ Beträge."
+  },
+  {
+    "front": "[2026-03-31] Was ist der Unterschied zwischen **Moment** und **zentralem Moment**?",
+    "back": "Das **$k$-te Moment** ist\n$$\n\\mathbb{E}[X^k].\n$$\n\nDas **$k$-te zentrale Moment** ist\n$$\n\\mathbb{E}\\big[(X-\\mathbb{E}[X])^k\\big].\n$$\n\nDer Unterschied:\n- **Momente** beschreiben die Verteilung relativ zum Ursprung.\n- **Zentrale Momente** beschreiben sie relativ zum **Erwartungswert**.\n\nWichtige Spezialfälle:\n- 1. Moment: $\\mathbb{E}[X]$\n- 2. zentrales Moment: $\\mathrm{Var}(X)$\n- 1. zentrales Moment: $0$\n\nZentrale Momente sind daher natürlicher, wenn man **Streuung um den Mittelwert** messen will."
+  },
+  {
+    "front": "[2026-03-31] Wie berechnet man für $X\\sim \\text{Bernoulli}(p)$ den Erwartungswert und die Varianz?",
+    "back": "Für **Bernoulli** gilt:\n$$\n\\Pr[X=1]=p,\\qquad \\Pr[X=0]=1-p.\n$$\n\nDann ist\n$$\n\\mathbb{E}[X]=1\\cdot p+0\\cdot(1-p)=p.\n$$\n\nFür die Varianz nutzt man $X^2=X$:\n$$\n\\mathrm{Var}(X)=\\mathbb{E}[X^2]-(\\mathbb{E}[X])^2\n= \\mathbb{E}[X]-p^2\n= p-p^2\n= p(1-p).\n$$\n\nDie Bernoulli-Verteilung ist der Grundbaustein für **Indikatorvariablen**: Sie modelliert genau ein Ereignis „tritt ein / tritt nicht ein“."
+  },
+  {
+    "front": "[2026-03-31] Wie erkennt man, dass eine Zählvariable binomialverteilt ist?",
+    "back": "Eine Zufallsvariable ist **binomialverteilt**, wenn sie die **Anzahl Erfolge in $n$ unabhängigen Versuchen** mit gleicher Erfolgswahrscheinlichkeit $p$ zählt.\n\nDann gilt:\n$$\nX\\sim \\text{Binomial}(n,p),\\qquad\n\\Pr[X=k]=\\binom{n}{k}p^k(1-p)^{n-k}.\n$$\n\nErkennungsmerkmale:\n- feste Anzahl von Versuchen,\n- jeder Versuch hat genau „Erfolg/Misserfolg“,\n- gleiche Erfolgswahrscheinlichkeit,\n- Unabhängigkeit,\n- gezählt wird die **Anzahl** der Erfolge.\n\nWenn eines davon fehlt, ist das Modell oft **nicht** binomial."
+  },
+  {
+    "front": "[2026-03-31] Warum hat die Binomialverteilung die Formel $\\Pr[X=k]=\\binom{n}{k}p^k(1-p)^{n-k}$?",
+    "back": "Für genau $k$ Erfolge in $n$ unabhängigen Versuchen braucht man zwei Zutaten:\n\n1. **Welche $k$ Positionen** sind Erfolge?  \n   Dafür gibt es\n   $$\n   \\binom{n}{k}\n   $$\n   Möglichkeiten.\n\n2. **Wie wahrscheinlich** ist eine feste solche Folge?  \n   Wegen Unabhängigkeit:\n   $$\n   p^k(1-p)^{n-k}.\n   $$\n\nMultiplikation ergibt:\n$$\n\\Pr[X=k]=\\binom{n}{k}p^k(1-p)^{n-k}.\n$$\n\nDie Formel kombiniert also **Kombinatorik** (Positionen wählen) mit **Wahrscheinlichkeiten** (eine konkrete Folge)."
+  },
+  {
+    "front": "[2026-03-31] Warum ist im Balls-into-Bins-Beispiel die Belegung eines festen Korbs binomialverteilt?",
+    "back": "Es werden $n$ Bälle unabhängig in $n/\\lambda$ Körbe geworfen. Sei $X$ die Anzahl Bälle im ersten Korb.\n\nFür jeden Ball gilt:\n- „landet im ersten Korb“ = Erfolg,\n- Erfolgswahrscheinlichkeit\n  $$\n  p=\\frac{1}{n/\\lambda}=\\frac{\\lambda}{n}.\n  $$\n\nDa die Bälle **unabhängig** geworfen werden, ist $X$ die Anzahl Erfolge in $n$ unabhängigen Versuchen. Also:\n$$\nX\\sim \\text{Binomial}\\left(n,\\frac{\\lambda}{n}\\right).\n$$\n\nAußerdem:\n$$\n\\mathbb{E}[X]=n\\cdot \\frac{\\lambda}{n}=\\lambda.\n$$\n\nDas ist der Ausgangspunkt für die **Poisson-Approximation**."
+  },
+  {
+    "front": "[2026-03-31] Wann verwendet man die Poissonverteilung statt einer Binomialverteilung?",
+    "back": "Die **Poissonverteilung** ist passend für **seltene Ereignisse**, wenn\n- die Zahl möglicher Gelegenheiten sehr groß ist,\n- die Einzelwahrscheinlichkeit sehr klein ist,\n- aber der Mittelwert\n  $$\n  \\lambda=np\n  $$\n  konstant bleibt.\n\nDann wird\n$$\n\\text{Binomial}(n,p)\n$$\nfür großes $n$ und kleines $p$ gut approximiert durch\n$$\n\\text{Poisson}(\\lambda).\n$$\n\nVorteil: Man braucht nur noch **einen Parameter** $\\lambda$ statt das exakte Paar $(n,p)$.\n\nTypische Interpretation: Anzahl Ereignisse pro Zeitintervall oder Raumregion, z.B. **Serverausfälle** oder das im Vortrag genannte Beispiel **Herzinfarkte pro Stunde**."
+  },
+  {
+    "front": "[2026-03-31] Was sind die Kennzahlen der Poissonverteilung, und warum sind sie bemerkenswert?",
+    "back": "Für\n$$\nX\\sim \\text{Poisson}(\\lambda)\n$$\ngilt:\n$$\n\\Pr[X=i]=\\frac{\\lambda^i}{i!}e^{-\\lambda},\\qquad i\\in\\mathbb{N}_0.\n$$\n\nDie wichtigsten Kennzahlen sind:\n$$\n\\mathbb{E}[X]=\\lambda,\\qquad \\mathrm{Var}(X)=\\lambda.\n$$\n\nBemerkenswert ist: **Erwartungswert und Varianz sind gleich**.\n\nDas ist ein typisches Erkennungsmerkmal der Poissonverteilung und passt zur Intuition „seltene, zufällige Ereignisse mit mittlerer Rate $\\lambda$“."
+  },
+  {
+    "front": "[2026-03-31] Warum kann eine Zufallsvariable mit seltenen großen Ausreißern größere Varianz haben als eine mit ständig kleiner Abweichung?",
+    "back": "Weil die **Varianz quadrierte Abweichungen** mittelt:\n$$\n\\mathrm{Var}(X)=\\mathbb{E}\\big[(X-\\mathbb{E}[X])^2\\big].\n$$\n\nDadurch zählen **große Ausreißer überproportional stark**.\n\nIm Vorlesungsbeispiel:\n- $X=3$ nur bei Augenzahl $3$, sonst $0$:\n  $$\n  \\mathrm{Var}(X)=\\frac{5}{4}.\n  $$\n- $Y=6$ bei gerader, $4$ bei ungerader Augenzahl:\n  $$\n  \\mathbb{E}[Y]=5,\\quad (Y-5)^2=1 \\text{ immer},\n  $$\n  also\n  $$\n  \\mathrm{Var}(Y)=1.\n  $$\n\nObwohl $Y$ immer schwankt, ist $\\mathrm{Var}(X)$ größer, weil die seltene große Abweichung bei $X$ stärker ins Gewicht fällt."
+  },
+  {
+    "front": "[2026-03-31] Wie zeigt das Würfelbeispiel „gleich wie vorher“, dass nicht offensichtliche Prozesse trotzdem binomial sein können?",
+    "back": "Bei $m$ Würfen eines fairen Würfels sei $X$ die Anzahl Positionen $k\\ge 2$, an denen der $k$-te Wurf gleich dem vorherigen ist.\n\nFür jedes $k\\in\\{2,\\dots,m\\}$ gilt:\n- Der vorherige Wurf ist bereits fest.\n- Der nächste Wurf stimmt mit Wahrscheinlichkeit\n  $$\n  \\frac16\n  $$\n  überein.\n\nDamit hat jeder der $m-1$ Vergleiche dieselbe Erfolgswahrscheinlichkeit, und gezählt wird die Anzahl Erfolge:\n$$\nX\\sim \\text{Binomial}\\left(m-1,\\frac16\\right).\n$$\n\nDie wichtige Einsicht: Auch wenn die Definition von $X$ „abhängig von der Vergangenheit“ klingt, kann die Zählvariable trotzdem binomial sein."
+  },
+  {
+    "front": "[2026-03-31] Was ist bei der geometrischen Verteilung die häufigste Stolperfalle?",
+    "back": "Die **Indexierung**.\n\nIn der Vorlesung zählt\n$$\nX\\sim \\text{Geo}(p)\n$$\ndie **Anzahl Würfe bis zum ersten Erfolg inklusive Erfolgswurf**. Daher nimmt $X$ die Werte\n$$\n1,2,3,\\dots\n$$\nan und\n$$\n\\Pr[X=k]=(1-p)^{k-1}p.\n$$\n\nDeshalb gilt auch\n$$\n\\Pr[X\\ge n]=(1-p)^{n-1},\n$$\nnicht $(1-p)^n$.\n\nViele Verwechslungen entstehen, wenn man stattdessen die **Anzahl Misserfolge vor dem ersten Erfolg** modelliert; diese Variante startet bei $0$ und hat andere Formeln."
+  },
+  {
+    "front": "[2026-03-31] Wie erhält man die Verteilungsfunktion der geometrischen Verteilung?",
+    "back": "Für\n$$\nX\\sim \\text{Geo}(p)\n$$\nmit\n$$\n\\Pr[X=k]=(1-p)^{k-1}p,\\qquad k\\ge 1,\n$$\nist die Verteilungsfunktion:\n$$\nF_X(n)=\\Pr[X\\le n].\n$$\n\nMan summiert:\n$$\nF_X(n)=\\sum_{i=1}^n p(1-p)^{i-1}.\n$$\n\nDas ist eine geometrische Reihe und ergibt:\n$$\nF_X(n)=1-(1-p)^n.\n$$\n\nInterpretation: „Bis spätestens zum $n$-ten Versuch ist ein Erfolg eingetreten“ ist genau das Gegenereignis zu „die ersten $n$ Versuche waren alle Misserfolge“."
+  },
+  {
+    "front": "[2026-03-31] Warum ist die geometrische Verteilung gedächtnislos?",
+    "back": "Für\n$$\nX\\sim \\text{Geo}(p)\n$$\ngilt:\n$$\n\\Pr[X\\ge s+t\\mid X>s]=\\Pr[X\\ge t].\n$$\n\nBegründung:\n$$\n\\Pr[X\\ge n]=(1-p)^{n-1}.\n$$\nAlso\n$$\n\\Pr[X\\ge s+t\\mid X>s]\n=\\frac{\\Pr[X\\ge s+t]}{\\Pr[X>s]}\n=\\frac{(1-p)^{s+t-1}}{(1-p)^s}\n=(1-p)^{t-1}\n=\\Pr[X\\ge t].\n$$\n\nIntuition: Nach beliebig vielen Misserfolgen beginnt die Restwartezeit **wieder wie neu**. Die Vergangenheit liefert keine Information darüber, wie lange man ab jetzt noch warten muss."
+  },
+  {
     "front": "[2026-04-02] Warum braucht man bei mehreren Zufallsvariablen eine gemeinsame Dichte statt nur einzelner Randdichten?",
     "back": "**Randdichten** beschreiben jede Variable für sich, aber nicht ihre **Abhängigkeit**. Zwei Paare von Zufallsvariablen können dieselben Randdichten haben und trotzdem völlig verschieden zusammenhängen.\n\nDie **gemeinsame Dichte** erfasst genau dieses Zusammenspiel:\n$$\nf_{XY}(\\alpha,\\beta)=\\Pr[X=\\alpha \\wedge Y=\\beta].\n$$\n\nIm Vorlesungsbeispiel ist $X$ die Würfelzahl und $Y$ die Anzahl Köpfe bei $X$ Münzwürfen. Hier hängt $Y$ direkt von $X$ ab: Große Werte von $X$ erlauben typischerweise größere Werte von $Y$.\n\nNur mit $f_X$ und $f_Y$ sieht man diese Kopplung nicht; mit $f_{XY}$ schon."
   },
