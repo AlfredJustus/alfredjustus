@@ -718,5 +718,65 @@
   {
     "front": "[2026-03-26] Wie wählt man $p$ im MIS-Algorithmus, und was folgt für $d$-reguläre Graphen?",
     "back": "Man maximiert die untere Schranke\n$$\nnp-mp^2.\n$$\nAls quadratische Funktion in $p$ liegt das Maximum bei\n$$\np=\\frac{n}{2m}.\n$$\nDann erhält man\n$$\n\\mathbb{E}[|S|]\\ge n\\cdot \\frac{n}{2m}-m\\left(\\frac{n}{2m}\\right)^2\n=\\frac{n^2}{4m}.\n$$\n\nFür einen **$d$-regulären Graphen** gilt\n$$\nm=\\frac{dn}{2}.\n$$\nEinsetzen liefert\n$$\n\\mathbb{E}[|S|]\\ge \\frac{n^2}{4\\cdot dn/2}=\\frac{n}{2d}.\n$$\nDas ist nicht nur eine Analyse des Algorithmus, sondern auch ein **Existenzresultat**: Es gibt eine stabile Menge mindestens dieser Größe."
+  },
+  {
+    "front": "[2026-04-02] Warum braucht man bei mehreren Zufallsvariablen eine gemeinsame Dichte statt nur einzelner Verteilungen?",
+    "back": "Einzelne Verteilungen erfassen **Abhängigkeiten** nicht. Zwei Zufallsvariablen können dieselben Randdichten haben, aber völlig verschieden zusammenhängen.\n\nDie **gemeinsame Dichte** beschreibt genau das gemeinsame Auftreten:\n$$\nf_{XY}(\\alpha,\\beta)=\\Pr[X=\\alpha \\wedge Y=\\beta].\n$$\n\nIm Vorlesungsbeispiel hängt $Y$ von $X$ ab:\n- $X$ = Augenzahl eines Würfels,\n- danach wird die Münze $X$-mal geworfen,\n- $Y$ = Anzahl Köpfe.\n\nDann ist ein großes $X$ typischerweise mit größerem $Y$ verbunden. Diese Information steckt **nicht** in $f_X$ und $f_Y$ allein, sondern nur in $f_{XY}$."
+  },
+  {
+    "front": "[2026-04-02] Wie erhält man aus der gemeinsamen Dichte die Randdichte von $X$, und warum ist das der Satz der totalen Wahrscheinlichkeit?",
+    "back": "Man summiert über **alle möglichen Werte von $Y$**:\n$$\nf_X(\\alpha)=\\sum_{\\beta} f_{XY}(\\alpha,\\beta).\n$$\n\nBegründung:\n$$\n\\Pr[X=\\alpha]\n=\n\\sum_{\\beta}\\Pr[X=\\alpha \\wedge Y=\\beta].\n$$\n\nDie Ereignisse $\\{Y=\\beta\\}$ sind paarweise disjunkt und zerlegen alle Fälle. Deshalb darf man die Wahrscheinlichkeiten addieren. Genau das ist hier der **Satz der totalen Wahrscheinlichkeit** bzw. der Additionssatz.\n\nIntuitiv: Man “vergisst” $Y$, indem man alle Möglichkeiten aufsummiert, bei denen $X=\\alpha$ eintritt."
+  },
+  {
+    "front": "[2026-04-02] Welche Paare $(n,k)$ sind im Würfel-Münze-Beispiel überhaupt möglich?",
+    "back": "Genau die Paare mit\n$$\nn\\in\\{1,2,3,4,5,6\\}\n\\quad\\text{und}\\quad\n0\\le k\\le n.\n$$\n\nDenn:\n- $n$ ist die Augenzahl des Würfels, also nur $1$ bis $6$.\n- Wenn die Münze $n$-mal geworfen wird, kann die Anzahl Köpfe $k$ nicht negativ sein und nicht größer als $n$.\n\nFür alle anderen Paare gilt\n$$\nf_{XY}(n,k)=0.\n$$\n\nTypische unmögliche Fälle sind also:\n- $k>n$,\n- $k<0$,\n- $n\\notin\\{1,\\dots,6\\}$."
+  },
+  {
+    "front": "[2026-04-02] Wie lautet die gemeinsame Dichte im Würfel-Münze-Beispiel?",
+    "back": "Für zulässige Werte $n\\in\\{1,\\dots,6\\}$ und $0\\le k\\le n$ gilt:\n$$\nf_{XY}(n,k)=\\Pr[X=n \\wedge Y=k]\n=\\frac{1}{6}\\binom{n}{k}\\left(\\frac12\\right)^n.\n$$\n\nBegründung:\n- $\\Pr[X=n]=\\frac16$,\n- bedingt auf $X=n$ ist $Y$ binomialverteilt mit $n$ Würfen und $p=\\frac12$,\n- genau $k$ Köpfe treten in\n$$\n\\binom{n}{k}\n$$\nFolgen auf, jede mit Wahrscheinlichkeit\n$$\n\\left(\\frac12\\right)^n.\n$$\n\nAlso:\n$$\n\\Pr[Y=k\\mid X=n]=\\binom{n}{k}\\left(\\frac12\\right)^n,\n$$\nund damit das Produkt mit $\\Pr[X=n]=\\frac16$.\n\nAußerhalb der zulässigen Paare ist die Dichte $0$."
+  },
+  {
+    "front": "[2026-04-02] Wie berechnet man im Würfel-Münze-Beispiel die Randdichte von $Y$?",
+    "back": "Man summiert die gemeinsame Dichte über alle möglichen $n$:\n$$\nf_Y(k)=\\sum_n f_{XY}(n,k).\n$$\n\nDa $k$ Köpfe nur möglich sind, wenn $n\\ge k$, ergibt sich für $k\\in\\{0,\\dots,6\\}$:\n$$\nf_Y(k)=\\sum_{n=\\max(1,k)}^{6}\\frac{1}{6}\\binom{n}{k}\\left(\\frac12\\right)^n.\n$$\n\nFür $k\\notin\\{0,\\dots,6\\}$ gilt:\n$$\nf_Y(k)=0.\n$$\n\nWichtig ist die Summationsgrenze:\n- Für $n<k$ wäre $\\binom{n}{k}$ bzw. der ganze Fall ohnehin unmöglich.\n- Man lässt diese $0$-Terme einfach weg."
+  },
+  {
+    "front": "[2026-04-02] Wie formuliert man Unabhängigkeit von Zufallsvariablen präzise?",
+    "back": "$X_1,\\dots,X_n$ sind **unabhängig**, wenn für alle zulässigen Werte $\\alpha_1,\\dots,\\alpha_n$ gilt:\n$$\n\\Pr[X_1=\\alpha_1,\\dots,X_n=\\alpha_n]\n=\n\\prod_{i=1}^n \\Pr[X_i=\\alpha_i].\n$$\n\nBei zwei Variablen ist das äquivalent zu:\n$$\nf_{XY}(\\alpha,\\beta)=f_X(\\alpha)f_Y(\\beta).\n$$\n\nDer Kern ist also **Faktorisierung**: Die gemeinsame Wahrscheinlichkeit zerfällt in das Produkt der Einzelwahrscheinlichkeiten.\n\nDas ist stärker als nur “$X$ beeinflusst $Y$ nicht intuitiv”, weil die Gleichung für **alle** Wertkombinationen gelten muss."
+  },
+  {
+    "front": "[2026-04-02] Warum sind Ereignisse $A_1,\\dots,A_n$ genau dann unabhängig, wenn ihre Indikatorvariablen unabhängig sind?",
+    "back": "Zu jedem Ereignis $A_i$ gehört die **Indikatorvariable**\n$$\nI_{A_i}\\in\\{0,1\\},\n$$\nmit $I_{A_i}=1$ genau dann, wenn $A_i$ eintritt.\n\nFür $\\alpha_i\\in\\{0,1\\}$ gilt:\n- $\\{I_{A_i}=1\\}=A_i$,\n- $\\{I_{A_i}=0\\}=A_i^c$.\n\nDamit entspricht jede Aussage über gemeinsame Werte der Indikatorvariablen einer Aussage über Schnitte von Ereignissen und Komplementen. Also ist\n$$\n\\Pr[I_{A_1}=\\alpha_1,\\dots,I_{A_n}=\\alpha_n]\n=\n\\prod_{i=1}^n \\Pr[I_{A_i}=\\alpha_i]\n$$\ngenau dieselbe Bedingung wie die übliche Unabhängigkeit der Ereignisse über alle $0/1$-Kombinationen.\n\nIndikatorvariablen übersetzen also **Ereignisunabhängigkeit** in **Zufallsvariablen-Unabhängigkeit**."
+  },
+  {
+    "front": "[2026-04-02] Was sagt das Lemma über Mengenereignisse bei unabhängigen Zufallsvariablen?",
+    "back": "Sind $X_1,\\dots,X_n$ unabhängig, dann gilt für beliebige Mengen $S_1,\\dots,S_n$:\n$$\n\\Pr[X_1\\in S_1,\\dots,X_n\\in S_n]\n=\n\\prod_{i=1}^n \\Pr[X_i\\in S_i].\n$$\n\nDas ist nützlich, weil man Unabhängigkeit nicht nur für **Einzelwerte**, sondern auch für **Mengen von Werten** verwenden darf.\n\nDie Idee des Beweises:\n- Schreibe das Ereignis als Summe über alle Wertkombinationen\n$$\n(\\alpha_1,\\dots,\\alpha_n)\\in S_1\\times\\cdots\\times S_n.\n$$\n- Faktorisiere jede gemeinsame Wahrscheinlichkeit wegen Unabhängigkeit.\n- Ziehe die Summen auseinander.\n\nSo wird aus Wert-Unabhängigkeit automatisch Mengen-Unabhängigkeit."
+  },
+  {
+    "front": "[2026-04-02] Warum folgt aus Unabhängigkeit einer ganzen Familie automatisch die Unabhängigkeit jeder Teilfamilie?",
+    "back": "Weil man die nicht ausgewählten Variablen durch triviale Mengenereignisse “ignorieren” kann.\n\nFür eine Teilfamilie $X_{i_1},\\dots,X_{i_k}$ wählt man:\n- $S_i=\\{\\alpha_i\\}$ für ausgewählte Indizes,\n- $S_i=\\mathrm{Wertebereich}(X_i)$ für alle anderen.\n\nDann ist\n$$\n\\{X_i\\in S_i\\}\n$$\nfür nicht ausgewählte $i$ immer wahr und hat Wahrscheinlichkeit $1$.\n\nMit dem Mengen-Lemma folgt:\n$$\n\\Pr[X_{i_1}=\\alpha_{i_1},\\dots,X_{i_k}=\\alpha_{i_k}]\n=\n\\prod_{j=1}^k \\Pr[X_{i_j}=\\alpha_{i_j}].\n$$\n\nAlso ist jede **Teilmenge unabhängiger Variablen** wieder unabhängig."
+  },
+  {
+    "front": "[2026-04-02] Warum bleiben unabhängige Zufallsvariablen nach punktweiser Funktionsanwendung unabhängig?",
+    "back": "Sind $X_1,\\dots,X_n$ unabhängig und\n$$\nY_i=f_i(X_i),\n$$\ndann sind auch $Y_1,\\dots,Y_n$ unabhängig.\n\nDer Grund: Jede neue Variable $Y_i$ hängt nur von **ihrer eigenen** alten Variable $X_i$ ab; es wird nichts zwischen den Variablen vermischt.\n\nFür vorgegebene Werte $\\alpha_i$ definiert man\n$$\nS_i=\\{\\beta: f_i(\\beta)=\\alpha_i\\}.\n$$\nDann gilt:\n$$\n\\{Y_i=\\alpha_i\\}=\\{X_i\\in S_i\\}.\n$$\n\nMit dem Mengen-Lemma folgt:\n$$\n\\Pr[Y_1=\\alpha_1,\\dots,Y_n=\\alpha_n]\n=\n\\prod_{i=1}^n \\Pr[Y_i=\\alpha_i].\n$$\n\nAlso bleibt Unabhängigkeit unter **separater Funktionsanwendung** erhalten."
+  },
+  {
+    "front": "[2026-04-02] Warum ist die Umkehrung falsch: Aus unabhängigen $f_i(X_i)$ folgt nicht, dass die $X_i$ unabhängig sind?",
+    "back": "Ein Gegenbeispiel sind **konstante Funktionen**:\n$$\nf_i(x)=1.\n$$\n\nDann gilt für alle $i$:\n$$\nY_i=f_i(X_i)=1\n$$\nimmer. Jede $Y_i$ ist also eine degenerierte Zufallsvariable.\n\nSolche konstanten Variablen sind trivial unabhängig, egal wie stark die ursprünglichen $X_i$ voneinander abhängen.\n\nDas zeigt:\n$$\nY_i=f_i(X_i)\\ \\text{unabhängig}\n\\centernot\\Rightarrow\nX_i\\ \\text{unabhängig}.\n$$\n\nDie Funktionsanwendung kann also Abhängigkeiten **vernichten** und ist deshalb nicht umkehrbar."
+  },
+  {
+    "front": "[2026-04-02] Wie erhält man die Dichte von $Z=X+Y$ für unabhängige diskrete Zufallsvariablen?",
+    "back": "Für\n$$\nZ=X+Y\n$$\nund unabhängige $X,Y$ gilt die **Faltungsformel**:\n$$\nf_Z(\\alpha)=\\sum_{\\beta} f_X(\\beta)\\,f_Y(\\alpha-\\beta).\n$$\n\nHerleitung:\n$$\nf_Z(\\alpha)=\\Pr[X+Y=\\alpha].\n$$\nWenn $X=\\beta$ ist, muss $Y=\\alpha-\\beta$ sein. Also:\n$$\n\\Pr[X+Y=\\alpha]\n=\n\\sum_{\\beta}\\Pr[X=\\beta \\wedge Y=\\alpha-\\beta].\n$$\nWegen Unabhängigkeit:\n$$\n\\Pr[X=\\beta \\wedge Y=\\alpha-\\beta]\n=\nf_X(\\beta)f_Y(\\alpha-\\beta).\n$$\n\nDie Summe läuft über alle möglichen $\\beta$; unmögliche Terme sind automatisch $0$."
+  },
+  {
+    "front": "[2026-04-02] Rechne ein Mikro-Beispiel zur Faltung: Was ist die Verteilung von $Z=X+Y$, wenn $X,Y$ unabhängig Bernoulli$\\left(\\frac12\\right)$ sind?",
+    "back": "Es gilt:\n$$\n\\Pr[X=1]=\\Pr[Y=1]=\\frac12,\\qquad \\Pr[X=0]=\\Pr[Y=0]=\\frac12.\n$$\n\nMögliche Werte von\n$$\nZ=X+Y\n$$\nsind $0,1,2$.\n\nMit der Faltung:\n$$\nf_Z(0)=\\Pr[X=0,Y=0]=\\frac14,\n$$\n$$\nf_Z(1)=\\Pr[X=0,Y=1]+\\Pr[X=1,Y=0]=\\frac14+\\frac14=\\frac12,\n$$\n$$\nf_Z(2)=\\Pr[X=1,Y=1]=\\frac14.\n$$\n\nAlso:\n$$\n\\Pr[Z=0]=\\frac14,\\qquad\n\\Pr[Z=1]=\\frac12,\\qquad\n\\Pr[Z=2]=\\frac14.\n$$\n\nDas illustriert die Idee der Faltung: Für jede Summe addiert man alle Zerlegungen dieser Summe."
+  },
+  {
+    "front": "[2026-04-02] Welche Rechenregel für Erwartungswerte gilt immer, auch ohne Unabhängigkeit?",
+    "back": "Die **Linearität des Erwartungswerts**:\n$$\n\\mathbb E[X+Y]=\\mathbb E[X]+\\mathbb E[Y].\n$$\n\nDiese Formel braucht **keine** Unabhängigkeit. Sie ist deshalb besonders robust und oft die erste Wahl bei Rechnungen.\n\nWichtig ist der Kontrast zu anderen Formeln:\n- Für\n$$\n\\mathbb E[XY]=\\mathbb E[X]\\mathbb E[Y]\n$$\nbraucht man im Allgemeinen Unabhängigkeit.\n- Für\n$$\n\\mathrm{Var}(X+Y)=\\mathrm{Var}(X)+\\mathrm{Var}(Y)\n$$\nebenfalls.\n\nMerksatz: **Summe im Erwartungswert ist immer linear; Produkte und Varianzen sind heikler.**"
+  },
+  {
+    "front": "[2026-04-02] Warum gilt $\\mathbb E[XY]=\\mathbb E[X]\\mathbb E[Y]$ bei Unabhängigkeit, aber nicht allgemein?",
+    "back": "Bei Unabhängigkeit faktorisiert die gemeinsame Wahrscheinlichkeit:\n$$\n\\Pr[X=\\alpha,Y=\\beta]=\\Pr[X=\\alpha]\\Pr[Y=\\beta].\n$$\nDaher:\n$$\n\\mathbb E[XY]\n=\n\\sum_{\\alpha}\\sum_{\\beta}\\alpha\\beta\\,\\Pr[X=\\alpha,Y=\\beta]\n$$\n$$\n=\n\\sum_{\\alpha}\\sum_{\\beta}\\alpha\\beta\\,\\Pr[X=\\alpha]\\Pr[Y=\\beta]\n=\n\\left(\\sum_{\\alpha}\\alpha\\Pr[X=\\alpha]\\right)\n\\left(\\sum_{\\beta}\\beta\\Pr[Y=\\beta]\\right).\n$$\nAlso:\n$$\n\\mathbb E[XY]=\\mathbb E[X]\\mathbb E[Y].\n$$\n\nOhne Unabhängigkeit ist das falsch. Gegenbeispiel:\n- Setze $Y=X$,\n- mit $\\mathrm{Var}(X)\\ne 0$.\n\nDann ist\n$$\n\\mathbb E[XY]=\\mathbb E[X^2],\n$$\naber\n$$\n\\mathbb E[X]\\mathbb E[Y]=(\\mathbb E[X])^2.\n$$\nDiese sind verschieden, weil\n$$\n\\mathrm{Var}(X)=\\mathbb E[X^2]-(\\mathbb E[X])^2\\ne 0.\n$$"
   }
 ]

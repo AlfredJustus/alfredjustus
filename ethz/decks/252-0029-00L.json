@@ -658,5 +658,65 @@
   {
     "front": "[2026-03-24] Warum muss `unlock()` bei `ReentrantLock` in einen `finally`-Block?",
     "back": "Bei **externen Locks** wird das Lock nicht automatisch freigegeben. Wenn zwischen `lock()` und `unlock()` eine Exception auftritt, bleibt das Lock sonst möglicherweise dauerhaft gehalten.\n\nDas korrekte Muster ist daher:\n\n- `lock()` vor der Critical Section\n- Arbeit im `try`\n- `unlock()` im `finally`\n\nSo wird das Lock garantiert freigegeben, egal ob die Critical Section normal endet oder mit Fehler abbricht.\n\nDas ist ein zentraler Unterschied zu **`synchronized`**, wo die JVM das Verlassen des Monitors automatisch handhabt."
+  },
+  {
+    "front": "[2026-03-31] Wann ist **Amdahls Gesetz** das richtige Modell, und wann **Gustafsons Gesetz**?",
+    "back": "**Amdahl** verwendet man bei **fester Problemgröße**: Man löst dieselbe Aufgabe mit mehr Prozessoren, und der sequentielle Anteil $f$ begrenzt den Speedup.\n\n**Gustafson** verwendet man bei **fester Laufzeit**: Mit mehr Prozessoren wird ein **größeres Problem in derselben Zeit** bearbeitet.\n\nMerksatz:\n- **Amdahl**: „Wie viel schneller wird dieselbe Arbeit?“\n- **Gustafson**: „Wie viel mehr Arbeit schaffe ich in derselben Zeit?“"
+  },
+  {
+    "front": "[2026-03-31] Warum begrenzt der sequentielle Anteil $f$ bei **Amdahl** den maximalen Speedup?",
+    "back": "Weil der Anteil $f$ **nie parallelisiert** werden kann. Selbst wenn $p \\to \\infty$ gilt, verschwindet nur der parallele Anteil, nicht aber der sequentielle.\n\nFormal:\n$$\n\\text{SP}(p) \\le \\frac{1}{f + \\frac{1-f}{p}}\n$$\n\nFür unendlich viele Prozessoren:\n$$\n\\lim_{p\\to\\infty}\\text{SP}(p)=\\frac{1}{f}\n$$\n\nBeispiel: Für $f=\\frac{1}{8}$ ist der maximale Speedup\n$$\n\\frac{1}{f}=8.\n$$\n\nDarum hat die Amdahl-Kurve eine **horizontale Asymptote**."
+  },
+  {
+    "front": "[2026-03-31] Eine Aufgabe ist zu $75\\%$ parallelisierbar, $T_1=4\\text{ h}$ und $T_p=2\\text{ h}$. Wie viele Prozessoren braucht man mindestens?",
+    "back": "Zuerst:\n- Parallelisierbar: $1-f=0{,}75$\n- Also: $f=0{,}25$\n- Speedup:\n$$\n\\text{SP}=\\frac{T_1}{T_p}=\\frac{4}{2}=2\n$$\n\nMit Amdahl:\n$$\n2=\\frac{1}{0{,}25+\\frac{0{,}75}{p}}\n$$\n\nUmformen:\n$$\n0{,}25+\\frac{0{,}75}{p}=0{,}5\n$$\n$$\n\\frac{0{,}75}{p}=0{,}25\n$$\n$$\np=3\n$$\n\n**Minimale Prozessorzahl: $3$**."
+  },
+  {
+    "front": "[2026-03-31] Was folgt aus $f=0$ für den Speedup nach **Amdahl** und **Gustafson**?",
+    "back": "Wenn **kein sequentieller Anteil** existiert, dann ist alles parallelisierbar.\n\n- Amdahl:\n$$\n\\text{SP}(p)\\le \\frac{1}{0+\\frac{1}{p}}=p\n$$\n\n- Gustafson:\n$$\n\\text{SP}(p)=0+p(1-0)=p\n$$\n\nAlso gilt in beiden Modellen:\n$$\n\\text{SP}(p)=p\n$$\n\nInterpretation: Der theoretische Speedup wächst mit der Prozessorzahl **unbegrenzt**, wenn $p$ wächst."
+  },
+  {
+    "front": "[2026-03-31] Woran erkennt man in einem Graphen die Amdahl-Kurve für $f=\\frac{1}{8}$?",
+    "back": "Man berechnet zuerst die Grenzgeschwindigkeit:\n$$\n\\lim_{p\\to\\infty}\\text{SP}(p)=\\frac{1}{f}=\\frac{1}{1/8}=8\n$$\n\nGesucht ist also die Kurve, die sich für große $p$ einer **horizontalen Asymptote bei $8$** annähert.\n\nWichtig:\n- **Nicht linear** wachsend\n- **Nicht unbegrenzt** steigend\n- Sondern **abflachend** gegen $8$\n\nGenau das ist das typische Amdahl-Verhalten bei $f>0$."
+  },
+  {
+    "front": "[2026-03-31] Wie zeichnet man die **Gustafson**-Gerade für $f=\\frac{1}{2}$?",
+    "back": "Einsetzen in\n$$\n\\text{SP}(p)=f+p(1-f)\n$$\n\nergibt:\n$$\n\\text{SP}(p)=\\frac{1}{2}+p\\left(1-\\frac{1}{2}\\right)=\\frac{1}{2}+\\frac{p}{2}\n$$\n\nZwei einfache Punkte:\n- Bei $p=1$:\n$$\n\\text{SP}(1)=1\n$$\n- Bei $p=3$:\n$$\n\\text{SP}(3)=2\n$$\n\nDamit erhält man eine **Gerade** durch die Punkte $(1,1)$ und $(3,2)$.\n\nWichtig: Gustafson liefert bei festem $f$ eine **lineare** Funktion in $p$."
+  },
+  {
+    "front": "[2026-03-31] Wann ist eine Pipeline **balanced**, und was ist der häufige Prüfungsfehler dabei?",
+    "back": "Eine Pipeline ist **balanced**, wenn **alle Stages gleich lang** sind.\n\nAlso nicht:\n- „ungefähr gleich“\n- „ähnlich schnell“\n- „keine offensichtliche Lücke“\n\nsondern exakt nach der in der Vorlesung verwendeten Definition:\n$$\nt_1=t_2=\\dots=t_n\n$$\n\nDer typische Fehler ist, eine Pipeline schon dann als balanced zu bezeichnen, wenn sie „gut ausgelastet aussieht“. In dieser Vorlesung zählt aber nur die **Gleichheit der Stage-Zeiten**.\n\nHinweis: In älteren Prüfungen können andere Definitionen verwendet worden sein."
+  },
+  {
+    "front": "[2026-03-31] Was ist der Unterschied zwischen **Latenz** und **Throughput** bei einer Pipeline?",
+    "back": "**Latenz** ist die Zeit, bis **ein einzelnes Item** die gesamte Pipeline durchlaufen hat.\n\n**Throughput** ist die Rate, mit der im **steady state** fertige Items herauskommen.\n\nBei einer Pipeline mit Stage-Zeiten $t_1,\\dots,t_n$ gilt:\n- Latenz:\n$$\n\\sum_i t_i\n$$\n- Throughput:\n$$\n\\frac{1}{\\max_i t_i}\n$$\n\nDer Unterschied ist wichtig:\n- Latenz betrachtet **ein Item von Anfang bis Ende**\n- Throughput betrachtet **viele Items im Fließbetrieb**"
+  },
+  {
+    "front": "[2026-03-31] Eine Pipeline hat Stage-Zeiten $[40,50,30,40]\\text{ ms}$. Wie groß ist die Latenz für ein Bild?",
+    "back": "Die **Latenz** ist die Summe aller Stage-Zeiten:\n$$\n40+50+30+40=160\\text{ ms}\n$$\n\nAlso braucht **ein einzelnes Bild** insgesamt\n$$\n160\\text{ ms}.\n$$\n\nWichtig: Das ist unabhängig davon, dass später im steady state alle $50\\text{ ms}$ ein Bild fertig werden kann. Diese $50\\text{ ms}$ betreffen den **Throughput**, nicht die Latenz."
+  },
+  {
+    "front": "[2026-03-31] Warum bestimmt in einer Pipeline die längste Stage den **Throughput**?",
+    "back": "Weil die langsamste Stage das **Bottleneck** ist. Selbst wenn alle anderen Stages schneller sind, kann die Pipeline insgesamt nicht schneller neue Ergebnisse liefern als diese langsamste Stage.\n\nFormal:\n$$\n\\text{Throughput}=\\frac{1}{\\max(\\text{Stage-Zeit})}\n$$\n\nFür $[40,50,30,40]\\text{ ms}$ ist die längste Stage $50\\text{ ms}$, also:\n$$\n\\text{Throughput}=\\frac{1}{50\\text{ ms}}\n$$\n\nInterpretation: Im steady state wird höchstens **alle $50\\text{ ms}$** ein neues Bild fertig."
+  },
+  {
+    "front": "[2026-03-31] Wie berechnet man die Zeit für $100$ Bilder in der Pipeline $[40,50,30,40]\\text{ ms}$?",
+    "back": "Zuerst braucht das **erste Bild** die volle Latenz:\n$$\n40+50+30+40=160\\text{ ms}\n$$\n\nDanach kommt im steady state wegen der längsten Stage alle\n$$\n50\\text{ ms}\n$$\nein weiteres Bild heraus.\n\nFür insgesamt $100$ Bilder:\n- erstes Bild: $160\\text{ ms}$\n- weitere $99$ Bilder: $99\\cdot 50\\text{ ms}$\n\nAlso:\n$$\nT=160+99\\cdot 50=160+4950=5110\\text{ ms}\n$$\n\n**Ergebnis: $5110\\text{ ms}$**."
+  },
+  {
+    "front": "[2026-03-31] Warum bringt das Duplizieren einer einzelnen Stage keinen Throughput-Gewinn, wenn es zwei Bottlenecks mit $50\\text{ ms}$ gibt?",
+    "back": "Wenn zwei Stages beide die maximale Zeit haben, z. B. $50\\text{ ms}$ und $50\\text{ ms}$, dann ist **nicht nur eine** Stage der Engpass.\n\nDupliziert man nur eine davon, bleibt die andere weiterhin bei\n$$\n50\\text{ ms}\n$$\nund bestimmt damit immer noch den Throughput.\n\nAlso:\n- Ein Bottleneck entfernt\n- Das andere Bottleneck bleibt\n- Gesamt-Throughput verbessert sich **nicht**\n\nDas ist der typische Gotcha bei Pipeline-Optimierung: Man muss den **tatsächlichen verbleibenden Engpass** betrachten, nicht nur irgendeine langsame Stage."
+  },
+  {
+    "front": "[2026-03-31] Warum ist im **Task Graph** der kritische Pfad die Untergrenze für die Laufzeit?",
+    "back": "Der **kritische Pfad** ist der längste Pfad im DAG, gemessen als Summe der Knotenzeiten. Alle Tasks auf diesem Pfad müssen wegen ihrer Abhängigkeiten in genau dieser Reihenfolge ausgeführt werden.\n\nDarum kann keine Ausführung schneller sein als:\n$$\nT_\\infty = \\text{Länge des kritischen Pfads}\n$$\n\nMehr Prozessoren helfen hier nicht, weil die Abhängigkeiten keine zusätzliche Parallelität erlauben.\n\nDer kritische Pfad ist also die **harte Untergrenze** der Laufzeit."
+  },
+  {
+    "front": "[2026-03-31] Wie berechnet man den maximalen Speedup eines Task Graphs aus $T_1$ und $T_\\infty$?",
+    "back": "Man verwendet:\n$$\n\\text{SP}_{\\max}=\\frac{T_1}{T_\\infty}\n$$\n\nDabei ist:\n- $T_1$: gesamte sequentielle Laufzeit\n- $T_\\infty$: Laufzeit mit unendlich vielen Prozessoren, also die Länge des kritischen Pfads\n\nBeispiel aus der Aufgabe:\n$$\nT_1=360,\\quad T_\\infty=180\n$$\n\nDann:\n$$\n\\text{SP}_{\\max}=\\frac{360}{180}=2\n$$\n\nInterpretation: Selbst mit beliebig vielen Prozessoren ist ein Speedup größer als $2$ unmöglich."
+  },
+  {
+    "front": "[2026-03-31] Warum muss `wait()` in Java in einem `while` statt in einem `if` stehen?",
+    "back": "Weil ein Thread aus `wait()` **aufwachen kann, obwohl die Bedingung noch nicht erfüllt ist**. Das kann durch **spurious wakeups** oder durch konkurrierende Threads passieren.\n\nDarum ist korrekt:\n```java\nwhile (!condition) wait();\n```\n\nund nicht:\n```java\nif (!condition) wait();\n```\n\nMit `if` würde der Thread nach dem Aufwachen einfach weitermachen, auch wenn der Zustand inzwischen wieder falsch ist. Das kann zu falschem Verhalten oder Race Conditions führen.\n\n**Regel:** Nach jedem Aufwachen Bedingung **neu prüfen**."
   }
 ]

@@ -1,5 +1,5 @@
 {
-  "generated": "2026-03-29T19:13:10.168Z",
+  "generated": "2026-04-11T18:28:38.610Z",
   "model": "gpt-5.4",
   "cardsPerLectureTarget": 15,
   "format": "markdown->parser->json",
@@ -17,16 +17,16 @@
       "name": "Parallele Programmierung",
       "file": "252-0029-00L.json",
       "apkg": null,
-      "lectures": 11,
-      "cards": 165
+      "lectures": 12,
+      "cards": 180
     },
     {
       "id": "252-0030-00L",
       "name": "Algorithmen und Wahrscheinlichkeit",
       "file": "252-0030-00L.json",
       "apkg": null,
-      "lectures": 12,
-      "cards": 180
+      "lectures": 13,
+      "cards": 195
     },
     {
       "id": "401-0212-16L",
