@@ -838,5 +838,125 @@
   {
     "front": "[2026-04-02] Welche Rechenregel für Erwartungswerte gilt immer, und welche braucht Unabhängigkeit?",
     "back": "Die **Linearität des Erwartungswerts** gilt immer:\n$$\n\\mathbb E[X+Y]=\\mathbb E[X]+\\mathbb E[Y].\n$$\n\nDafür ist **keine Unabhängigkeit** nötig.\n\nDagegen gilt die Produktregel\n$$\n\\mathbb E[XY]=\\mathbb E[X]\\mathbb E[Y]\n$$\nim Allgemeinen **nur bei Unabhängigkeit**.\n\nDer Unterschied ist wichtig:\n- Summen verhalten sich beim Erwartungswert immer linear.\n- Produkte lassen sich nur bei faktorisierbarer gemeinsamer Verteilung trennen.\n\nDiese Unterscheidung ist eine typische Prüfungsfalle."
+  },
+  {
+    "front": "[2026-04-14] Warum ist die **Waldsche Identität** nützlich, und unter welchen Voraussetzungen darf man sie anwenden?",
+    "back": "Für eine zufällige Summe\n$$\nZ=\\sum_{i=1}^{N} X_i\n$$\nliefert die **Waldsche Identität**\n$$\n\\mathbb{E}[Z]=\\mathbb{E}[N]\\cdot \\mathbb{E}[X].\n$$\n\nSie ist nützlich, weil man den Erwartungswert einer Summe mit **zufälliger Anzahl Summanden** berechnen kann, ohne die gesamte Verteilung von $Z$ auszurechnen.\n\nWichtige Voraussetzungen:\n- $N$ ist eine $\\mathbb{N}$-wertige Zufallsvariable.\n- $X_1,X_2,\\dots$ sind **i.i.d.** Kopien von $X$.\n- Die Summanden sind vom Mechanismus, der $N$ bestimmt, passend **unabhängig**.\n\nOhne diese Unabhängigkeit kann der Schritt\n$$\n\\mathbb{E}[X_i\\mid N=n]=\\mathbb{E}[X]\n$$\nscheitern, und damit auch die Formel."
+  },
+  {
+    "front": "[2026-04-14] Warum reicht bei $\\mathbb{E}[X+Y]$ keine Unabhängigkeit, bei $\\mathbb{E}[XY]$ aber schon?",
+    "back": "Für Summen gilt immer die **Linearität des Erwartungswerts**:\n$$\n\\mathbb{E}[X+Y]=\\mathbb{E}[X]+\\mathbb{E}[Y].\n$$\nDafür braucht man **keine** Unabhängigkeit.\n\nFür Produkte gilt dagegen im Allgemeinen **nicht**\n$$\n\\mathbb{E}[XY]=\\mathbb{E}[X]\\mathbb{E}[Y].\n$$\nDiese Faktorzerlegung ist typisch für **unabhängige** Zufallsvariablen.\n\nDer Unterschied ist konzeptionell:\n- Bei Summen verteilt sich der Erwartungswert immer linear.\n- Bei Produkten koppeln sich die Variablen; nur Unabhängigkeit trennt diese Kopplung.\n\nMerksatz:\n- **Summe:** Erwartungswert addiert sich immer.\n- **Produkt:** Erwartungswert faktorisiert nur bei Unabhängigkeit."
+  },
+  {
+    "front": "[2026-04-14] Wie erhält man **Randverteilungen** aus einer gemeinsamen Verteilung, und was sagt das über Unabhängigkeit aus?",
+    "back": "Die **gemeinsame Verteilung** von $X,Y$ beschreibt Wahrscheinlichkeiten für Wertepaaren $(x,y)$. Die **Randverteilungen** erhält man, indem man über die andere Variable aufsummiert bzw. integriert.\n\nDiskret:\n$$\n\\Pr(X=x)=\\sum_y \\Pr(X=x,Y=y).\n$$\n\nStetig:\n$$\nf_X(x)=\\int f_{X,Y}(x,y)\\,dy.\n$$\n\n**Unabhängigkeit** bedeutet dann:\n$$\n\\Pr(X=x,Y=y)=\\Pr(X=x)\\Pr(Y=y)\n$$\nbzw. bei Dichten\n$$\nf_{X,Y}(x,y)=f_X(x)f_Y(y).\n$$\n\nDas ist wichtig, weil viele Rechenregeln genau auf dieser Faktorzerlegung beruhen, etwa\n$$\n\\mathbb{E}[XY]=\\mathbb{E}[X]\\mathbb{E}[Y].\n$$"
+  },
+  {
+    "front": "[2026-04-14] Was bedeutet die Notation **$X\\mid A$**, und wann ist sie überhaupt sinnvoll?",
+    "back": "**$X\\mid A$** bedeutet: dieselbe Zufallsvariable $X$, aber betrachtet unter der Bedingung, dass das Ereignis $A$ eingetreten ist.\n\nFormal:\n$$\n\\Pr(X\\mid A=\\alpha)=\\Pr(X=\\alpha\\mid A).\n$$\n\nSinnvoll ist das nur, wenn\n$$\n\\Pr(A)>0,\n$$\ndenn sonst ist die bedingte Wahrscheinlichkeit auf $A$ nicht definiert.\n\nDer zugehörige bedingte Erwartungswert ist\n$$\n\\mathbb{E}[X\\mid A]=\\sum_{\\alpha}\\alpha\\,\\Pr(X=\\alpha\\mid A).\n$$\n\nIntuitiv: Man rechnet so, als wäre der Wahrscheinlichkeitsraum auf $A$ eingeschränkt und anschließend neu normiert."
+  },
+  {
+    "front": "[2026-04-14] Wie lautet die **totale Erwartung** auf einer Partition, und warum ist sie das Analogon zur totalen Wahrscheinlichkeit?",
+    "back": "Für paarweise disjunkte Ereignisse $A_1,\\dots,A_n$ mit\n$$\n\\bigcup_{i=1}^n A_i=\\Omega\n\\quad\\text{und}\\quad\n\\Pr(A_i)>0\n$$\ngilt:\n$$\n\\mathbb{E}[X]=\\sum_{i=1}^n \\mathbb{E}[X\\mid A_i]\\Pr(A_i).\n$$\n\nDas ist das Erwartungswert-Analogon zur **totalen Wahrscheinlichkeit**, weil man zuerst nach Fällen $A_i$ zerlegt und dann mit deren Wahrscheinlichkeiten gewichtet.\n\nDie Idee ist:\n$$\n\\Pr(X=\\alpha)=\\sum_i \\Pr(X=\\alpha\\mid A_i)\\Pr(A_i),\n$$\nund nach Einsetzen in die Definition von $\\mathbb{E}[X]$ entsteht die Formel.\n\nPraktisch ist das eine systematische **Fallunterscheidung für Erwartungswerte**."
+  },
+  {
+    "front": "[2026-04-14] Warum ist im Beweis von Wald das Konditionieren auf $N=n$ der entscheidende Trick?",
+    "back": "Für\n$$\nZ=\\sum_{i=1}^{N}X_i\n$$\nist das Problem, dass die Anzahl Summanden zufällig ist. Konditioniert man aber auf $N=n$, wird daraus\n$$\nZ=X_1+\\dots+X_n,\n$$\nalso eine Summe mit **fester** Länge.\n\nDann gilt:\n$$\n\\mathbb{E}[Z\\mid N=n]\n=\n\\mathbb{E}[X_1+\\dots+X_n\\mid N=n]\n=\n\\sum_{i=1}^n \\mathbb{E}[X_i\\mid N=n].\n$$\n\nUnter den Unabhängigkeitsannahmen folgt\n$$\n\\mathbb{E}[X_i\\mid N=n]=\\mathbb{E}[X],\n$$\nalso\n$$\n\\mathbb{E}[Z\\mid N=n]=n\\mathbb{E}[X].\n$$\n\nDanach setzt man nur noch die totale Erwartung ein:\n$$\n\\mathbb{E}[Z]=\\sum_n \\mathbb{E}[Z\\mid N=n]\\Pr(N=n).\n$$"
+  },
+  {
+    "front": "[2026-04-14] Rechne das Würfel–Münze-Beispiel mit Wald aus: Wie groß ist die erwartete Anzahl Köpfe?",
+    "back": "Es sei:\n- $N=$ Augenzahl eines fairen Würfels,\n- danach werden $N$ faire Münzwürfe gemacht,\n- $Z=$ Anzahl Köpfe.\n\nDann ist\n$$\n\\mathbb{E}[N]=\\frac{1+2+3+4+5+6}{6}=\\frac{7}{2}.\n$$\n\nEin einzelner Münzwurf als Indikator $X$ für Kopf hat\n$$\n\\mathbb{E}[X]=\\frac{1}{2}.\n$$\n\nMit **Wald**:\n$$\n\\mathbb{E}[Z]=\\mathbb{E}[N]\\mathbb{E}[X]\n=\\frac{7}{2}\\cdot \\frac{1}{2}\n=\\frac{7}{4}.\n$$\n\nAlso ist die erwartete Anzahl Köpfe\n$$\n\\boxed{\\frac{7}{4}}.\n$$"
+  },
+  {
+    "front": "[2026-04-14] Warum ist im Beispiel „bis zum ersten Kopf, dann nochmal $N$ Würfe“ die Verteilung von $N$ geometrisch?",
+    "back": "$N$ ist die Anzahl Würfe bis zum **ersten Erfolg** bei einer fairen Münze. Genau das ist die Definition der **geometrischen Verteilung** mit Parameter\n$$\np=\\frac{1}{2}.\n$$\n\nAlso gilt:\n$$\n\\Pr(N=i)=\\left(1-\\frac12\\right)^{i-1}\\frac12\n=\\left(\\frac12\\right)^i.\n$$\n\nDer Erwartungswert einer geometrischen Verteilung ist\n$$\n\\mathbb{E}[N]=\\frac{1}{p}=2.\n$$\n\nWenn in Phase 2 dann nochmals $N$ faire Würfe gemacht werden und $Z$ die Zahl der Köpfe ist, folgt mit $X\\sim \\mathrm{Bernoulli}(1/2)$:\n$$\n\\mathbb{E}[Z]=\\mathbb{E}[N]\\mathbb{E}[X]\n=2\\cdot \\frac12=1.\n$$"
+  },
+  {
+    "front": "[2026-04-14] Wie kann man die Waldsche Identität auf Laufzeiten randomisierter Algorithmen anwenden?",
+    "back": "Wenn ein Algorithmus eine randomisierte Subroutine zufällig oft aufruft, kann man modellieren:\n- $N=$ Anzahl der Aufrufe,\n- $X_i=$ Laufzeit des $i$-ten Aufrufs,\n- Gesamtzeit\n$$\nZ=\\sum_{i=1}^{N} X_i.\n$$\n\nUnter passenden Voraussetzungen, insbesondere:\n- die Aufrufe verhalten sich wie **i.i.d.** Kopien,\n- ihre Laufzeiten sind passend **unabhängig** von $N$,\n\ngilt:\n$$\n\\mathbb{E}[Z]=\\mathbb{E}[N]\\mathbb{E}[X].\n$$\n\nDas ist stark, weil man die erwartete Gesamtlaufzeit in zwei einfachere Größen zerlegt:\n- erwartete Anzahl Aufrufe,\n- erwartete Kosten pro Aufruf.\n\nDie typische Falle ist, dass spätere Aufrufe vom bisherigen Verlauf abhängen; dann ist Wald nicht automatisch anwendbar."
+  },
+  {
+    "front": "[2026-04-14] Warum gilt die **Markov-Ungleichung** nur für nichtnegative Zufallsvariablen?",
+    "back": "Die **Markov-Ungleichung**\n$$\n\\Pr(X\\ge t)\\le \\frac{\\mathbb{E}[X]}{t}\n\\quad (t>0)\n$$\nsetzt voraus, dass\n$$\nX\\ge 0.\n$$\n\nIm Beweis benutzt man nämlich:\n- der Anteil mit Werten $<t$ trägt **nichtnegativ** zum Erwartungswert bei,\n- auf dem Ereignis $X\\ge t$ gilt mindestens Beitrag $t$.\n\nOhne Nichtnegativität kann ein negativer Teil den Erwartungswert stark nach unten ziehen, obwohl $\\Pr(X\\ge t)$ groß ist.\n\nDeshalb kann z.B. aus\n$$\n\\Pr(X\\ge 5)\\ge \\frac15\n$$\nfür **beliebiges** $X$ nicht auf\n$$\n\\mathbb{E}[X]\\ge 1\n$$\ngeschlossen werden: Der Rest der Verteilung könnte sehr negativ sein."
+  },
+  {
+    "front": "[2026-04-14] Welche Clicker-Aussage ist bei Markov wahr: $\\Pr(X\\ge 5)\\ge 1/5 \\Rightarrow \\mathbb{E}[X]\\ge 1$?",
+    "back": "Für **beliebiges** $X$ ist die Aussage **falsch**.\n\nGrund: Auch wenn mit Wahrscheinlichkeit mindestens $1/5$ der Wert mindestens $5$ ist, kann der Rest der Verteilung sehr negativ sein und den Erwartungswert unter $1$ drücken.\n\nFür **nichtnegative** $X$ ist die Aussage **wahr**. Dann gilt nämlich:\n- Auf einem Anteil von mindestens $1/5$ ist $X\\ge 5$,\n- also trägt dieser Teil mindestens\n$$\n5\\cdot \\frac15 = 1\n$$\nzum Erwartungswert bei,\n- und der Rest trägt wegen $X\\ge 0$ nichts Negatives bei.\n\nDaher:\n$$\n\\mathbb{E}[X]\\ge 1.\n$$\n\nDas ist genau die Intuition hinter Markov."
+  },
+  {
+    "front": "[2026-04-14] Welche Clicker-Aussage ist falsch: $\\Pr(X\\le 5)\\ge 1/5 \\Rightarrow \\mathbb{E}[X]\\le 1$?",
+    "back": "Diese Aussage ist sowohl für **beliebige** als auch für **nichtnegative** Zufallsvariablen **falsch**.\n\nWarum? Die Information\n$$\n\\Pr(X\\le 5)\\ge \\frac15\n$$\nsagt nur, dass mindestens ein Fünftel der Masse bei kleinen Werten liegt. Über die restlichen $4/5$ sagt sie fast nichts.\n\nDiese restliche Wahrscheinlichkeit kann auf sehr großen Werten liegen, sodass der Erwartungswert beliebig groß wird.\n\nBeispielidee:\n- Mit Wahrscheinlichkeit $1/5$ sei $X=0$,\n- mit Wahrscheinlichkeit $4/5$ sei $X=1000$.\n\nDann gilt\n$$\n\\Pr(X\\le 5)=\\frac15,\n$$\naber\n$$\n\\mathbb{E}[X]=0\\cdot \\frac15 + 1000\\cdot \\frac45 = 800.\n$$\n\nAlso folgt aus einer unteren Schranke auf $\\Pr(X\\le 5)$ keine sinnvolle obere Schranke auf $\\mathbb{E}[X]$."
+  },
+  {
+    "front": "[2026-04-14] Wann ist die Markov-Schranke scharf, und was ist die Extremform der Verteilung?",
+    "back": "Die **Markov-Ungleichung**\n$$\n\\Pr(X\\ge t)\\le \\frac{\\mathbb{E}[X]}{t}\n$$\nwird scharf, wenn möglichst wenig „Erwartungswert verschwendet“ wird.\n\nDas passiert im Extremfall, wenn $X$ nur die Werte\n$$\n0 \\quad\\text{und}\\quad t\n$$\nannimmt.\n\nDann ist\n$$\n\\mathbb{E}[X]=t\\Pr(X=t)=t\\Pr(X\\ge t),\n$$\nalso\n$$\n\\Pr(X\\ge t)=\\frac{\\mathbb{E}[X]}{t}.\n$$\n\nDie Ungleichung wird also zur Gleichheit.\n\nIntuition: Alle Masse oberhalb der Schwelle sitzt genau **auf** der Schwelle $t$, und unterhalb davon gibt es nur $0$. So entstehen keine zusätzlichen Beiträge zum Erwartungswert, die die Schranke lockerer machen würden."
+  },
+  {
+    "front": "[2026-04-14] Wie leitet man die **Tschebyscheff-Ungleichung** aus Markov her?",
+    "back": "Man definiert die nichtnegative Zufallsvariable\n$$\nY=(X-\\mathbb{E}[X])^2 \\ge 0.\n$$\n\nDann gilt die Ereignisäquivalenz:\n$$\n|X-\\mathbb{E}[X]|\\ge t\n\\iff\n(X-\\mathbb{E}[X])^2\\ge t^2\n\\iff\nY\\ge t^2.\n$$\n\nAuf $Y$ kann man **Markov** anwenden:\n$$\n\\Pr(Y\\ge t^2)\\le \\frac{\\mathbb{E}[Y]}{t^2}.\n$$\n\nDa\n$$\n\\mathbb{E}[Y]=\\mathrm{Var}(X),\n$$\nfolgt\n$$\n\\Pr(|X-\\mathbb{E}[X]|\\ge t)\\le \\frac{\\mathrm{Var}(X)}{t^2}.\n$$\n\nDer Trick ist also nicht eine neue Beweismethode, sondern die richtige Wahl einer **nichtnegativen** Hilfsvariablen."
+  },
+  {
+    "front": "[2026-04-14] Wann ist die Tschebyscheff-Schranke informativ, und wann ist sie nur trivial?",
+    "back": "Die **Tschebyscheff-Ungleichung**\n$$\n\\Pr(|X-\\mathbb{E}[X]|\\ge t)\\le \\frac{\\mathrm{Var}(X)}{t^2}\n$$\nist nur dann informativ, wenn die rechte Seite deutlich kleiner als $1$ ist.\n\nSchreibt man\n$$\nt=c\\sqrt{\\mathrm{Var}(X)},\n$$\nso erhält man\n$$\n\\Pr\\!\\left(|X-\\mathbb{E}[X]|\\ge c\\sqrt{\\mathrm{Var}(X)}\\right)\\le \\frac{1}{c^2}.\n$$\n\nDaraus sieht man:\n- Für $c<1$ ist die Schranke $\\ge 1$ und damit meist **trivial**.\n- Interessant wird sie typischerweise erst für Abweichungen von mindestens etwa **einer Standardabweichung** oder mehr.\n\nTschebyscheff ist also ein grobes, aber sehr allgemeines Werkzeug."
+  },
+  {
+    "front": "[2026-04-16] Warum ist die Markov-Ungleichung oft zu grob, obwohl sie immer leicht anwendbar ist?",
+    "back": "Die **Markov-Ungleichung** nutzt nur den Erwartungswert einer **nichtnegativen** Zufallsvariable:\n$$\nP(X\\ge t)\\le \\frac{\\mathbb{E}[X]}{t}.\n$$\nSie ignoriert die gesamte Verteilungsform, insbesondere Varianz und Unabhängigkeit.\n\nDarum kann sie extrem schwach sein: Für $X\\sim \\mathrm{Bin}(n,1/2)$ gilt\n$$\nP(X\\ge n)\\le \\frac{n/2}{n}=\\frac12,\n$$\nobwohl tatsächlich\n$$\nP(X\\ge n)=P(X=n)=2^{-n}\n$$\nist.\n\n**Kernpunkt:** Markov ist sehr allgemein, aber diese Allgemeinheit kostet Schärfe. Sie ist nützlich als Basistool oder Beweisschritt, aber selten die beste Endschranke."
+  },
+  {
+    "front": "[2026-04-16] Wann ist Chebyshev stärker als Markov, und welche zusätzliche Information nutzt sie?",
+    "back": "**Chebyshev** ist stärker, wenn man nicht nur den Erwartungswert, sondern auch die **Varianz** kennt. Sie beschränkt Abweichungen vom Mittelwert:\n$$\nP(|X-\\mathbb{E}[X]|\\ge t)\\le \\frac{\\mathrm{Var}(X)}{t^2}.\n$$\n\nIm Gegensatz zu **Markov** betrachtet sie also die Streuung der Verteilung. Das macht sie oft deutlich besser, besonders wenn die Varianz klein ist.\n\nBeispiel für $X\\sim \\mathrm{Bin}(n,1/2)$:\n$$\n\\mathrm{Var}(X)=\\frac n4.\n$$\nFür das Ereignis $X\\ge n$ gilt\n$$\nP(X\\ge n)\\le P\\left(|X-n/2|\\ge n/2\\right)\\le \\frac{n/4}{(n/2)^2}=\\frac1n.\n$$\n\nDas ist besser als Markovs $\\frac12$, aber immer noch viel schwächer als die exakte Wahrscheinlichkeit $2^{-n}$."
+  },
+  {
+    "front": "[2026-04-16] Warum ist bei $X\\sim \\mathrm{Bin}(n,1/2)$ die Wahrscheinlichkeit $P(X\\ge n)$ genau $2^{-n}$?",
+    "back": "Da **$X$ die Anzahl Köpfe in $n$ fairen Münzwürfen** zählt, kann $X$ nie größer als $n$ sein. Also ist\n$$\nX\\ge n \\iff X=n.\n$$\n\nDas Ereignis $X=n$ bedeutet: Alle $n$ Würfe sind Kopf. Da die Würfe unabhängig sind und jeder Wurf mit Wahrscheinlichkeit $\\frac12$ Kopf ist, gilt\n$$\nP(X=n)=\\left(\\frac12\\right)^n=2^{-n}.\n$$\n\nDer wichtige Punkt ist also nicht nur die Binomialverteilung, sondern die Beobachtung, dass **$X\\ge n$ hier genau ein einziges Extremereignis** beschreibt."
+  },
+  {
+    "front": "[2026-04-16] Warum motiviert das Münzbeispiel den Einsatz von Chernoff-Schranken?",
+    "back": "Im Münzbeispiel mit $X\\sim \\mathrm{Bin}(n,1/2)$ erhält man:\n- **Markov:** $P(X\\ge n)\\le \\frac12$\n- **Chebyshev:** $P(X\\ge n)\\le \\frac1n$\n- **exakt:** $P(X\\ge n)=2^{-n}$\n\nDie exakte Wahrscheinlichkeit ist also **exponentiell klein**, während Markov und Chebyshev nur konstante bzw. polynomielle Schranken liefern.\n\n**Motivation für Chernoff:** Bei Summen unabhängiger Bernoulli-Variablen will man Schranken, die diese Struktur ausnutzen und ebenfalls **exponentiell kleine** Abweichungswahrscheinlichkeiten liefern.\n\nChernoff ist genau dafür gemacht:\n- Summe unabhängiger Indikatoren/Bernoullis\n- starke Konzentration um den Erwartungswert\n- exponentielle statt nur polynomielle Schranken"
+  },
+  {
+    "front": "[2026-04-16] In welchem Setting darf man Chernoff-Schranken anwenden?",
+    "back": "Die Vorlesung betrachtet das Setting\n$$\nX=\\sum_{i=1}^n X_i,\n$$\nwobei die $X_i$ **unabhängige Bernoulli-Zufallsvariablen** sind, also\n$$\nP(X_i=1)=p_i,\\qquad P(X_i=0)=1-p_i.\n$$\n\nWichtig:\n- Die $X_i$ müssen **unabhängig** sein.\n- Die $p_i$ müssen **nicht gleich** sein.\n\nDann gilt\n$$\n\\mathbb{E}[X]=\\sum_{i=1}^n p_i.\n$$\n\nDer Spezialfall $p_1=\\dots=p_n=p$ ist die **Binomialverteilung**:\n$$\nX\\sim \\mathrm{Bin}(n,p).\n$$\n\nOhne Unabhängigkeit darf man die Chernoff-Schranken aus der Vorlesung nicht einfach anwenden."
+  },
+  {
+    "front": "[2026-04-16] Was ist der entscheidende Unterschied zwischen Chebyshev- und Chernoff-Schranken?",
+    "back": "Der zentrale Unterschied ist die **Abfallgeschwindigkeit** der Schranke.\n\n- **Chebyshev** liefert typischerweise nur eine **polynomielle** Schranke:\n  $$\n  P(|X-\\mathbb{E}[X]|\\ge t)\\le \\frac{\\mathrm{Var}(X)}{t^2}.\n  $$\n- **Chernoff** liefert für Summen unabhängiger Bernoulli-Variablen typischerweise eine **exponentielle** Schranke in der Abweichung bzw. in $n$.\n\nDas ist besonders wichtig bei großen Stichproben oder vielen unabhängigen Zufallsexperimenten: Exponentielle Schranken werden sehr schnell klein, polynomielle viel langsamer.\n\n**Merksatz:**  \nChebyshev nutzt nur Mittelwert und Varianz. Chernoff nutzt zusätzlich die **Produktstruktur durch Unabhängigkeit** und ist deshalb viel schärfer."
+  },
+  {
+    "front": "[2026-04-16] Warum ist Unabhängigkeit im Chernoff-Beweis unverzichtbar?",
+    "back": "Im Beweis wird für\n$$\nX=\\sum_{i=1}^n X_i\n$$\ndie transformierte Variable\n$$\n4^X=4^{\\sum_i X_i}=\\prod_{i=1}^n 4^{X_i}\n$$\nbetrachtet.\n\nDann braucht man den Schritt\n$$\n\\mathbb{E}\\!\\left[\\prod_{i=1}^n 4^{X_i}\\right]\n=\n\\prod_{i=1}^n \\mathbb{E}[4^{X_i}].\n$$\n\nDieser Schritt gilt nur, wenn die Zufallsvariablen $4^{X_i}$ unabhängig sind. Das folgt aus der Unabhängigkeit der $X_i$, weil $4^{X_i}$ eine Funktion von $X_i$ ist.\n\n**Ohne Unabhängigkeit** darf man diese Faktorisierung nicht machen. Dann bricht genau der Mechanismus zusammen, der die exponentielle Schranke erzeugt."
+  },
+  {
+    "front": "[2026-04-16] Warum wendet der Chernoff-Beweis Markov auf $4^X$ statt direkt auf $X$ an?",
+    "back": "Direkt auf $X$ angewandt würde Markov nur liefern:\n$$\nP(X\\ge t)\\le \\frac{\\mathbb{E}[X]}{t},\n$$\nalso wieder nur eine grobe, polynomielle Schranke.\n\nDer Trick ist, eine **monoton wachsende Transformation** zu wählen, hier\n$$\nY=4^X.\n$$\nDann gilt\n$$\nX\\ge t \\iff 4^X\\ge 4^t,\n$$\nund Markov ergibt\n$$\nP(X\\ge t)\\le \\frac{\\mathbb{E}[4^X]}{4^t}.\n$$\n\nJetzt steht die Schwelle $t$ im Exponenten von $4^t$. Genau das eröffnet die Möglichkeit, eine **exponentielle** Schranke in $t$ zu erhalten.\n\n**Idee:** Nicht Markov selbst ist stark, sondern die geschickte Wahl der transformierten Zufallsvariable."
+  },
+  {
+    "front": "[2026-04-16] Rechne $\\mathbb{E}[4^{X_i}]$ für eine Bernoulli-Zufallsvariable $X_i$ mit Parameter $p_i$ aus.",
+    "back": "Für eine **Bernoulli-Zufallsvariable** gilt:\n$$\nX_i=\n\\begin{cases}\n1 & \\text{mit Wahrscheinlichkeit } p_i,\\\\\n0 & \\text{mit Wahrscheinlichkeit } 1-p_i.\n\\end{cases}\n$$\n\nDaher nimmt $4^{X_i}$ die Werte\n$$\n4^{X_i}=\n\\begin{cases}\n4 & \\text{mit Wahrscheinlichkeit } p_i,\\\\\n1 & \\text{mit Wahrscheinlichkeit } 1-p_i.\n\\end{cases}\n$$\n\nAlso:\n$$\n\\mathbb{E}[4^{X_i}]\n=4p_i+1\\cdot(1-p_i)\n=1+3p_i.\n$$\n\nMit der Standardabschätzung\n$$\n1+\\alpha\\le e^\\alpha\n$$\nfolgt\n$$\n\\mathbb{E}[4^{X_i}] = 1+3p_i \\le e^{3p_i}.\n$$\n\nDieser Schritt ist zentral, um später\n$$\n\\mathbb{E}[4^X]\\le e^{3\\mathbb{E}[X]}\n$$\nzu erhalten."
+  },
+  {
+    "front": "[2026-04-16] Wie entsteht aus dem Chernoff-Beweis die Schranke $P(X\\ge t)\\le 2^{-t}$?",
+    "back": "Für\n$$\nX=\\sum_{i=1}^n X_i\n$$\nmit unabhängigen Bernoulli-$X_i$ setzt man\n$$\nY=4^X.\n$$\nDann liefert Markov:\n$$\nP(X\\ge t)=P(4^X\\ge 4^t)\\le \\frac{\\mathbb{E}[4^X]}{4^t}.\n$$\n\nMit Unabhängigkeit und $\\mathbb{E}[4^{X_i}]\\le e^{3p_i}$ folgt\n$$\n\\mathbb{E}[4^X]\n=\n\\prod_{i=1}^n \\mathbb{E}[4^{X_i}]\n\\le\n\\prod_{i=1}^n e^{3p_i}\n=\ne^{3\\sum_i p_i}\n=\ne^{3\\mathbb{E}[X]}.\n$$\n\nUnter der Voraussetzung\n$$\nt\\ge 2e\\cdot \\mathbb{E}[X]\n$$\nwird dies weiter zu\n$$\n\\mathbb{E}[4^X]\\le 2^t\n$$\nabgeschätzt. Einsetzen ergibt\n$$\nP(X\\ge t)\\le \\frac{2^t}{4^t}=2^{-t}.\n$$\n\nDie Schranke ist bemerkenswert, weil **$t$ im Exponenten** steht."
+  },
+  {
+    "front": "[2026-04-16] Was zeigt das Beispiel mit $P(X\\ge n/2)$ bei Bernoulli-Variablen mit Erwartungswert $n/4$ über die Rolle der Unabhängigkeit?",
+    "back": "Seien $X_1,\\dots,X_n$ Bernoulli mit\n$$\nP(X_i=1)=\\frac14,\n\\qquad\nX=\\sum_{i=1}^n X_i.\n$$\nDann ist\n$$\n\\mathbb{E}[X]=\\frac n4.\n$$\n\nDas Ereignis\n$$\nX\\ge \\frac n2\n$$\nbedeutet also:\n$$\nX\\ge 2\\mathbb{E}[X].\n$$\n\n- **Mit Unabhängigkeit** ist Chernoff anwendbar und liefert eine exponentielle Schranke wie\n  $$\n  P\\left(X\\ge \\frac n2\\right)\\le e^{-n/12}.\n  $$\n- **Ohne Unabhängigkeit** bleibt im Worst Case nur Markov:\n  $$\n  P\\left(X\\ge \\frac n2\\right)\\le \\frac{\\mathbb{E}[X]}{n/2}=\\frac12.\n  $$\n\n**Lehre:** Derselbe Erwartungswert reicht nicht aus, um starke Konzentration zu garantieren. Die exponentielle Verbesserung kommt aus der **Unabhängigkeitsstruktur**, nicht aus dem Mittelwert allein."
+  },
+  {
+    "front": "[2026-04-16] Warum darf man im abhängigen Fall nicht einfach trotzdem Chernoff anwenden?",
+    "back": "Chernoff-Schranken sind keine bloßen Aussagen über Erwartungswerte, sondern über die **gemeinsame Struktur** der Zufallsvariablen. Der Beweis benutzt explizit:\n$$\n\\mathbb{E}\\!\\left[\\prod_i 4^{X_i}\\right]=\\prod_i \\mathbb{E}[4^{X_i}],\n$$\nund das ist ohne Unabhängigkeit im Allgemeinen falsch.\n\nWenn man Chernoff trotz Abhängigkeiten anwenden würde, könnte man massiv zu optimistische Schranken erhalten. Die Vorlesung betont sogar, dass bei starken Abhängigkeiten eine grobe Schranke wie\n$$\nP(X\\ge n/2)\\le \\frac12\n$$\nim Wesentlichen scharf sein kann.\n\n**Gotcha:** Gleiche Randverteilungen $P(X_i=1)=p$ genügen nicht. Für Chernoff braucht man nicht nur die einzelnen Verteilungen, sondern auch **Unabhängigkeit**."
+  },
+  {
+    "front": "[2026-04-16] Wie modelliert man den Target-Shooting-Algorithmus als Summe von Bernoulli-Zufallsvariablen?",
+    "back": "Man zieht unabhängig und uniform\n$$\nu_1,\\dots,u_n\\in U\n$$\nund definiert für jedes Sample\n$$\nY_i=I_S(u_i),\n$$\nwobei\n$$\nI_S(u)=\n\\begin{cases}\n1,& u\\in S,\\\\\n0,& u\\notin S.\n\\end{cases}\n$$\n\nDann ist jedes $Y_i$ eine **Bernoulli-Zufallsvariable** mit\n$$\nP(Y_i=1)=\\frac{|S|}{|U|}.\n$$\n\nDer Schätzer ist\n$$\n\\hat p=\\frac1n\\sum_{i=1}^n Y_i.\n$$\n\nDamit ist\n$$\nn\\hat p=\\sum_{i=1}^n Y_i\n$$\neine Summe unabhängiger Bernoulli-Variablen — genau das Setting, in dem Chernoff anwendbar ist."
+  },
+  {
+    "front": "[2026-04-16] Warum ist der Target-Shooting-Schätzer $\\hat p=\\frac1n\\sum_{i=1}^n I_S(u_i)$ erwartungstreu?",
+    "back": "Für\n$$\nY_i=I_S(u_i)\n$$\ngilt wegen uniformem Sampling aus $U$:\n$$\nP(Y_i=1)=P(u_i\\in S)=\\frac{|S|}{|U|}.\n$$\nDa $Y_i$ eine Indikatorvariable ist, folgt\n$$\n\\mathbb{E}[Y_i]=\\frac{|S|}{|U|}.\n$$\n\nFür den Schätzer\n$$\n\\hat p=\\frac1n\\sum_{i=1}^n Y_i\n$$\nergibt die Linearität des Erwartungswerts:\n$$\n\\mathbb{E}[\\hat p]\n=\n\\frac1n\\sum_{i=1}^n \\mathbb{E}[Y_i]\n=\n\\frac1n\\cdot n\\cdot \\frac{|S|}{|U|}\n=\n\\frac{|S|}{|U|}.\n$$\n\nAlso ist $\\hat p$ **erwartungstreu**: Im Mittel trifft der Schätzer genau den gesuchten Anteil."
+  },
+  {
+    "front": "[2026-04-16] Welche Stichprobengröße reicht im Target Shooting für relativen Fehler $\\varepsilon$ mit Fehlerwahrscheinlichkeit $\\delta$?",
+    "back": "Gesucht ist\n$$\nP\\left(\\left|\\hat p-p\\right|\\le \\varepsilon p\\right)\\ge 1-\\delta,\n\\qquad p=\\frac{|S|}{|U|}.\n$$\n\nDa\n$$\nn\\hat p=\\sum_{i=1}^n Y_i\n$$\neine Summe unabhängiger Bernoulli-Variablen ist, liefert Chernoff:\n$$\nP\\left(\\left|n\\hat p-\\mathbb{E}[n\\hat p]\\right|\\ge \\varepsilon\\,\\mathbb{E}[n\\hat p]\\right)\n\\le\n2\\exp\\left(-\\frac13\\varepsilon^2\\,\\mathbb{E}[n\\hat p]\\right).\n$$\n\nMit\n$$\n\\mathbb{E}[n\\hat p]=np=n\\frac{|S|}{|U|}\n$$\nreicht also\n$$\n2\\exp\\left(-\\frac13\\varepsilon^2\\,n\\frac{|S|}{|U|}\\right)\\le \\delta.\n$$\n\nNach Umstellen genügt\n$$\nn \\ge 3\\cdot \\frac{|U|}{|S|}\\cdot \\frac{1}{\\varepsilon^2}\\cdot \\ln\\left(\\frac{2}{\\delta}\\right).\n$$\n\nDas ist die Vorlesungsformel für die notwendige Stichprobengröße."
   }
 ]

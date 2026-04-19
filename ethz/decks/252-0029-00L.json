@@ -780,6 +780,66 @@
     "back": "Weil ein Thread aus `wait()` **aufwachen kann, obwohl die Bedingung noch nicht erfüllt ist**. Das kann durch **spurious wakeups** oder durch konkurrierende Threads passieren.\n\nDarum ist korrekt:\n```java\nwhile (!condition) wait();\n```\n\nund nicht:\n```java\nif (!condition) wait();\n```\n\nMit `if` würde der Thread nach dem Aufwachen einfach weitermachen, auch wenn der Zustand inzwischen wieder falsch ist. Das kann zu falschem Verhalten oder Race Conditions führen.\n\n**Regel:** Nach jedem Aufwachen Bedingung **neu prüfen**."
   },
   {
+    "front": "[2026-04-13] Warum ist Parallelprogrammierung heute kein Spezialthema mehr?",
+    "back": "**Parallelprogrammierung** ist Grundlagenstoff, weil moderne Geräte praktisch immer **mehrere Kerne** haben. Sequentielle Intuitionen wie „erst passiert A, dann B“ sind deshalb oft falsch.\n\nWichtig ist:\n- Historisch wurden Sprachen, Compiler und Denkweisen für **Single-Core** entwickelt.\n- Heute laufen Programme auf **Multi-Core-Systemen** mit mehreren Threads.\n- Korrektheit hängt daher nicht nur vom Quellcode ab, sondern auch von **Interleavings**, **Compiler-Optimierungen** und **Hardware-Verhalten**.\n\nDarum reicht sequentielles Denken für moderne Systeme nicht mehr aus."
+  },
+  {
+    "front": "[2026-04-13] Was ist ein Interleaving, und welche Reihenfolge muss dabei erhalten bleiben?",
+    "back": "Ein **Interleaving** ist eine mögliche Verschachtelung der Operationen mehrerer Threads.\n\nDabei gilt:\n- Die **Programmreihenfolge innerhalb jedes einzelnen Threads** muss erhalten bleiben.\n- Zwischen verschiedenen Threads darf die Reihenfolge beliebig verschachtelt werden.\n\nBeispiel: Hat Thread 1 die Schritte $A,B$ und Thread 2 die Schritte $C,D$, dann ist $A,C,B,D$ erlaubt, aber $B,A,C,D$ nicht, weil das die Reihenfolge in Thread 1 verletzt."
+  },
+  {
+    "front": "[2026-04-13] Warum gibt es bei 2 Threads mit je $k$ Statements genau $\\binom{2k}{k}$ Interleavings?",
+    "back": "Ein gültiges Interleaving besteht aus insgesamt $2k$ Positionen. Man muss nur wählen, **an welchen $k$ Positionen** die Statements von Thread 1 stehen; die restlichen Positionen gehören automatisch Thread 2.\n\nDeshalb ist die Anzahl:\n$$\n\\binom{2k}{k}\n$$\n\nDie Reihenfolge innerhalb eines Threads ist damit schon fest vorgegeben. Genau deshalb zählt man nicht Permutationen aller Statements, sondern nur die Wahl der Positionen eines Threads."
+  },
+  {
+    "front": "[2026-04-13] Warum skaliert vollständige Enumeration von Interleavings schlecht?",
+    "back": "Weil die Anzahl der Interleavings **kombinatorisch** wächst. Für 2 Threads mit je $k$ Statements gilt:\n$$\n\\binom{2k}{k} \\approx \\frac{4^k}{\\sqrt{2k}}\n$$\n\nDas wächst im Wesentlichen **exponentiell** in $k$.\n\nFolge:\n- Für sehr kleine Beispiele kann man noch alle Fälle aufzählen.\n- Schon bei etwas größeren Programmen wird das unpraktisch.\n- Man braucht dann andere Beweistechniken, z.B. **Widerspruchsbeweise** oder formale Synchronisationsargumente."
+  },
+  {
+    "front": "[2026-04-13] Wie zeigt man per Widerspruch, dass ein „schlechter“ Parallelzustand unmöglich ist?",
+    "back": "Man nimmt an, der schlechte Zustand sei eingetreten, und leitet daraus notwendige Ordnungsbeziehungen ab. Wenn diese einen **Zyklus** erzeugen, ist die Annahme unmöglich.\n\nIm Beispiel mit $x,y$:\n- Aus $a=1$ folgt: das Lesen von $y$ sah die $1$, also muss $y \\leftarrow 1$ vorher passiert sein.\n- Aus $b=0$ folgt: das Lesen von $x$ geschah vor $x \\leftarrow 1$.\n- Zusammen mit der Programmordnung der Threads entsteht eine kreisförmige Ordnung.\n\nEin solcher Zyklus in der **happens-before-artigen Ordnung** ist unmöglich. Also ist der angenommene schlechte Zustand unerreichbar."
+  },
+  {
+    "front": "[2026-04-13] Warum ist „unter dem Interleaving-Modell unmöglich“ noch kein Beweis für reale Korrektheit?",
+    "back": "Weil das reine **Interleaving-Modell** nur annimmt, dass Threads ihre Quellcode-Operationen in dieser Reihenfolge ausführen. In realen Systemen dürfen aber **Compiler und CPU** Speicherzugriffe umordnen.\n\nDadurch kann gelten:\n- Im idealisierten Modell ist ein Fehler unmöglich.\n- Auf echter Hardware mit Optimierungen tritt er trotzdem auf.\n\nDas ist die zentrale Lektion: **Quellcode-Reihenfolge** ist nicht automatisch gleich **Beobachtungsreihenfolge** in paralleler Ausführung."
+  },
+  {
+    "front": "[2026-04-13] Was ist ein Heisenbug, und warum sind Parallelitätsfehler oft Heisenbugs?",
+    "back": "Ein **Heisenbug** ist ein Fehler, der schwer reproduzierbar ist und beim Beobachten verschwinden kann.\n\nParallelitätsbugs sind oft Heisenbugs, weil ihr Auftreten von feinem **Timing** abhängt:\n- andere Interleavings,\n- andere Optimierungen,\n- andere Cache-Zustände,\n- Debug-Ausgaben oder Instrumentierung.\n\nGerade Debugging verändert oft das Laufzeitverhalten so stark, dass der Bug nicht mehr auftritt. Deshalb ist „ich habe ihn nie gesehen“ kein Korrektheitsargument."
+  },
+  {
+    "front": "[2026-04-13] Warum kann derselbe C++-Code mit $-O0$ stabil wirken, aber mit $-O3$ fehlschlagen?",
+    "back": "Weil höhere Optimierungsstufen wie $-O3$ aggressiver **umordnen**, **wegoptimieren** und **Register-Caching** verwenden.\n\nIm Vortrag:\n- Mit $-O0$ lief das Beispiel praktisch unbegrenzt ohne sichtbaren Fehler.\n- Mit $-O3$ konnte die Assertion irgendwann fehlschlagen.\n\nDer Quellcode ist derselbe, aber die erzeugte Ausführung nicht. Das zeigt: Parallelitätskorrektheit darf nicht davon abhängen, dass der Compiler „freundlich“ bleibt."
+  },
+  {
+    "front": "[2026-04-13] Warum darf ein Compiler Speicherzugriffe umordnen oder entfernen, obwohl das parallel gefährlich sein kann?",
+    "back": "Der Compiler optimiert nach **sequentieller Semantik**: Er darf Transformationen durchführen, solange ein einzelner Thread dasselbe beobachtbare Ergebnis hat.\n\nTypische Gründe:\n- weniger teure Speicherzugriffe,\n- mehr Nutzung von **Registern**,\n- bessere **Locality**,\n- **Dead Code Elimination**.\n\nDas Problem ist: **sequentiell äquivalent** bedeutet nicht automatisch **parallel korrekt**. Ohne passende Synchronisation darf der Compiler Shared-Memory-Zugriffe so behandeln, als gäbe es keine konkurrierenden Threads."
+  },
+  {
+    "front": "[2026-04-13] Warum kann `while (x == 1) {}` ohne Speichermodell-Garantien zur Endlosschleife werden?",
+    "back": "Weil der Compiler annehmen kann, dass sich $x$ innerhalb dieses Threads nicht „magisch“ ändert. Dann darf er den Wert von $x$ einmal laden und im **Register** behalten, statt in jeder Iteration neu aus dem Speicher zu lesen.\n\nDann wird aus der Sicht des Threads effektiv:\n- $x$ ist einmal als $1$ gelesen,\n- die Schleife prüft immer wieder denselben Registerwert,\n- das spätere Schreiben eines anderen Threads auf $x=2$ wird nie gesehen.\n\nOhne geeignete Synchronisations- oder Sichtbarkeitsgarantien ist die Terminierung also **nicht garantiert**."
+  },
+  {
+    "front": "[2026-04-13] Warum reicht es nicht, den erzeugten Assembly-Code anzuschauen?",
+    "back": "Weil nicht nur der **Compiler**, sondern auch die **CPU** selbst umordnen kann.\n\nSelbst wenn der Assembly-Code „vernünftig“ aussieht, können zur Laufzeit noch Effekte auftreten durch:\n- **Out-of-Order Execution**,\n- **Store Buffers**,\n- Caches,\n- verzögerte Sichtbarkeit zwischen Kernen.\n\nDarum muss Korrektheit gegen das **Speichermodell** argumentiert werden, nicht nur gegen eine bestimmte Assembly-Ausgabe."
+  },
+  {
+    "front": "[2026-04-13] Warum reorder’t die CPU überhaupt?",
+    "back": "Die CPU reorder’t aus **Performancegründen**. Wenn eine Instruktion auf langsamen Speicher warten muss, wäre es ineffizient, einfach stillzustehen.\n\nStattdessen versucht die Hardware:\n- unabhängige Instruktionen vorzuziehen,\n- Pipelines auszulasten,\n- Wartezeiten auf Speicher zu überdecken.\n\nDas ist besonders wichtig, weil Speicherzugriffe viel langsamer sind als Rechenoperationen. Reordering ist also kein „Bug“, sondern ein bewusstes Leistungsmerkmal moderner Prozessoren."
+  },
+  {
+    "front": "[2026-04-13] Warum ist „ein gemeinsamer Speicher“ auf Multi-Core-Systemen nur eine Vereinfachung?",
+    "back": "Weil reale Systeme eine **Speicherhierarchie** haben:\n- **Register**: sehr schnell, core-lokal\n- **Caches**: schnell, oft teilweise privat pro Core\n- **DRAM**: globaler, aber langsam\n\nDadurch sehen verschiedene Kerne Speicheränderungen nicht unbedingt sofort gleich. Ein Write kann z.B. zunächst in einem Cache oder Buffer sichtbar sein, aber noch nicht für andere Kerne.\n\nDie Vorstellung eines einzigen, sofort konsistenten Speichers ist daher ein nützliches Modell, aber keine physische Realität."
+  },
+  {
+    "front": "[2026-04-13] Was ist ein Speichermodell, und warum braucht man es?",
+    "back": "Ein **Speichermodell** ist der formale Vertrag darüber, welche Beobachtungen von Reads/Writes in gemeinsamem Speicher erlaubt sind.\n\nEs legt fest:\n- welche Umordnungen Compiler machen dürfen,\n- welche Umordnungen Hardware machen darf,\n- mit welchen Sprachmitteln der Programmierer Ordnung erzwingen kann.\n\nOhne Speichermodell wäre unklar, wann ein paralleles Programm korrekt ist. Es gibt solche Modelle sowohl auf Ebene der **Programmiersprache** als auch der **Architektur**."
+  },
+  {
+    "front": "[2026-04-13] Worin unterscheiden sich Sprach-Speichermodelle und Architektur-Speichermodelle?",
+    "back": "Ein **Sprach-Speichermodell** beschreibt, was ein Programmierer in einer Sprache wie Java oder C++ erwarten darf. Ein **Architektur-Speichermodell** beschreibt, was die Hardware wie x86 oder ARM garantiert.\n\nWichtig:\n- Die Sprache definiert die Semantik des Programms.\n- Die Hardware definiert, welche realen Reorderings möglich sind.\n- Compiler müssen zwischen beiden Ebenen korrekt übersetzen.\n\nDeshalb kann derselbe Quellcode auf verschiedenen Architekturen unterschiedliche Risiken haben, wenn er nicht sauber synchronisiert ist."
+  },
+  {
     "front": "[2026-04-14] Warum ist parallele Programmierung laut Vorlesung keine optionale Spezialtechnik mehr?",
     "back": "Weil die **Hardwareentwicklung** zusätzliche Transistoren heute nicht mehr primär in ein einzelnes schnelleres Rechenwerk steckt, sondern in viele parallele Ausführungseinheiten wie **Cores** und **Vektoreinheiten**.\n\nDie Motivation ist also nicht „mehrere Threads sind manchmal praktisch“, sondern:\n- Transistordichte wächst weiter stark.\n- Ein einzelner Kern skaliert nicht beliebig sinnvoll.\n- Moderne Systeme setzen deshalb auf **massive Parallelität**.\n\nDas Vorlesungsbeispiel mit **Cerebras** macht das extrem deutlich: Wenn ein System in Richtung $10^6$ Cores geht, müssen Programme Parallelität systematisch nutzen."
   },

@@ -658,5 +658,125 @@
   {
     "front": "[2026-04-02] Why is “just search the ROB for the latest producer of $R3$” a CAM-like problem?",
     "back": "Because the ROB is organized by **instruction age**, not by architectural register number.\n\nTo find the current producer of $R3$, hardware would need to:\n- compare $R3$ against the destination register field of **every ROB entry** in parallel,\n- ignore invalid entries,\n- choose the **youngest matching** entry,\n- handle circular wrap-around between head and tail.\n\nThat is essentially a **content-addressable memory (CAM)** style lookup with extra age-selection logic.\n\nIt is much more complex than a normal register file read, where the register number is simply the array index."
+  },
+  {
+    "front": "[2026-04-16] Why does in-order dispatch hurt performance even if later instructions are independent?",
+    "back": "With **in-order dispatch**, the pipeline must try to send instructions to execution in program order. If instruction $i$ cannot dispatch because one operand is not ready, then every younger instruction $j>i$ is blocked behind it, even if $j$ has all operands ready.\n\nThis is especially bad for long or variable latencies:\n- a multiply may take $4$–$6$ cycles,\n- a load may take anywhere from a few cycles to $\\sim 100$ cycles.\n\nSo one stalled instruction creates a **traffic jam** that prevents exploiting available instruction-level parallelism."
+  },
+  {
+    "front": "[2026-04-16] When is compiler scheduling not enough to hide latency?",
+    "back": "**Compiler scheduling** helps only when the producer latency is predictable and there are enough independent instructions to move into the gap.\n\nIt is limited because:\n- **deterministic latency** (e.g. multiply): the compiler may separate producer and consumer,\n- **variable latency** (e.g. load with cache hit/miss): the compiler cannot know the needed distance at compile time,\n- even if latency were known, there may be too little independent work.\n\nThat is why **dynamic out-of-order scheduling** is more robust than compiler-only scheduling."
+  },
+  {
+    "front": "[2026-04-16] What does “von Neumann outside, dataflow inside” mean in an out-of-order processor?",
+    "back": "It means the machine preserves the programmer-visible sequential model while internally scheduling by operand readiness.\n\nConcretely:\n- **fetch/decode in order**,\n- **execute out of order** when operands are ready,\n- **commit in order**.\n\nSo the back end behaves like **dataflow execution** (“fire when inputs are ready”), but the architectural state still changes in program order, preserving the **von Neumann illusion**."
+  },
+  {
+    "front": "[2026-04-16] Which dependences are real, and which ones can register renaming remove?",
+    "back": "The only **true dependence** is **RAW** (**read after write**): a later instruction needs a value produced by an earlier one.\n\nThe others are name dependences caused by limited architectural registers:\n- **WAW** (**write after write**): two instructions write the same register,\n- **WAR** (**write after read**): a later instruction writes a register that an earlier instruction still needs to read.\n\n**Register renaming** removes **WAR** and **WAW**, but not **RAW**, because RAW represents an actual data flow."
+  },
+  {
+    "front": "[2026-04-16] Why does register renaming eliminate WAR and WAW but not RAW?",
+    "back": "**Register renaming** gives different internal names/tags to different produced values, so two instructions no longer have to fight over the same architectural register name.\n\nTherefore:\n- **WAW** disappears because each write gets its own tag,\n- **WAR** disappears because an older read can still refer to the old tag while a younger write gets a new one.\n\nBut **RAW** remains, because the consumer truly needs the producer’s value. Renaming can represent that dependence more clearly, but it cannot remove it."
+  },
+  {
+    "front": "[2026-04-16] In the lecture’s notation, what does an architectural register store, and how do you interpret it?",
+    "back": "Each architectural register stores\n$$(\\text{valid}, \\text{value}, \\text{tag}).$$\n\nInterpretation:\n- If $\\text{valid}=1$, the **value** is ready and trusted; the **tag** is don't-care.\n- If $\\text{valid}=0$, the value is not ready yet; the **tag** identifies the producer that will generate it.\n\nSo the register entry either contains the actual value or a promise of where that value will come from."
+  },
+  {
+    "front": "[2026-04-16] What is stored for a source operand in a reservation station when the operand is not ready, and why?",
+    "back": "The reservation station stores a **tag**, not a value.\n\nReason:\n- the value does not exist yet or is not available yet,\n- the tag identifies the instruction that will produce it,\n- when that producer finishes, it broadcasts $(\\text{tag}, \\text{value})$ on the **CDB**,\n- the waiting operand captures the value if the tag matches.\n\nSo the tag is the link from **consumer** to **producer**."
+  },
+  {
+    "front": "[2026-04-16] How does the common data bus wake up waiting instructions?",
+    "back": "When an instruction completes, it broadcasts\n$$(\\text{tag}, \\text{value})$$\non the **common data bus (CDB)**.\n\nThen:\n- every reservation-station operand field compares its stored tag against the broadcast tag,\n- matching operands capture the value and become ready,\n- the register-alias state also updates if it was waiting for that tag.\n\nAn instruction **wakes up** when all its operands have become ready. It can then compete for issue to a functional unit."
+  },
+  {
+    "front": "[2026-04-16] What are the four things a processor needs to support out-of-order dispatch?",
+    "back": "It needs to:\n1. **Link consumers to producers** using tags.\n2. **Buffer instructions until ready** using reservation stations or an instruction queue.\n3. **Track operand readiness** using valid bits plus tags.\n4. **Select among ready instructions** and dispatch them to available functional units.\n\nWithout all four, the machine cannot safely let younger ready instructions bypass older stalled ones."
+  },
+  {
+    "front": "[2026-04-16] Why must reservation-station allocation happen only if space is available?",
+    "back": "If no **reservation station (RS)** entry is free, the instruction cannot be inserted into the scheduling window, so decode/rename must stall.\n\nThis matters because the RS is the structure that holds:\n- the operation,\n- ready source values or waiting tags,\n- destination tag information.\n\nWithout an RS entry, the processor has nowhere to remember the instruction while it waits for operands. So out-of-order execution still depends on finite buffering capacity."
+  },
+  {
+    "front": "[2026-04-16] In the example $R5 \\leftarrow R5 + R11$, why must the processor read the old mapping of $R5$ before renaming the destination?",
+    "back": "Because the source $R5$ and destination $R5$ refer to **different versions** of the architectural register.\n\nCorrect decode order:\n1. read the current mapping of source $R5$ (e.g. tag $A$),\n2. use that as the input dependence,\n3. assign a **new tag** (e.g. $D$) to the destination $R5$.\n\nIf the processor renamed the destination first, it could accidentally make the instruction read its own new version instead of the older one it depends on."
+  },
+  {
+    "front": "[2026-04-16] Worked micro-example: if a multiply produces tag $X$ and a later add waits on $X$, what happens when the multiply finishes?",
+    "back": "Suppose:\n- multiply: destination renamed to tag $X$,\n- later add has one operand stored as tag $X$.\n\nWhen the multiply completes, it broadcasts\n$$(X, v).$$\n\nThen:\n1. the waiting add compares its missing operand tag with $X$,\n2. it captures value $v$,\n3. that operand becomes valid,\n4. if its other operand was already ready, the add now wakes up and can issue.\n\nThis is how a consumer learns that its producer has finished without directly polling that producer."
+  },
+  {
+    "front": "[2026-04-16] Why does Tomasulo-style scheduling improve performance on the lecture’s example?",
+    "back": "Because it allows **independent instructions** to execute while older dependent ones are still waiting.\n\nIn the lecture’s comparison for the same sequence:\n- non-pipelined: $50$ cycles,\n- in-order pipeline without forwarding: $31$ cycles,\n- in-order pipeline with forwarding: $25$ cycles,\n- **out-of-order dispatch**: $20$ cycles.\n\nThe gain comes from avoiding dispatch stalls behind unready operands, especially when later instructions are independent."
+  },
+  {
+    "front": "[2026-04-16] Why doesn’t Tomasulo’s algorithm by itself guarantee precise exceptions?",
+    "back": "Because **out-of-order completion** can update visible state in an order different from program order unless results are held back.\n\nWithout a **reorder buffer (ROB)**:\n- a younger instruction may finish before an older one,\n- architectural state may reflect some younger results even if an older instruction later raises an exception.\n\nThat violates **precise exceptions**, which require:\n- all older instructions committed,\n- no younger instruction committed.\n\nSo Tomasulo alone gives out-of-order execution, but not precise exception handling."
+  },
+  {
+    "front": "[2026-04-16] How does a reorder buffer restore precise exceptions?",
+    "back": "A **reorder buffer (ROB)** holds results after execution and delays architectural updates until the instruction reaches the head of the ROB.\n\nThus:\n- execution may finish out of order,\n- **commit/retire** still happens in order.\n\nIf an exception occurs, the processor can stop before committing younger instructions, so the architectural state reflects a clean boundary: all older instructions committed, no younger ones committed. That is exactly the definition of a **precise exception**."
+  },
+  {
+    "front": "[2026-04-17] Why does out-of-order execution not violate the programmer’s sequential model?",
+    "back": "**Out-of-order execution (OoO)** runs instructions when their operands are ready, but it still **commits results in program order**.  \nThis preserves the **von Neumann illusion**: architecturally, the machine appears to have executed instructions sequentially.\n\nThe key idea is:\n- execution order may differ from program order,\n- but **retirement/commit order** does not.\n\nThis is why OoO can tolerate long latencies internally while still supporting correct exceptions, interrupts, and visible state updates as if execution were in order."
+  },
+  {
+    "front": "[2026-04-17] What are the four hardware operations needed for OoO scheduling, and what does each one do?",
+    "back": "The four required operations are:\n\n1. **Register renaming** — links consumers to the correct producer and removes false dependencies like **WAR** and **WAW**.\n2. **Reservation stations (RS)** — buffer renamed instructions while they wait for operands.\n3. **Tag broadcast / readiness tracking** — when a producer finishes, it broadcasts a tag so waiting consumers know their operand is now ready.\n4. **Wakeup-and-select** — wakes instructions whose operands are ready and chooses which ready ones issue to execution units.\n\nTogether, these let the processor behave like a limited internal **dataflow machine**."
+  },
+  {
+    "front": "[2026-04-17] Why does register renaming enable more parallelism than architectural registers alone?",
+    "back": "**Register renaming** breaks **false dependencies** caused by reusing the same architectural register name.\n\nWithout renaming, two instructions that write the same architectural register appear dependent even if their values are unrelated. Renaming gives each write a fresh destination tag or physical register, so only **true data dependencies** remain.\n\nThis helps OoO execution because:\n- **WAW** and **WAR** hazards disappear,\n- consumers are linked to the right producer,\n- independent instructions can execute earlier.\n\nSo renaming does not create new computation; it reveals parallelism that was hidden by register-name reuse."
+  },
+  {
+    "front": "[2026-04-17] Why are reservation stations not enough by themselves for OoO execution?",
+    "back": "**Reservation stations (RS)** only **hold instructions** until operands are available. They do not by themselves solve:\n- how consumers find the right producer,\n- how readiness is detected,\n- how precise architectural state is preserved.\n\nFor full OoO execution, RS must work together with:\n- **renaming** to identify dependencies,\n- **tag broadcast** to mark operands ready,\n- **wakeup-and-select** to issue ready instructions,\n- a **ROB** to commit in order.\n\nSo RS are necessary as waiting buffers, but they are only one part of the OoO mechanism."
+  },
+  {
+    "front": "[2026-04-17] Why is the instruction window a fundamental limit on how much latency OoO can hide?",
+    "back": "The **instruction window** bounds how many in-flight instructions the processor can inspect and schedule around a stall. In the lecture, it is treated as **essentially the ROB size**.\n\nIf a long-latency instruction blocks progress, OoO can keep executing independent later instructions only while they still fit in the window. Once the window fills, no more useful instructions can enter, so ILP extraction stops.\n\nThus OoO is not unbounded dataflow: it can only exploit parallelism visible within the current window."
+  },
+  {
+    "front": "[2026-04-17] A processor has a ROB of 500 entries and fetches 1 instruction per cycle. Roughly how much latency can it tolerate before the window fills?",
+    "back": "Using the lecture’s rough mental model, it can tolerate about **500 cycles**.\n\nReason:\n- the processor brings in about **1 instruction per cycle**,\n- the **ROB/instruction window** can hold about **500 in-flight instructions**.\n\nSo a long-latency operation can be hidden only until those 500 slots are occupied. After that, the front end cannot keep feeding more work, and OoO can no longer find additional independent instructions to execute.\n\nThis is only a rule of thumb, but it captures why **window size limits latency tolerance**."
+  },
+  {
+    "front": "[2026-04-17] Why does a physical register file reduce storage overhead in OoO designs?",
+    "back": "A **physical register file (PRF)** stores each value **once**, while other structures store only **tags/pointers** to that value.\n\nWithout a PRF-based organization, values may be replicated across:\n- speculative rename structures,\n- architectural state structures,\n- the ROB.\n\nThat is expensive because values may be **64 bits**, while tags may be only about **12–14 bits**. Replacing repeated full-value copies with tags saves storage and wiring.\n\nThe main idea is: **values live in one place; metadata elsewhere points to them**."
+  },
+  {
+    "front": "[2026-04-17] What is the difference between the front-end register map and the architectural register map?",
+    "back": "The **front-end register map** is the **speculative map** used during renaming. It tracks the current speculative producer for each architectural register, including whether the value is ready or which tag to wait for.\n\nThe **architectural register map** is the **precise checkpointed state** used for recovery after an exception or interrupt.\n\nSo:\n- **front-end map** = speculative, changes as instructions are renamed,\n- **architectural map** = committed, restart-safe state.\n\nThis separation is what lets OoO execute speculatively while still recovering precisely."
+  },
+  {
+    "front": "[2026-04-17] Why does a reorder buffer enable precise exceptions in an OoO processor?",
+    "back": "A **reorder buffer (ROB)** lets instructions finish execution out of order but **commit in order**.\n\nThis matters for **precise exceptions** because, at an exception point, the processor can guarantee:\n- all older instructions are fully committed,\n- no younger instructions have modified architectural state.\n\nThat gives a clean restart point matching the sequential model. Without in-order commit, the visible state could contain effects from younger instructions while older ones are still incomplete, making recovery ambiguous.\n\nSo the ROB is the structure that reconciles speculative OoO execution with precise architectural state."
+  },
+  {
+    "front": "[2026-04-17] Why does OoO help most when latencies are long, and less when all instructions are 1-cycle?",
+    "back": "The main benefit of **OoO** is **latency tolerance**.\n\nIf some instructions take many cycles, OoO can execute independent instructions while waiting, reducing stalls. But if nearly all instructions complete in **1 cycle**, there is little latency to hide, so the advantage of dynamic scheduling shrinks.\n\nIn other words:\n- long latency $\\Rightarrow$ more opportunity for OoO to overlap work,\n- short latency $\\Rightarrow$ less hidden slack to exploit.\n\nOoO is valuable because real processors face long-latency events such as cache misses and expensive floating-point operations."
+  },
+  {
+    "front": "[2026-04-17] Why is superscalar not the same thing as out-of-order execution?",
+    "back": "**Superscalar** means executing **multiple instructions per cycle**.  \n**Out-of-order** means executing instructions in an order driven by operand readiness rather than strict program order.\n\nThese are different dimensions of design:\n- **in-order scalar**\n- **in-order superscalar**\n- **out-of-order superscalar**\n\nSo a processor can be superscalar without being OoO. The lecture explicitly warns against confusing the two.\n\nA useful summary:\n- **superscalar** = pipeline **width**\n- **OoO** = dynamic scheduling policy"
+  },
+  {
+    "front": "[2026-04-17] In a 2-wide in-order superscalar pipeline, why can a dependence between same-cycle instructions create an empty slot?",
+    "back": "In an **in-order 2-wide superscalar** machine, two instructions are ideally issued together. But if the second instruction depends on the first, it cannot execute in the same cycle because its input is not yet available.\n\nSince the machine still respects in-order issue, that second slot may become a **bubble** instead of being filled by a later independent instruction.\n\nSo true dependence within the same fetch/issue group reduces throughput:\n- ideal case: both slots used,\n- dependent pair: one slot wasted.\n\nThis is one reason in-order superscalar often needs compiler scheduling help."
+  },
+  {
+    "front": "[2026-04-17] How can compiler reordering improve IPC in an in-order superscalar processor?",
+    "back": "A compiler can **reorder independent instructions** so that instructions issued in the same cycle are less likely to depend on each other.\n\nThat improves pairing in a wide in-order machine:\n- dependent instructions are separated,\n- independent instructions are grouped together,\n- fewer issue slots become bubbles.\n\nThe lecture’s point is that the program’s meaning stays the same, but the schedule becomes more hardware-friendly. This can move IPC closer to the ideal width, such as from around $1.2$ back toward $2$ on a 2-wide machine."
+  },
+  {
+    "front": "[2026-04-17] Why can wide commit bandwidth still be underutilized in an OoO processor?",
+    "back": "Even if hardware can commit multiple instructions per cycle, **commit is still in order**.\n\nSo if the oldest instruction at the head of the ROB is not ready to commit, retirement stops there. Younger instructions behind it may already be finished, but they cannot bypass it.\n\nThis means some commit slots go unused that cycle. Therefore:\n- **wide commit capability** does not guarantee\n- **wide realized retirement every cycle**.\n\nThe bottleneck is not only width, but also the requirement for **in-order commit**."
+  },
+  {
+    "front": "[2026-04-17] Why does branch misprediction cost scale roughly like $N \\cdot W$?",
+    "back": "If a branch resolves **$N$ cycles** after fetch and the processor fetches **$W$ instructions per cycle**, then during those $N$ cycles it may fetch up to\n\n$$\nN \\cdot W\n$$\n\ninstructions from the wrong path.\n\nWhen the branch is found to be mispredicted, those wrong-path instructions are flushed. So the penalty has two views:\n- about **$N$ lost cycles**,\n- up to **$N \\cdot W$ wasted fetched instructions**.\n\nThis is why deeper and wider pipelines make branch prediction much more important."
   }
 ]

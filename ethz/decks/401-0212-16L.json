@@ -778,5 +778,125 @@
   {
     "front": "[2026-04-01] Warum ist die Menge",
     "back": "$$\nX=\\{x\\in[a,b]: f(x)\\le c\\}\n$$\nim Beweis des Zwischenwertsatzes eine gute Wahl?\n\nSie ist genau so gewählt, dass man den „letzten Punkt von links“ betrachtet, an dem die Funktionswerte noch **nicht über $c$ hinausgehen**.\n\nVorteile:\n\n- $a\\in X$, also ist $X$ **nicht leer**, weil $f(a)\\le c$.\n- $X\\subseteq [a,b]$, also ist $X$ **nach oben beschränkt**.\n- Daher existiert\n  $$\n  x^*=\\sup X.\n  $$\n\nDas $\\le$ ist wichtig: So kann später aus einer Folge $x_n\\in X$ direkt\n$$\nf(x_n)\\le c\n$$\nund im Grenzübergang\n$$\nf(x^*)\\le c\n$$\ngefolgert werden. Genau das ist der erste halbe Schritt zum Ziel $f(x^*)=c$."
+  },
+  {
+    "front": "[2026-04-13] Warum ist der Differenzenquotient $\\frac{f(a+h)-f(a)}{h}$ geometrisch eine Sekantensteigung?",
+    "back": "Die Punkte $(a,f(a))$ und $(a+h,f(a+h))$ liegen auf dem Graphen von $f$. Die Gerade durch diese zwei Punkte ist die **Sekante**.\n\nIhre Steigung ist\n$$\nm=\\frac{\\Delta y}{\\Delta x}=\\frac{f(a+h)-f(a)}{(a+h)-a}=\\frac{f(a+h)-f(a)}{h}.\n$$\n\nAlso misst der **Differenzenquotient** die mittlere Änderungsrate von $f$ zwischen zwei Stellen."
+  },
+  {
+    "front": "[2026-04-13] Wie entsteht aus der Sekantensteigung die Tangentensteigung?",
+    "back": "Man lässt den zweiten Punkt $(a+h,f(a+h))$ gegen $(a,f(a))$ rücken, also $h\\to 0$.\n\nFalls sich die Sekantensteigungen dabei einem eindeutigen Wert annähern, erhält man die **Tangentensteigung**:\n$$\nf'(a)=\\lim_{h\\to 0}\\frac{f(a+h)-f(a)}{h}.\n$$\n\nDie Tangente ist damit die **Grenzlage der Sekanten** und zugleich die lokal beste lineare Approximation des Graphen bei $a$."
+  },
+  {
+    "front": "[2026-04-13] Wie lautet die Definition der Ableitung in einem Punkt, und welche Notationen sind üblich?",
+    "back": "Die **Ableitung** von $f$ an der Stelle $a$ ist definiert durch\n$$\nf'(a)=\\lim_{h\\to 0}\\frac{f(a+h)-f(a)}{h},\n$$\nfalls dieser Grenzwert existiert.\n\nÜbliche Notationen sind:\n- **$f'(a)$**\n- **$\\frac{df}{dx}$** bzw. an der Stelle $x=a$\n\nInhaltlich beschreibt die Ableitung die **momentane Änderungsrate** oder die **Tangentensteigung**."
+  },
+  {
+    "front": "[2026-04-13] Warum ist die Ableitung ein weiteres Grenzwertkonzept wie Folgen und Reihen?",
+    "back": "Die Ableitung entsteht nicht aus einem einzelnen Quotienten, sondern aus einem **Grenzprozess**: Man betrachtet\n$$\n\\frac{f(a+h)-f(a)}{h}\n$$\nfür immer kleinere $h$ und untersucht den Grenzwert für $h\\to 0$.\n\nDamit ist die Ableitung strukturell ähnlich zu:\n- **Folgen**, bei denen man das Verhalten für $n\\to\\infty$ untersucht,\n- **Reihen**, die als Folgen von Partialsummen verstanden werden.\n\nDie zentrale Idee ist in allen Fällen dieselbe: Man gewinnt mathematische Information aus dem Verhalten einer Größe im Grenzfall."
+  },
+  {
+    "front": "[2026-04-13] Was bedeutet das Vorzeichen von $f'(a)$ für das lokale Verhalten von $f$?",
+    "back": "Das Vorzeichen von **$f'(a)$** beschreibt die lokale Richtung der Änderung:\n\n- $f'(a)>0$: $f$ ist lokal **zunehmend**\n- $f'(a)<0$: $f$ ist lokal **abnehmend**\n- $f'(a)=0$: die Tangente ist **horizontal**\n\nGeometrisch ist das die Steigung der Tangente. Physikalisch bedeutet positives Vorzeichen z.B. positive momentane Geschwindigkeit."
+  },
+  {
+    "front": "[2026-04-13] Warum braucht man für Differenzierbarkeit bei $x_0$ mehr als nur den Funktionswert $f(x_0)$?",
+    "back": "Für die Ableitung an $x_0$ braucht man Vergleichspunkte in der Nähe von $x_0$, denn der Quotient\n$$\n\\frac{f(x_0+h)-f(x_0)}{h}\n$$\nverwendet Werte bei $x_0+h$.\n\nIst $x_0$ ein **isolierter Punkt** des Definitionsbereichs, gibt es keine Folge von Argumenten mit $x_0+h\\to x_0$, auf der man den Grenzwert bilden könnte. Dann ist der Ausdruck für $h\\to 0$ nicht sinnvoll als Ableitungsdefinition.\n\nDeshalb braucht man um $x_0$ herum eine **Häufungspunkt-Situation**."
+  },
+  {
+    "front": "[2026-04-13] Warum gilt allgemein $\\operatorname{Dom}(f')\\subseteq \\operatorname{Dom}(f)$, oft sogar echt?",
+    "back": "Die **Ableitungsfunktion** $f'$ ist nur dort definiert, wo zunächst $f$ selbst definiert ist. Daher gilt immer\n$$\n\\operatorname{Dom}(f')\\subseteq \\operatorname{Dom}(f).\n$$\n\nDie Inklusion kann **echt** sein, weil eine Funktion an einer Stelle zwar definiert, aber dort nicht differenzierbar sein kann, z.B. bei:\n- **Knickstellen**\n- **Sprungstellen**\n- **Definitionsproblemen in der Umgebung**\n\nBeispiel:\n$$\nf(x)=|x|\n$$\nist für alle $x\\in\\mathbb{R}$ definiert, aber bei $x=0$ nicht differenzierbar. Also fehlt $0$ im Definitionsbereich von $f'$."
+  },
+  {
+    "front": "[2026-04-13] Warum ist $f(x)=|x|$ bei $x=0$ nicht differenzierbar, obwohl die Funktion dort stetig ist?",
+    "back": "Die Funktion ist bei $0$ zwar **stetig**, hat dort aber einen **Knick**.\n\nEinseitige Ableitungen:\n$$\n\\lim_{h\\to 0^+}\\frac{|h|-0}{h}=1,\n\\qquad\n\\lim_{h\\to 0^-}\\frac{|h|-0}{h}=-1.\n$$\n\nDa rechts- und linksseitige Ableitung verschieden sind, existiert keine zweiseitige Ableitung:\n$$\nf'(0)\\ \\text{existiert nicht}.\n$$\n\nDas zeigt: **Stetigkeit allein genügt nicht** für Differenzierbarkeit."
+  },
+  {
+    "front": "[2026-04-13] Warum kann eine Sprungstelle nicht differenzierbar sein?",
+    "back": "Bei einer **Sprungstelle** bleibt die Änderung im Funktionswert in der Nähe des Sprungs von null getrennt, während die Änderung im Argument gegen null geht.\n\nAnschaulich:\n- $\\Delta y$ bleibt ungefähr konstant,\n- $\\Delta x\\to 0$.\n\nDann wird\n$$\n\\frac{\\Delta y}{\\Delta x}\n$$\nunbeschränkt oder hat keinen sinnvollen Grenzwert. Deshalb kann an einer Sprungstelle keine Ableitung existieren.\n\nDas passt zur allgemeinen Aussage: **Differenzierbarkeit impliziert Stetigkeit**, also sind Sprungstellen automatisch ausgeschlossen."
+  },
+  {
+    "front": "[2026-04-13] Was ist der Unterschied zwischen einer Definitionslücke und einer hebbaren Lücke im Zusammenhang mit Ableitbarkeit?",
+    "back": "Bei einer **Definitionslücke** ist $f(a)$ nicht definiert. Dann ist schon der Differenzenquotient\n$$\n\\frac{f(a+h)-f(a)}{h}\n$$\nnicht sinnvoll, also kann die ursprüngliche Funktion dort nicht differenzierbar sein.\n\nBei einer **hebbaren Lücke** kann man manchmal einen passenden Funktionswert ergänzen, sodass eine neue Funktion entsteht, die dort stetig oder sogar differenzierbar ist.\n\nWichtig: Dann betrachtet man **nicht mehr dieselbe Funktion**, sondern eine abgeänderte."
+  },
+  {
+    "front": "[2026-04-13] Warum folgt aus Differenzierbarkeit in $x_0$ automatisch Stetigkeit in $x_0$?",
+    "back": "Existiert **$f'(x_0)$**, dann gilt\n$$\nf(x_0+h)-f(x_0)\n=\n\\left(\\frac{f(x_0+h)-f(x_0)}{h}\\right)\\cdot h.\n$$\n\nFür $h\\to 0$ konvergiert der erste Faktor gegen $f'(x_0)$, der zweite gegen $0$. Also:\n$$\n\\lim_{h\\to 0}\\bigl(f(x_0+h)-f(x_0)\\bigr)=f'(x_0)\\cdot 0=0.\n$$\n\nDamit folgt\n$$\n\\lim_{h\\to 0} f(x_0+h)=f(x_0),\n$$\nalso ist $f$ in $x_0$ **stetig**.\n\nDie Kernaussage ist:\n$$\n\\text{differenzierbar} \\Rightarrow \\text{stetig}.\n$$"
+  },
+  {
+    "front": "[2026-04-13] Warum gilt die Umkehrung „stetig $\\Rightarrow$ differenzierbar“ nicht?",
+    "back": "**Stetigkeit** verlangt nur, dass keine Sprünge oder Lücken auftreten. **Differenzierbarkeit** verlangt zusätzlich ein lokal lineares Verhalten mit eindeutiger Tangentensteigung.\n\nDas Gegenbeispiel aus der Vorlesung ist\n$$\nf(x)=|x|.\n$$\nDiese Funktion ist bei $x=0$ stetig, aber nicht differenzierbar, weil die einseitigen Ableitungen\n$$\n-1 \\quad \\text{und} \\quad 1\n$$\nnicht übereinstimmen.\n\nAlso ist Differenzierbarkeit eine **stärkere** Eigenschaft als Stetigkeit."
+  },
+  {
+    "front": "[2026-04-13] Wann verwendet man einseitige Ableitungen, und was testen sie?",
+    "back": "**Einseitige Ableitungen** verwendet man:\n- an **Randpunkten** des Definitionsbereichs,\n- bei Verdacht auf **Knicke** oder asymmetrisches Verhalten.\n\nDefinitionen:\n$$\nf'_+(a)=\\lim_{h\\to 0^+}\\frac{f(a+h)-f(a)}{h},\n\\qquad\nf'_-(a)=\\lim_{h\\to 0^-}\\frac{f(a+h)-f(a)}{h}.\n$$\n\nSie testen das Änderungsverhalten nur von rechts bzw. links. Eine zweiseitige Ableitung existiert genau dann, wenn beide einseitigen Ableitungen existieren und gleich sind."
+  },
+  {
+    "front": "[2026-04-13] Wie erkennt man bei $f(x)=|x|$ an den einseitigen Ableitungen den Knick konkret?",
+    "back": "Für $h>0$ gilt $|h|=h$, also\n$$\n\\frac{|h|-0}{h}=\\frac{h}{h}=1.\n$$\n\nFür $h<0$ gilt $|h|=-h$, also\n$$\n\\frac{|h|-0}{h}=\\frac{-h}{h}=-1.\n$$\n\nDaher:\n$$\nf'_+(0)=1,\\qquad f'_-(0)=-1.\n$$\n\nDie beiden Grenzwerte existieren zwar, aber sie sind verschieden. Genau diese Diskrepanz beschreibt den **Knick** bei $x=0$."
+  },
+  {
+    "front": "[2026-04-13] Was bedeuten $f^{(n)}$, $C^n$ und $C^\\infty$?",
+    "back": "Die Schreibweise **$f^{(n)}$** bezeichnet die $n$-te Ableitung:\n$$\nf^{(0)}=f,\\qquad f^{(1)}=f',\\qquad f^{(2)}=f'',\\ \\dots\n$$\n\nEine Funktion gehört zu **$C^n$**, wenn sie bis zur $n$-ten Ableitung differenzierbar ist und die $n$-te Ableitung stetig ist.\n\n**$C^\\infty$** bedeutet: Die Funktion ist unendlich oft differenzierbar.\n\nBeispiele:\n- **Polynome**: nach endlich vielen Ableitungen wird alles $0$\n- **$e^x$**, **$\\sin x$**, **$\\cos x$**: gehören zu $C^\\infty$"
+  },
+  {
+    "front": "[2026-04-15] Warum ist die Ableitung eine **lokale** Kenngröße, und wie wird sie formal definiert?",
+    "back": "Die **Ableitung an einer Stelle** $x_0$ misst das Verhalten von $f$ in einer beliebig kleinen Umgebung von $x_0$.\n\nFormal:\n$$\nf'(x_0)=\\lim_{h\\to 0}\\frac{f(x_0+h)-f(x_0)}{h}.\n$$\n\nSie ist lokal, weil nur Werte von $f$ nahe bei $x_0$ in den Differenzenquotienten eingehen. Geometrisch ist $f'(x_0)$ die **Tangentensteigung**, physikalisch die **momentane Änderungsrate**."
+  },
+  {
+    "front": "[2026-04-15] Was sagt das Vorzeichen von $f'(x)$ über das Verhalten von $f$ aus?",
+    "back": "Unter der Konvention, dass man in $x$ **nach rechts** geht, gilt:\n\n- $f'(x)>0$: $f$ nimmt lokal zu.\n- $f'(x)<0$: $f$ nimmt lokal ab.\n- $f'(x)=0$: waagrechte Tangente, aber **nicht automatisch** ein Extremum.\n\nDie Ableitung beschreibt also die lokale Änderungsrichtung und -stärke, nicht direkt die globale Form der Funktion."
+  },
+  {
+    "front": "[2026-04-15] Warum darf man im Beweis der Summenregel den Grenzwert aufspalten?",
+    "back": "Man darf\n$$\n\\lim_{h\\to 0}\\left(\\frac{f(x+h)-f(x)}{h}+\\frac{g(x+h)-g(x)}{h}\\right)\n=\n\\lim_{h\\to 0}\\frac{f(x+h)-f(x)}{h}\n+\n\\lim_{h\\to 0}\\frac{g(x+h)-g(x)}{h}\n$$\nnur dann schreiben, wenn **beide einzelnen Grenzwerte existieren**.\n\nDie entscheidende Voraussetzung ist also: **$f$ und $g$ sind differenzierbar** an der betrachteten Stelle. Dann liefern die Grenzwertregeln direkt\n$$\n(f+g)'=f'+g'.\n$$"
+  },
+  {
+    "front": "[2026-04-15] Wie lautet die Summen- und Differenzregel, auch für höhere Ableitungen?",
+    "back": "Für differenzierbare Funktionen gilt:\n$$\n(f+g)'=f'+g', \\qquad (f-g)'=f'-g'.\n$$\n\nFür höhere Ableitungen folgt durch wiederholtes Ableiten:\n$$\n(f+g)^{(n)}=f^{(n)}+g^{(n)}, \\qquad (f-g)^{(n)}=f^{(n)}-g^{(n)}.\n$$\n\nWichtig ist: Die Linearität des Ableitens bleibt auch bei iteriertem Ableiten erhalten."
+  },
+  {
+    "front": "[2026-04-15] Welchen „$+0$“-Trick benutzt man im Beweis der Produktregel?",
+    "back": "Man startet mit\n$$\nf(x+h)g(x+h)-f(x)g(x)\n$$\nund fügt geschickt den Term $f(x+h)g(x)$ hinzu und wieder ab:\n$$\nf(x+h)g(x+h)-f(x+h)g(x)+f(x+h)g(x)-f(x)g(x).\n$$\n\nDann kann man faktorisieren:\n$$\nf(x+h)\\bigl(g(x+h)-g(x)\\bigr)+g(x)\\bigl(f(x+h)-f(x)\\bigr).\n$$\n\nGenau dieser Trick macht aus dem Produkt-Ausdruck zwei Teile, in denen Differenzenquotienten sichtbar werden."
+  },
+  {
+    "front": "[2026-04-15] Warum braucht man im Beweis der Produktregel zusätzlich **Stetigkeit**?",
+    "back": "Nach dem Aufspalten erhält man Terme wie\n$$\nf(x+h)\\frac{g(x+h)-g(x)}{h}.\n$$\n\nDamit man im Grenzübergang\n$$\nf(x+h)\\to f(x)\n$$\nverwenden darf, braucht man **Stetigkeit** von $f$ an der Stelle. Diese ist aber automatisch gegeben, weil\n\n**Differenzierbarkeit $\\Rightarrow$ Stetigkeit**.\n\nSo folgt insgesamt:\n$$\n(fg)'=f'g+fg'.\n$$"
+  },
+  {
+    "front": "[2026-04-15] Wie lautet die Produktregel, und was ist ihre inhaltliche Bedeutung?",
+    "back": "Die **Produktregel** lautet:\n$$\n(fg)'=f'g+fg'.\n$$\n\nInhaltlich bedeutet sie: Wenn zwei Faktoren von $x$ abhängen, dann entsteht die Änderung des Produkts aus zwei Beiträgen:\n\n- Änderung von $f$ bei festem $g$\n- Änderung von $g$ bei festem $f$\n\nDeshalb ist die Ableitung nicht einfach das Produkt $f'g'$."
+  },
+  {
+    "front": "[2026-04-15] Wie lautet die Leibniz-Regel für die $n$-te Ableitung eines Produkts?",
+    "back": "Für hinreichend oft differenzierbare Funktionen gilt:\n$$\n(fg)^{(n)}=\\sum_{k=0}^{n}\\binom{n}{k}\\,f^{(k)}\\,g^{(n-k)}.\n$$\n\nDie **Leibniz-Regel** verallgemeinert die Produktregel auf höhere Ableitungen. Jeder Summand beschreibt den Fall, dass $f$ genau $k$-mal und $g$ genau $n-k$-mal abgeleitet wird."
+  },
+  {
+    "front": "[2026-04-15] Warum tauchen in der Leibniz-Regel Binomialkoeffizienten auf?",
+    "back": "Bei $n$-maligem Ableiten eines Produkts entscheidet man in jedem Schritt, ob die Ableitung auf $f$ oder auf $g$ fällt.\n\nDamit ein Term der Form\n$$\nf^{(k)}g^{(n-k)}\n$$\nentsteht, muss man genau $k$ der $n$ Ableitungen auf $f$ und die übrigen $n-k$ auf $g$ verteilen. Die Anzahl solcher Verteilungen ist\n$$\n\\binom{n}{k}=\\frac{n!}{k!(n-k)!}.\n$$\n\nDie Binomialkoeffizienten zählen also die Anzahl der entstehenden gleichen Terme."
+  },
+  {
+    "front": "[2026-04-15] Wie formuliert man die Kettenregel in Worten und als Formel?",
+    "back": "In Worten:\n\nDie Ableitung einer Verkettung ist die **äußere Ableitung an der inneren Stelle**, multipliziert mit der **inneren Ableitung**.\n\nFormal:\n$$\n(g\\circ f)'(x_0)=g'(f(x_0))\\cdot f'(x_0).\n$$\n\nWichtig ist die Auswertungsstelle: $g'$ wird **nicht** bei $x_0$, sondern bei $f(x_0)$ ausgewertet."
+  },
+  {
+    "front": "[2026-04-15] Welche Rolle spielt die Tangentenapproximation in der Beweisidee der Kettenregel?",
+    "back": "Die Leitidee ist: Eine differenzierbare Funktion ist lokal fast linear. Nahe $y_0$ gilt\n$$\ng(y)\\approx g(y_0)+g'(y_0)(y-y_0).\n$$\n\nGenauer schreibt man $g$ als Tangente plus **Restterm**, der gegenüber $y-y_0$ klein ist. Setzt man dann $y=f(x)$ ein, zerfällt die Änderung von $g(f(x))$ in\n\n- den linearen Hauptteil mit Faktor $g'(f(x_0))$\n- einen Restterm, der im Grenzübergang verschwindet\n\nSo erklärt die lokale Linearisierung, warum in der Kettenregel ein Produkt der beiden Ableitungen entsteht."
+  },
+  {
+    "front": "[2026-04-15] Was ist der wichtige Stolperstein beim Restterm im Beweis der Kettenregel?",
+    "back": "Der Ausdruck\n$$\n\\frac{g(y)-g(y_0)}{y-y_0}-g'(y_0)\n$$\nist bei $y=y_0$ **nicht definiert**, weil man durch $0$ teilen würde.\n\nTrotzdem ist er für den Beweis nützlich, denn aus der Differenzierbarkeit von $g$ folgt:\n$$\n\\frac{g(y)-g(y_0)}{y-y_0}\\to g'(y_0)\\quad \\text{für } y\\to y_0,\n$$\nalso\n$$\n\\frac{g(y)-g(y_0)}{y-y_0}-g'(y_0)\\to 0.\n$$\n\nDer Ausdruck selbst muss also nicht an $y_0$ definiert sein; entscheidend ist sein **Grenzwert**."
+  },
+  {
+    "front": "[2026-04-15] Warum ist die Quotientenregel keine neue Grundidee?",
+    "back": "Weil man einen Quotienten als Produkt schreiben kann:\n$$\n\\frac{f}{g}=f\\cdot \\frac{1}{g}.\n$$\n\nDann verwendet man:\n\n- die **Produktregel** für $f\\cdot (1/g)$\n- die **Kettenregel** für $(1/g)(x)$ mit äußerer Funktion $u\\mapsto u^{-1}$\n\nSo erhält man\n$$\n\\left(\\frac{f}{g}\\right)'=\\frac{f'g-fg'}{g^2}.\n$$\n\nDie Quotientenregel ist also eine Kombination bereits bekannter Regeln."
+  },
+  {
+    "front": "[2026-04-15] Leite die Quotientenregel für $\\frac{f}{g}$ kurz her.",
+    "back": "Setze\n$$\n\\frac{f}{g}=f\\cdot g^{-1}.\n$$\n\nDann gilt mit der Produktregel:\n$$\n\\left(fg^{-1}\\right)'=f'(g^{-1})+f(g^{-1})'.\n$$\n\nFür $g^{-1}(x)=\\frac{1}{g(x)}$ liefert die Kettenregel:\n$$\n(g^{-1})'(x)=-\\frac{g'(x)}{g(x)^2}.\n$$\n\nEinsetzen ergibt:\n$$\n\\left(\\frac{f}{g}\\right)'\n=\nf'\\frac{1}{g}+f\\left(-\\frac{g'}{g^2}\\right)\n=\n\\frac{f'g-fg'}{g^2}.\n$$\n\nVoraussetzung ist natürlich $g(x)\\neq 0$."
+  },
+  {
+    "front": "[2026-04-15] Warum ist bei der Ableitung der Umkehrfunktion die Zuordnung der Stellen so wichtig?",
+    "back": "Die korrekte Formel lautet:\n$$\n(f^{-1})'(y_0)=\\frac{1}{f'(x_0)}\n\\qquad \\text{mit } y_0=f(x_0).\n$$\n\nLinks wird also bei **$y_0$**, rechts bei **$x_0$** ausgewertet. Das sind im Allgemeinen verschiedene Stellen.\n\nDie häufige falsche Schreibweise\n$$\n(f^{-1})'(x)=\\frac{1}{f'(x)}\n$$\nignoriert genau diesen Unterschied. Richtig ist nur\n$$\n(f^{-1})'(f(x))=\\frac{1}{f'(x)}.\n$$"
   }
 ]
