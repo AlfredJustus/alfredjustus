@@ -778,5 +778,65 @@
   {
     "front": "[2026-03-31] Warum muss `wait()` in Java in einem `while` statt in einem `if` stehen?",
     "back": "Weil ein Thread aus `wait()` **aufwachen kann, obwohl die Bedingung noch nicht erfüllt ist**. Das kann durch **spurious wakeups** oder durch konkurrierende Threads passieren.\n\nDarum ist korrekt:\n```java\nwhile (!condition) wait();\n```\n\nund nicht:\n```java\nif (!condition) wait();\n```\n\nMit `if` würde der Thread nach dem Aufwachen einfach weitermachen, auch wenn der Zustand inzwischen wieder falsch ist. Das kann zu falschem Verhalten oder Race Conditions führen.\n\n**Regel:** Nach jedem Aufwachen Bedingung **neu prüfen**."
+  },
+  {
+    "front": "[2026-04-14] Warum ist parallele Programmierung laut Vorlesung keine optionale Spezialtechnik mehr?",
+    "back": "Weil die **Hardwareentwicklung** zusätzliche Transistoren heute nicht mehr primär in ein einzelnes schnelleres Rechenwerk steckt, sondern in viele parallele Ausführungseinheiten wie **Cores** und **Vektoreinheiten**.\n\nDie Motivation ist also nicht „mehrere Threads sind manchmal praktisch“, sondern:\n- Transistordichte wächst weiter stark.\n- Ein einzelner Kern skaliert nicht beliebig sinnvoll.\n- Moderne Systeme setzen deshalb auf **massive Parallelität**.\n\nDas Vorlesungsbeispiel mit **Cerebras** macht das extrem deutlich: Wenn ein System in Richtung $10^6$ Cores geht, müssen Programme Parallelität systematisch nutzen."
+  },
+  {
+    "front": "[2026-04-14] Was beschreibt ein Architektur-Speichermodell, und warum ist ein schwächeres Modell für Programmierer schwieriger?",
+    "back": "Ein **Architektur-Speichermodell** legt fest, welche Umordnungen von **Loads** und **Stores** eine CPU/ISA erlauben darf und was andere Threads dadurch beobachten können.\n\nJe **schwächer** das Modell, desto mehr Reorderings sind erlaubt:\n- gut für Hardware-Optimierungen,\n- schlecht für die Vorhersagbarkeit aus Sicht des Programmierers.\n\nWichtiger Punkt: Die **Program Order** eines Threads bleibt lokal sinnvoll, aber andere Threads müssen Writes nicht in genau dieser Reihenfolge sehen. Deshalb entstehen Beobachtungen, die unter intuitiver „Schritt-für-Schritt“-Sicht überraschend wirken."
+  },
+  {
+    "front": "[2026-04-14] Was ist sequentielle Konsistenz, und warum ist sie als Denkmodell nützlich?",
+    "back": "**Sequentielle Konsistenz (SC)** bedeutet: Alle Speicheroperationen aller Threads erscheinen in einer einzigen globalen Reihenfolge, die mit der **Program Order** jedes Threads verträglich ist.\n\nIntuition:\n- Jeder Thread sieht dieselbe globale Reihenfolge.\n- Es gibt keine überraschenden Reorderings.\n\nNützlich ist SC als **Referenzmodell**:\n- Es ist leicht zu verstehen.\n- Viele Korrektheitsargumente starten mit SC-Intuition.\n\nAber: Laut Vorlesung ist praktisch **keine reale Architektur strikt SC**. Deshalb braucht man formale Speichermodelle wie das **JMM**, die präzise sagen, welche nicht-SC-Beobachtungen trotzdem legal sind."
+  },
+  {
+    "front": "[2026-04-14] Warum argumentiert das Java Memory Model über Ausführungs-Traces statt direkt über Programme?",
+    "back": "Weil bei einem parallelen Programm erst ein konkreter **Trace** festlegt, welche Aktionen tatsächlich stattfinden.\n\nDer Grund ist Verzweigung durch gelesene Werte:\n- Ein Read bestimmt oft, welcher Zweig ausgeführt wird.\n- Daher kann man nicht unabhängig vom beobachteten Verhalten sagen, welche Writes überhaupt vorkommen.\n\nBeispielidee aus der Vorlesung:\n- Wenn im Trace $\\text{read}(x)=2$ steht,\n- dann wird der `then`-Zweig ausgeführt, etwa $\\text{write}(y)=1$,\n- und nicht der `else`-Zweig, etwa $\\text{write}(z)=1$.\n\nEin Trace mit $\\text{read}(x)=2$ **und** $\\text{write}(z)=1$ wäre also inkonsistent. Das JMM klassifiziert deshalb **Traces** als legal oder illegal."
+  },
+  {
+    "front": "[2026-04-14] Was ist eine Aktion im JMM, und wie wird sie im Trace notiert?",
+    "back": "Eine **Aktion** ist ein einzelnes Speicherereignis in einer Ausführung, typischerweise ein **Read** oder **Write**.\n\nTypische Notation:\n- $\\text{read}(x)=v$\n- $\\text{write}(x)=v$\n\nWichtig ist: Das JMM argumentiert nicht nur über Quelltextzeilen, sondern über solche konkreten Aktionen in einer Ausführung. Dadurch kann man präzise festhalten,\n- welcher Wert gelesen wurde,\n- welcher Write dazu passt,\n- und welche Ordnungsrelationen zwischen Aktionen gelten."
+  },
+  {
+    "front": "[2026-04-14] Was ist die Program Order, und was garantiert sie gerade nicht?",
+    "back": "**Program Order (PO)** ist die Reihenfolge der Aktionen **innerhalb eines Threads** gemäß Programm bzw. konkretem Trace.\n\nEigenschaften:\n- pro Thread **total geordnet**,\n- über mehrere Threads hinweg nur **partiell**.\n\nDie wichtige Nicht-Garantie:\n**PO sagt nicht**, dass andere Threads diese Aktionen in derselben Reihenfolge beobachten. Genau diese Lücke macht Speichermodelle nötig: Lokale Reihenfolge im Thread ist nicht automatisch globale Sichtbarkeitsreihenfolge."
+  },
+  {
+    "front": "[2026-04-14] Welche Synchronization Actions wurden im JMM in der Vorlesung genannt?",
+    "back": "Als **Synchronization Actions** wurden genannt:\n- **volatile read**\n- **volatile write**\n- **monitor lock**\n- **monitor unlock**\n- die **erste Aktion eines Threads**\n- **Thread-Erzeugung**\n- **Join** bzw. **Termination-Check**\n\nDiese Aktionen sind besonders, weil sie nicht nur lokale Speicherzugriffe sind, sondern globale Ordnungsbeziehungen definieren. Auf ihnen baut die **Synchronization Order** auf, und über sie entstehen **synchronizes-with**- und damit **happens-before**-Beziehungen."
+  },
+  {
+    "front": "[2026-04-14] Was ist die Synchronization Order, und warum ist sie stärker als Program Order?",
+    "back": "Die **Synchronization Order (SO)** ist eine **globale totale Ordnung** über alle **Synchronization Actions**.\n\nDer entscheidende Unterschied zu **PO**:\n- **PO** ordnet nur Aktionen innerhalb eines Threads.\n- **SO** ordnet Synchronisationsaktionen **threadübergreifend** in einer einzigen Reihenfolge, die alle Threads gleich sehen.\n\nDas ist stark, weil dadurch Synchronisation nicht nur „lokal gemeint“, sondern global beobachtbar wird. Insbesondere müssen Reads von Synchronisationsaktionen die in **SO** passende letzte relevante Write-Aktion sehen."
+  },
+  {
+    "front": "[2026-04-14] Was bedeutet synchronizes-with im JMM konkret?",
+    "back": "**synchronizes-with (SW)** verbindet zwei konkrete Synchronisationsaktionen, wenn eine die andere beobachtet.\n\nTypisches Beispiel:\n- ein **volatile write** auf $x$\n- und ein **volatile read** von $x$, das genau diesen Write sieht.\n\nDie Relation ist also nicht bloß „beide greifen auf dieselbe Variable zu“, sondern:\n- der Read muss den Wert dieses Writes tatsächlich lesen.\n\nDamit wird aus einer beobachteten Synchronisation eine formale Kante, aus der später über **Transitivität** eine **happens-before**-Ordnung entstehen kann."
+  },
+  {
+    "front": "[2026-04-14] Wie ist happens-before formal definiert, und warum ist diese Relation zentral?",
+    "back": "**Happens-before (HB)** ist die transitive Hülle aus **Program Order** und **synchronizes-with**:\n$$\nhb = (po \\cup sw)^+\n$$\n\nZentral ist diese Relation, weil sie die relevante Sichtbarkeitsordnung im JMM ausdrückt:\n- Wenn ein Write vor einem Read in **$hb$** liegt, darf der Read nicht so tun, als wäre dieser Write „noch nicht passiert“.\n- Ohne passende **$hb$**-Ordnung sind Race-artige Beobachtungen möglich.\n\n**HB** ist also die Brücke zwischen lokaler Reihenfolge im Thread und globaler Sichtbarkeit zwischen Threads."
+  },
+  {
+    "front": "[2026-04-14] Warum ist im Store-Buffering-Beispiel das Ergebnis $(i=0, j=0)$ trotz der beiden Writes möglich?",
+    "back": "Im Beispiel gilt initial $x=0, y=0$:\n- Thread A: $\\text{write}(x)=1$; dann $\\text{read}(y)\\to j$\n- Thread B: $\\text{write}(y)=1$; dann $\\text{read}(x)\\to i$\n\nDas Ergebnis $(i=0, j=0)$ ist möglich, weil die **Sichtbarkeit** der Writes für den jeweils anderen Thread verzögert sein kann, etwa durch **Store Buffering**. Jeder Thread führt lokal seine Program Order aus, aber der andere Thread muss den vorherigen Store noch nicht sehen.\n\nDie Lehre daraus:\n**„Ich habe zuerst geschrieben, also muss der andere das sehen“** ist ohne Synchronisation falsch."
+  },
+  {
+    "front": "[2026-04-14] Warum ist bei zwei volatile-Variablen im 2-Thread-Beispiel das Ergebnis $00$ ausgeschlossen?",
+    "back": "Programm:\n- Thread A: $\\text{write}(x)=1$; $\\text{read}(y)\\to r_1$\n- Thread B: $\\text{write}(y)=1$; $\\text{read}(x)\\to r_2$\n\nWenn **beide Variablen volatile** sind, sind alle diese Zugriffe **Synchronization Actions** und damit durch eine globale **SO** geordnet.\n\nWarum ist $r_1=r_2=0$ unmöglich?\n- Dann müssten beide Reads jeweils „vor“ dem relevanten Write liegen.\n- Gleichzeitig liegen in jedem Thread die Writes vor den Reads.\n- Diese Anforderungen lassen sich nicht mit einer einzigen globalen Ordnung aller volatile-Aktionen vereinbaren.\n\nDeshalb sind nur $01$, $10$ und $11$ möglich, aber nicht $00$."
+  },
+  {
+    "front": "[2026-04-14] Im Beispiel mit $x$ nicht volatile und $g$ volatile: Warum ist $(r_1=1, r_2=0)$ illegal?",
+    "back": "Setup:\n- Thread A: $\\text{write}(x)=1$; $\\text{write}(g)=1$\n- Thread B: $\\text{read}(g)\\to r_1$; $\\text{read}(x)\\to r_2$\n\nFalls $r_1=1$, dann sieht B den **volatile write** auf $g$. Dadurch entsteht eine **SW**-Beziehung von $\\text{write}(g)=1$ zu $\\text{read}(g)=1$.\n\nMit der **PO** in A gilt:\n$$\n\\text{write}(x)=1 \\; po \\; \\text{write}(g)=1\n$$\nund damit über Transitivität:\n$$\n\\text{write}(x)=1 \\; hb \\; \\text{read}(x)\n$$\n\nDann darf B danach nicht mehr $x=0$ lesen. Genau deshalb ist der Trace\n$$\n(r_1=1, r_2=0)\n$$\nim Vortragsargument **illegal**."
+  },
+  {
+    "front": "[2026-04-14] Warum ist im selben Beispiel $(r_1=0, r_2=1)$ in Java legal?",
+    "back": "Wieder:\n- Thread A: $\\text{write}(x)=1$; $\\text{write}(g)=1$\n- Thread B: $\\text{read}(g)\\to r_1$; $\\text{read}(x)\\to r_2$\n\nWenn B **$g=0$** liest, gibt es gerade **keine** Synchronisation über den volatile-Write von A. Dann entsteht auch keine hilfreiche **SW/HB**-Kette von A nach B.\n\nDeshalb kann B in Java durchaus\n- den Write auf **$x$** schon sehen,\n- aber den Write auf **$g$** noch nicht.\n\nAlso ist\n$$\n(r_1=0, r_2=1)\n$$\nin Java legal. Genau das zeigt: **volatile auf einer Variablen synchronisiert nicht automatisch alle Beobachtungen**, sondern nur über die tatsächlich entstehende Synchronisationsbeziehung."
+  },
+  {
+    "front": "[2026-04-14] Was ist der Unterschied zwischen Mutual Exclusion, Deadlock-Freiheit und Starvation-Freiheit?",
+    "back": "Die drei Eigenschaften betreffen verschiedene Aspekte einer **kritischen Sektion**:\n\n- **Mutual Exclusion**: Nie sind zwei Threads gleichzeitig in der kritischen Sektion.\n- **Deadlock-Freiheit**: Wenn mehrere Threads hinein wollen, kommt **mindestens einer** irgendwann hinein.\n- **Starvation-Freiheit**: **Jeder** Thread, der hinein will, kommt irgendwann hinein.\n\nWichtig ist die Stärke:\n- Starvation-Freiheit $\\Rightarrow$ Deadlock-Freiheit\n- aber nicht umgekehrt.\n\nEin Lock kann also korrekt bezüglich **Mutual Exclusion** sein und trotzdem unfair sein; oder deadlock-frei sein, aber einen bestimmten Thread unendlich lange verhungern lassen."
   }
 ]

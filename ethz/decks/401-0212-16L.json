@@ -718,5 +718,65 @@
   {
     "front": "[2026-03-25] Woran erkennt man eine hebbare Definitionslücke, und was darf man dann tun?",
     "back": "Eine **hebbare Definitionslücke** liegt an $x_0$ vor, wenn\n\n- $f$ an $x_0$ nicht definiert ist,\n- aber der Grenzwert\n  $$\n  \\lim_{x\\to x_0} f(x)\n  $$\n  existiert und endlich ist.\n\nDann fehlt nur „ein Punkt“ im Graphen. Man kann die Lücke schließen, indem man eine neue Funktion definiert:\n$$\nf^\\ast(x)=\n\\begin{cases}\nf(x), & x\\neq x_0,\\\\\nL, & x=x_0,\n\\end{cases}\n$$\nwobei\n$$\nL=\\lim_{x\\to x_0} f(x).\n$$\n\nWichtig: Algebraisches Kürzen zeigt oft die Struktur, ändert aber nicht automatisch den ursprünglichen Definitionsbereich. Ein ursprünglich ausgeschlossener Nenner-Nullpunkt bleibt zunächst ausgeschlossen."
+  },
+  {
+    "front": "[2026-04-01] Wie formuliert man Stetigkeit in $x_0$ mit der $\\varepsilon$-$\\delta$-Definition?",
+    "back": "Eine Funktion $f$ ist **stetig in $x_0$**, wenn gilt:\n$$\n\\forall \\varepsilon>0\\ \\exists \\delta>0\\ \\forall x:\\ |x-x_0|<\\delta \\Rightarrow |f(x)-f(x_0)|<\\varepsilon.\n$$\n\nInterpretation: Zu jeder gewünschten vertikalen Genauigkeit $\\varepsilon$ um $f(x_0)$ findet man eine horizontale Genauigkeit $\\delta$ um $x_0$, sodass alle zugehörigen Funktionswerte im $\\varepsilon$-Band bleiben.\n\nDie Vorlesungsintuition dazu war die **Box-Idee**: Der Graph darf in einer genügend schmalen Umgebung von $x_0$ nicht aus dem Rechteck um $(x_0,f(x_0))$ „herausspringen“."
+  },
+  {
+    "front": "[2026-04-01] Wann ist die Folgencharakterisierung von Stetigkeit äquivalent zur $\\varepsilon$-$\\delta$-Definition?",
+    "back": "Für Funktionen auf den hier betrachteten reellen Intervallen gilt:\n$$\nf \\text{ ist stetig in } x_0\n\\quad\\Longleftrightarrow\\quad\n\\forall (x_n): x_n\\to x_0 \\Rightarrow f(x_n)\\to f(x_0).\n$$\n\nDie rechte Seite heißt **Folgenstetigkeit**.\n\nDer wichtige Punkt ist nicht nur die Formulierung, sondern die **Äquivalenz**: Man darf je nach Beweis die bequemere Sichtweise wählen. Für Rechenregeln ist die Folgenform oft einfacher, für Verknüpfungen oder lokale Abschätzungen ist $\\varepsilon$-$\\delta$ oft direkter."
+  },
+  {
+    "front": "[2026-04-01] Warum sind Rechenregeln für stetige Funktionen mit Folgenstetigkeit besonders bequem zu beweisen?",
+    "back": "Weil man bekannte **Grenzwertregeln für Folgen** direkt wiederverwenden kann.\n\nWenn $f$ und $g$ in $x_0$ stetig sind und $x_n\\to x_0$, dann gilt:\n$$\nf(x_n)\\to f(x_0), \\qquad g(x_n)\\to g(x_0).\n$$\nDann folgen sofort:\n$$\nf(x_n)+g(x_n)\\to f(x_0)+g(x_0),\n$$\n$$\nf(x_n)g(x_n)\\to f(x_0)g(x_0),\n$$\nund beim Quotienten\n$$\n\\frac{f(x_n)}{g(x_n)}\\to \\frac{f(x_0)}{g(x_0)}\n\\quad\\text{falls } g(x_0)\\ne 0.\n$$\n\nSo zeigt man elegant: **Summe, Produkt und unter der üblichen Voraussetzung auch Quotient stetiger Funktionen sind wieder stetig**."
+  },
+  {
+    "front": "[2026-04-01] Unter welcher Zusatzbedingung ist der Quotient zweier stetiger Funktionen wieder stetig?",
+    "back": "Für stetige Funktionen $f$ und $g$ ist\n$$\n\\frac{f}{g}\n$$\nnur dann sicher **stetig in $x_0$**, wenn zusätzlich\n$$\ng(x_0)\\neq 0\n$$\ngilt.\n\nWarum? Die Grenzwertregel für Quotienten funktioniert nur, wenn der Nennergrenzwert nicht $0$ ist. Ist $g(x_0)=0$, kann der Quotient undefiniert sein oder in der Nähe von $x_0$ instabil werden.\n\nDie Bedingung ist also kein technisches Detail, sondern genau das, was verhindert, dass man durch $0$ teilt."
+  },
+  {
+    "front": "[2026-04-01] Was muss man vor der Bildung einer Verknüpfung $g\\circ f$ immer prüfen?",
+    "back": "Man muss prüfen, ob die **Komposition überhaupt definiert** ist:\n$$\n(g\\circ f)(x)=g(f(x)).\n$$\n\nDazu müssen die Werte von $f$ im **Definitionsbereich von $g$** liegen. Formal: Das Bild von $f$ an der betrachteten Stelle bzw. in einer Umgebung muss in der Definitionsmenge von $g$ liegen.\n\nOhne diese Prüfung ist die Aussage „$g\\circ f$ ist stetig“ sinnlos, weil die Funktion dann möglicherweise gar nicht existiert.\n\nDas ist die typische Falle bei Verknüpfungen: Nicht nur Stetigkeit, sondern zuerst **Wohldefiniertheit**."
+  },
+  {
+    "front": "[2026-04-01] Wie läuft der $\\varepsilon$-$\\delta$-Beweis für die Stetigkeit von $g\\circ f$ in zwei Schritten?",
+    "back": "Angenommen, $f$ ist stetig in $x_0$ und $g$ stetig in $f(x_0)$.\n\n1. Starte mit einem beliebigen $\\varepsilon>0$ für die äußere Funktion $g$.\n2. Aus der Stetigkeit von $g$ folgt ein **Zwischenwert $\\eta>0$** mit\n   $$\n   |y-f(x_0)|<\\eta \\Rightarrow |g(y)-g(f(x_0))|<\\varepsilon.\n   $$\n3. Nun benutze die Stetigkeit von $f$ mit genau diesem $\\eta$:\n   $$\n   \\exists \\delta>0:\\ |x-x_0|<\\delta \\Rightarrow |f(x)-f(x_0)|<\\eta.\n   $$\n4. Zusammengesetzt ergibt das:\n   $$\n   |x-x_0|<\\delta \\Rightarrow |g(f(x))-g(f(x_0))|<\\varepsilon.\n   $$\n\nDas ist das zentrale **Fehlerbudget-Prinzip**: $\\varepsilon \\to \\eta \\to \\delta$."
+  },
+  {
+    "front": "[2026-04-01] Warum braucht man beim Beweis der Stetigkeit von $g\\circ f$ ein Zwischen-$\\eta$ und nicht direkt ein $\\delta$?",
+    "back": "Weil die äußere Funktion $g$ nicht direkt auf $x$, sondern auf den **Zwischenwert** $f(x)$ angewendet wird.\n\nDas gewünschte Ziel ist\n$$\n|g(f(x))-g(f(x_0))|<\\varepsilon.\n$$\nDie Stetigkeit von $g$ sagt aber: Dafür genügt es, wenn ihr Input nahe genug bei $f(x_0)$ liegt, also\n$$\n|f(x)-f(x_0)|<\\eta.\n$$\nErst danach liefert die Stetigkeit von $f$ ein $\\delta$, das genau diese Bedingung sicherstellt.\n\nOhne das Zwischen-$\\eta$ würde man die zwei Ebenen der Verknüpfung vermischen: Nähe von $x$ und Nähe von $f(x)$ sind nicht dasselbe."
+  },
+  {
+    "front": "[2026-04-01] Warum sind $\\delta$ und $\\eta$ im Allgemeinen nicht explizit und von der Stelle abhängig?",
+    "back": "Weil **Stetigkeit lokal** ist: Wie klein man $\\delta$ wählen muss, hängt von der Funktion und von der betrachteten Stelle ab.\n\nIntuition aus der Vorlesung: Bei einer Funktion mit großer Steigung, etwa der **Exponentialfunktion** für große $x$, kann dieselbe vertikale Toleranz $\\varepsilon$ nur mit einer viel kleineren horizontalen Toleranz $\\delta$ erreicht werden als an einer flacheren Stelle.\n\nDeshalb gibt es meist kein einziges universelles $\\delta$ für alle Punkte. Die Größen\n$$\n\\delta=\\delta(\\varepsilon,x_0), \\qquad \\eta=\\eta(\\varepsilon,f(x_0))\n$$\nsind typischerweise **ortsabhängig**."
+  },
+  {
+    "front": "[2026-04-01] Warum ist $\\sin$ auf $\\mathbb{R}$ nicht invertierbar, aber auf $\\left[-\\frac{\\pi}{2},\\frac{\\pi}{2}\\right]$ schon?",
+    "back": "Auf ganz $\\mathbb{R}$ ist $\\sin$ **nicht injektiv**, weil verschiedene $x$ denselben Funktionswert haben, z.B.\n$$\n\\sin(0)=\\sin(\\pi)=0.\n$$\nAlso kann es keine Umkehrfunktion auf ganz $\\mathbb{R}$ geben.\n\nAuf dem Intervall\n$$\n\\left[-\\frac{\\pi}{2},\\frac{\\pi}{2}\\right]\n$$\nist $\\sin$ jedoch **streng monoton** und damit injektiv. Außerdem ist seine Bildmenge genau\n$$\n[-1,1].\n$$\nDaher ist die eingeschränkte Funktion bijektiv\n$$\n\\sin:\\left[-\\frac{\\pi}{2},\\frac{\\pi}{2}\\right]\\to [-1,1],\n$$\nund besitzt die Umkehrfunktion **$\\arcsin$**.\n\nDie Einschränkung des Definitionsbereichs ist also der entscheidende Schritt."
+  },
+  {
+    "front": "[2026-04-01] Warum ist strenge Monotonie die richtige Intuition für Invertierbarkeit auf einem Intervall?",
+    "back": "Eine Funktion ist auf einem Intervall nur dann invertierbar, wenn sie **injektiv** ist. Strenge Monotonie liefert genau diese Eigenschaft:\n\n- **streng wachsend**: $x_1<x_2 \\Rightarrow f(x_1)<f(x_2)$\n- **streng fallend**: $x_1<x_2 \\Rightarrow f(x_1)>f(x_2)$\n\nDann können nie zwei verschiedene Stellen denselben Funktionswert haben.\n\nOhne strenge Monotonie ist auf einem Intervall typischerweise Mehrdeutigkeit möglich, also\n$$\nf(x_1)=f(x_2)\\quad \\text{mit }x_1\\ne x_2,\n$$\nund dann kann keine Umkehrfunktion existieren.\n\nDie Vorlesung nutzte das als Leitintuition für Beispiele wie $\\sin$."
+  },
+  {
+    "front": "[2026-04-01] Was sagt der Zwischenwertsatz genau, und was garantiert er gerade nicht?",
+    "back": "Der **Zwischenwertsatz** lautet:\n\nIst $f$ stetig auf $[a,b]$ und liegt $c$ zwischen $f(a)$ und $f(b)$, dann existiert ein $x\\in[a,b]$ mit\n$$\nf(x)=c.\n$$\n\nInsbesondere: Wenn\n$$\nf(a)<0<f(b)\n\\quad\\text{oder}\\quad\nf(b)<0<f(a),\n$$\ndann besitzt $f$ eine **Nullstelle** in $[a,b]$.\n\nWichtig ist die Grenze der Aussage: Der Satz garantiert **Existenz**, aber nicht **Eindeutigkeit**. Es kann ein, zwei oder viele Punkte mit $f(x)=c$ geben.\n\nEr ist also kein Satz über die Anzahl der Lösungen, sondern nur darüber, dass mindestens eine existiert."
+  },
+  {
+    "front": "[2026-04-01] Warum ist Stetigkeit bis an den Rand im Zwischenwertsatz wesentlich?",
+    "back": "Weil sonst ein Niveau am Rand „durchrutschen“ kann.\n\nWenn $f$ im Inneren von $(a,b)$ stetig ist, aber am Randpunkt $b$ einen Sprung hat, dann kann $c$ zwar zwischen $f(a)$ und $f(b)$ liegen, ohne dass es ein $x\\in[a,b]$ mit\n$$\nf(x)=c\n$$\ngibt.\n\nDie Vorlesungsintuition war: Der Graph kann kurz vor dem Rand unterhalb eines Niveaus bleiben und am Rand plötzlich auf einen anderen Wert springen. Dann wird das Zwischenniveau nie tatsächlich angenommen.\n\nFür den Satz auf dem **abgeschlossenen Intervall** $[a,b]$ braucht man daher ausdrücklich **Randstetigkeit**."
+  },
+  {
+    "front": "[2026-04-01] Wie bestimmt man im Nullstellenbeispiel zuerst den Definitionsbereich?",
+    "back": "Für\n$$\ng(x)=\\sqrt{3x-4}+2\\sin(x)-x-0.5\n$$\nkommt die Einschränkung allein von der Wurzel:\n$$\n3x-4\\ge 0.\n$$\nDaraus folgt\n$$\nx\\ge \\frac{4}{3}.\n$$\n\nDer **Definitionsbereich** ist also\n$$\n\\left[\\frac{4}{3},\\infty\\right).\n$$\n\nDas ist der erste notwendige Schritt, bevor man überhaupt über Stetigkeit oder Nullstellen spricht: Man darf nur dort suchen, wo die Funktion definiert ist."
+  },
+  {
+    "front": "[2026-04-01] Warum erwartet man bei",
+    "back": "$$\ng(x)=\\sqrt{3x-4}+2\\sin(x)-x-0.5\n$$\nfür große $x$ negative Werte?\n\nWeil die Terme sehr unterschiedlich wachsen:\n\n- $\\sqrt{3x-4}$ wächst nur wie eine **Wurzel**,\n- $2\\sin(x)$ ist **beschränkt** zwischen $-2$ und $2$,\n- der Term $-x$ fällt **linear** und dominiert für große $x$.\n\nDaher gilt intuitiv:\n$$\ng(x)=\\sqrt{3x-4}+2\\sin(x)-x-0.5 \\to -\\infty\n\\quad\\text{für }x\\to\\infty.\n$$\n\nAlso ist $g(x)$ für hinreichend große $x$ sicher negativ. Genau diese Beobachtung nutzt man, um zusammen mit einem positiven Wert an anderer Stelle einen **Vorzeichenwechsel** und damit per Zwischenwertsatz eine Nullstelle zu erhalten."
+  },
+  {
+    "front": "[2026-04-01] Warum ist die Menge",
+    "back": "$$\nX=\\{x\\in[a,b]: f(x)\\le c\\}\n$$\nim Beweis des Zwischenwertsatzes eine gute Wahl?\n\nSie ist genau so gewählt, dass man den „letzten Punkt von links“ betrachtet, an dem die Funktionswerte noch **nicht über $c$ hinausgehen**.\n\nVorteile:\n\n- $a\\in X$, also ist $X$ **nicht leer**, weil $f(a)\\le c$.\n- $X\\subseteq [a,b]$, also ist $X$ **nach oben beschränkt**.\n- Daher existiert\n  $$\n  x^*=\\sup X.\n  $$\n\nDas $\\le$ ist wichtig: So kann später aus einer Folge $x_n\\in X$ direkt\n$$\nf(x_n)\\le c\n$$\nund im Grenzübergang\n$$\nf(x^*)\\le c\n$$\ngefolgert werden. Genau das ist der erste halbe Schritt zum Ziel $f(x^*)=c$."
   }
 ]
