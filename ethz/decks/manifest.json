@@ -1,5 +1,5 @@
 {
-  "generated": "2026-04-21T19:17:10.674Z",
+  "generated": "2026-04-21T19:21:01.913Z",
   "model": "gpt-5.4",
   "cardsPerLectureTarget": 15,
   "format": "markdown->parser->json",
@@ -17,8 +17,8 @@
       "name": "Parallele Programmierung",
       "file": "252-0029-00L.json",
       "apkg": null,
-      "lectures": 15,
-      "cards": 225
+      "lectures": 16,
+      "cards": 240
     },
     {
       "id": "252-0030-00L",

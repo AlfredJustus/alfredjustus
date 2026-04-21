@@ -898,5 +898,65 @@
   {
     "front": "[2026-04-14] Was ist der Unterschied zwischen Mutual Exclusion, Deadlock-Freiheit und Starvation-Freiheit?",
     "back": "Die drei Eigenschaften betreffen verschiedene Aspekte einer **kritischen Sektion**:\n\n- **Mutual Exclusion**: Nie sind zwei Threads gleichzeitig in der kritischen Sektion.\n- **Deadlock-Freiheit**: Wenn mehrere Threads hinein wollen, kommt **mindestens einer** irgendwann hinein.\n- **Starvation-Freiheit**: **Jeder** Thread, der hinein will, kommt irgendwann hinein.\n\nWichtig ist die Stärke:\n- Starvation-Freiheit $\\Rightarrow$ Deadlock-Freiheit\n- aber nicht umgekehrt.\n\nEin Lock kann also korrekt bezüglich **Mutual Exclusion** sein und trotzdem unfair sein; oder deadlock-frei sein, aber einen bestimmten Thread unendlich lange verhungern lassen."
+  },
+  {
+    "front": "[2026-04-20] Warum reicht es nicht, dass ein Lock „meistens funktioniert“?",
+    "back": "Ein Lock ist nur dann korrekt, wenn es für **alle Interleavings** korrekt ist, also für jede mögliche Verschachtelung der Thread-Schritte.\n\nSchon ein einziges Gegenbeispiel genügt:\n- Wenn es **ein** Interleaving gibt, in dem zwei Threads gleichzeitig in die kritische Sektion kommen, ist **Mutual Exclusion verletzt**.\n- Wenn es **ein** Interleaving gibt, in dem alle ewig warten, ist der Algorithmus nicht **deadlock-frei**.\n- Wenn **ein** Thread in einem möglichen Ablauf unendlich lange warten kann, fehlt **starvation-freedom**.\n\nNebenläufigkeit ist daher kein „funktioniert im Testlauf“-Problem, sondern ein **Für-alle-Ausführungen**-Problem."
+  },
+  {
+    "front": "[2026-04-20] Worin unterscheiden sich Deadlock und Livelock beim „vertauschten“ Flag-Algorithmus?",
+    "back": "Beim Algorithmus „erst eigenes Flag setzen, dann auf `otherFlag` warten“ können beide Threads gleichzeitig `flag=true` setzen und dann beide in der `while`-Schleife hängen.\n\nDer Unterschied ist die **Betrachtungsebene**:\n- **Deadlock**: Im globalen Zustandsmodell gibt es keine ausgehende Transition mehr, also keinen Fortschritt des Systems.\n- **Livelock**: Auf CPU-Ebene führen beide Threads weiter Schritte aus, nämlich **Busy-Waiting**, aber die Anwendung macht keinen Fortschritt.\n\nDer gleiche Zustand kann also je nach Modell als Deadlock oder Livelock beschrieben werden."
+  },
+  {
+    "front": "[2026-04-20] Warum löst eine reine `turn`-Variable zwar Mutual Exclusion, aber nicht Starvation?",
+    "back": "Mit einer gemeinsamen Variable `turn` darf immer nur der Thread eintreten, für den gerade `turn` gesetzt ist. Dadurch ist **Mutual Exclusion** erfüllt.\n\n**Starvation** bleibt aber möglich:\n- Wenn `turn = P` ist, darf nur $P$ eintreten.\n- Falls $P$ außerhalb der kritischen Sektion „verschwindet“, abstürzt oder nie wieder läuft, wird `turn` nie weitergegeben.\n- Dann wartet $Q$ möglicherweise **unendlich lange**, obwohl kein anderer sinnvoll arbeitet.\n\nDie Lehre ist: **gegenseitiger Ausschluss allein genügt nicht**; man braucht zusätzlich eine Fortschrittsgarantie."
+  },
+  {
+    "front": "[2026-04-20] Wie reduziert man einen Zustandsraum, ohne den Fehlernachweis zu verlieren?",
+    "back": "Man fasst für den Beweis **irrelevante lokale Zustände** zusammen, solange die für die Eigenschaft entscheidenden Unterschiede erhalten bleiben.\n\nTypische Reduktion:\n- alle Zustände **vor** dem möglichen Eintritt in die kritische Sektion zusammenfassen,\n- alle Zustände **nach** dem Eintritt ebenfalls zusammenfassen.\n\nDie Idee:\n- Für **Mutual Exclusion** ist nur relevant, ob ein Thread\n  1. noch nicht kritisch ist,\n  2. in der kritischen Sektion ist,\n  3. schon wieder draußen ist.\n- Feine Unterschiede innerhalb dieser Bereiche ändern den Fehlernachweis oft nicht.\n\nSo schrumpft der globale Zustandsraum stark, ohne dass ein Zustand wie „beide in der kritischen Sektion“ verloren geht."
+  },
+  {
+    "front": "[2026-04-20] Warum skaliert ein vollständiges Zustandsdiagramm für Lock-Beweise schlecht?",
+    "back": "Ein Zustandsdiagramm enumeriert alle möglichen **Interleavings**. Diese Zahl wächst mit mehr Instruktionen und mehr Threads extrem schnell.\n\nDas Problem:\n- Hat jeder Thread mehrere lokale Zustände, entsteht der globale Raum als Kombination dieser Zustände.\n- Schon kleine Programme erzeugen viele globale Zustände und Übergänge.\n- Für reale Systeme wie Kernel oder große Laufzeitsysteme ist vollständige Enumeration praktisch zu groß.\n\nDarum sind Zustandsdiagramme gut für kleine Beispiele und Gegenbeispiele, aber für größere Algorithmen braucht man meist **Invarianten**, **Widerspruchsbeweise** oder **Induktion**."
+  },
+  {
+    "front": "[2026-04-20] Was bedeutet die Semantik eines atomaren Registers für einen Read?",
+    "back": "Ein **atomarer Read** liefert den Wert der **letzten Write-Operation vor seinem Linearisationzeitpunkt** $\\tau$.\n\nFormal:\n- Jede Operation $A$ hat ein Intervall $[A_0, A_1]$.\n- Ihr Effekt tritt zu einem Zeitpunkt $\\tau(A)$ auf mit\n$$\nA_0 \\preceq \\tau(A) \\preceq A_1.\n$$\n- Für einen Read auf ein atomares Register gilt: Er gibt den Wert der letzten Write zurück, deren $\\tau$ vor $\\tau(\\text{read})$ liegt.\n\nWichtig:\n- Ein Read darf bei überlappenden Writes unterschiedliche Werte sehen,\n- aber nur solche, die mit **einer totalen Ordnung** der atomaren Operationen konsistent sind."
+  },
+  {
+    "front": "[2026-04-20] Warum führt das Intervallmodell mit $\\tau$ zu einer präziseren Sicht auf Atomizität?",
+    "back": "Weil reale Reads und Writes **Zeit dauern** und nicht wirklich punktförmig sind.\n\nDas Intervallmodell trennt:\n- **Beginn** einer Operation $A_0$,\n- **Ende** einer Operation $A_1$,\n- den wirksamen atomaren Zeitpunkt $\\tau(A)$ dazwischen.\n\nDamit kann man präzise formulieren:\n$$\nA_0 \\preceq \\tau(A) \\preceq A_1.\n$$\n\nDer Nutzen:\n- Überlappung von Operationen wird explizit modelliert.\n- Trotzdem kann man atomare Register so behandeln, als gäbe es eine **Linearisation**.\n- Aussagen wie „liest den zuletzt geschriebenen Wert“ werden dadurch formal sinnvoll.\n\nOhne dieses Modell wäre unklar, was „zuletzt“ bei parallelen, überlappenden Operationen überhaupt bedeutet."
+  },
+  {
+    "front": "[2026-04-20] Warum kann ein Read bei überlappenden Writes verschiedene Werte sehen, aber nicht „irgendeinen“?",
+    "back": "Bei atomaren Registern dürfen überlappende Writes unterschiedlich linearisiert werden. Deshalb kann ein Read je nach Lage seines $\\tau$-Zeitpunkts verschiedene legitime Werte sehen.\n\nBeispiel:\n- Eine Write schreibt $4$,\n- eine andere überlappende Write schreibt $8$,\n- ein Read liegt zeitlich dazwischen.\n\nDann kann der Read je nach Linearisation entweder $4$ oder $8$ zurückgeben.\n\nAber nicht beliebig:\n- Der gelesene Wert muss zu der **letzten Write vor $\\tau(\\text{read})$** passen.\n- Es muss also eine **totale Ordnung** der atomaren Writes geben, in der das Ergebnis konsistent ist.\n\nAtomar heißt daher nicht „deterministisch“, sondern **nicht beliebig**."
+  },
+  {
+    "front": "[2026-04-20] Warum ist die Idee „ich erkläre mich zum Opfer“ in Petersons Lock so zentral?",
+    "back": "Weil Konflikte dadurch asymmetrisch aufgelöst werden.\n\nIn Petersons Lock macht Thread $i$:\n1. `flag[i] = true`\n2. `victim = i`\n3. wartet, solange `flag[j] && victim == i`\n\nDie Bedeutung:\n- `flag` sagt: **Ich will rein**.\n- `victim = i` sagt: **Falls wir kollidieren, gebe ich nach**.\n\nDas ist robust, weil `victim` nur **einen** Wert haben kann. Bei gleichzeitigem Interesse kann also höchstens einer wirklich „Opfer“ sein. Dadurch wird verhindert, dass beide gleichzeitig weiterlaufen.\n\nDie Vorlesungsintuition war: In Konkurrenzsituationen kann man zuverlässig den **Verlierer** bestimmen; einen sicheren „Gewinner“ direkt festzulegen ist schwieriger."
+  },
+  {
+    "front": "[2026-04-20] Wie funktioniert der Widerspruchsbeweis für Mutual Exclusion bei Peterson?",
+    "back": "Man nimmt an, beide Threads seien gleichzeitig in der kritischen Sektion, und leitet daraus einen Widerspruch ab.\n\nKernschritt:\n- **WLOG** sei `victim = P` der zuletzt geschriebene Wert von `victim`.\n\nDann gilt:\n- Thread $Q$ muss seine Schleife\n  `while(flag[P] && victim == Q) {}`\n  verlassen haben.\n- Da `victim` zuletzt auf $P$ gesetzt wurde, kann `victim == Q` nicht gelten.\n- Gleichzeitig ist $P$ in der kritischen Sektion und hat vorher `flag[P]=true` gesetzt.\n- Unter der Semantik atomarer Register kann $Q$ also nicht einfach `flag[P]=false` gesehen haben.\n\nDamit kann $Q$ die Schleife nicht korrekt verlassen haben — Widerspruch.\n\nFolglich können nicht beide gleichzeitig in der kritischen Sektion sein."
+  },
+  {
+    "front": "[2026-04-20] Unter welchen Annahmen ist Peterson starvation-frei?",
+    "back": "**Peterson** ist starvation-frei unter der Annahme, dass Threads **nicht innerhalb von `lock()` oder `unlock()` sterben oder dauerhaft stecken bleiben**.\n\nErlaubt ist nur:\n- außerhalb der kritischen Sektion beliebige Verzögerung oder Absturz.\n\nWarum diese Annahme wichtig ist:\n- Hängt ein Thread in `lock()` fest und setzt z.B. sein `flag` nie zurück, kann der andere sonst ewig blockieren.\n- Der Beweis der Starvation-Freiheit setzt voraus, dass ein Thread im Protokoll nicht „halb verschwindet“.\n\nDie Eigenschaft ist also nicht absolut, sondern **modellabhängig**. Ohne diese Fortschrittsannahme ist Starvation-Freiheit für Peterson im Vorlesungsmodell nicht garantiert."
+  },
+  {
+    "front": "[2026-04-20] Warum ist `volatile boolean[] flag` in Java kein korrekter Peterson-Baustein?",
+    "back": "Weil `volatile` bei einem Array in Java nur die **Referenz auf das Array**, nicht aber die einzelnen Elemente `flag[i]`, volatil macht.\n\nDas bedeutet:\n- Zugriffe auf `flag[i]` haben nicht automatisch die nötigen **Sichtbarkeits-** und **Ordnungs**garantien.\n- Der Code kann in Tests funktionieren, ist aber formal nicht korrekt.\n\nFür Peterson braucht man aber genau diese garantierte Ordnung der gemeinsamen Variablen.\n\nKorrekte Richtung:\n- atomare Container wie **`AtomicIntegerArray`** verwenden,\n- `false/true` z.B. als $0/1$ kodieren.\n\nDas ist ein klassischer Java-Concurrency-Fallstrick."
+  },
+  {
+    "front": "[2026-04-20] Warum braucht Peterson auf $x86$ ohne Zusatzmaßnahmen mindestens ein Memory-Fence?",
+    "back": "Der Korrektheitsbeweis von Peterson setzt eine bestimmte **Speicherordnung** voraus: andere Threads müssen die Writes in der benötigten Reihenfolge beobachten können.\n\nOhne ausreichende Ordnungsgarantien kann Folgendes schiefgehen:\n- `flag[i] = true` und `victim = i` werden nicht in der für den Beweis nötigen Reihenfolge sichtbar,\n- ein Thread verlässt die Schleife auf Basis einer Beobachtung, die im Modell des Beweises nicht erlaubt wäre.\n\nDeshalb reicht der rein algorithmische Code nicht auf jeder Hardware direkt aus. Auf $x86$ braucht man laut Vorlesung **mindestens ein Memory-Fence**, damit die benötigte Ordnung erzwungen wird.\n\nIn Java kann man diese Ordnung typischerweise über geeignete **volatile/atomare** Konstrukte erhalten."
+  },
+  {
+    "front": "[2026-04-20] Warum ist der Filter Lock keine FCFS-faire Verallgemeinerung von Peterson?",
+    "back": "**FCFS** bedeutet:\nWenn Thread $A$ den **Doorway** vor Thread $B$ beendet, dann muss $A$ die kritische Sektion vor $B$ betreten.\n\nBeim **Filter Lock** gilt das nicht:\n- Ein Thread durchläuft mehrere Levels.\n- Auf einem einzelnen Level wirkt das Verfahren lokal fair.\n- Über mehrere Levels hinweg kann aber ein späterer Thread einen früheren überholen, weil sich ihre Blockierungen auf verschiedenen Levels unterschiedlich entwickeln.\n\nAlso:\n- Der Filter Lock ist korrekt im Sinn von Ausschluss/Fortschritt,\n- aber **nicht First-Come-First-Served**.\n\nDie Mehrstufigkeit zerstört die globale Reihenfolge, selbst wenn lokale Entscheidungen plausibel wirken."
+  },
+  {
+    "front": "[2026-04-20] Warum kostet der Filter Lock selbst ohne Konkurrenz $\\mathcal{O}(n)$ pro Eintritt?",
+    "back": "Weil ein Thread auch ohne Gegner alle Levels $1,\\dots,n-1$ durchlaufen muss.\n\nDer Aufwand entsteht durch:\n- Setzen von `level[me]`,\n- Setzen von `victim[level]`,\n- Prüfen, ob es andere Threads mit `level \\ge i` gibt.\n\nSelbst wenn kein anderer Thread wirklich konkurriert:\n- der Thread passiert trotzdem alle $n-1$ Levels,\n- und die Prüfungen sind nicht kostenlos.\n\nDaher ist der Eintrittsaufwand **linear in der Threadzahl**:\n$$\n\\mathcal{O}(n).\n$$\n\nFür große Systeme ist das problematisch, weil der Lock schon im konkurrenzfreien Fall schlecht skaliert."
   }
 ]
