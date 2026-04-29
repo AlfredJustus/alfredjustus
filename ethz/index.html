@@ -588,7 +588,10 @@
         "spring-2026": "Spring 2026",
         "autumn-2025": "Autumn 2025",
       };
-      const SEMESTER_ORDER = ["spring-2026", "autumn-2025"];
+      // Display order: oldest left, newest right.
+      const SEMESTER_DISPLAY_ORDER = ["autumn-2025", "spring-2026"];
+      // Default selection: most recent semester present.
+      const SEMESTER_DEFAULT_PRIORITY = ["spring-2026", "autumn-2025"];
 
       function getAvailableSemesters() {
         const courses = state.manifest && Array.isArray(state.manifest.courses)
@@ -596,7 +599,7 @@
           : [];
         const set = new Set();
         for (const c of courses) if (c.semester) set.add(c.semester);
-        return SEMESTER_ORDER.filter(function (s) { return set.has(s); });
+        return SEMESTER_DISPLAY_ORDER.filter(function (s) { return set.has(s); });
       }
 
       function getSelectedSemester() {
@@ -606,6 +609,9 @@
           try { return localStorage.getItem("ethz-flashcards-semester"); } catch (e) { return null; }
         })();
         if (stored && available.indexOf(stored) !== -1) return stored;
+        for (const s of SEMESTER_DEFAULT_PRIORITY) {
+          if (available.indexOf(s) !== -1) return s;
+        }
         return available[0];
       }
 
