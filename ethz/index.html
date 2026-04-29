@@ -736,7 +736,7 @@
           + "<h2 class=\"setup-title\">" + escapeHtml(state.course.name) + "</h2>"
           + "</div>"
           + "<div class=\"section\">"
-          + "<div class=\"section-top\"><div class=\"section-title\">Lecture Selection</div><button type=\"button\" id=\"toggleAll\" class=\"text-btn\">" + (allSelected ? "Deselect All" : "Select All") + "</button></div>"
+          + "<div class=\"section-top\"><div class=\"section-title\">" + (getDeckBucketKind(state.deck) === "topic" ? "Topic Selection" : "Lecture Selection") + "</div><button type=\"button\" id=\"toggleAll\" class=\"text-btn\">" + (allSelected ? "Deselect All" : "Select All") + "</button></div>"
           + "<div class=\"lecture-list\">" + lectureRows + "</div>"
           + "</div>"
           + "<div class=\"section\">"
@@ -787,7 +787,7 @@
 
       function getSelectedCards() {
         return state.deck.filter(function (card) {
-          return state.setup.selectedLectures.has(card.lectureKey);
+          return state.setup.selectedLectures.has(card.bucketKey);
         });
       }
 
@@ -1149,23 +1149,52 @@
           .trim();
       }
 
+      const DATE_RE = /^\[(\d{4}-\d{2}-\d{2})\]\s*/;
+      const TAG_RE = /^\[([^\]]+)\]\s*/;
+
       function normalizeDeck(deck) {
         if (!Array.isArray(deck)) {
           return [];
         }
 
-        return deck.map(function (item) {
+        return deck.map(function (item, index) {
           const front = String(item && item.front ? item.front : "");
           const back = String(item && item.back ? item.back : "");
-          const dateMatch = front.match(/^\[(\d{4}-\d{2}-\d{2})\]\s*/);
-          const date = dateMatch ? dateMatch[1] : null;
-          const frontDisplay = dateMatch ? front.slice(dateMatch[0].length) : front;
+          const dateMatch = front.match(DATE_RE);
+          if (dateMatch) {
+            return {
+              front: front,
+              frontDisplay: front.slice(dateMatch[0].length),
+              back: back,
+              date: dateMatch[1],
+              bucketKey: dateMatch[1],
+              bucketKind: "date",
+              bucketLabel: dateMatch[1],
+              key: cardKey(front + "\n" + back)
+            };
+          }
+          const tagMatch = front.match(TAG_RE);
+          if (tagMatch) {
+            const topic = tagMatch[1].trim();
+            return {
+              front: front,
+              frontDisplay: front.slice(tagMatch[0].length),
+              back: back,
+              date: null,
+              bucketKey: "topic:" + topic,
+              bucketKind: "topic",
+              bucketLabel: topic,
+              key: cardKey(front + "\n" + back)
+            };
+          }
           return {
             front: front,
-            frontDisplay: frontDisplay,
+            frontDisplay: front,
             back: back,
-            date: date,
-            lectureKey: date || "undated",
+            date: null,
+            bucketKey: "undated",
+            bucketKind: "undated",
+            bucketLabel: "Undated",
             key: cardKey(front + "\n" + back)
           };
         });
@@ -1173,25 +1202,39 @@
 
       function getLectureBuckets(deck) {
         const counts = new Map();
+        const meta = new Map();
         deck.forEach(function (card) {
-          counts.set(card.lectureKey, (counts.get(card.lectureKey) || 0) + 1);
+          counts.set(card.bucketKey, (counts.get(card.bucketKey) || 0) + 1);
+          if (!meta.has(card.bucketKey)) {
+            meta.set(card.bucketKey, { kind: card.bucketKind, label: card.bucketLabel, firstIndex: deck.indexOf(card) });
+          }
         });
 
         return Array.from(counts.keys()).sort(function (a, b) {
-          if (a === "undated") {
-            return 1;
-          }
-          if (b === "undated") {
-            return -1;
-          }
-          return a.localeCompare(b);
+          if (a === "undated") return 1;
+          if (b === "undated") return -1;
+          const ma = meta.get(a);
+          const mb = meta.get(b);
+          // dates are chronological; topics keep first-encountered order (which is the section order from the generator)
+          if (ma.kind === "date" && mb.kind === "date") return a.localeCompare(b);
+          if (ma.kind === "topic" && mb.kind === "topic") return ma.firstIndex - mb.firstIndex;
+          return ma.kind === "date" ? -1 : 1;
         }).map(function (key) {
+          const m = meta.get(key);
           return {
             key: key,
-            label: key === "undated" ? "Undated" : formatLectureDate(key),
+            label: m.kind === "date" ? formatLectureDate(m.label) : m.label,
             count: counts.get(key)
           };
         });
+      }
+
+      function getDeckBucketKind(deck) {
+        for (const c of deck) {
+          if (c.bucketKind === "topic") return "topic";
+          if (c.bucketKind === "date") return "date";
+        }
+        return "undated";
       }
 
       function formatLectureDate(value) {
