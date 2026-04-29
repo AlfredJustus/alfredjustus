@@ -958,5 +958,185 @@
   {
     "front": "[2026-04-16] Welche Stichprobengröße reicht im Target Shooting für relativen Fehler $\\varepsilon$ mit Fehlerwahrscheinlichkeit $\\delta$?",
     "back": "Gesucht ist\n$$\nP\\left(\\left|\\hat p-p\\right|\\le \\varepsilon p\\right)\\ge 1-\\delta,\n\\qquad p=\\frac{|S|}{|U|}.\n$$\n\nDa\n$$\nn\\hat p=\\sum_{i=1}^n Y_i\n$$\neine Summe unabhängiger Bernoulli-Variablen ist, liefert Chernoff:\n$$\nP\\left(\\left|n\\hat p-\\mathbb{E}[n\\hat p]\\right|\\ge \\varepsilon\\,\\mathbb{E}[n\\hat p]\\right)\n\\le\n2\\exp\\left(-\\frac13\\varepsilon^2\\,\\mathbb{E}[n\\hat p]\\right).\n$$\n\nMit\n$$\n\\mathbb{E}[n\\hat p]=np=n\\frac{|S|}{|U|}\n$$\nreicht also\n$$\n2\\exp\\left(-\\frac13\\varepsilon^2\\,n\\frac{|S|}{|U|}\\right)\\le \\delta.\n$$\n\nNach Umstellen genügt\n$$\nn \\ge 3\\cdot \\frac{|U|}{|S|}\\cdot \\frac{1}{\\varepsilon^2}\\cdot \\ln\\left(\\frac{2}{\\delta}\\right).\n$$\n\nDas ist die Vorlesungsformel für die notwendige Stichprobengröße."
+  },
+  {
+    "front": "[2026-04-21] Warum ist ein randomisierter Algorithmus formal trotzdem eine Funktion?",
+    "back": "Ein **randomisierter Algorithmus** ist formal eine Funktion\n$$\nA(I,R),\n$$\nalso eine deterministische Abbildung von **Eingabe** $I$ und **Zufall** $R$ auf eine Ausgabe.\n\nDer scheinbare Widerspruch entsteht nur, wenn man $R$ nicht fixiert:\n- Für festes $I$ und festes $R$ ist das Verhalten vollständig bestimmt.\n- Betrachtet man nur $I$, dann wird $R$ bei jedem Lauf neu gezogen, also ist\n$$\nA(I)\n$$\neine **Zufallsvariable**.\n\nDer Unterschied zu einem deterministischen Algorithmus ist daher nicht, dass er „keine Funktion“ wäre, sondern dass ein Teil der Eingabe verborgen als Zufall modelliert wird."
+  },
+  {
+    "front": "[2026-04-21] Woran erkennt man den Unterschied zwischen Monte Carlo und Las Vegas?",
+    "back": "Der Unterschied liegt darin, **was zufällig sein darf**:\n\n- **Monte Carlo**: Die Laufzeit ist fest beschränkt, aber die Ausgabe kann mit kleiner Wahrscheinlichkeit falsch sein oder nur approximativ.\n- **Las Vegas**: Die Ausgabe ist immer korrekt, aber die Laufzeit ist eine Zufallsvariable.\n\nMerksatz:\n- Monte Carlo: **feste Zeit, unsichere Antwort**\n- Las Vegas: **sichere Antwort, unsichere Zeit**\n\nDie alternative Las-Vegas-Sicht „korrekt oder ?“ passt dazu: Statt falscher Antworten gibt es manchmal einfach keine Antwort."
+  },
+  {
+    "front": "[2026-04-21] Warum braucht jeder deterministische Algorithmus beim Problem „üppige Auswahl“ im Worst Case mindestens $n/2+1$ gelesene Bits?",
+    "back": "Der Beweis ist **adversarial**. Fixiere einen deterministischen Algorithmus. Dann ist seine Reihenfolge der Abfragen durch den bisherigen Verlauf festgelegt.\n\nNun konstruiert man die Eingabe adaptiv:\n- Bei jeder abgefragten Position antwortet man zunächst mit $0$.\n- Das geht für die ersten $n/2$ Abfragen, weil insgesamt genau $n/2$ Nullen erlaubt sind.\n- Alle übrigen, noch nicht abgefragten Positionen setzt man auf $1$.\n\nDann hat der Algorithmus nach $n/2$ gelesenen Bits noch keine $1$ gesehen und muss mindestens noch ein weiteres Bit lesen, um einen gültigen Index zu finden.\n\nAlso gibt es für **jeden** deterministischen Algorithmus eine Instanz, auf der er mindestens\n$$\n\\frac{n}{2}+1\n$$\nBits lesen muss."
+  },
+  {
+    "front": "[2026-04-21] Warum ist die Untergrenze bei „üppige Auswahl“ nur eine Worst-Case-Aussage und keine Aussage über jede Instanz?",
+    "back": "Die Aussage lautet:\n> Für jeden deterministischen Algorithmus **existiert** eine schlechte Instanz.\n\nSie lautet **nicht**:\n> Auf jeder Instanz braucht der Algorithmus mindestens $n/2+1$ Schritte.\n\nDas ist wichtig, weil es auch leichte Instanzen gibt, etwa wenn schon das erste gelesene Bit eine $1$ ist. Die Untergrenze zeigt also nur, dass ein deterministischer Algorithmus im **schlechtesten Fall** nicht wesentlich besser als lineares Lesen sein kann.\n\nDer Kern ist: Der Gegner kann die Eingabe passend zum festen Verhalten des deterministischen Algorithmus wählen."
+  },
+  {
+    "front": "[2026-04-21] Warum hat der randomisierte Algorithmus für „üppige Auswahl“ Erfolgswahrscheinlichkeit $1/2$ pro Versuch?",
+    "back": "In jedem Versuch wählt der Algorithmus einen Index uniform aus\n$$\n\\{1,\\dots,n\\}.\n$$\nDa genau die Hälfte der Bits gleich $1$ ist, liegen unter den $n$ Positionen genau $n/2$ Erfolge.\n\nAlso ist\n$$\n\\Pr[a_i=1]=\\frac{n/2}{n}=\\frac{1}{2}.\n$$\n\nDiese Wahrscheinlichkeit ist unabhängig davon, wie die Einsen angeordnet sind. Genau deshalb hilft Randomisierung hier: Sie macht die feste, vom Gegner ausnutzbare Abfragereihenfolge kaputt."
+  },
+  {
+    "front": "[2026-04-21] Wie zeigt man für „üppige Auswahl“ die Schranke $\\Pr[T>k]=2^{-k}$?",
+    "back": "Sei $T$ die Anzahl Versuche bis zur ersten gefundenen $1$.\n\nDas Ereignis\n$$\nT>k\n$$\nbedeutet: In den ersten $k$ Versuchen wurde jedes Mal eine $0$ getroffen.\n\nDa jeder Versuch mit Wahrscheinlichkeit $1/2$ scheitert und die Versuche unabhängig sind, gilt\n$$\n\\Pr[T>k]=\\left(\\frac{1}{2}\\right)^k.\n$$\n\nDas ist genau das typische Verhalten einer **geometrischen Verteilung** mit Erfolgswahrscheinlichkeit $p=1/2$."
+  },
+  {
+    "front": "[2026-04-21] Wie berechnet man aus $\\Pr[T>k]=2^{-k}$ den Erwartungswert $\\mathbb{E}[T]$?",
+    "back": "Für eine nichtnegative ganzzahlige Zufallsvariable gilt die Summenformel\n$$\n\\mathbb{E}[T]=\\sum_{k=0}^{\\infty}\\Pr[T>k].\n$$\n\nMit\n$$\n\\Pr[T>k]=\\left(\\frac{1}{2}\\right)^k\n$$\nfolgt\n$$\n\\mathbb{E}[T]\n=\\sum_{k=0}^{\\infty}\\left(\\frac{1}{2}\\right)^k\n= \\frac{1}{1-1/2}\n=2.\n$$\n\nDer randomisierte Algorithmus findet also im Erwartungswert nach nur $2$ Versuchen eine $1$, obwohl deterministische Algorithmen im Worst Case $\\Omega(n)$ Bits lesen müssen."
+  },
+  {
+    "front": "[2026-04-21] Wie erhält man für „üppige Auswahl“ den Erwartungswert $\\mathbb{E}[T]=2$ mit der Zerlegung nach dem ersten Schritt?",
+    "back": "Man betrachtet den ersten Versuch:\n\n- Mit Wahrscheinlichkeit $1/2$ ist er erfolgreich, dann ist $T=1$.\n- Mit Wahrscheinlichkeit $1/2$ scheitert er, dann hat man bereits $1$ Schritt verbraucht und braucht danach nochmals eine Restlaufzeit $T'$, die gleich verteilt ist wie $T$.\n\nDaraus folgt\n$$\n\\mathbb{E}[T]\n= \\frac{1}{2}\\cdot 1 + \\frac{1}{2}\\cdot (1+\\mathbb{E}[T]).\n$$\nUmformen ergibt\n$$\n\\mathbb{E}[T]=1+\\frac{1}{2}\\mathbb{E}[T]\n\\quad\\Rightarrow\\quad\n\\mathbb{E}[T]=2.\n$$\n\nDiese Methode ist oft nützlicher als das direkte Ausrechnen der Verteilung, weil sie auch bei komplizierteren randomisierten Algorithmen funktioniert."
+  },
+  {
+    "front": "[2026-04-21] Warum ist Rejection Sampling für Uniformität auf $\\{0,1,2\\}$ korrekt?",
+    "back": "Man sampelt zuerst mit 2 Bits gleichverteilt aus\n$$\n\\{0,1,2,3\\}.\n$$\nFalls $X=3$, verwirft man und wiederholt; sonst gibt man $X$ aus.\n\nDie Korrektheit folgt aus bedingter Wahrscheinlichkeit:\n$$\n\\Pr[X=i \\mid X\\le 2]\n= \\frac{\\Pr[X=i]}{\\Pr[X\\le 2]}\n= \\frac{1/4}{3/4}\n= \\frac{1}{3}\n\\quad \\text{für } i\\in\\{0,1,2\\}.\n$$\n\nAlso bleiben die drei akzeptierten Werte gleichwahrscheinlich. Das Verfahren ist daher **exakt uniform**, nicht nur ungefähr."
+  },
+  {
+    "front": "[2026-04-21] Warum kann man mit einer festen Anzahl Zufallsbits nicht exakt uniform aus $\\{0,1,2\\}$ sampeln?",
+    "back": "Mit genau $t$ Zufallsbits gibt es\n$$\n2^t\n$$\ngleichwahrscheinliche Bitfolgen.\n\nSoll jede der drei Ausgaben $0,1,2$ exakt dieselbe Wahrscheinlichkeit haben, dann müsste die Anzahl der Bitfolgen, die auf jede Ausgabe abgebildet werden, gleich groß sein. Also müsste $3$ die Zahl\n$$\n2^t\n$$\nteilen.\n\nDas ist unmöglich, weil keine Zweierpotenz durch $3$ teilbar ist.\n\nDeshalb gibt es mit nur Zufallsbits zwei Möglichkeiten:\n- **variable Laufzeit** mit Rejection Sampling,\n- oder **feste Laufzeit**, aber nur approximative Verteilung."
+  },
+  {
+    "front": "[2026-04-21] Wie groß ist die erwartete Anzahl Versuche beim Rejection Sampling für $\\{0,1,2\\}$?",
+    "back": "Ein Versuch ist erfolgreich, wenn unter den vier gleichwahrscheinlichen Werten aus $\\{0,1,2,3\\}$ nicht die $3$ gezogen wird. Also ist die Erfolgswahrscheinlichkeit\n$$\np=\\frac{3}{4}.\n$$\n\nDie Anzahl Versuche bis zum ersten Erfolg ist geometrisch verteilt, daher\n$$\n\\mathbb{E}[T]=\\frac{1}{p}=\\frac{4}{3}.\n$$\n\nDas Verfahren ist also ein **Las-Vegas-Algorithmus**:\n- immer korrekt,\n- aber mit zufälliger Laufzeit."
+  },
+  {
+    "front": "[2026-04-21] Wie macht man aus einem Las-Vegas-Algorithmus mit erwarteter Laufzeit einen Algorithmus „korrekt oder ?“ mit fester Laufzeit?",
+    "back": "Sei $T$ die zufällige Laufzeit eines immer korrekten Las-Vegas-Algorithmus. Man setzt einen **Cutoff** bei\n$$\nc\\cdot \\mathbb{E}[T].\n$$\n\n- Falls der Algorithmus rechtzeitig fertig wird, gibt man die korrekte Antwort aus.\n- Falls nicht, bricht man ab und gibt **„?“** aus.\n\nMit der **Markov-Ungleichung**\n$$\n\\Pr[T\\ge c\\mathbb{E}[T]]\\le \\frac{1}{c}\n$$\nfolgt, dass die Wahrscheinlichkeit für „?“ höchstens $1/c$ ist.\n\nSo erhält man feste Laufzeit auf Kosten einer kleinen Wahrscheinlichkeit, keine Antwort zu bekommen."
+  },
+  {
+    "front": "[2026-04-21] Wie reduziert man bei einem Las-Vegas-Algorithmus vom Typ „korrekt oder ?“ die Wahrscheinlichkeit für „?“ auf höchstens $\\delta$?",
+    "back": "Angenommen, ein Lauf liefert mit Wahrscheinlichkeit mindestens $\\varepsilon$ eine korrekte Antwort und sonst nur „?“.\n\nDann:\n- führe den Algorithmus $n$-mal unabhängig aus,\n- gib die erste echte Antwort zurück,\n- nur wenn alle Läufe „?“ liefern, gib wieder „?“ aus.\n\nDie Fehlerwahrscheinlichkeit ist dann\n$$\n(1-\\varepsilon)^n.\n$$\nMit\n$$\nn=\\left\\lceil \\frac{1}{\\varepsilon}\\ln\\frac{1}{\\delta}\\right\\rceil\n$$\ngilt wegen\n$$\n(1-\\varepsilon)^n \\le e^{-\\varepsilon n}\\le \\delta,\n$$\ndass die Wahrscheinlichkeit für „?“ höchstens $\\delta$ ist."
+  },
+  {
+    "front": "[2026-04-21] Warum hilft Wiederholung bei Monte-Carlo-Algorithmen nicht immer?",
+    "back": "Wiederholung hilft nur, wenn **jeder Lauf echte Information über die Instanz** liefert.\n\nEin Gegenbeispiel ist ein Algorithmus, der unabhängig von der Eingabe einfach zufällig „ja“ oder „nein“ ausgibt. Jeder Lauf hat Fehlerwahrscheinlichkeit $1/2$, aber mehrere Wiederholungen erzeugen nur mehr Zufall — keine zusätzliche Information.\n\nDann kann weder Mehrheitsentscheidung noch irgendeine andere Kombination die Antwort zuverlässig machen. Deshalb ist Fehlerreduktion bei Monte Carlo **nicht automatisch** möglich."
+  },
+  {
+    "front": "[2026-04-21] Wie reduziert man bei einseitigem Fehler die Fehlerwahrscheinlichkeit auf höchstens $\\delta$?",
+    "back": "Angenommen:\n- auf **Ja-Instanzen** sagt der Algorithmus immer korrekt „ja“,\n- auf **Nein-Instanzen** sagt er mit Wahrscheinlichkeit mindestens $\\varepsilon$ korrekt „nein“.\n\nDann wiederholt man den Algorithmus\n$$\nn=\\left\\lceil \\frac{1}{\\varepsilon}\\ln\\frac{1}{\\delta}\\right\\rceil\n$$\nmal und gibt:\n- **„nein“**, falls irgendein Lauf „nein“ sagt,\n- sonst **„ja“**.\n\nWarum ist das korrekt?\n- Auf Ja-Instanzen kommt nie ein falsches „nein“.\n- Auf Nein-Instanzen ist man nur dann falsch, wenn alle $n$ Läufe das korrekte „nein“ verpassen.\n\nAlso\n$$\n\\Pr[\\text{Fehler}] \\le (1-\\varepsilon)^n \\le \\delta.\n$$\n\nDas funktioniert, weil der Fehler **einseitig** ist."
+  },
+  {
+    "front": "[2026-04-23] Warum ist beim Primzahltesten die relevante Eingabegröße $\\log n$ und nicht $n$?",
+    "back": "Die Zahl $n$ wird binär eingegeben und benötigt dafür $\\Theta(\\log n)$ Bits. **Effizient** bedeutet daher: Laufzeit polynomial in der Bitlänge, also in $\\log n$.\n\nDeshalb ist ein Verfahren mit Laufzeit $O(\\sqrt n)$ trotz „weniger als $n$“ für große Zahlen ungeeignet:\n$$\n\\sqrt n = 2^{\\frac12 \\log_2 n},\n$$\nalso exponentiell in der Eingabegröße.\n\nFür kryptographische Größen wie $n\\approx 2^{1000}$ wäre\n$$\n\\sqrt n \\approx 2^{500},\n$$\nalso astronomisch groß. Ein brauchbarer Primzahltest muss daher in $\\mathrm{poly}(\\log n)$ laufen."
+  },
+  {
+    "front": "[2026-04-23] Warum reicht es beim naiven Primzahltest, nur Teiler bis $\\sqrt n$ zu prüfen?",
+    "back": "Ist $n$ **zusammengesetzt**, so gibt es\n$$\nn=n_1n_2\n$$\nmit $1<n_1,n_2<n$. Wären beide Faktoren größer als $\\sqrt n$, dann wäre\n$$\nn_1n_2>\\sqrt n\\cdot \\sqrt n=n,\n$$\nWiderspruch.\n\nAlso hat jede zusammengesetzte Zahl mindestens einen Teiler\n$$\n\\le \\sqrt n.\n$$\n\nDaher genügt es, alle $a=2,\\dots,\\lfloor \\sqrt n\\rfloor$ zu testen. Das macht den Test korrekt, aber nicht effizient im Sinn von $\\mathrm{poly}(\\log n)$."
+  },
+  {
+    "front": "[2026-04-23] Warum ist der zufällige $\\gcd$-Test einseitig korrekt, aber als Primzahltest schwach?",
+    "back": "Der Test wählt zufällig $a\\in\\{1,\\dots,n-1\\}$ und berechnet\n$$\ng=\\gcd(a,n).\n$$\n\n- Falls $g>1$, ist $n$ sicher **nicht prim**.\n- Falls $g=1$, hat man nur keinen Teiler gefunden.\n\n**Einseitig korrekt** heißt:\n- Ist $n$ prim, dann gilt für jedes $a\\in\\{1,\\dots,n-1\\}$:\n  $$\n  \\gcd(a,n)=1,\n  $$\n  also gibt der Test nie fälschlich „zusammengesetzt“ aus.\n- Fehler sind nur im zusammengesetzten Fall möglich.\n\nSchwach ist der Test, weil bei vielen zusammengesetzten Zahlen sehr viele Werte $a$ teilerfremd zu $n$ sind und daher keinen Nicht-Prim-Beweis liefern."
+  },
+  {
+    "front": "[2026-04-23] Welche Fehlerwahrscheinlichkeit hat der $\\gcd$-Zufallstest für $n=9$?",
+    "back": "Für\n$$\nn=9\n$$\nsind die zu $9$ teilerfremden Zahlen in $\\{1,\\dots,8\\}$:\n$$\n\\{1,2,4,5,7,8\\}.\n$$\nAlso ist\n$$\n\\varphi(9)=6.\n$$\n\nGenau diese $6$ Basen führen beim **$\\gcd$-Test** zu einem Fehler, weil dann\n$$\n\\gcd(a,9)=1\n$$\nund der Test fälschlich „prim“ ausgeben würde.\n\nDie Fehlerwahrscheinlichkeit ist daher\n$$\n\\frac{\\varphi(9)}{9-1}=\\frac{6}{8}=\\frac34.\n$$\n\nDas zeigt schon an einem kleinen Beispiel, dass der Test sehr unzuverlässig sein kann."
+  },
+  {
+    "front": "[2026-04-23] Warum ist der $\\gcd$-Zufallstest für $n=p^2$ praktisch unbrauchbar?",
+    "back": "Für\n$$\nn=p^2\n$$\nsind unter $\\{1,\\dots,p^2-1\\}$ genau die Vielfachen von $p$ **nicht** teilerfremd zu $n$. Davon gibt es\n$$\np-1.\n$$\nAlso\n$$\n\\varphi(p^2)=p^2-p=n-\\sqrt n.\n$$\n\nDamit ist die Fehlerwahrscheinlichkeit des $\\gcd$-Tests\n$$\n\\frac{\\varphi(n)}{n-1}=\\frac{n-\\sqrt n}{n-1}\\approx 1-\\frac{1}{\\sqrt n}.\n$$\n\nFür große $n$ liegt diese Wahrscheinlichkeit extrem nahe bei $1$. Der Test sagt also fast immer „prim“, obwohl $n$ zusammengesetzt ist. Genau deshalb reicht „zufällig einen gemeinsamen Teiler suchen“ nicht aus."
+  },
+  {
+    "front": "[2026-04-23] Warum folgt aus Lagrange in einer endlichen Gruppe $G$, dass für jedes $a\\in G$ gilt $a^{|G|}=1$?",
+    "back": "Sei $\\operatorname{ord}(a)$ die **Ordnung** von $a$, also die kleinste Zahl $m\\ge 1$ mit\n$$\na^m=1.\n$$\nDie von $a$ erzeugte Untergruppe hat genau diese Größe:\n$$\n|\\langle a\\rangle|=\\operatorname{ord}(a).\n$$\n\nNach dem **Satz von Lagrange** gilt\n$$\n\\operatorname{ord}(a)\\mid |G|.\n$$\nAlso gibt es ein $t$ mit\n$$\n|G|=t\\cdot \\operatorname{ord}(a).\n$$\nDann folgt\n$$\na^{|G|}=a^{t\\operatorname{ord}(a)}=(a^{\\operatorname{ord}(a)})^t=1^t=1.\n$$\n\nDiese einfache Gruppenaussage ist die Grundlage für\n$$\na^{\\varphi(n)}\\equiv 1\\pmod n\n$$\nin $\\mathbb Z_n^\\*$ und damit für den Fermat-Test."
+  },
+  {
+    "front": "[2026-04-23] Wie erhält man den kleinen Fermatschen Satz aus der Gruppensicht auf $\\mathbb{Z}_n^\\*$?",
+    "back": "Für\n$$\n\\mathbb Z_n^\\*=\\{a\\in\\{1,\\dots,n-1\\}:\\gcd(a,n)=1\\}\n$$\ngilt:\n- Es ist eine endliche Gruppe unter Multiplikation modulo $n$.\n- Ihre Größe ist\n  $$\n  |\\mathbb Z_n^\\*|=\\varphi(n).\n  $$\n\nAus der Gruppenaussage folgt für jedes $a\\in\\mathbb Z_n^\\*$:\n$$\na^{\\varphi(n)}\\equiv 1\\pmod n.\n$$\n\nIst nun $n$ **prim**, dann sind alle Zahlen $1,\\dots,n-1$ teilerfremd zu $n$, also\n$$\n\\varphi(n)=n-1.\n$$\nDamit erhält man den **kleinen Fermatschen Satz**:\n$$\na^{n-1}\\equiv 1\\pmod n\n\\quad\\text{für alle }a\\in\\{1,\\dots,n-1\\}.\n$$\n\nDer Fermat-Primzahltest prüft genau diese notwendige Bedingung für Primzahlen."
+  },
+  {
+    "front": "[2026-04-23] Warum kann man $a^{n-1}\\bmod n$ effizient berechnen, obwohl $a^{n-1}$ riesig ist?",
+    "back": "Man berechnet nicht die Zahl $a^{n-1}$ selbst, sondern nur ihren Rest modulo $n$ mit **binärer Exponentiation**.\n\nDie Idee:\n- Für gerades $e=2m$:\n  $$\n  a^e=(a^m)^2\n  $$\n- Für ungerades $e=2m+1$:\n  $$\n  a^e=(a^m)^2\\cdot a\n  $$\n\nNach jedem Schritt reduziert man modulo $n$, sodass alle Zwischenwerte nur $O(\\log n)$ Bits haben.\n\nDadurch braucht man nur\n$$\nO(\\log e)\n$$\nMultiplikationen, hier also\n$$\nO(\\log n).\n$$\n\nDie Rechnung ist damit polynomial in $\\log n$ und nicht in $n$. Genau das macht Fermat und Miller–Rabin praktisch einsetzbar."
+  },
+  {
+    "front": "[2026-04-23] Warum ist $\\mathrm{PBN}=\\{a: a^{n-1}\\equiv 1\\pmod n\\}$ eine Untergruppe von $\\mathbb Z_n^\\*$?",
+    "back": "Zuerst gilt\n$$\n\\mathrm{PBN}\\subseteq \\mathbb Z_n^\\*.\n$$\nDenn wäre $\\gcd(a,n)>1$, dann hätte auch $a^{n-1}$ einen gemeinsamen Teiler mit $n$ und könnte nicht\n$$\n\\equiv 1 \\pmod n\n$$\nsein.\n\nNun zur Untergruppeneigenschaft:\n- **Neutrales Element**: $1^{n-1}\\equiv 1\\pmod n$, also $1\\in\\mathrm{PBN}$.\n- **Abgeschlossenheit**: Sind $a,b\\in\\mathrm{PBN}$, dann\n  $$\n  (ab)^{n-1}\\equiv a^{n-1}b^{n-1}\\equiv 1\\cdot 1\\equiv 1\\pmod n.\n  $$\n- **Inverse**: Aus $a^{n-1}\\equiv 1$ folgt in der Gruppe auch\n  $$\n  (a^{-1})^{n-1}\\equiv 1.\n  $$\n\nAlso ist **PBN** eine Untergruppe von $\\mathbb Z_n^\\*$. Dadurch kann man Lagrange anwenden und die Zahl der „schlechten“ Basen abschätzen."
+  },
+  {
+    "front": "[2026-04-23] Warum hat der Fermat-Test für nicht-Carmichael-Zahlen Fehlerwahrscheinlichkeit höchstens $\\tfrac12$?",
+    "back": "Für zusammengesetztes $n$ sei\n$$\n\\mathrm{PBN}=\\{a\\in\\{1,\\dots,n-1\\}: a^{n-1}\\equiv 1\\pmod n\\}.\n$$\nDiese Menge ist eine Untergruppe von $\\mathbb Z_n^\\*$.\n\nFalls $n$ **keine Carmichael-Zahl** ist, gilt\n$$\n\\mathrm{PBN}\\ne \\mathbb Z_n^\\*.\n$$\nDann ist $\\mathrm{PBN}$ eine echte Untergruppe. Nach Lagrange teilt ihre Größe die Gruppengröße, also kann eine echte Untergruppe höchstens halb so groß sein:\n$$\n|\\mathrm{PBN}|\\le \\frac{|\\mathbb Z_n^\\*|}{2}\\le \\frac{n-1}{2}.\n$$\n\nWählt man $a$ gleichverteilt aus $\\{1,\\dots,n-1\\}$, dann ist die Fehlerwahrscheinlichkeit des Fermat-Tests höchstens\n$$\n\\frac{|\\mathrm{PBN}|}{n-1}\\le \\frac12.\n$$\n\nDie Schranke bricht genau dann zusammen, wenn\n$$\n\\mathrm{PBN}=\\mathbb Z_n^\\*,\n$$\nalso im Carmichael-Fall."
+  },
+  {
+    "front": "[2026-04-23] Warum sind Carmichael-Zahlen ein grundlegendes Problem für den Fermat-Test?",
+    "back": "Eine **Carmichael-Zahl** ist eine zusammengesetzte Zahl $n$ mit\n$$\n\\mathrm{PBN}=\\mathbb Z_n^\\*.\n$$\nDas bedeutet: Für jedes zu $n$ teilerfremde $a$ gilt trotzdem\n$$\na^{n-1}\\equiv 1\\pmod n.\n$$\n\nDann versagt der Fermat-Test maximal:\n- Für alle $a$ mit $\\gcd(a,n)=1$ sagt er „prim“.\n- Nur Basen mit $\\gcd(a,n)>1$ entlarven noch die Zusammengesetztheit.\n\nDas Problem ist also nicht nur, dass Fermat manchmal irrt, sondern dass es zusammengesetzte Zahlen gibt, die für fast alle sinnvollen Basen wie Primzahlen aussehen. Deshalb braucht man einen stärkeren Test wie **Miller–Rabin**."
+  },
+  {
+    "front": "[2026-04-23] Warum gilt für primes $n$: Aus $x^2\\equiv 1\\pmod n$ folgt $x\\equiv \\pm 1\\pmod n$?",
+    "back": "Ist $n$ **prim**, dann ist $\\mathbb Z_n$ ein **Körper**. In einem Körper hat ein Polynom vom Grad $d$ höchstens $d$ Nullstellen.\n\nBetrachte\n$$\nx^2-1=(x-1)(x+1).\n$$\nDie offensichtlichen Lösungen von\n$$\nx^2\\equiv 1\\pmod n\n$$\nsind\n$$\nx\\equiv 1 \\quad\\text{und}\\quad x\\equiv -1.\n$$\n\nDa das Polynom Grad $2$ hat, kann es in einem Körper keine weiteren Lösungen geben. Also:\n$$\nx^2\\equiv 1\\pmod n\n\\;\\Rightarrow\\;\nx\\equiv 1\\pmod n \\text{ oder } x\\equiv -1\\pmod n.\n$$\n\nGenau diese Eigenschaft macht Miller–Rabin stärker als Fermat: Der Test prüft nicht nur das Endergebnis $1$, sondern auch die möglichen „Quadratwurzeln von $1$“ entlang der Potenzkette."
+  },
+  {
+    "front": "[2026-04-23] Wie lautet die zentrale Miller–Rabin-Bedingung für Primzahlen?",
+    "back": "Für ungerades $n>2$ schreibe\n$$\nn-1=2^k d\n\\quad\\text{mit ungeradem }d.\n$$\n\nDann gilt für **prim**es $n$ und jedes\n$$\na\\in\\{1,\\dots,n-1\\}:\n$$\nentweder\n$$\na^d\\equiv 1\\pmod n,\n$$\noder es gibt ein\n$$\ni\\in\\{0,\\dots,k-1\\}\n$$\nmit\n$$\na^{2^i d}\\equiv -1\\pmod n.\n$$\n\nDiese Bedingung ist stärker als bloß\n$$\na^{n-1}\\equiv 1\\pmod n,\n$$\ndenn sie betrachtet die Folge\n$$\na^d,\\ a^{2d},\\ a^{4d},\\dots,a^{2^k d}=a^{n-1}.\n$$\n\nWenn in dieser Kette vor dem Endwert $1$ nie ein $-1$ auftaucht, kann $n$ nicht prim sein."
+  },
+  {
+    "front": "[2026-04-23] Warum ist Miller–Rabin strenger als der Fermat-Test?",
+    "back": "Der **Fermat-Test** prüft nur:\n$$\na^{n-1}\\equiv 1\\pmod n?\n$$\n\nDer **Miller–Rabin-Test** zerlegt zusätzlich\n$$\nn-1=2^k d\n$$\nund untersucht die ganze Kette\n$$\na^d,\\ a^{2d},\\ a^{4d},\\dots,a^{2^k d}.\n$$\n\nFür Primzahlen darf dabei nur Folgendes passieren:\n- entweder schon\n  $$\n  a^d\\equiv 1\\pmod n,\n  $$\n- oder vor dem ersten Auftreten von $1$ muss irgendwann\n  $$\n  -1 \\pmod n\n  $$\n  erscheinen.\n\nFehlt dieses $-1$, dann hat man eine „verbotene“ nichttriviale Quadratwurzel von $1$ konstruiert, was bei primem $n$ unmöglich ist.\n\nDarum entdeckt Miller–Rabin Zusammengesetztheit auch in Fällen, in denen Fermat nur das harmlose Endergebnis $1$ sieht."
+  },
+  {
+    "front": "[2026-04-23] Wie entlarvt Miller–Rabin die Carmichael-Zahl $561$ mit Basis $a=2$?",
+    "back": "Für\n$$\n561=2^4\\cdot 35+1,\n$$\nalso\n$$\n560=2^4\\cdot 35,\n$$\nist\n$$\nd=35.\n$$\n\nDer Fermat-Test sieht nur:\n$$\n2^{560}\\equiv 1\\pmod{561},\n$$\nalso kein Gegenbeweis zur Primzahl.\n\nMiller–Rabin schaut die Zwischenstufen an. Laut Vorlesung gilt:\n$$\n2^{280}\\equiv 1\\pmod{561}.\n$$\nHalbiert man weiter, erhält man\n$$\n2^{140}\\not\\equiv 1\\pmod{561}\n\\quad\\text{und}\\quad\n2^{140}\\not\\equiv -1\\pmod{561}.\n$$\n\nDamit tritt vor einem Quadrat, das $1$ ergibt, kein $-1$ auf. Das verletzt die Miller–Rabin-Bedingung für Primzahlen. Also ist $a=2$ ein **Zeuge** dafür, dass $561$ zusammengesetzt ist.\n\nDas zeigt konkret, warum Miller–Rabin auf Carmichael-Zahlen funktioniert, wo Fermat scheitert."
+  },
+  {
+    "front": "[2026-04-28] Warum ist Randomized Quicksort ein **Las-Vegas-Algorithmus** und kein Monte-Carlo-Algorithmus?",
+    "back": "**Las Vegas** bedeutet: Das Ergebnis ist immer korrekt, aber die Laufzeit ist zufällig.  \nBei **Randomized Quicksort** beeinflusst die zufällige Pivot-Wahl nur, **wie gut** das Problem aufgeteilt wird, nicht **ob** korrekt sortiert wird.\n\n- **Korrektheit:** Partition stellt sicher, dass links nur kleinere und rechts nur größere Elemente stehen; rekursiv werden beide Seiten sortiert.\n- **Zufall:** Die Anzahl Vergleiche hängt von den zufällig gewählten Pivots ab.\n- Daher ist die Vergleichszahl eine **Zufallsvariable**, das sortierte Ergebnis aber immer richtig.\n\nEin **Monte-Carlo-Algorithmus** wäre stattdessen einer, der in fester/garantierter Zeit läuft, aber mit kleiner Wahrscheinlichkeit ein falsches Ergebnis liefern darf."
+  },
+  {
+    "front": "[2026-04-28] Worin liegt der zentrale Unterschied zwischen **Las Vegas** und **Monte Carlo**?",
+    "back": "Der Unterschied liegt darin, **was der Zufall beeinflusst**:\n\n- **Las Vegas:** Das Ergebnis ist **immer korrekt**, aber die **Laufzeit** ist zufällig.\n- **Monte Carlo:** Die Laufzeit ist typischerweise **deterministisch oder garantiert beschränkt**, aber das **Ergebnis kann falsch** sein.\n\nMerksatz:\n- **Las Vegas:** Unsicherheit in der **Zeit**\n- **Monte Carlo:** Unsicherheit in der **Antwort**\n\nDas ist wichtig, weil man je nach Anwendung anders priorisiert:\n- Bei sicherheitskritischen Resultaten ist Las Vegas oft attraktiver.\n- Wenn feste Laufzeit wichtiger ist als perfekte Korrektheit, kann Monte Carlo sinnvoll sein."
+  },
+  {
+    "front": "[2026-04-28] Warum kostet $\\text{Partition}(A,l,r,p)$ im verwendeten Modell genau $r-l$ Vergleiche?",
+    "back": "Im Teilarray $A[l..r]$ gibt es genau $r-l+1$ Elemente, davon ist eines das **Pivot**.  \nJedes der übrigen $r-l$ Elemente wird genau **einmal mit dem Pivot verglichen**, um zu entscheiden, ob es links oder rechts landet.\n\nDaher ist die Vergleichszahl genau\n$$\nr-l.\n$$\n\nDas passt zum Laufzeitmodell der Vorlesung, in dem die Laufzeit im Wesentlichen durch die **Anzahl Vergleichsoperationen** gemessen wird.\n\nWichtig: Diese Aussage bezieht sich auf das verwendete **abstrakte Modell**. Zusätzliche Speicherzugriffe oder Vertauschungen werden hier nicht separat gezählt."
+  },
+  {
+    "front": "[2026-04-28] Warum gilt bei Randomized Quicksort unter paarweise verschiedenen Elementen $\\Pr[t=i]=\\frac{1}{r-l+1}$?",
+    "back": "Der Pivot-Index $p$ wird **gleichverteilt** aus den $r-l+1$ Positionen in $A[l..r]$ gewählt.  \nDa alle Elemente **paarweise verschieden** sind, hat jedes Element einen eindeutigen Rang im Teilarray.\n\nNach der Partition landet das Pivot genau an der Position seines Rangs. Also entspricht:\n\n- Pivot ist das kleinste Element $\\Rightarrow t=l$\n- Pivot ist das zweitkleinste $\\Rightarrow t=l+1$\n- ...\n- Pivot ist das größte $\\Rightarrow t=r$\n\nWeil jedes Element mit gleicher Wahrscheinlichkeit als Pivot gewählt wird, ist auch jede mögliche Endposition gleich wahrscheinlich:\n$$\n\\Pr[t=i]=\\frac{1}{r-l+1}.\n$$\n\nOhne die Annahme paarweise verschiedener Elemente wäre dieses Rangargument wegen Gleichständen komplizierter."
+  },
+  {
+    "front": "[2026-04-28] Warum hängt $\\mathbb{E}[T_{l,r}]$ nur von der Länge $r-l+1$ ab und nicht von den absoluten Indizes?",
+    "back": "Der Algorithmus betrachtet nur die **Elemente im Teilarray** und deren relative Ordnung, nicht die konkreten Indexwerte $l$ und $r$.\n\nFür die erwartete Vergleichszahl sind nur diese Größen relevant:\n\n- die Anzahl Elemente $n=r-l+1$,\n- die gleichverteilte Pivot-Wahl unter diesen $n$ Positionen,\n- die Größen der entstehenden Teilprobleme.\n\nOb das Teilarray an Position $[1..n]$ oder $[100..99+n]$ liegt, ändert daran nichts. Deshalb kann man\n$$\n\\mathbb{E}[T_{l,r}] = t_{r-l+1}\n$$\nschreiben, wobei $t_n$ nur von der Problemgröße $n$ abhängt.\n\nDiese Reduktion ist entscheidend, um aus einer zweidimensionalen Rekursion in $(l,r)$ eine einfache Folge $(t_n)$ zu machen."
+  },
+  {
+    "front": "[2026-04-28] Wie lautet die Rekursion für die erwartete Vergleichszahl $t_n$ von Randomized Quicksort, und was bedeuten die Terme?",
+    "back": "Für $n\\le 1$ gilt\n$$\nt_n=0.\n$$\n\nFür $n\\ge 2$ gilt\n$$\nt_n=\\frac{1}{n}\\sum_{i=0}^{n-1}\\Big((n-1)+t_i+t_{n-i-1}\\Big).\n$$\n\nBedeutung der Terme:\n\n- $\\frac{1}{n}$: jede Pivot-Rangposition ist gleich wahrscheinlich\n- $(n-1)$: Partition vergleicht alle Nicht-Pivot-Elemente mit dem Pivot\n- $t_i$: erwartete Vergleichszahl im linken Teil mit $i$ Elementen\n- $t_{n-i-1}$: erwartete Vergleichszahl im rechten Teil\n\nDie Rekursion drückt also aus:  \n**Erwartete Kosten = Kosten der Partition + erwartete Kosten der rekursiven Teilprobleme, gemittelt über alle möglichen Pivot-Ränge.**"
+  },
+  {
+    "front": "[2026-04-28] Rechne die Rekursion für $t_2$ aus. Warum ist $t_2=1$?",
+    "back": "Für $n=2$ liefert die Rekursion\n$$\nt_2=\\frac{1}{2}\\sum_{i=0}^{1}\\Big((2-1)+t_i+t_{2-i-1}\\Big).\n$$\n\nDa $t_0=t_1=0$, ergibt sich:\n\nFür $i=0$:\n$$\n1+t_0+t_1=1\n$$\n\nFür $i=1$:\n$$\n1+t_1+t_0=1\n$$\n\nAlso\n$$\nt_2=\\frac{1}{2}(1+1)=1.\n$$\n\nIntuitiv ist das klar: Bei zwei verschiedenen Elementen braucht man genau **einen Vergleich**, um ihre Reihenfolge festzustellen.  \nDie Randomisierung ändert daran nichts, weil unabhängig vom gewählten Pivot genau ein Nicht-Pivot-Element mit ihm verglichen wird."
+  },
+  {
+    "front": "[2026-04-28] Warum führt die Subtraktion der Rekursionen für $n$ und $n-1$ zu einer handlicheren Formel?",
+    "back": "Die ursprüngliche Rekursion enthält eine **Summe über alle möglichen Teilproblemgrößen**. Das ist schwer direkt zu lösen.  \nDeshalb multipliziert man die Rekursionen mit $n$ bzw. $n-1$ und subtrahiert:\n\n$$\nn t_n = \\sum_{i=0}^{n-1}\\Big((n-1)+t_i+t_{n-i-1}\\Big),\n$$\n$$\n(n-1)t_{n-1} = \\sum_{i=0}^{n-2}\\Big((n-2)+t_i+t_{n-i-2}\\Big).\n$$\n\nBeim Subtrahieren heben sich viele Summanden weg. Übrig bleibt:\n$$\nn t_n-(n-1)t_{n-1}=2(n-1)+2t_{n-1}.\n$$\n\nDer Vorteil: Statt einer breiten Summe erhält man eine Beziehung nur zwischen **$t_n$ und $t_{n-1}$**.  \nDas macht eine induktive Abschätzung mit harmonischen Summen möglich."
+  },
+  {
+    "front": "[2026-04-28] Wie erhält man aus der Differenzformel die Ungleichung",
+    "back": "$$\nt_n \\le \\frac{n+1}{n}t_{n-1}+2 \\, ?\n$$\n\nAus\n$$\nn t_n-(n-1)t_{n-1}=2(n-1)+2t_{n-1}\n$$\nfolgt durch Umstellen:\n$$\nn t_n=(n+1)t_{n-1}+2(n-1).\n$$\n\nDivision durch $n$ ergibt\n$$\nt_n=\\frac{n+1}{n}t_{n-1}+2\\frac{n-1}{n}.\n$$\n\nDa\n$$\n\\frac{n-1}{n}\\le 1,\n$$\nerhält man sofort die Abschätzung\n$$\nt_n\\le \\frac{n+1}{n}t_{n-1}+2.\n$$\n\nDer Punkt dieser Ungleichung ist nicht exakte Gleichheit, sondern eine Form, die sich gut **iterieren** und per **Induktion** gegen eine harmonische Summe abschätzen lässt."
+  },
+  {
+    "front": "[2026-04-28] Warum tauchen in der Quicksort-Analyse harmonische Zahlen auf?",
+    "back": "Aus der Ungleichung\n$$\nt_n\\le \\frac{n+1}{n}t_{n-1}+2\n$$\nentsteht bei wiederholtem Einsetzen ein Produkt bzw. Summenausdruck mit Faktoren wie\n$$\n\\frac{n+1}{n},\\ \\frac{n}{n-1},\\ \\dots\n$$\nund daraus Summanden der Form\n$$\n\\frac{n+1}{i}.\n$$\n\nSo erhält man eine Schranke wie\n$$\nt_n \\le 2\\sum_{i=3}^{n+1}\\frac{n+1}{i}.\n$$\n\nDer wesentliche Teil ist also\n$$\n\\sum_{i=1}^n \\frac{1}{i}=H_n,\n$$\ndie **harmonische Zahl**. Da\n$$\nH_n=\\log n+O(1),\n$$\nfolgt\n$$\nt_n=O(n\\log n).\n$$\n\nDie harmonische Summe entsteht also nicht zufällig, sondern aus der Struktur der rekursiven Mittelung über alle Pivot-Ränge."
+  },
+  {
+    "front": "[2026-04-28] Warum folgt aus",
+    "back": "$$\nt_n \\le 2(n+1)\\sum_{i=1}^n \\frac{1}{i}\n$$\ndie Schranke $\\Theta(n\\log n)$ für den Erwartungswert?\n\nWeil die harmonische Summe asymptotisch wie ein Logarithmus wächst:\n$$\n\\sum_{i=1}^n \\frac{1}{i} = \\log n + O(1).\n$$\n\nEinsetzen ergibt\n$$\nt_n \\le 2(n+1)(\\log n + O(1))\n= 2(n+1)\\log n + O(n).\n$$\n\nDamit ist insbesondere\n$$\nt_n = O(n\\log n).\n$$\n\nDie Vorlesung formuliert dies als recht genaue obere Schranke für die erwartete Vergleichszahl von Randomized Quicksort.  \nWichtig ist der Kontrast zum Worst Case:\n- **Worst Case:** $\\Theta(n^2)$\n- **Erwartungswert:** $\\Theta(n\\log n)$\n\nDie Randomisierung verbessert also nicht den schlimmsten Fall, aber den **typischen erwarteten Aufwand**."
+  },
+  {
+    "front": "[2026-04-28] Warum reicht bei Quickselect nach der Partition genau **ein** rekursiver Aufruf?",
+    "back": "Quickselect sucht nicht eine vollständige Sortierung, sondern nur das **$k$-kleinste Element**.  \nNach der Partition steht das Pivot an Position $t$ und damit an seinem **endgültigen Rang**.\n\nVergleiche $t$ mit der Zielposition $l+k-1$:\n\n- Falls $t=l+k-1$, ist das Pivot bereits das gesuchte Element.\n- Falls $t>l+k-1$, liegt das gesuchte Element sicher **links**.\n- Falls $t<l+k-1$, liegt es sicher **rechts**.\n\nMan muss also nur in dem Teil weiter suchen, der das gesuchte Rang-Element noch enthalten kann.  \nIm Gegensatz zu Quicksort werden nicht beide Seiten rekursiv bearbeitet, weil für die Auswahl eines einzelnen Rangs die vollständige Ordnung unnötig ist."
+  },
+  {
+    "front": "[2026-04-28] Wie wird bei Quickselect der Rangparameter angepasst, wenn man rechts weiterrechnet?",
+    "back": "Wenn nach der Partition das Pivot an Position $t$ liegt und\n$$\nt < l+k-1,\n$$\ndann liegt das gesuchte Element im rechten Teilarray $A[t+1..r]$.\n\nDabei fallen alle Elemente in $A[l..t]$ aus der Betrachtung heraus:\n- die $t-l$ kleineren Elemente links vom Pivot\n- plus das Pivot selbst\n\nIn der Vorlesungsnotation wird der neue Rangparameter als\n$$\nk' = k - t\n$$\nangegeben.\n\nDie Intuition ist: Im rechten Teil sucht man nicht mehr das insgesamt $k$-kleinste, sondern das um die bereits ausgeschiedenen kleineren Elemente **verschobene** Rangziel.\n\nWichtig ist hier vor allem das Prinzip: Beim Wechsel in den rechten Teil muss der Rang **relativ zum neuen Teilarray** neu berechnet werden."
+  },
+  {
+    "front": "[2026-04-28] Was ist der entscheidende strukturelle Unterschied zwischen Quicksort und Quickselect?",
+    "back": "Beide Algorithmen benutzen dieselbe Kernidee:\n\n1. zufälliges Pivot wählen,\n2. partitionieren,\n3. rekursiv weitermachen.\n\nDer Unterschied liegt im **Ziel**:\n\n- **Quicksort:** will eine **totale Ordnung** aller Elemente  \n  $\\Rightarrow$ beide Teilarrays müssen rekursiv verarbeitet werden.\n- **Quickselect:** will nur ein Element mit bestimmtem **Rang** finden  \n  $\\Rightarrow$ nur das eine relevante Teilarray wird weiter betrachtet.\n\nDeshalb ist Selektion leichter als Sortieren:\n- Sortieren braucht im Erwartungswert $\\Theta(n\\log n)$ Vergleiche.\n- Quickselect soll im Erwartungswert mit **$O(n)$** auskommen.\n\nDie gemeinsame Partition-Idee erklärt zugleich, warum sich die Algorithmen ähnlich anfühlen, aber unterschiedliche Laufzeiten haben."
+  },
+  {
+    "front": "[2026-04-28] Warum ist die Annahme „alle Elemente sind paarweise verschieden“ für die Analyse hilfreich?",
+    "back": "Mit paarweise verschiedenen Elementen hat jedes Element einen **eindeutigen Rang**. Dadurch gilt sauber:\n\n- Das Pivot landet nach Partition an genau einer Rangposition.\n- Jede Pivot-Endposition ist gleich wahrscheinlich.\n- Die Teilprobleme haben klar definierte Größen $i$ und $n-i-1$.\n\nBei **Duplikaten** wird das technischer:\n- Elemente können gleich dem Pivot sein.\n- Die Aufteilung in „links kleiner, rechts größer“ ist nicht mehr eindeutig genug.\n- Die Rang- und Wahrscheinlichkeitsargumente müssen angepasst werden.\n\nDie Annahme ist also kein Selbstzweck, sondern vereinfacht die Analyse erheblich.  \nDer Algorithmus selbst kann oft auch mit Duplikaten umgehen, aber die Herleitung der Rekursion wird weniger elegant."
   }
 ]

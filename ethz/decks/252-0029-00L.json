@@ -958,5 +958,185 @@
   {
     "front": "[2026-04-20] Warum kostet der Filter Lock selbst ohne Konkurrenz $\\mathcal{O}(n)$ pro Eintritt?",
     "back": "Weil ein Thread auch ohne Gegner alle Levels $1,\\dots,n-1$ durchlaufen muss.\n\nDer Aufwand entsteht durch:\n- Setzen von `level[me]`,\n- Setzen von `victim[level]`,\n- Prüfen, ob es andere Threads mit `level \\ge i` gibt.\n\nSelbst wenn kein anderer Thread wirklich konkurriert:\n- der Thread passiert trotzdem alle $n-1$ Levels,\n- und die Prüfungen sind nicht kostenlos.\n\nDaher ist der Eintrittsaufwand **linear in der Threadzahl**:\n$$\n\\mathcal{O}(n).\n$$\n\nFür große Systeme ist das problematisch, weil der Lock schon im konkurrenzfreien Fall schlecht skaliert."
+  },
+  {
+    "front": "[2026-04-21] Warum reicht im reinen Read/Write-Modell ein einzelnes Register nicht aus, um viele Threads effizient zu koordinieren?",
+    "back": "Weil ein **Read/Write-Register** nur den **letzten geschriebenen Wert** sichtbar macht. Wenn mehrere Threads nacheinander schreiben und niemand dazwischen liest, können frühere Writes vollständig überschrieben werden.\n\nFür Synchronisation ist das problematisch, weil Informationen wie „wer war zuerst?“ oder „wer hat schon Interesse signalisiert?“ verloren gehen können. Dadurch lässt sich Koordination nicht kompakt in wenigen Registern kodieren.\n\nDie Vorlesungsintuition war:\n- spätere Writes können frühere unsichtbar machen,\n- damit fehlt Information über konkurrierende Threads,\n- deshalb braucht Mutual Exclusion mit nur `read`/`write` grundsätzlich viele Speicherstellen und viele Speicherzugriffe."
+  },
+  {
+    "front": "[2026-04-21] Welche fundamentale Schranke gilt für Mutual Exclusion mit nur atomaren Read/Write-Registern?",
+    "back": "Im reinen **Read/Write-Modell** braucht man für $n$ Threads mindestens\n$$\\Omega(n)$$\n**Speicherstellen** und mindestens\n$$\\Omega(n)$$\n**Speicheroperationen**.\n\nDie Vorlesung formulierte das als Unmöglichkeitsresultat: Mit nur atomaren `read`/`write`-Registern kann man Mutual Exclusion nicht asymptotisch besser skalierend implementieren.\n\nDie Konsequenz ist nicht nur theoretisch:\n- $O(1)$-Locks sind in diesem Modell unmöglich,\n- bessere Skalierung erfordert ein stärkeres Maschinenmodell,\n- deshalb führt Hardware **Read-Modify-Write-Operationen** ein."
+  },
+  {
+    "front": "[2026-04-21] Warum skaliert der Bakery-Lock trotz korrekter Mutual Exclusion schlecht?",
+    "back": "Der **Bakery-Lock** ist korrekt, aber ein Acquire kostet $O(n)$, weil ein Thread alle anderen Threads betrachten muss.\n\nKonkret:\n- Er muss typischerweise alle Labels lesen, um $\\max + 1$ zu bestimmen.\n- Danach muss er beim Warten die Tickets anderer Threads vergleichen.\n- Zusätzlich braucht der Lock Arrays der Größe $n$, also $O(n)$ Speicher pro Lock.\n\nDas ist besonders schlecht, wenn nur ein Thread den Lock will, aber insgesamt viele Threads existieren: Der Aufwand bleibt trotzdem linear in $n$."
+  },
+  {
+    "front": "[2026-04-21] Warum ist $O(n)$ Speicher pro Lock in der Praxis besonders problematisch?",
+    "back": "Weil sich der Speicherbedarf bei vielen Locks multipliziert. Hat man $m$ Locks und jeder Lock braucht $O(n)$ Speicher, dann ergibt sich insgesamt\n$$O(m \\cdot n).$$\n\nDas ist bei **fine-grained locking** katastrophal. Die Vorlesung nannte als Beispiel große Graphen mit sehr vielen Knoten, bei denen jeder Knoten einen eigenen Lock haben könnte.\n\nDann ist nicht nur die Laufzeit relevant, sondern auch:\n- Speicherverbrauch pro Objekt,\n- Cache-Verhalten,\n- praktische Umsetzbarkeit überhaupt.\n\nDarum sind Locks mit **$O(1)$ Speicher pro Lock** so wichtig."
+  },
+  {
+    "front": "[2026-04-21] Was erweitert Read-Modify-Write gegenüber reinem Read/Write konzeptionell?",
+    "back": "**Read-Modify-Write (RMW)** führt Lesen, Modifizieren und Schreiben als **eine ununterbrechbare atomare Operation** aus.\n\nDer entscheidende Unterschied zu normalem Code ist:\n- Nicht erst `read`, dann lokal entscheiden, dann `write`,\n- sondern alles passiert als ein einziger atomarer Schritt.\n\nDas ist stärker als das Read/Write-Modell und erlaubt kompaktere Synchronisation. Wichtig ist auch: Man kann RMW nicht einfach durch „Lock; read; write; unlock“ simulieren, wenn Locks selbst im alten Modell schon schlecht skalieren."
+  },
+  {
+    "front": "[2026-04-21] Wie lautet die Semantik von Compare-and-Swap/Compare-and-Exchange (CAS)?",
+    "back": "**CAS** prüft atomar, ob eine Speicherstelle noch den erwarteten Wert hat, und schreibt nur dann den neuen Wert.\n\nFormal:\n$$\n\\text{CAS}(x,\\text{expected},\\text{update}):\n\\begin{cases}\n*x \\leftarrow \\text{update}, & \\text{falls } *x=\\text{expected} \\\\\n\\text{keine Änderung}, & \\text{sonst}\n\\end{cases}\n$$\n\nTypischerweise wird zusätzlich entweder der alte Wert oder ein Erfolgsbit zurückgegeben.\n\nDie zentrale Idee ist: **prüfen und setzen ohne Race Condition**. Genau deshalb eignet sich CAS als Baustein für Locks und lock-freie Datenstrukturen."
+  },
+  {
+    "front": "[2026-04-21] Wie kann man mit CAS einen einfachen Lock implementieren?",
+    "back": "Man kodiert den Lockzustand mit einer einzigen Variable:\n- $0$ = frei\n- $1$ = belegt\n\n**Acquire** versucht wiederholt:\n$$\n\\text{CAS}(\\text{lock}, 0, 1)\n$$\nund ist erfolgreich, wenn der alte Zustand frei war.\n\n**Release** setzt den Lock wieder auf frei, typischerweise durch\n$$\n\\text{lock} \\leftarrow 0.\n$$\n\nDamit erhält man einen **Spinlock** mit $O(1)$ Speicher pro Lock. Der Vorteil gegenüber Bakery ist die kompakte Darstellung; der Nachteil zeigt sich unter hoher Konkurrenz."
+  },
+  {
+    "front": "[2026-04-21] Was ist Test-and-Set, und warum ist es ein natürlicher Lock-Baustein?",
+    "back": "**Test-and-Set (TAS)** ist eine atomare Operation, die typischerweise den alten Wert liest und gleichzeitig auf „belegt“ setzt.\n\nFür einen Lock mit Zuständen $0/1$ bedeutet das:\n- Wenn vorher $0$ war, gewinnt der Thread und setzt auf $1$.\n- Wenn vorher schon $1$ war, war der Lock bereits belegt.\n\nEin TAS-Spinlock funktioniert daher so:\n- **Acquire**: wiederhole TAS, bis der alte Wert $0$ war.\n- **Release**: schreibe $0$.\n\nTAS ist als Lock-Baustein besonders direkt, weil „testen und reservieren“ genau die benötigte Semantik ist."
+  },
+  {
+    "front": "[2026-04-21] Was ist der Unterschied zwischen TAS und TTAS, und warum hilft TTAS?",
+    "back": "Bei **TAS** führen wartende Threads ständig teure atomare Schreiboperationen auf derselben Speicherstelle aus.\n\nBei **TTAS** passiert zuerst nur Lesen:\n1. Solange der Lock belegt aussieht, spinnt der Thread mit normalen Reads.\n2. Erst wenn der Lock frei aussieht, versucht er einmal atomar zu akquirieren.\n\nDer Vorteil:\n- weniger atomare Writes,\n- weniger Cache-Invalidierungen,\n- geringere Belastung des Kohärenzsystems.\n\nTTAS verbessert also nicht die Korrektheit, sondern die **Performance unter Contention**."
+  },
+  {
+    "front": "[2026-04-21] Warum explodiert die Laufzeit eines einfachen TAS-Spinlocks bei hoher Contention?",
+    "back": "Weil viele Threads gleichzeitig auf **dieselbe Lock-Variable** zugreifen und dabei ständig atomare Schreibzugriffe auslösen.\n\nDas führt zu:\n- **Contention** auf einer einzigen Speicherstelle,\n- ständigen Cache-Invalidierungen,\n- einem effektiven **sequentiellen Bottleneck** auf Bus-/Kohärenzebene.\n\nDie Vorlesungsintuition war: Alle „rennen gleichzeitig zur Ticketmaschine“. Selbst wenn der kritische Abschnitt klein ist, wird der Lock selbst zum Flaschenhals.\n\nDarum ist ein TAS-Lock zwar speichereffizient, aber unter hoher Konkurrenz oft sehr schlecht skalierend."
+  },
+  {
+    "front": "[2026-04-21] Warum ist „mach einfach alles atomar“ keine gute Standardstrategie?",
+    "back": "Weil **atomare Operationen** deutlich teurer sind als normale Loads/Stores. Laut Vorlesung liegen die Kosten typischerweise etwa bei\n$$10\\text{–}100\\times$$\nim Vergleich zu normalen Speicheroperationen.\n\nZusätzlich können manche Primitive wie **LL/SC** fehlschlagen und Wiederholungen erzwingen.\n\nDie praktische Konsequenz:\n- Atomics nur dort einsetzen, wo sie wirklich Synchronisation liefern,\n- unnötige atomare Zugriffe vermeiden,\n- besonders unter Contention auf die Anzahl teurer RMW-Operationen achten."
+  },
+  {
+    "front": "[2026-04-21] Was ist die Grundidee von Load-Linked/Store-Conditional (LL/SC), und worin unterscheidet sie sich von CAS?",
+    "back": "Bei **LL/SC** besteht ein Update aus zwei Schritten:\n1. **Load-Linked (LL)** liest einen Wert und markiert die Adresse als beobachtet.\n2. **Store-Conditional (SC)** schreibt nur dann erfolgreich, wenn seit dem LL niemand dazwischen auf konfliktträchtige Weise eingegriffen hat.\n\nDer Unterschied zu **CAS** ist:\n- CAS vergleicht explizit mit einem erwarteten Wert.\n- LL/SC prüft stattdessen, ob die beobachtete Speicherlage „unverändert exklusiv“ geblieben ist.\n\nWichtig ist der Gotcha:\n- **SC kann fehlschlagen**, obwohl der gewünschte neue Wert sinnvoll wäre,\n- daher braucht man oft Retry-Schleifen."
+  },
+  {
+    "front": "[2026-04-21] Wie funktioniert Exponential Backoff bei Spinlocks, und welches Problem löst es?",
+    "back": "**Exponential Backoff** lässt Threads nach einem fehlgeschlagenen Acquire-Versuch zufällig warten, statt sofort wieder gleichzeitig anzugreifen.\n\nTypisch:\n- Wähle zufällig\n$$\n\\text{delay} \\in \\{0,\\dots,\\text{limit}\\}\n$$\n- warte diese Zeit,\n- erhöhe danach\n$$\n\\text{limit} \\leftarrow \\min(2\\cdot \\text{limit}, \\text{maxDelay}).\n$$\n\nDas löst vor allem das Problem, dass bei Freigabe des Locks viele Threads gleichzeitig aus ihrer Schleife fallen und erneut kollidieren. Backoff entzerrt diese Zugriffe und reduziert so die Zahl gleichzeitiger teurer Atomics."
+  },
+  {
+    "front": "[2026-04-21] Warum ist ein `maxDelay` beim Exponential Backoff wichtig?",
+    "back": "Ohne Obergrenze kann ein Thread durch wiederholtes Pech immer länger warten. Dann wächst sein Backoff-Fenster immer weiter, und er kann praktisch **verhungern**.\n\nEin **maxDelay** begrenzt dieses Wachstum:\n$$\n\\text{limit} \\le \\text{maxDelay}.\n$$\n\nDamit verhindert man, dass Wartezeiten unbegrenzt explodieren. Die Vorlesung argumentierte, dass dies wichtig ist, um **Starvation** zu vermeiden bzw. zumindest deutlich zu entschärfen.\n\nDie Kernaussage ist also:\n- Backoff reduziert Kollisionen,\n- aber ohne Obergrenze kann er Fairness verschlechtern."
+  },
+  {
+    "front": "[2026-04-21] Wie entsteht im Bankkonto-Beispiel ein Deadlock?",
+    "back": "Ein **Deadlock** entsteht durch zyklisches Warten auf Locks.\n\nIm Beispiel:\n- Thread 1 transferiert von $X$ nach $Y$, hält also Lock auf $X$ und will danach $Y$.\n- Thread 2 transferiert von $Y$ nach $X$, hält Lock auf $Y$ und will danach $X$.\n\nDann gilt:\n- Thread 1 wartet auf $Y$,\n- Thread 2 wartet auf $X$,\n- keiner kann fortschreiten.\n\nDas ist genau eine zyklische Abhängigkeit und damit ein Deadlock."
+  },
+  {
+    "front": "[2026-04-27] Warum schützt `synchronized` in `StringBuffer.append(sb)` nicht automatisch auch den Zustand von `sb`?",
+    "back": "`**synchronized**` auf einer Instanzmethode sperrt nur den **Monitor von `this`**. In `append(sb)` wird also das aktuelle Objekt geschützt, **nicht** automatisch das übergebene Objekt `sb`.\n\nDeshalb kann folgendes passieren:\n- `len = sb.length()` liest eine Länge von `sb`\n- ein anderer Thread verändert `sb`\n- später ruft man `sb.getChars(...)` mit der alten Länge auf\n\nWenn `sb` inzwischen **kürzer** wurde, kann das zu einem **Out-of-bounds-Zugriff** führen. Wenn `sb` **länger** wurde, kopiert man nur einen Präfix. Der Kernfehler ist: Der Code benutzt Zustand eines **fremden Objekts**, ohne dessen Lock zu halten."
+  },
+  {
+    "front": "[2026-04-27] Wie entsteht der Deadlock bei wechselseitigem `x.append(y)` und `y.append(x)`?",
+    "back": "Der Deadlock entsteht durch **invertierte Lock-Reihenfolge**:\n\n- Thread 1 ruft `x.append(y)` auf:\n  - lockt zuerst `x`\n  - ruft dann `y.getChars(...)` auf und will `y` locken\n- Thread 2 ruft `y.append(x)` auf:\n  - lockt zuerst `y`\n  - ruft dann `x.getChars(...)` auf und will `x` locken\n\nDann gilt:\n- Thread 1 hält `x` und wartet auf `y`\n- Thread 2 hält `y` und wartet auf `x`\n\nDas ist ein klassischer **Deadlock**: eine zyklische Warteabhängigkeit, bei der keiner mehr Fortschritt machen kann."
+  },
+  {
+    "front": "[2026-04-27] Worin liegt der Unterschied zwischen atomaren Registern und Atomic Operations wie Compare-and-Swap?",
+    "back": "**Atomare Register** garantieren nur atomare `read`- und `write`-Zugriffe: Ein `read` sieht bei Konkurrenz entweder den alten oder den neuen Wert, aber keinen Mischwert.\n\n**Atomic Operations** sind stärker: Sie führen komplexere Aktionen **als eine unteilbare Operation** aus. Beispiel **Compare-and-Swap (CAS)**:\n$$\n\\text{if } x = \\text{alt} \\text{ then } x \\leftarrow \\text{neu}\n$$\n\nDer Unterschied ist also:\n- Register: atomare **Einzelzugriffe**\n- Atomic Operations: atomare **Prüf-und-Ändere-Logik**\n\nDas ist wichtig, weil viele Synchronisationsalgorithmen mehr brauchen als nur korrektes Lesen und Schreiben."
+  },
+  {
+    "front": "[2026-04-27] Warum ist ein unfairer Lock anfällig für Starvation, aber nicht notwendigerweise für Deadlock?",
+    "back": "Bei **Starvation** bekommt ein Thread eine Ressource dauerhaft nicht, obwohl das System insgesamt weiterläuft. Ein unfairer Lock kann z. B. immer wieder denselben Thread bevorzugen.\n\nBei **Deadlock** dagegen warten Threads zyklisch aufeinander, sodass **niemand** mehr weiterkommt.\n\nDer Unterschied:\n- **Starvation**: globaler Fortschritt möglich, aber nicht für alle\n- **Deadlock**: kein Fortschritt der beteiligten Threads\n\nEin unfairer Lock kann also korrekt Mutual Exclusion liefern und trotzdem einzelne Threads verhungern lassen."
+  },
+  {
+    "front": "[2026-04-27] Wie ist ein Semaphor formal definiert, und was machen `acquire` und `release`?",
+    "back": "Ein **Semaphor** ist ein Zähler\n$$\nS \\ge 0\n$$\nmit zwei Operationen:\n\n$$\n\\text{acquire: warte bis } S>0,\\ \\text{dann } S \\leftarrow S-1\n$$\n\n$$\n\\text{release: } S \\leftarrow S+1\n$$\n\nIntuitiv:\n- `acquire` verbraucht eine verfügbare Einheit\n- `release` erzeugt eine neue verfügbare Einheit oder weckt einen wartenden Thread\n\nDamit kann ein Semaphor sowohl **Ressourcen zählen** als auch **Ereignisse signalisieren**. Genau das macht ihn allgemeiner als einen reinen Lock."
+  },
+  {
+    "front": "[2026-04-27] Wann verhält sich ein Semaphor wie ein Lock, und welche Zusatzregel braucht man dafür?",
+    "back": "Ein Semaphor mit Initialwert\n$$\nS = 1\n$$\nist ein **binary semaphore** und kann wie ein **Lock** verwendet werden: Zu jedem Zeitpunkt kann höchstens ein Thread die Ressource besitzen.\n\nDie wichtige Zusatzregel ist:\n- `release` darf nur nach einem erfolgreichen `acquire` erfolgen\n\nOhne diese Regel könnte ein Thread den Zähler künstlich erhöhen und damit die Lock-Semantik verletzen. Erst mit dieser Disziplin entspricht der binary semaphore wirklich einer Mutual-Exclusion-Sperre."
+  },
+  {
+    "front": "[2026-04-27] Warum können Semaphoren Ordnungsbedingungen ausdrücken, die mit Locks allein unhandlich sind?",
+    "back": "Ein **Lock** sagt nur: „Wer darf gerade hinein?“ Es transportiert aber nicht direkt die Information:\n$$\n\\text{„Ist Ereignis } X \\text{ schon passiert?“}\n$$\n\nEin **Semaphor** kann genau diese Zustandskommunikation ausdrücken. Mit Initialwert $0$ bedeutet:\n- noch kein Signal angekommen\n- `acquire` blockiert\n- nach `release` ist das Ereignis beobachtbar\n\nDeshalb eignen sich Semaphoren für Muster wie:\n- „warte, bis Thread A fertig ist“\n- „der zweite Thread soll etwas ausführen“\n- Producer/Consumer-Synchronisation\n\nLocks können das nur mit zusätzlichen Flags oder Zählern ausdrücken."
+  },
+  {
+    "front": "[2026-04-27] Warum kann man mit einer Semaphore $s$ initial $0$ erkennen, dass man „der zweite“ Thread ist?",
+    "back": "Wenn\n$$\ns = 0\n$$\nstartet, dann blockiert ein `acquire(s)` so lange, bis ein anderer Thread `release(s)` ausführt.\n\nDamit gilt:\n- Der Thread, der `release(s)` macht, signalisiert: „Ich war da.“\n- Der Thread, dessen `acquire(s)` danach erfolgreich wird, weiß: Das Signal ist bereits passiert.\n\nIm Skalarprodukt-Beispiel bedeutet das: Wer an `acquire(s)` vorbeikommt, **kann nicht der erste gewesen sein**. Er ist also effektiv „der zweite“ und darf die Aktion ausführen, die erst nach beiden Teilbeiträgen passieren soll, etwa\n$$\nx \\leftarrow x \\cdot z\n$$"
+  },
+  {
+    "front": "[2026-04-27] Wie löst das Semaphor-Muster das Ordnungsproblem im Skalarprodukt mit End-Multiplikation?",
+    "back": "Gesucht ist:\n$$\nx = z \\cdot \\left(\\sum_{i=1}^{n} a_i b_i\\right)\n$$\nwobei zwei Threads Teilsummen berechnen und die Multiplikation mit $z$ **genau einmal und erst am Ende** passieren soll.\n\nMit einem Semaphor $s$ initial $0$ kann man z. B. so arbeiten:\n- Thread A: berechnet Beitrag, addiert zu $x$, dann `release(s)`\n- Thread B: berechnet Beitrag, dann `acquire(s)`, addiert zu $x$, danach\n  $$\n  x \\leftarrow x \\cdot z\n  $$\n\nDie Idee ist nicht „Semaphor schützt $x$“, sondern: Das Semaphor kodiert die **Reihenfolge**. So wird „ich bin der zweite“ ohne zusätzlichen Counter erkennbar."
+  },
+  {
+    "front": "[2026-04-27] Warum deadlockt die symmetrische Rendezvous-Variante „beide machen zuerst `acquire`“?",
+    "back": "Nehmen wir zwei Semaphoren `P_arrived` und `Q_arrived`, beide initial $0$`. Wenn beide Threads zuerst auf das Signal des anderen warten, ergibt sich:\n\n- $P$: `acquire(Q_arrived)` dann `release(P_arrived)`\n- $Q$: `acquire(P_arrived)` dann `release(Q_arrived)`\n\nBeide blockieren sofort beim ersten `acquire`, weil beide Semaphoren noch $0$ sind. Keiner erreicht sein `release`.\n\nDamit entsteht eine **zyklische Abhängigkeit**:\n- $P$ wartet auf $Q$\n- $Q$ wartet auf $P$\n\nDas ist genau das Deadlock-Muster „beide warten zuerst“."
+  },
+  {
+    "front": "[2026-04-27] Wie sieht ein korrektes Rendezvous mit zwei Semaphoren aus, und warum funktioniert es?",
+    "back": "Eine korrekte Variante ist:\n\n- $P$: `release(P_arrived)` dann `acquire(Q_arrived)`\n- $Q$: `acquire(P_arrived)` dann `release(Q_arrived)`\n\nWarum funktioniert das?\n- $P$ signalisiert zuerst seine Ankunft\n- $Q$ kann dadurch an `acquire(P_arrived)` vorbeikommen\n- danach signalisiert $Q$ seine eigene Ankunft\n- nun kann auch $P$ an `acquire(Q_arrived)` vorbeikommen\n\nDer entscheidende Punkt ist: In mindestens einem Thread wird die Reihenfolge **umgedreht**, sodass nicht beide zuerst warten. Dadurch wird der Zyklus gebrochen."
+  },
+  {
+    "front": "[2026-04-27] Warum ist die Variante „beide erst `release`, dann `acquire`“ oft die sauberere Rendezvous-Struktur?",
+    "back": "Bei der spiegelbildlichen Variante machen beide Threads:\n- zuerst `release` auf ihrer eigenen Semaphore\n- dann `acquire` auf der des anderen\n\nDas ist oft konzeptionell sauberer, weil beide dieselbe Struktur haben:\n1. „Ich bin angekommen.“\n2. „Ich warte, bis du angekommen bist.“\n\nAußerdem vermeidet diese Sichtweise unnötige Verwirrung über Scheduling zwischen `release` und `acquire`. Blockierend ist im Wesentlichen nur `acquire`; ein frühes `release` stellt sicher, dass das eigene Ankunftssignal bereits sichtbar ist, bevor man selbst wartet.\n\nDie Semantik des Rendezvous wird dadurch symmetrischer und leichter zu prüfen."
+  },
+  {
+    "front": "[2026-04-27] Wie funktioniert eine blocking Semaphore ohne Busy-Waiting?",
+    "back": "Eine **blocking Semaphore** verwaltet neben dem Zähler $S$ eine Warteschlange $Q$ blockierter Threads.\n\n`acquire`:\n- falls $S>0$:\n  $$\n  S \\leftarrow S-1\n  $$\n- sonst:\n  - Thread in $Q$ einfügen\n  - `block()` aufrufen\n\n`release`:\n- falls $Q$ leer:\n  $$\n  S \\leftarrow S+1\n  $$\n- sonst:\n  - einen Thread aus $Q$ holen\n  - `unblock()` aufrufen\n\nDer Vorteil: Wartende Threads verbrauchen keine CPU durch Spinning. Die Synchronisation arbeitet also mit dem **Scheduler** zusammen statt gegen ihn."
+  },
+  {
+    "front": "[2026-04-27] Warum ist `count++` im naiven Barrier-Entwurf ein Race, obwohl es wie eine einzelne Operation aussieht?",
+    "back": "`count++` ist typischerweise **nicht atomar**, sondern besteht aus mehreren Schritten:\n1. Wert lesen\n2. lokal erhöhen\n3. zurückschreiben\n\nFormal etwa:\n$$\nr \\leftarrow count,\\quad r \\leftarrow r+1,\\quad count \\leftarrow r\n$$\n\nWenn zwei Threads diese Schritte verschachtelt ausführen, können Updates verloren gehen. Dann ist `count` kleiner als die tatsächliche Zahl angekommener Threads.\n\nGenau deshalb ist der naive Barrier-Entwurf fehlerhaft. Das Update muss durch **Mutual Exclusion** geschützt werden, z. B. mit einer Semaphore `mutex` mit Initialwert $1$."
+  },
+  {
+    "front": "[2026-04-27] Warum reicht bei einer Barrier ein einziges `release(barrier)` des letzten Threads nicht aus?",
+    "back": "Im naiven Entwurf führen **alle $n$ Threads** ein\n$$\n\\text{acquire(barrier)}\n$$\naus. Wenn aber nur der letzte Thread genau **einmal**\n$$\n\\text{release(barrier)}\n$$\nmacht, wird auch nur **ein** wartender Thread freigegeben.\n\nDie übrigen Threads bleiben blockiert. Es fehlt also nicht an Korrektheit des letzten Tests `count == n`, sondern an genügend vielen Freigaben.\n\nFür eine Barrier müssen am Ende **alle** Threads passieren können. Deshalb braucht man ein Muster, das die Freigabe weiterreicht, etwa ein **Turnstile**."
+  },
+  {
+    "front": "[2026-04-28] Warum ist `count++` in einer Barrier-Implementierung ohne Schutz falsch, obwohl es wie eine einzelne Operation aussieht?",
+    "back": "`count++` ist **nicht atomar**. Es besteht mindestens aus drei Schritten:\n1. alten Wert lesen,\n2. $1$ addieren,\n3. neuen Wert zurückschreiben.\n\nWenn zwei Threads denselben alten Wert lesen, berechnen beide denselben neuen Wert und einer überschreibt den anderen. Dann ist `count` zu klein, obwohl zwei Threads angekommen sind.\n\nFür eine **Barrier** ist das fatal, weil die Bedingung „alle $n$ Threads sind da“ auf einem korrekten Zähler beruht. Deshalb muss die Manipulation von `count` in einen **kritischen Abschnitt** mit Mutex/Lock."
+  },
+  {
+    "front": "[2026-04-28] Warum ist eine Barrier, die nur bei `count == n` öffnet, ohne Reset nur einmal nutzbar?",
+    "back": "Nach der ersten Runde gilt `count == n`. Wenn Threads in der nächsten Iteration wieder eintreten und `count` weiter erhöht wird, entsteht `count > n`.\n\nDann wird die Bedingung `count == n` nie wieder wahr. Die Barrier öffnet also nur einmal und bleibt danach effektiv kaputt.\n\nFür eine **mehrfach nutzbare Barrier** braucht man die Invariante, dass der Zustand nach jeder Runde wieder auf einen definierten Startzustand zurückkehrt, typischerweise `count = 0` und korrekt balancierte Sperren/Semaphoren."
+  },
+  {
+    "front": "[2026-04-28] Warum reicht ein naives `count--` beim Verlassen einer Barrier nicht aus, um sie mehrfach nutzbar zu machen?",
+    "back": "Die Idee „beim Eintritt `count++`, beim Verlassen `count--`“ klingt plausibel, erzeugt aber neue **Race Conditions**. Mehrere Threads können gleichzeitig sehen, dass `count == n` oder später `count == 0`, und dann mehrfach dieselbe Öffnungs- oder Reset-Aktion ausführen.\n\nDadurch werden `acquire`/`release`-Operationen nicht mehr sauber balanciert. Die Barrier endet dann in einem falschen Zustand, obwohl alle Threads scheinbar durchgelaufen sind.\n\nDer Kernfehler ist: Nicht nur das Zählen, sondern auch die **Prüfung und die daraus folgende Aktion** müssen atomar geschützt werden."
+  },
+  {
+    "front": "[2026-04-28] Warum löst selbst ein Mutex um die `count == n`-Prüfung das Barrier-Problem in einer Schleife noch nicht vollständig?",
+    "back": "Ein Mutex verhindert zwar, dass mehrere Threads gleichzeitig die „letzter Thread“-Aktion ausführen. Trotzdem bleibt das **Überholen zwischen Iterationen** möglich.\n\nEin schneller Thread kann nach dem Öffnen der Barrier schon wieder oben in die nächste Runde eintreten und `count++` machen, während langsamere Threads der alten Runde unten noch `count--` ausführen. Dann vermischen sich zwei Phasen.\n\nDie Folge: Die Invariante „am Ende der Runde ist die Barrier wieder vollständig zurückgesetzt“ kann verletzt werden. Genau deshalb braucht eine robuste wiederverwendbare Barrier eine Trennung zwischen **Phase betreten** und **Phase verlassen**."
+  },
+  {
+    "front": "[2026-04-28] Warum lösen zwei Turnstiles das Wiederverwendungsproblem einer Barrier?",
+    "back": "Mit **zwei Turnstiles** trennt man die Barrier in zwei kontrollierte Phasen:\n- eine Schranke für das gemeinsame **Eintreten/Öffnen**,\n- eine zweite Schranke, die das **zu frühe Wiedereintreten** in die nächste Iteration verhindert.\n\nSo kann kein Thread schon in Runde $k+1$ loslaufen, während andere noch Runde $k$ verlassen. Die Phasen bleiben sauber getrennt.\n\nDie zentrale Idee ist also nicht nur „alle warten, bis alle da sind“, sondern zusätzlich: **Niemand startet die nächste Runde, bevor alle die aktuelle Runde vollständig abgeschlossen haben.**"
+  },
+  {
+    "front": "[2026-04-28] Warum muss man beim Producer–Consumer-Pattern nicht das Datenobjekt selbst locken?",
+    "back": "Entscheidend ist nicht das Objekt $x$ selbst, sondern der **Ownership-Wechsel** zwischen Producer und Consumer. Wenn zu jedem Zeitpunkt genau ein Thread Besitzer von $x$ ist, braucht $x$ selbst keinen zusätzlichen Lock.\n\nSynchronisiert werden muss nur die **Übergabe**, also typischerweise die Queue oder der Puffer, über den das Objekt weitergereicht wird.\n\nDas passt gut zu **Pipelines**: Eine Stage produziert Daten für die nächste. Die eigentliche Verarbeitung kann lokal und exklusiv erfolgen; nur der Übergang zwischen den Stages braucht Synchronisation."
+  },
+  {
+    "front": "[2026-04-28] Wie funktioniert ein Ringpuffer als FIFO-Queue, und warum braucht man Modulo-Arithmetik?",
+    "back": "Ein **Ringpuffer** speichert die Queue in einem Array fester Größe. Zwei Indizes genügen:\n- `in`: Position für das nächste `enqueue`\n- `out`: Position für das nächste `dequeue`\n\nDamit man nach dem letzten Feld wieder vorne weitermacht, verwendet man\n$$\n\\text{next}(i) = (i+1)\\bmod \\text{size}.\n$$\n\nBeispiel bei `size = 8`: Aus `in = 7` wird nach einem Einfügen\n$$\n(7+1)\\bmod 8 = 0.\n$$\n\nOhne dieses **wrap-around** würde der Puffer „am Ende hängen bleiben“, obwohl vorne bereits wieder freie Plätze existieren."
+  },
+  {
+    "front": "[2026-04-28] Warum ist bei einem Ringpuffer mit nur `in` und `out` der Zustand `in == out` mehrdeutig?",
+    "back": "Initial gilt oft `in = out = 0`, und das bedeutet **leer**. Wenn der Puffer aber vollständig gefüllt wird und `in` einmal komplett herumläuft, kann ebenfalls wieder `in == out` gelten.\n\nDann ist derselbe Zustand sowohl mit **leer** als auch mit **voll** vereinbar. Mit nur diesen zwei Indizes kann man die beiden Fälle also nicht eindeutig unterscheiden.\n\nDeshalb braucht man entweder:\n- einen zusätzlichen Zähler, oder\n- den Trick, **ein Feld frei zu lassen**."
+  },
+  {
+    "front": "[2026-04-28] Wie erkennt man bei einem Ringpuffer mit dem „ein Feld frei lassen“-Trick leer und voll?",
+    "back": "Beim **Index-Trick** opfert man absichtlich einen Platz. Dann gelten die Zustände:\n$$\n\\text{Empty}: in == out\n$$\nund\n$$\n\\text{Full}: \\text{next}(in) == out.\n$$\n\nDadurch wird `in == out` eindeutig als **leer** interpretiert, weil der Zustand „wirklich komplett voll“ gar nicht mehr zugelassen wird.\n\nDer Nachteil ist die effektive Kapazität:\n$$\n\\text{nutzbare Kapazität} = \\text{size} - 1.\n$$\n\nDer Vorteil ist eine sehr einfache und schnelle Zustandsprüfung nur mit den beiden Indizes."
+  },
+  {
+    "front": "[2026-04-28] Warum führt `synchronized enqueue()` mit aktivem Warten auf `isFull()` zum Deadlock?",
+    "back": "Wenn `enqueue()` als `synchronized` läuft und bei voller Queue in einer Schleife wartet, hält der Producer während des Wartens den **Monitor**.\n\nDann kann kein Consumer `dequeue()` betreten, falls auch diese Methode synchronisiert ist. Genau der Consumer müsste aber ein Element entfernen, damit wieder Platz entsteht.\n\nDamit wartet der Producer auf ein Ereignis, das nur eintreten könnte, wenn er selbst den Lock freigibt. Das ist ein klassischer **Deadlock durch Lock-Halten beim Blockieren**."
+  },
+  {
+    "front": "[2026-04-28] Warum ist `sleep()` als Ersatz für korrektes Warten bei Producer–Consumer nur ein schlechter Teilfix?",
+    "back": "Wenn man außerhalb des Locks periodisch `sleep()` verwendet, vermeidet man zwar den direkten Deadlock, aber man wartet auf **Zeit** statt auf das eigentliche **Ereignis**.\n\nDas hat zwei Probleme:\n- Ist das Sleep-Intervall zu lang, steigt die **Latenz** unnötig.\n- Ist es zu kurz, entsteht viel **Polling**, Lock-Contention oder sogar livelock-artiges Verhalten.\n\nDas eigentliche Ziel ist: „Warte, bis die Queue nicht mehr voll/leer ist.“ Dafür sind **Semaphoren**, **Monitore** oder **Conditions** besser geeignet als zeitbasiertes Raten."
+  },
+  {
+    "front": "[2026-04-28] Warum ist bei der Semaphore-Lösung die Reihenfolge `nonFull/nonEmpty` vor `manipulation` entscheidend?",
+    "back": "Die korrekte Reihenfolge ist:\n1. auf Ressource warten (`nonFull.acquire()` oder `nonEmpty.acquire()`),\n2. dann erst den **Manipulations-Lock** nehmen.\n\nWenn man stattdessen zuerst `manipulation.acquire()` macht und danach auf `nonFull` oder `nonEmpty` blockiert, hält man den Lock während des Wartens. Dann kann der andere Thread den Puffer nicht manipulieren und die passende Semaphore nicht freigeben.\n\nSo entsteht ein **Ressourcen-Zyklus** und damit Deadlock. Die Regel lautet also: **Nie blockieren, während man den Puffer-Lock hält, wenn der andere Thread genau diesen Lock braucht, um die Bedingung herzustellen.**"
+  },
+  {
+    "front": "[2026-04-28] Warum braucht man bei der Semaphore-Queue den „ein Feld frei lassen“-Trick nicht mehr?",
+    "back": "Mit Semaphoren werden freie und belegte Plätze explizit gezählt:\n- `nonEmpty` zählt vorhandene Elemente,\n- `nonFull` zählt freie Plätze.\n\nDadurch ist die Information „leer oder voll?“ nicht mehr indirekt aus `in` und `out` abzuleiten, sondern direkt als **Zählerzustand** vorhanden.\n\nDeshalb kann die Queue wirklich alle `size` Plätze nutzen. Der Ringpuffer dient dann nur noch zur Positionierung im Array, nicht mehr zur Zustandskodierung von leer/voll."
+  },
+  {
+    "front": "[2026-04-28] Warum muss man in Java bei Monitoren `while (Bedingung) wait()` statt `if (Bedingung) wait()` schreiben?",
+    "back": "Nach dem Aufwachen ist nicht garantiert, dass die gewünschte Bedingung noch gilt. Ein anderer Thread kann schneller gewesen sein und den Zustand wieder verändert haben.\n\nDarum ist das korrekte Muster:\n$$\n\\text{while}(\\neg \\text{Bedingung})\\ \\text{wait()}.\n$$\n\nMit `if` würde die Bedingung nur einmal geprüft. Danach könnte ein Thread trotz weiterhin falscher Voraussetzung weiterlaufen und z.B. aus einer leeren Queue lesen oder in eine volle schreiben.\n\n`while` macht das Warten **zustandsbasiert** statt **signalbasiert**: Nicht das Aufwachen zählt, sondern ob die Bedingung jetzt wirklich erfüllt ist."
+  },
+  {
+    "front": "[2026-04-28] Warum ist `notifyAll()` bei Producer–Consumer oft sicherer als `notify()`?",
+    "back": "`notify()` weckt nur **einen beliebigen** wartenden Thread. Wenn sowohl Producer als auch Consumer warten, kann der „falsche“ Typ geweckt werden, der seine Bedingung sofort wieder als falsch erkennt und erneut schlafen geht.\n\n`notifyAll()` weckt alle Wartenden. Danach prüft jeder Thread seine Bedingung erneut mit `while`, und nur die Threads mit tatsächlich erfüllter Bedingung laufen weiter.\n\nDas ist oft robuster, besonders wenn mehrere **Wartbedingungen** auf demselben Monitor zusammenliegen. Der Preis ist mehr Aufweckarbeit, aber die Logik ist sicherer."
   }
 ]

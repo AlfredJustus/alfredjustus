@@ -778,5 +778,125 @@
   {
     "front": "[2026-04-17] Why does branch misprediction cost scale roughly like $N \\cdot W$?",
     "back": "If a branch resolves **$N$ cycles** after fetch and the processor fetches **$W$ instructions per cycle**, then during those $N$ cycles it may fetch up to\n\n$$\nN \\cdot W\n$$\n\ninstructions from the wrong path.\n\nWhen the branch is found to be mispredicted, those wrong-path instructions are flushed. So the penalty has two views:\n- about **$N$ lost cycles**,\n- up to **$N \\cdot W$ wasted fetched instructions**.\n\nThis is why deeper and wider pipelines make branch prediction much more important."
+  },
+  {
+    "front": "[2026-04-23] Why does a branch misprediction waste roughly $N \\cdot W$ instruction slots in an $N$-stage, $W$-wide pipeline?",
+    "back": "A **misprediction** sends the front-end down the wrong path until the branch is resolved. During that time, up to $N$ pipeline stages can be filled with wrong-path work, and each stage can hold/issue about $W$ instructions per cycle in a $W$-wide machine.\n\nSo the wasted work scales roughly like\n\n$$\nN \\cdot W\n$$\n\ninstruction slots.\n\nThis is only an order-of-magnitude estimate, but it explains the trend: deeper pipelines increase how long the machine follows the wrong path, and wider pipelines increase how much wrong work is done per cycle. That is why even small drops in prediction accuracy can hurt IPC badly in deep, superscalar processors."
+  },
+  {
+    "front": "[2026-04-23] In the fetch stage, what three things must be predicted to keep the pipeline moving?",
+    "back": "The front-end ideally predicts:\n\n1. **Whether there is a branch** in the fetched instruction stream.\n2. The branch **direction**: taken or not taken.\n3. The branch **target address** if it is taken.\n\nA **BTB** helps with two of these:\n- It can suggest that the current PC is a branch, because a BTB hit means this PC was previously seen as a branch.\n- It provides the predicted **target**.\n\nThe remaining hard problem is usually **direction prediction**, which needs a separate predictor such as a bimodal, global, local, or hybrid predictor."
+  },
+  {
+    "front": "[2026-04-23] Why is next-PC prediction harder in a variable-length ISA like x86 than in a fixed-length ISA like MIPS?",
+    "back": "In a **fixed-length ISA**, the sequential next PC is easy:\n\n$$\n\\text{PC}_{\\text{next}} = \\text{PC} + 4\n$$\n\nfor 4-byte instructions like MIPS.\n\nIn a **variable-length ISA** such as x86, the next sequential PC is\n\n$$\n\\text{PC}_{\\text{next}} = \\text{PC} + \\text{inst\\_size}\n$$\n\nbut **instruction size may not be known yet in fetch**. That means even “just continue sequentially” is not trivial before decode.\n\nSo branch prediction is harder not only because of taken/not-taken decisions, but also because the front-end may not yet know where the next instruction begins."
+  },
+  {
+    "front": "[2026-04-23] When does a BTB work especially well, and why?",
+    "back": "A **BTB (Branch Target Buffer)** works especially well for **direct branches**.\n\nFor a direct branch, the target is typically computed as\n\n$$\n\\text{target} = \\text{PC} + \\text{offset}\n$$\n\nand that offset is fixed in the instruction. Therefore, across dynamic executions of the same static branch, the target is usually stable.\n\nThe BTB learns and stores the mapping\n\n$$\n\\text{PC} \\mapsto \\text{target}\n$$\n\nso later fetches can retrieve the target immediately without waiting to execute the branch. This makes BTBs very effective for direct conditional branches, but much less straightforward for **indirect branches**, whose targets may vary."
+  },
+  {
+    "front": "[2026-04-23] Why can static branch prediction be badly wrong even if profile-guided hints were collected carefully?",
+    "back": "The main problem is **profile representativeness**.\n\nA static or profile-guided predictor chooses a likely direction based on earlier runs, but if the actual runtime inputs differ, the branch behavior may change. Then the stored hint no longer matches reality.\n\nThis is especially bad for branches with:\n- **phase changes**,\n- **alternating behavior**,\n- or input-dependent behavior that was not present during profiling.\n\nA static hint also usually encodes only one preferred direction, so it cannot express richer patterns like $T, N, T, N, \\dots$ or “taken for a while, then not taken for a while.” Static prediction is simple and cheap, but it cannot **adapt at runtime**."
+  },
+  {
+    "front": "[2026-04-23] Why does a 1-bit last-time predictor fail completely on the pattern $T, N, T, N, \\dots$?",
+    "back": "A **1-bit last-time predictor** predicts that the next outcome will be the same as the previous one.\n\nFor the alternating pattern\n\n$$\nT, N, T, N, \\dots\n$$\n\nthe next outcome is always the **opposite** of the last one. So after seeing $T$, it predicts $T$ again, but the actual outcome is $N$; after seeing $N$, it predicts $N$ again, but the actual outcome is $T$.\n\nThus it is wrong every time after initialization, giving essentially **0% accuracy** on a perfect alternation. This shows that “repeat the last outcome” is too weak for branches with regular multi-step patterns."
+  },
+  {
+    "front": "[2026-04-23] Why does a 1-bit predictor tend to mispredict twice per loop, while a 2-bit counter tends to mispredict once?",
+    "back": "Consider a loop-closing branch that is **taken** for most iterations and **not taken** only on loop exit.\n\nA **1-bit predictor** remembers only the last outcome:\n- It mispredicts on the final iteration when the branch changes from taken to not taken.\n- Then its state flips, so when the loop is entered again, it often mispredicts the first taken iteration too.\n\nSo it tends to miss about **twice per loop**.\n\nA **2-bit saturating counter** adds **hysteresis**: one unusual outcome only weakens confidence instead of fully reversing the prediction. That means the loop exit usually causes one misprediction, but the predictor still remains on the taken side, so the next loop entry is predicted correctly.\n\nHence the rough improvement from about\n\n$$\n\\frac{N-2}{N}\n$$\n\nto\n\n$$\n\\frac{N-1}{N}\n$$\n\naccuracy for an $N$-iteration loop."
+  },
+  {
+    "front": "[2026-04-23] How does a 2-bit saturating counter implement hysteresis?",
+    "back": "A **2-bit saturating counter** has four states:\n\n- strongly not taken\n- weakly not taken\n- weakly taken\n- strongly taken\n\nIf we encode the counter as $c \\in \\{0,1,2,3\\}$, then:\n- predict **not taken** for $c \\in \\{0,1\\}$\n- predict **taken** for $c \\in \\{2,3\\}$\n\nUpdate rule:\n\n$$\nc \\leftarrow \\min(3, c+1) \\quad \\text{if taken}\n$$\n\n$$\nc \\leftarrow \\max(0, c-1) \\quad \\text{if not taken}\n$$\n\nThe key idea is **hysteresis**: one contrary outcome does not immediately flip the prediction direction. A strongly taken branch must see two not-taken outcomes before predicting not taken. This reduces oscillation on mostly-biased branches such as loop branches."
+  },
+  {
+    "front": "[2026-04-23] What problem does global history solve that a simple per-branch counter cannot?",
+    "back": "A simple per-branch counter only learns how **this branch itself** behaved recently. It cannot capture cases where a branch depends on **other recent branches**.\n\nA **global history predictor** solves this by storing the outcomes of the last $n$ branches in a **Global History Register (GHR)** and using that context to predict the current branch.\n\nThis helps when the current branch is correlated with the recent control-flow path, for example:\n- “if branch $Y$ was not taken, branch $X$ is also not taken,”\n- or “$X$ depends on the combination of outcomes of $Y$ and $Z$.”\n\nIn such cases, the same branch PC may need different predictions in different path contexts, which a plain bimodal predictor cannot represent well."
+  },
+  {
+    "front": "[2026-04-23] What problem does local history solve that global history may miss?",
+    "back": "A **local history predictor** captures repeating patterns of the **same branch**, even when those patterns are longer than one bit.\n\nExample: a loop branch with pattern\n\n$$\n1,1,1,0\n$$\n\nrepeating. A simple 2-bit counter sees “mostly taken” and still tends to miss the exit. A local predictor can store the recent history of that branch, recognize the pattern, and predict the next outcome much more accurately.\n\nGlobal history may miss this if the surrounding branches create noisy context or if the important information is specifically “what this branch did the last few times.” So:\n\n- **global history** = path context from other branches\n- **local history** = per-branch pattern memory\n\nThey solve different kinds of predictability."
+  },
+  {
+    "front": "[2026-04-23] Why is branch prediction called “two-level” in global or local adaptive predictors?",
+    "back": "It is called **two-level adaptive prediction** because prediction uses two distinct stages of state.\n\nFor a **global** predictor:\n1. Level 1 stores the **history**, e.g. the **GHR**.\n2. Level 2 uses that history to index a **PHT** of saturating counters.\n\nFor a **local** predictor:\n1. Level 1 stores a **per-branch local history**, selected by PC.\n2. Level 2 uses that local history to index a **PHT**.\n\nSo the first level records a pattern, and the second level learns what outcome usually follows that pattern. The “adaptive” part comes from updating the counters over time based on actual outcomes."
+  },
+  {
+    "front": "[2026-04-23] Why does gshare usually outperform a pure global-history index?",
+    "back": "A pure global-history predictor indexes the PHT using only the **GHR**, so different branches with the same recent history can collide heavily in the same entries.\n\n**Gshare** reduces this interference by combining branch identity and history:\n\n$$\n\\text{index} = \\text{PC}_{\\text{low}} \\oplus \\text{GHR}\n$$\n\nThis helps because:\n- the **PC bits** distinguish different branches,\n- the **GHR bits** still provide path context,\n- and the XOR tends to spread accesses more evenly across the table.\n\nSo gshare usually improves table utilization and reduces aliasing compared with history-only indexing. The tradeoff is a bit more indexing logic, though XOR is relatively cheap."
+  },
+  {
+    "front": "[2026-04-23] What is aliasing in branch predictors, and why is it harmful?",
+    "back": "**Aliasing** means that multiple different branches, or multiple different histories, map to the same predictor entry because the tables are finite.\n\nThis is harmful because those branches then **overwrite each other’s learned state**. For example:\n- one branch may be mostly taken,\n- another mostly not taken,\n- but if both share the same counter entry, the counter gets pulled in both directions.\n\nThe result is reduced accuracy due to **interference**.\n\nAliasing can occur in:\n- bimodal predictor tables,\n- global-history PHTs,\n- local history tables,\n- and even more complex hybrid structures.\n\nMany predictor designs, such as **gshare**, exist largely to reduce this interference rather than to change the basic prediction rule."
+  },
+  {
+    "front": "[2026-04-23] Why can a hybrid/tournament predictor beat either a pure global or pure local predictor?",
+    "back": "Different branches have different behavior:\n- some are strongly **biased**,\n- some depend on **global path context**,\n- some follow **local repeating patterns**.\n\nNo single predictor is best for all of them. A **hybrid** or **tournament** predictor runs multiple predictors, such as global and local, and uses a **choice/meta predictor** to decide which one to trust in the current context.\n\nThis works better because it matches the mechanism to the branch type instead of forcing one predictor to handle everything. It can also help with **warm-up**: a simpler predictor may be useful early, while a more complex one is still learning.\n\nThe cost is extra storage, extra latency, and extra selection logic."
+  },
+  {
+    "front": "[2026-04-23] Why might a processor filter out highly biased branches instead of sending them through the most sophisticated predictor?",
+    "back": "A highly **biased branch**—for example one that is taken 99% of the time—does not need an expensive predictor to be predicted well.\n\nIf such easy branches use entries in complex shared predictors, they create **pollution**:\n- they consume table capacity,\n- they add interference,\n- and they can push out information needed for harder branches.\n\nSo processors may detect biased branches and handle them with simpler mechanisms. This preserves sophisticated predictor resources for branches that actually need global history, local history, long histories, or specialized handling.\n\nThe goal is not just accuracy on easy branches, but better **overall predictor efficiency** and less interference."
+  },
+  {
+    "front": "[2026-04-24] Why does VLIW not need hardware dependence checking, and what assumption makes that safe?",
+    "back": "In **VLIW**, the **compiler** packs only mutually independent operations into the same instruction bundle. Because the hardware assumes the bundle is already valid, it can issue the operations directly without dynamic RAW/WAR/WAW checking.\n\nThis is safe only under the assumption that the compiler’s **static dependence analysis and scheduling are correct** for the target machine model. In other words, hardware “trusts” software to avoid conflicts.\n\nThe benefit is much simpler issue logic than a wide superscalar. The risk is that correctness and performance now depend heavily on compile-time knowledge, which is especially hard for uncertain cases like memory aliasing and variable-latency loads."
+  },
+  {
+    "front": "[2026-04-24] Why is dependence checking especially expensive in a wide superscalar processor?",
+    "back": "A wide **superscalar** processor may fetch many instructions per cycle, and hardware must determine which ones can safely issue together.\n\nThat is expensive because it must compare many instruction pairs for possible dependences, including register and memory conflicts. As width grows, the number of comparisons grows quickly, and the issue logic becomes a complex **dependence-checking structure**.\n\nSo the cost is not just “more ALUs”; it is the hardware needed to discover ILP dynamically every cycle. This complexity is exactly what **VLIW** tries to avoid by moving the scheduling problem to the compiler."
+  },
+  {
+    "front": "[2026-04-24] What is the practical purpose of slot alignment in a VLIW bundle?",
+    "back": "**Slot alignment** means each position in a VLIW bundle is tied to a particular functional unit or class of units.\n\nIts purpose is to simplify hardware routing. For example, if a multiply must appear in the multiply slot, the hardware can send that slot directly to the multiplier instead of using flexible, expensive dispatch logic.\n\nSo slot alignment trades **hardware simplicity** for **compiler burden**:\n- hardware becomes simpler and more predictable,\n- but the compiler must place each operation into a legal slot,\n- and unused slots may become **NOPs** if no suitable operation is available."
+  },
+  {
+    "front": "[2026-04-24] How is VLIW fundamentally different from SIMD/vector execution, even though both use one PC for many operations?",
+    "back": "In **VLIW**, one instruction bundle contains **different independent operations** that execute in parallel, such as an add, multiply, divide, and XOR.\n\nIn **SIMD/vector**, one instruction typically represents **the same operation applied to many data elements**, such as adding two vectors lane-wise.\n\nSo the key distinction is:\n- **VLIW** exploits **instruction-level parallelism** across different operations,\n- **SIMD/vector** exploits **data-level parallelism** across many data items.\n\nBoth may execute multiple operations under one program counter, but they encode very different kinds of parallelism."
+  },
+  {
+    "front": "[2026-04-24] What does lockstep execution mean in VLIW, and why is it a problem for cache misses?",
+    "back": "**Lockstep execution** means the operations in a VLIW bundle advance together as a group. If one operation stalls, the whole bundle is effectively held back.\n\nThis is especially bad for **cache misses** because memory latency is often unpredictable at compile time. A load that unexpectedly misses in cache can delay unrelated operations that happened to be bundled with it.\n\nSo even if some operations are independent, they may not continue past the stalled one in a traditional VLIW design. This makes VLIW much less tolerant of variable latency than **out-of-order** machines, which can often keep executing other ready instructions."
+  },
+  {
+    "front": "[2026-04-24] In a VLIW machine of width $N$, what happens if the compiler finds only $k < N$ independent operations for a cycle?",
+    "back": "The compiler fills the remaining $N-k$ slots with **NOPs**.\n\nThis preserves the fixed bundle format, but it has two costs:\n- it wastes issue bandwidth, reducing achieved IPC,\n- and it can increase **code size**, since wide bundles still have to be stored.\n\nSo a width-$N$ VLIW only performs well when the compiler can regularly expose close to $N$ independent operations. If the available ILP is low, much of the machine sits idle even though the hardware is present."
+  },
+  {
+    "front": "[2026-04-24] Why is VLIW code often tied to a specific microarchitecture more than superscalar code?",
+    "back": "**VLIW** code is scheduled statically using assumptions about the machine’s functional units, slot layout, and operation latencies.\n\nIf a later processor generation changes those details, the old schedule may become suboptimal or even incompatible with the intended execution model. For example, a bundle layout or latency assumption that worked well on one version may waste slots or create stalls on another.\n\nSo VLIW exposes more microarchitectural detail to software, reducing the **semantic gap** but also reducing portability across implementations. This is one reason recompilation is often more important for VLIW than for dynamically scheduled superscalar designs."
+  },
+  {
+    "front": "[2026-04-24] Why are basic blocks often too small for wide VLIW scheduling, and how does trace scheduling address that?",
+    "back": "A single **basic block** may not contain enough independent instructions to fill a wide VLIW bundle, especially if issue width is large.\n\n**Trace scheduling** addresses this by using profiling to identify a likely hot path through multiple basic blocks, then scheduling across that whole path as if it were one larger region. This gives the compiler a much larger pool of instructions to reorder and pack.\n\nThe idea is to optimize for the common case, not every path equally. The downside is that if execution leaves the predicted trace, the compiler needs **compensation code** to preserve correctness."
+  },
+  {
+    "front": "[2026-04-24] What is a trace in trace scheduling, and why does it need patch-up code?",
+    "back": "A **trace** is a sequence of basic blocks that profiling suggests will usually execute consecutively, such as along highly biased branches.\n\nThe compiler schedules across the trace as though that hot path will occur. This enables aggressive code motion across branch boundaries and can expose more ILP.\n\nIt needs **patch-up** or **compensation code** because the optimized schedule may move computations assuming the hot path is taken. If execution instead follows a different branch, the program state must still be made correct for that alternative path.\n\nSo trace scheduling gains performance by speculating on common control flow, then repairing the uncommon cases."
+  },
+  {
+    "front": "[2026-04-24] What is the difference between a trace and a superblock?",
+    "back": "A **trace** is a likely hot path through the CFG, but it may still have **multiple entries** due to side entrances.\n\nA **superblock** is a compiler-formed region with:\n- **single entry**\n- **multiple exits**\n\nThe single-entry property is the key improvement. It gives the compiler stronger guarantees about what must be true when control enters the region, enabling more aggressive scheduling and code motion.\n\nSuperblocks are often created using **tail duplication** to remove side entrances. So you can think of a superblock as a trace-like hot region that has been reshaped to be easier to optimize safely."
+  },
+  {
+    "front": "[2026-04-24] Why does eliminating side entrances enable stronger optimization in a superblock?",
+    "back": "A **side entrance** means control can jump into the middle of a region without executing its earlier instructions. That prevents the compiler from assuming that values or invariants established earlier in the hot path still hold.\n\nBy eliminating side entrances, a **superblock** guarantees that every execution enters at the top. Then any transformation based on earlier computations is valid throughout the region.\n\nThis is what enables optimizations like reusing a previously computed value instead of recomputing it. Without single entry, a later block might be reached from a path where that value was never produced or where an operand was changed.\n\nSo removing side entrances is really about making dataflow assumptions safe."
+  },
+  {
+    "front": "[2026-04-24] In the lecture’s superblock example, why can the second multiply be replaced by a move only after tail duplication?",
+    "back": "On the hot path, two multiplies compute the same expression, such as $R2 \\cdot 3$, into different destinations. Replacing the second multiply with a move is valid only if the value of $R2$ has not changed since the first multiply.\n\nThe problem is that a cold side path can modify $R2$ and then re-enter later, which breaks that assumption. After **tail duplication**, the hot region becomes a **single-entry superblock**, so the later instruction on the hot path can only be reached through the earlier one.\n\nThen the compiler knows the first result is still valid and can do **common subexpression elimination / strength reduction**:\n- compute once,\n- reuse the value,\n- replace the second multiply by a move."
+  },
+  {
+    "front": "[2026-04-24] Why was IA-64/Itanium a harder transition than x86-64?",
+    "back": "**IA-64 (Itanium)** tried to move to a new ISA based on VLIW/EPIC ideas, which required a major software and ecosystem transition. Existing x86 software had to rely on translation or recompilation, and that transition proved difficult.\n\nBy contrast, **x86-64** extended the existing x86 ecosystem rather than replacing it. That made adoption much easier because software compatibility was far better.\n\nThe lesson is that ISA design is not only a technical issue. Even if a new architecture has appealing ideas, **ecosystem inertia** is enormous. A technically elegant ISA can still lose if the migration cost is too high."
+  },
+  {
+    "front": "[2026-04-24] Why are systolic arrays efficient for matrix multiplication and convolution?",
+    "back": "A **systolic array** is efficient because it reuses data across many nearby **processing elements (PEs)** before sending results back to memory.\n\nFor workloads like convolution and matrix multiplication, the same inputs and weights participate in many **multiply-accumulate (MAC)** operations. Instead of repeatedly fetching them from memory, the array streams data through neighboring PEs so each value contributes to many computations locally.\n\nThis improves efficiency because memory access is often much more expensive than arithmetic. The array’s regular structure also allows high concurrency and simple control, making it well matched to regular linear-algebra-style computations."
+  },
+  {
+    "front": "[2026-04-24] In a 1D systolic convolution array with stationary weights, what does each PE do?",
+    "back": "Each PE stores a local **weight** $W$ and performs a **MAC** while forwarding data:\n\n$$\nX_{\\text{out}} \\leftarrow X_{\\text{in}}\n$$\n\n$$\nY_{\\text{out}} \\leftarrow Y_{\\text{in}} + W \\cdot X_{\\text{in}}\n$$\n\nSo each PE:\n- passes the input sample $X$ to the next PE,\n- receives a partial sum $Y$,\n- adds its own contribution $W \\cdot X$,\n- forwards the updated partial sum.\n\nThe key idea is that the weights stay local while the input stream and partial sums move through the array in a carefully timed way. This lets the convolution be computed as a rhythmic flow of data rather than as a sequence of general-purpose instructions."
   }
 ]

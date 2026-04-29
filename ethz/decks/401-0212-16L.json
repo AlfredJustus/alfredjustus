@@ -898,5 +898,125 @@
   {
     "front": "[2026-04-15] Warum ist bei der Ableitung der Umkehrfunktion die Zuordnung der Stellen so wichtig?",
     "back": "Die korrekte Formel lautet:\n$$\n(f^{-1})'(y_0)=\\frac{1}{f'(x_0)}\n\\qquad \\text{mit } y_0=f(x_0).\n$$\n\nLinks wird also bei **$y_0$**, rechts bei **$x_0$** ausgewertet. Das sind im Allgemeinen verschiedene Stellen.\n\nDie häufige falsche Schreibweise\n$$\n(f^{-1})'(x)=\\frac{1}{f'(x)}\n$$\nignoriert genau diesen Unterschied. Richtig ist nur\n$$\n(f^{-1})'(f(x))=\\frac{1}{f'(x)}.\n$$"
+  },
+  {
+    "front": "[2026-04-22] Warum braucht der Satz von Rolle Stetigkeit auf dem **abgeschlossenen** Intervall $[a,b]$ und nicht nur auf $(a,b)$?",
+    "back": "Der Beweis von **Rolle** benutzt den **Extremwertsatz**: Eine stetige Funktion auf einem **kompakten** Intervall $[a,b]$ nimmt Maximum und Minimum an.\n\nOhne Stetigkeit auf $[a,b]$ kann genau das scheitern. Dann muss es kein inneres Extremum geben, auf das man das **Fermat-Kriterium** anwenden könnte.\n\nDie drei Voraussetzungen sind:\n- $f$ ist stetig auf $[a,b]$,\n- $f$ ist differenzierbar auf $(a,b)$,\n- $f(a)=f(b)$.\n\nDann folgt:\n$$\n\\exists\\,\\xi\\in(a,b):\\quad f'(\\xi)=0.\n$$\n\nDie Randstetigkeit ist also nicht kosmetisch, sondern sichert erst die Existenz von Extremwerten auf dem ganzen Intervall."
+  },
+  {
+    "front": "[2026-04-22] Wie führt man den Beweis des Mittelwertsatzes auf den Satz von Rolle zurück?",
+    "back": "Man konstruiert eine **Hilfsfunktion**, die die Randwerte „geradezieht“:\n$$\ng(x)=f(x)-\\frac{f(b)-f(a)}{b-a}(x-a).\n$$\n\nDann gilt:\n$$\ng(a)=f(a),\n$$\nund\n$$\ng(b)=f(b)-\\frac{f(b)-f(a)}{b-a}(b-a)=f(a).\n$$\nAlso ist\n$$\ng(a)=g(b).\n$$\n\nDa $g$ dieselben Regularitätseigenschaften wie $f$ hat, darf man **Rolle** auf $g$ anwenden. Es gibt also ein $\\xi\\in(a,b)$ mit\n$$\ng'(\\xi)=0.\n$$\nWegen\n$$\ng'(x)=f'(x)-\\frac{f(b)-f(a)}{b-a}\n$$\nfolgt\n$$\nf'(\\xi)=\\frac{f(b)-f(a)}{b-a}.\n$$\n\nDas ist genau der **Mittelwertsatz**."
+  },
+  {
+    "front": "[2026-04-22] Was ist die geometrische Aussage des Mittelwertsatzes?",
+    "back": "Der **Mittelwertsatz** sagt: Es gibt einen inneren Punkt $\\xi\\in(a,b)$, an dem die **Tangentensteigung** gleich der **Sekantensteigung** zwischen den Randpunkten ist:\n$$\nf'(\\xi)=\\frac{f(b)-f(a)}{b-a}.\n$$\n\nGeometrisch bedeutet das:\n- Die Sekante durch $(a,f(a))$ und $(b,f(b))$ hat eine bestimmte Steigung.\n- Irgendwo dazwischen ist die Tangente an den Graphen **parallel** zu dieser Sekante.\n\nDer Satz ist ein **Existenzsatz**: Er garantiert ein solches $\\xi$, liefert aber im Allgemeinen **keine explizite Formel** dafür."
+  },
+  {
+    "front": "[2026-04-22] Warum ist das $\\xi$ aus Rolle oder Mittelwertsatz im Allgemeinen nicht berechenbar?",
+    "back": "Die Sätze von **Rolle** und vom **Mittelwertsatz** sind **Existenzsätze**. Sie sagen nur:\n$$\n\\exists\\,\\xi\\in(a,b)\\ \\text{mit einer bestimmten Eigenschaft}.\n$$\n\nSie geben aber normalerweise kein Verfahren an, um dieses $\\xi$ in geschlossener Form auszurechnen.\n\nDas ist typisch in der Analysis: Existenz ist oft viel leichter als explizite Berechnung. Im Vortrag wurden als Beispiele genannt:\n- Gleichungen wie $x^5+x=1$, die nicht einfach lösbar sind,\n- Ausdrücke wie\n  $$\n  \\int_0^x e^{-y^2}\\,dy,\n  $$\n  die keine elementare Stammfunktion haben.\n\nOft kann man $\\xi$ nur **numerisch approximieren**, etwa mit Verfahren wie Newton."
+  },
+  {
+    "front": "[2026-04-22] Wann darf man die Regel von Bernoulli–de l’Hôpital anwenden?",
+    "back": "Die Regel von **Bernoulli–de l’Hôpital** ist für Quotienten in den unbestimmten Formen\n$$\n\\frac{0}{0}\\quad\\text{oder}\\quad \\frac{\\infty}{\\infty}\n$$\ngedacht.\n\nTypische Voraussetzungen sind:\n- $f$ und $g$ sind differenzierbar,\n- der Quotient $\\frac{f(x)}{g(x)}$ ist in der Umgebung sinnvoll, also insbesondere $g(x)\\ne 0$,\n- Zähler und Nenner gehen gemeinsam gegen $0$ oder beide betragsmäßig gegen $\\infty$,\n- der Grenzwert\n  $$\n  \\lim \\frac{f'(x)}{g'(x)}\n  $$\n  existiert.\n\nDann folgt:\n$$\n\\lim \\frac{f(x)}{g(x)}=\\lim \\frac{f'(x)}{g'(x)}.\n$$\n\nWichtig: L’Hôpital gilt **nicht** für beliebige Quotienten, sondern nur unter diesen Voraussetzungen."
+  },
+  {
+    "front": "[2026-04-22] Warum ist $\\frac{0}{0}$ eine unbestimmte Form und nicht einfach $0$?",
+    "back": "Wenn\n$$\nf(x)\\to 0 \\quad\\text{und}\\quad g(x)\\to 0,\n$$\ndann ist der Quotient\n$$\n\\frac{f(x)}{g(x)}\n$$\nnicht automatisch bestimmt.\n\nDer Grund: Entscheidend ist, **wie schnell** Zähler und Nenner gegen $0$ gehen. Je nach Wachstum kann der Grenzwert verschieden sein.\n\nBeispiele:\n$$\n\\frac{x}{x}\\to 1,\\qquad \\frac{x^2}{x}\\to 0,\\qquad \\frac{x}{x^2}\\to \\infty\n\\quad (x\\to 0).\n$$\n\nObwohl in allen drei Fällen „oben $0$ und unten $0$“ steht, entstehen verschiedene Grenzwerte. Deshalb heißt\n$$\n\\frac{0}{0}\n$$\neine **unbestimmte Form**."
+  },
+  {
+    "front": "[2026-04-22] Rechne mit L’Hôpital: Warum gilt $\\displaystyle \\lim_{x\\to 0}\\frac{\\sin x}{x}=1$?",
+    "back": "Hier liegt die Form\n$$\n\\frac{0}{0}\n$$\nvor, denn\n$$\n\\sin x\\to 0,\\qquad x\\to 0.\n$$\n\nSetze\n$$\nf(x)=\\sin x,\\qquad g(x)=x.\n$$\nDann ist\n$$\nf'(x)=\\cos x,\\qquad g'(x)=1.\n$$\n\nMit **L’Hôpital** folgt:\n$$\n\\lim_{x\\to 0}\\frac{\\sin x}{x}\n=\n\\lim_{x\\to 0}\\frac{\\cos x}{1}\n=\n\\cos 0\n=\n1.\n$$\n\nDas ist ein Standardbeispiel für die $0/0$-Version der Regel."
+  },
+  {
+    "front": "[2026-04-22] Wie kann man $\\displaystyle \\lim_{x\\to 0}\\frac{\\sin x}{x}$ auch **ohne** L’Hôpital begründen?",
+    "back": "Man kann den Grenzwert direkt über die **Ableitungsdefinition** von $\\sin$ bei $0$ erhalten:\n$$\n\\sin'(0)=\\lim_{h\\to 0}\\frac{\\sin(0+h)-\\sin(0)}{h}\n=\\lim_{h\\to 0}\\frac{\\sin h}{h}.\n$$\n\nDa bekannt ist:\n$$\n\\sin'(x)=\\cos x,\n$$\ngilt insbesondere\n$$\n\\sin'(0)=\\cos 0=1.\n$$\n\nAlso folgt sofort:\n$$\n\\lim_{x\\to 0}\\frac{\\sin x}{x}=1.\n$$\n\nDas zeigt schön: L’Hôpital ist nützlich, aber nicht immer nötig."
+  },
+  {
+    "front": "[2026-04-22] Warum ist $\\displaystyle \\lim_{x\\to\\infty}\\frac{\\ln x}{x}=0$ ein Beispiel für „$\\ln x$ wächst langsamer als $x$“?",
+    "back": "Hier liegt die Form\n$$\n\\frac{\\infty}{\\infty}\n$$\nvor, denn\n$$\n\\ln x\\to\\infty,\\qquad x\\to\\infty.\n$$\n\nMit\n$$\nf(x)=\\ln x,\\qquad g(x)=x\n$$\nerhält man\n$$\nf'(x)=\\frac{1}{x},\\qquad g'(x)=1.\n$$\n\nL’Hôpital liefert:\n$$\n\\lim_{x\\to\\infty}\\frac{\\ln x}{x}\n=\n\\lim_{x\\to\\infty}\\frac{1/x}{1}\n=\n\\lim_{x\\to\\infty}\\frac{1}{x}\n=\n0.\n$$\n\nDie Interpretation ist:\n- Beide Funktionen wachsen,\n- aber **$x$ wächst viel schneller** als $\\ln x$.\n\nDarum verschwindet ihr Quotient im Grenzwert."
+  },
+  {
+    "front": "[2026-04-22] Warum muss man bei $\\displaystyle \\lim_{x\\to\\infty}\\frac{\\ln x}{x}$ den Definitionsbereich sorgfältig wählen?",
+    "back": "Für L’Hôpital braucht man einen Bereich, auf dem die beteiligten Funktionen sinnvoll definiert sind und der Quotient existiert.\n\nBei\n$$\nf(x)=\\ln x,\\qquad g(x)=x\n$$\nist $\\ln x$ nur für\n$$\nx>0\n$$\ndefiniert. Deshalb arbeitet man auf einem Intervall wie\n$$\n(1,\\infty)\n$$\noder allgemein $(r,\\infty)$ mit $r>0$.\n\nDas ist kein bloß technisches Detail: Die Voraussetzungen des Satzes müssen auf dem gewählten Intervall wirklich gelten. Der Vortrag betonte genau diesen Punkt als typische Fehlerquelle."
+  },
+  {
+    "front": "[2026-04-22] Warum muss man bei $\\displaystyle \\lim_{x\\to 0}\\frac{\\cos x-1}{x^2}$ L’Hôpital zweimal anwenden?",
+    "back": "Zunächst liegt\n$$\n\\frac{0}{0}\n$$\nvor, denn\n$$\n\\cos x-1\\to 0,\\qquad x^2\\to 0.\n$$\n\nEinmal ableiten ergibt:\n$$\n\\frac{-\\sin x}{2x}.\n$$\nAber auch das ist wieder vom Typ\n$$\n\\frac{0}{0}.\n$$\n\nDeshalb darf man **noch einmal** L’Hôpital anwenden:\n$$\n\\frac{-\\cos x}{2}.\n$$\n\nNun ist der Grenzwert direkt:\n$$\n\\lim_{x\\to 0}\\frac{-\\cos x}{2}=-\\frac12.\n$$\n\nAlso:\n$$\n\\lim_{x\\to 0}\\frac{\\cos x-1}{x^2}=-\\frac12.\n$$\n\nMehrfaches Anwenden ist erlaubt, solange nach jedem Schritt die Voraussetzungen erneut erfüllt sind."
+  },
+  {
+    "front": "[2026-04-22] Warum folgt aus „$f$ ist wachsend“ direkt „$f'(x)\\ge 0$“?",
+    "back": "Sei $f$ **wachsend** und $x$ ein innerer Punkt.\n\nFür $h>0$ gilt aus der Monotonie:\n$$\nf(x+h)\\ge f(x),\n$$\nalso\n$$\n\\frac{f(x+h)-f(x)}{h}\\ge 0.\n$$\n\nFür $h<0$ gilt:\n$$\nf(x+h)\\le f(x),\n$$\nund weil dann auch $h<0$ ist, bleibt der Quotient ebenfalls nichtnegativ:\n$$\n\\frac{f(x+h)-f(x)}{h}\\ge 0.\n$$\n\nDamit sind alle Differenzenquotienten in der Nähe von $x$ $\\ge 0$. Im Grenzübergang folgt:\n$$\nf'(x)=\\lim_{h\\to 0}\\frac{f(x+h)-f(x)}{h}\\ge 0.\n$$\n\nAlso:\n$$\nf \\text{ wachsend } \\Rightarrow f'(x)\\ge 0.\n$$"
+  },
+  {
+    "front": "[2026-04-22] Warum folgt aus $f'(x)=0$ für alle $x$ auf einem Intervall, dass $f$ konstant ist?",
+    "back": "Aus\n$$\nf'(x)=0\\quad \\forall x\n$$\nfolgt insbesondere\n$$\nf'(x)\\ge 0\\quad \\forall x.\n$$\nDann ist $f$ **wachsend**.\n\nGleichzeitig gilt für $-f$:\n$$\n(-f)'(x)=-f'(x)=0\\ge 0,\n$$\nalso ist auch $-f$ wachsend. Das bedeutet, dass $f$ zugleich **fallend** ist.\n\nEine Funktion auf einem Intervall, die sowohl wachsend als auch fallend ist, muss **konstant** sein.\n\nÄquivalent kann man auch den Mittelwertsatz verwenden: Für beliebige $a<b$ gibt es ein $\\xi\\in(a,b)$ mit\n$$\nf(b)-f(a)=f'(\\xi)(b-a)=0,\n$$\nalso\n$$\nf(a)=f(b).\n$$"
+  },
+  {
+    "front": "[2026-04-22] Was bedeutet Konvexität geometrisch und formal?",
+    "back": "Eine Funktion $f$ auf einem Intervall heißt **konvex**, wenn ihr Graph unter jeder Verbindungsstrecke zweier Graphpunkte liegt.\n\nFormal heißt das: Für alle $a<b$ und alle $t\\in[0,1]$ gilt\n$$\nf((1-t)a+tb)\\le (1-t)f(a)+t f(b).\n$$\n\nDabei ist\n$$\n(1-t)a+tb\n$$\nein Punkt zwischen $a$ und $b$, und die rechte Seite ist der zugehörige Punkt auf der Sekante zwischen $(a,f(a))$ und $(b,f(b))$.\n\nAnschaulich: Der Graph hat eine **„Smiley-Form“** oder ist „nach oben geöffnet“."
+  },
+  {
+    "front": "[2026-04-22] Wie zeigt der Mittelwertsatz: Aus wachsendem $f'$ folgt Konvexität?",
+    "back": "Für $a<x<b$ liefert der **Mittelwertsatz** auf $[a,x]$ ein $\\xi\\in(a,x)$ mit\n$$\nf'(\\xi)=\\frac{f(x)-f(a)}{x-a}.\n$$\n\nAuf $[x,b]$ liefert er ein $\\eta\\in(x,b)$ mit\n$$\nf'(\\eta)=\\frac{f(b)-f(x)}{b-x}.\n$$\n\nDa $\\xi<\\eta$ und $f'$ **wachsend** ist, gilt\n$$\nf'(\\xi)\\le f'(\\eta).\n$$\n\nAlso:\n$$\n\\frac{f(x)-f(a)}{x-a}\\le \\frac{f(b)-f(x)}{b-x}.\n$$\n\nDiese Ungleichung sagt: Die linke Sekantensteigung ist höchstens so groß wie die rechte. Genau das charakterisiert **Konvexität**.\n\nDie Idee ist also: Wenn die Ableitung wächst, werden auch die Sekantensteigungen nach rechts größer."
+  },
+  {
+    "front": "[2026-04-27] Warum ist die Tangente bei $x_0$ eine sinnvolle lokale Approximation von $f$?",
+    "back": "Die **Tangente** verwendet genau die beiden Informationen, die $f$ im Punkt $x_0$ lokal festlegen: Funktionswert und Steigung. Daher gilt für $x$ nahe bei $x_0$:\n$$\nf(x)\\approx f(x_0)+f'(x_0)(x-x_0).\n$$\nMan liest das als:\n\n- **Referenzwert** $f(x_0)$\n- plus **proportionale Korrektur** $f'(x_0)(x-x_0)$\n\nJe kleiner $|x-x_0|$ ist, desto kleiner ist die Korrektur. Der Vorteil ist rechnerisch: Hat man $f(x_0)$ und $f'(x_0)$ einmal bestimmt, ist die Näherung sehr billig auszuwerten."
+  },
+  {
+    "front": "[2026-04-27] Wie erhält man die Tangentengleichung in der Form $f(x_0)+f'(x_0)(x-x_0)$?",
+    "back": "Man startet mit der Geradengleichung\n$$\ny=mx+b.\n$$\nFür die **Tangente** an $f$ in $x_0$ gilt:\n\n- $m=f'(x_0)$\n- sie geht durch den Punkt $(x_0,f(x_0))$\n\nAlso:\n$$\nf(x_0)=f'(x_0)x_0+b\n\\quad\\Rightarrow\\quad\nb=f(x_0)-f'(x_0)x_0.\n$$\nEinsetzen liefert\n$$\ny=f'(x_0)x+f(x_0)-f'(x_0)x_0\n=f(x_0)+f'(x_0)(x-x_0).\n$$\nDiese Form ist besonders nützlich, weil sie die Tangente direkt als lokale Approximation lesbar macht."
+  },
+  {
+    "front": "[2026-04-27] Warum kann die Tangente die Funktionen $x^2$ und $x^3$ am Ursprung nicht unterscheiden?",
+    "back": "Für\n$$\nf_1(x)=x^2,\\qquad f_2(x)=x^3\n$$\ngilt bei $x_0=0$:\n$$\nf_1(0)=f_2(0)=0,\\qquad f_1'(0)=f_2'(0)=0.\n$$\nDamit haben beide dieselbe Tangente:\n$$\ny=0.\n$$\nDie **Tangente** kennt also nur Wert und erste Ableitung im Entwicklungspunkt. Sie sieht nicht, dass:\n\n- $x^2$ in der Nähe von $0$ nichtnegativ bleibt,\n- $x^3$ das Vorzeichen wechselt.\n\nDie qualitative Geometrie ist verschieden, obwohl die lineare Approximation identisch ist. Deshalb braucht man höhere Ableitungen."
+  },
+  {
+    "front": "[2026-04-27] Wie unterscheidet die zweite Ableitung $x^2$ und $x^3$ am Punkt $0$?",
+    "back": "Die **zweite Ableitung** misst lokal die Krümmung. Für\n$$\nf_1(x)=x^2,\\qquad f_2(x)=x^3\n$$\ngilt:\n$$\nf_1''(x)=2 \\Rightarrow f_1''(0)=2>0,\n$$\n$$\nf_2''(x)=6x \\Rightarrow f_2''(0)=0.\n$$\nDaraus folgt:\n\n- Bei $x^2$ erkennt man eine echte **Krümmung nach oben** und ein lokales Minimum.\n- Bei $x^3$ liefert die zweite Ableitung am Ursprung noch keine Krümmungsinformation; Ordnung $2$ reicht dort nicht aus.\n\nDie zweite Ableitung ergänzt also genau die Information, die der Tangente fehlt."
+  },
+  {
+    "front": "[2026-04-27] Wie bestimmt man die Koeffizienten des quadratischen Ansatzes $p_2(x)=a(x-x_0)^2+b(x-x_0)+c$?",
+    "back": "Man fordert, dass **Funktionswert**, **erste Ableitung** und **zweite Ableitung** bei $x_0$ übereinstimmen:\n$$\np_2(x_0)=f(x_0),\\qquad p_2'(x_0)=f'(x_0),\\qquad p_2''(x_0)=f''(x_0).\n$$\nDann:\n\n1. Aus $p_2(x_0)=c$ folgt\n   $$\n   c=f(x_0).\n   $$\n\n2. Ableiten:\n   $$\n   p_2'(x)=2a(x-x_0)+b\n   \\Rightarrow\n   p_2'(x_0)=b=f'(x_0).\n   $$\n\n3. Nochmals ableiten:\n   $$\n   p_2''(x)=2a\n   \\Rightarrow\n   2a=f''(x_0)\n   \\Rightarrow\n   a=\\frac12 f''(x_0).\n   $$\n\nAlso:\n$$\np_2(x)=f(x_0)+f'(x_0)(x-x_0)+\\frac12 f''(x_0)(x-x_0)^2.\n$$"
+  },
+  {
+    "front": "[2026-04-27] Warum ist die verschobene Form $a(x-x_0)^2+b(x-x_0)+c$ geschickter als $ax^2+bx+c$?",
+    "back": "Die **verschobene Form** ist um den Entwicklungspunkt $x_0$ zentriert. Dadurch verschwinden beim Einsetzen von $x=x_0$ viele Terme sofort:\n$$\nx-x_0=0.\n$$\nDas macht das Matching der Ableitungen einfach:\n\n- $p_2(x_0)=c$\n- $p_2'(x_0)=b$\n- $p_2''(x)=2a$\n\nDie Koeffizienten lassen sich also direkt aus\n$$\nf(x_0),\\ f'(x_0),\\ f''(x_0)\n$$\nablesen. Bei der Form $ax^2+bx+c$ müsste man erst ein lineares Gleichungssystem lösen. Die verschobene Form ist daher die natürliche Koordinatenwahl für Taylorpolynome."
+  },
+  {
+    "front": "[2026-04-27] Was ist die quadratische Taylor-Approximation, und wann bringt sie mehr als die Tangente?",
+    "back": "Die **quadratische Taylor-Approximation** bei $x_0$ lautet\n$$\nT_2(x)=f(x_0)+f'(x_0)(x-x_0)+\\frac12 f''(x_0)(x-x_0)^2.\n$$\nSie benutzt zusätzlich zur Tangente noch die **Krümmung**. Das ist besonders wichtig, wenn die lineare Approximation zu grob ist, etwa wenn zwei Funktionen dieselbe Tangente haben.\n\nDer neue Term ist proportional zu\n$$\n(x-x_0)^2,\n$$\nalso für $x$ nahe bei $x_0$ typischerweise kleiner als der lineare Term. Trotzdem kann er qualitative Information sichtbar machen, z.B. den Unterschied zwischen Minimum und Wendepunkt."
+  },
+  {
+    "front": "[2026-04-27] Rechne das Taylorpolynom 2. Ordnung von $f(x)=x^2$ um $x_0=0$ aus. Was fällt auf?",
+    "back": "Für\n$$\nf(x)=x^2\n$$\ngilt:\n$$\nf(0)=0,\\qquad f'(x)=2x \\Rightarrow f'(0)=0,\\qquad f''(x)=2 \\Rightarrow f''(0)=2.\n$$\nAlso:\n$$\nT_2(x)=f(0)+f'(0)x+\\frac12 f''(0)x^2\n=0+0+\\frac12\\cdot 2\\,x^2=x^2.\n$$\nDamit ist\n$$\nT_2(x)=f(x)\n$$\nfür alle $x$.\n\nDas zeigt: Für ein Polynom vom Grad $2$ ist das Taylorpolynom 2. Ordnung nicht nur eine Näherung, sondern exakt die Funktion selbst."
+  },
+  {
+    "front": "[2026-04-27] Warum taucht im Taylorpolynom der Faktor $\\frac{1}{k!}$ auf?",
+    "back": "Beim $k$-maligen Ableiten von\n$$\n(x-x_0)^k\n$$\nentsteht der Faktor\n$$\nk(k-1)\\cdots 1=k!.\n$$\nDamit der Koeffizient nach $k$ Ableitungen genau\n$$\nf^{(k)}(x_0)\n$$\nliefert, muss man den Potenzterm mit\n$$\n\\frac{1}{k!}\n$$\nnormieren.\n\nBeispiel für $k=3$:\n$$\n\\frac{a}{3!}(x-x_0)^3\n$$\nwird nach dreimaligem Ableiten zu $a$. Ohne Division durch $3!$ bekäme man einen unerwünschten Faktor $6$."
+  },
+  {
+    "front": "[2026-04-27] Was ist das Taylorpolynom $n$-ter Ordnung um $x_0$?",
+    "back": "Das **Taylorpolynom $n$-ter Ordnung** von $f$ um $x_0$ ist\n$$\nP_n(x)=\\sum_{k=0}^{n}\\frac{f^{(k)}(x_0)}{k!}(x-x_0)^k.\n$$\nEs ist das eindeutige Polynom, das am Punkt $x_0$ die Ableitungen von $f$ bis zur Ordnung $n$ reproduziert:\n$$\nP_n^{(k)}(x_0)=f^{(k)}(x_0)\\qquad \\text{für } k=0,\\dots,n.\n$$\nDamit ist es die systematische Verallgemeinerung von:\n\n- Tangente für $n=1$\n- quadratischer Approximation für $n=2$"
+  },
+  {
+    "front": "[2026-04-27] Was sagt der Restterm in der Taylorformel präzise aus?",
+    "back": "Die **Taylorformel mit Restterm** lautet\n$$\nf(x)=P_n(x)+\\frac{f^{(n+1)}(c)}{(n+1)!}(x-x_0)^{n+1},\n$$\nwobei $c$ zwischen $x$ und $x_0$ liegt.\n\nSie macht aus dem Symbol „$\\approx$“ eine exakte Aussage:\n\n- $P_n(x)$ ist die Approximation,\n- der zweite Term ist der **Fehler**.\n\nDer Fehler hängt von zwei Dingen ab:\n\n- von der Größe von $(x-x_0)^{n+1}$,\n- von der Größe der $(n+1)$-ten Ableitung auf dem Zwischenintervall.\n\nNahe bei $x_0$ wird der Faktor $(x-x_0)^{n+1}$ klein, daher wird auch der Fehler klein, sofern die höhere Ableitung kontrollierbar bleibt."
+  },
+  {
+    "front": "[2026-04-27] Was bedeutet im Restterm, dass $c$ „zwischen $x$ und $x_0$“ liegt?",
+    "back": "In\n$$\nf(x)=P_n(x)+\\frac{f^{(n+1)}(c)}{(n+1)!}(x-x_0)^{n+1}\n$$\nist $c$ kein frei wählbarer Punkt, sondern ein **Zwischenpunkt** im Intervall mit Endpunkten $x_0$ und $x$.\n\nDas bedeutet:\n\n- Ist $x>x_0$, dann gilt $c\\in(x_0,x)$.\n- Ist $x<x_0$, dann gilt $c\\in(x,x_0)$.\n\nWichtig ist nicht der genaue Wert von $c$, sondern dass er im relevanten Intervall liegt. Dadurch kann man\n$$\nf^{(n+1)}(c)\n$$\ndurch obere Schranken der $(n+1)$-ten Ableitung auf diesem Intervall abschätzen. Genau das macht den Restterm praktisch nutzbar."
+  },
+  {
+    "front": "[2026-04-27] Warum steht der Mittelwertsatz „Pate“ beim Restterm?",
+    "back": "Der **Mittelwertsatz** verbindet globale Differenzen über ein Intervall mit einer Ableitung an einem Zwischenpunkt:\n$$\nf'(c)=\\frac{f(b)-f(a)}{b-a}.\n$$\nGenau dieses Muster taucht beim **Restterm** wieder auf: Der Fehler zwischen Funktion und Taylorpolynom wird durch eine höhere Ableitung an einem Zwischenpunkt $c$ beschrieben.\n\nDie gemeinsame Idee ist:\n\n- Information über ein ganzes Intervall\n- wird auf eine Aussage an einem geeigneten Zwischenpunkt zurückgeführt.\n\nDarum ist der Restterm nicht nur formal ähnlich, sondern konzeptionell eng mit dem Mittelwertsatz verwandt."
+  },
+  {
+    "front": "[2026-04-27] Warum garantiert eine höhere Taylorordnung nicht automatisch überall eine bessere Approximation?",
+    "back": "Eine höhere Ordnung fügt zwar mehr lokale Information hinzu, aber die Güte wird durch den **Restterm** bestimmt:\n$$\nR_{n+1}(x)=\\frac{f^{(n+1)}(c)}{(n+1)!}(x-x_0)^{n+1}.\n$$\nDas ist nur dann klein, wenn:\n\n- $x$ nahe bei $x_0$ liegt,\n- und die höhere Ableitung auf dem Zwischenintervall nicht zu groß wird.\n\nDeshalb ist „höhere Ordnung“ vor allem eine **lokale** Verbesserung. Weit weg vom Entwicklungspunkt kann ein Taylorpolynom höherer Ordnung sogar schlecht sein. Man darf also nicht „mehr Terme“ mit „global besser“ verwechseln."
+  },
+  {
+    "front": "[2026-04-27] Warum kann ein Taylorpolynom $n$-ter Ordnung effektiv kleineren Grad haben?",
+    "back": "Die Bezeichnung „$n$-te Ordnung“ sagt nur, bis zu welcher Ableitungsordnung gematcht wird. Sie sagt **nicht**, dass der tatsächliche Grad wirklich $n$ sein muss.\n\nWenn einige Ableitungen am Entwicklungspunkt verschwinden, verschwinden auch die zugehörigen Koeffizienten:\n$$\n\\frac{f^{(k)}(x_0)}{k!}=0.\n$$\nDann fehlen diese Potenzterme im Taylorpolynom.\n\nBeispiel: Ist\n$$\nf''(x_0)=f^{(3)}(x_0)=0,\n$$\ndann hat das Taylorpolynom 3. Ordnung dort vielleicht nur Grad $1$. Die Ordnung beschreibt also die verwendete Information, nicht zwingend den sichtbaren Polynomgrad."
   }
 ]
