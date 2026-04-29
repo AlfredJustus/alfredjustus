@@ -1,5 +1,5 @@
 {
-  "generated": "2026-04-29T09:39:55.310Z",
+  "generated": "2026-04-29T15:22:26.617Z",
   "model": "gpt-5.4",
   "cardsPerLectureTarget": 15,
   "format": "markdown->parser->json",
@@ -10,7 +10,8 @@
       "file": "227-0003-10L.json",
       "apkg": null,
       "lectures": 15,
-      "cards": 225
+      "cards": 225,
+      "semester": "spring-2026"
     },
     {
       "id": "252-0029-00L",
@@ -18,7 +19,8 @@
       "file": "252-0029-00L.json",
       "apkg": null,
       "lectures": 19,
-      "cards": 285
+      "cards": 285,
+      "semester": "spring-2026"
     },
     {
       "id": "252-0030-00L",
@@ -26,7 +28,8 @@
       "file": "252-0030-00L.json",
       "apkg": null,
       "lectures": 19,
-      "cards": 285
+      "cards": 285,
+      "semester": "spring-2026"
     },
     {
       "id": "401-0212-16L",
@@ -34,7 +37,48 @@
       "file": "401-0212-16L.json",
       "apkg": null,
       "lectures": 17,
-      "cards": 255
+      "cards": 255,
+      "semester": "spring-2026"
+    },
+    {
+      "id": "252-0026-00L",
+      "name": "Algorithmen und Datenstrukturen",
+      "file": "252-0026-00L.json",
+      "apkg": null,
+      "topics": 11,
+      "cards": 287,
+      "semester": "autumn-2025",
+      "cardSource": "topic-blocks"
+    },
+    {
+      "id": "252-0025-01L",
+      "name": "Diskrete Mathematik",
+      "file": "252-0025-01L.json",
+      "apkg": null,
+      "topics": 11,
+      "cards": 323,
+      "semester": "autumn-2025",
+      "cardSource": "topic-blocks"
+    },
+    {
+      "id": "401-0131-00L",
+      "name": "Lineare Algebra",
+      "file": "401-0131-00L.json",
+      "apkg": null,
+      "topics": 17,
+      "cards": 478,
+      "semester": "autumn-2025",
+      "cardSource": "topic-blocks"
+    },
+    {
+      "id": "252-0027-00L",
+      "name": "Einführung in die Programmierung",
+      "file": "252-0027-00L.json",
+      "apkg": null,
+      "topics": 15,
+      "cards": 461,
+      "semester": "autumn-2025",
+      "cardSource": "topic-blocks"
     }
   ]
 }

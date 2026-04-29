@@ -93,6 +93,34 @@
       color: #37352f;
     }
 
+    .semester-tabs {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 18px;
+    }
+
+    .semester-tab {
+      flex: 0 0 auto;
+      border: 1px solid var(--divider);
+      background: transparent;
+      padding: 7px 14px;
+      border-radius: 999px;
+      font-size: 0.92rem;
+      color: var(--text-soft);
+      cursor: pointer;
+      transition: background 80ms ease, color 80ms ease, border-color 80ms ease;
+    }
+
+    .semester-tab:hover {
+      background: var(--bg-soft);
+    }
+
+    .semester-tab.active {
+      background: #37352f;
+      color: #fff;
+      border-color: #37352f;
+    }
+
     .courses {
       border-top: 1px solid var(--divider);
     }
@@ -556,10 +584,39 @@
         progressLine.classList.toggle("hidden", name !== "session");
       }
 
+      const SEMESTER_LABELS = {
+        "spring-2026": "Spring 2026",
+        "autumn-2025": "Autumn 2025",
+      };
+      const SEMESTER_ORDER = ["spring-2026", "autumn-2025"];
+
+      function getAvailableSemesters() {
+        const courses = state.manifest && Array.isArray(state.manifest.courses)
+          ? state.manifest.courses
+          : [];
+        const set = new Set();
+        for (const c of courses) if (c.semester) set.add(c.semester);
+        return SEMESTER_ORDER.filter(function (s) { return set.has(s); });
+      }
+
+      function getSelectedSemester() {
+        const available = getAvailableSemesters();
+        if (available.length === 0) return null;
+        const stored = (function () {
+          try { return localStorage.getItem("ethz-flashcards-semester"); } catch (e) { return null; }
+        })();
+        if (stored && available.indexOf(stored) !== -1) return stored;
+        return available[0];
+      }
+
+      function setSelectedSemester(value) {
+        try { localStorage.setItem("ethz-flashcards-semester", value); } catch (e) {}
+      }
+
       function renderHome(loading) {
         showScreen("home");
 
-        const courses = state.manifest && Array.isArray(state.manifest.courses)
+        const allCourses = state.manifest && Array.isArray(state.manifest.courses)
           ? state.manifest.courses
           : [];
 
@@ -567,14 +624,36 @@
         if (loading) {
           body = "<p class=\"subtle\">Loading courses...</p>";
         } else {
-          const rows = courses.map(function (course) {
+          const semesters = getAvailableSemesters();
+          const selected = getSelectedSemester();
+
+          let switcher = "";
+          if (semesters.length > 1) {
+            const tabs = semesters.map(function (s) {
+              const active = s === selected ? " active" : "";
+              return "<button type=\"button\" class=\"semester-tab" + active + "\" data-semester=\"" + escapeAttr(s) + "\">"
+                + escapeHtml(SEMESTER_LABELS[s] || s) + "</button>";
+            }).join("");
+            switcher = "<div class=\"semester-tabs\">" + tabs + "</div>";
+          }
+
+          const filtered = selected
+            ? allCourses.filter(function (c) { return c.semester === selected; })
+            : allCourses;
+
+          const rows = filtered.map(function (course) {
+            const unitLabel = (typeof course.lectures === "number" && course.lectures > 0)
+              ? Number(course.lectures) + " lectures"
+              : (typeof course.topics === "number" && course.topics > 0)
+                ? Number(course.topics) + " topics"
+                : "";
             return ""
               + "<button type=\"button\" class=\"course-row\" data-course-id=\"" + escapeAttr(course.id) + "\">"
               + "<span class=\"course-name\">" + escapeHtml(course.name) + "</span>"
-              + "<span class=\"course-meta\">" + Number(course.lectures || 0) + " lectures</span>"
+              + "<span class=\"course-meta\">" + escapeHtml(unitLabel) + "</span>"
               + "</button>";
           }).join("");
-          body = "<div class=\"courses\">" + rows + "</div>";
+          body = switcher + "<div class=\"courses\">" + rows + "</div>";
         }
 
         screens.home.innerHTML = ""
@@ -588,6 +667,12 @@
         screens.home.querySelectorAll("[data-course-id]").forEach(function (el) {
           el.addEventListener("click", function () {
             openCourseSetup(el.getAttribute("data-course-id"));
+          });
+        });
+        screens.home.querySelectorAll("[data-semester]").forEach(function (el) {
+          el.addEventListener("click", function () {
+            setSelectedSemester(el.getAttribute("data-semester"));
+            renderHome(false);
           });
         });
       }

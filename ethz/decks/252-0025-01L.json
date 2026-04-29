@@ -1,0 +1,1294 @@
+[
+  {
+    "front": "[Prädikatenlogik & Beweise] Warum braucht man Prädikatenlogik zusätzlich zur Aussagenlogik?",
+    "back": "Die **Aussagenlogik** kann nur ganze Aussagen als atomare Wahr/Falsch-Symbole behandeln, z.B. $A,B,C$.\n\nDie **Prädikatenlogik** kann innere Struktur ausdrücken:\n\n- Objekte aus einem **Universum** $U$\n- **Prädikate** wie $P(x)$, $x \\le y$, $\\mathrm{Prime}(x)$\n- **Funktionen** wie $x+y$ oder $f(x)$\n- **Quantoren** wie $\\forall x$ und $\\exists x$\n\nDamit lassen sich Aussagen wie\n\n$$\n\\forall x \\ \\exists y \\ (x < y)\n$$\n\nformal ausdrücken; reine Aussagenlogik könnte diese Quantorenstruktur nicht darstellen."
+  },
+  {
+    "front": "[Prädikatenlogik & Beweise] Was gehört zu einer Interpretation in der Prädikatenlogik?",
+    "back": "Eine **Interpretation** legt fest:\n\n- das **Universum** $U$, aus dem Variablenwerte stammen,\n- die Bedeutung aller **Prädikate**, z.B. was $P(x,y)$ heißt,\n- die Bedeutung aller **Funktionen**, z.B. was $f(x)$ ist,\n- die Bedeutung von **Konstanten**, z.B. $0,1,\\pi$.\n\nErst unter einer Interpretation kann eine prädikatenlogische Formel einen Wahrheitswert bekommen.\n\nBeispiel:\n\n$$\nU=\\mathbb{N}, \\qquad P(x,y) \\equiv x \\le y\n$$\n\nDann ist\n\n$$\n\\forall x \\ (0 \\le x)\n$$\n\nwahr."
+  },
+  {
+    "front": "[Prädikatenlogik & Beweise] Was ist der Unterschied zwischen einer Formel und einer Aussage?",
+    "back": "Eine **Formel** ist ein formales Objekt der Logik, z.B.\n\n$$\n\\forall x \\ (0 \\le x).\n$$\n\nEine **Aussage** ist etwas, das wahr oder falsch ist, z.B.:\n\n„Die Formel $\\forall x(0 \\le x)$ ist unter der Interpretation $U=\\mathbb{N}$ wahr.“\n\nDer Unterschied ist wichtig:\n\n- Ohne Interpretation ist eine Formel oft noch nicht wahr oder falsch.\n- Unter fester Interpretation kann man eine Formel als Aussage auffassen.\n- Logische Umformungen betreffen Formeln; Beweise betreffen Aussagen über deren Wahrheit."
+  },
+  {
+    "front": "[Prädikatenlogik & Beweise] Warum muss man bei Konstanten auf das Universum achten?",
+    "back": "Eine **Konstante** muss ein Element des Universums sein.\n\nWenn das Universum z.B. $U=\\mathbb{N}$ ist, dann ist $1$ erlaubt. Wenn aber $U$ eine Menge negativer Zahlen ist, dann ist $1$ nicht automatisch erlaubt.\n\nDeshalb ist eine Formel wie\n\n$$\nP(x) \\equiv 1 > x\n$$\n\nnur sinnvoll, wenn $1 \\in U$ oder wenn klar definiert ist, wie $1$ in der Interpretation vorkommt.\n\nPrüfungsfalle: Man darf nicht einfach Konstanten benutzen, die nicht im gewählten Universum liegen."
+  },
+  {
+    "front": "[Prädikatenlogik & Beweise] Was bedeutet der Quantor $\\forall x$ und worauf bezieht er sich?",
+    "back": "Der Quantor\n\n$$\n\\forall x \\ F(x)\n$$\n\nbedeutet: Für **alle** Elemente $x$ aus dem Universum $U$ gilt $F(x)$.\n\nDer Quantor bindet die Variable $x$ nur in seinem **Gültigkeitsbereich**. Klammern machen diesen Bereich eindeutig:\n\n$$\n\\forall x \\bigl(P(x) \\to Q(x)\\bigr)\n$$\n\nbedeutet etwas anderes als\n\n$$\n(\\forall x \\ P(x)) \\to Q(x).\n$$\n\nKlammern sind nie falsch und vermeiden Mehrdeutigkeiten."
+  },
+  {
+    "front": "[Prädikatenlogik & Beweise] Warum sind $\\exists x F(x) \\land \\exists x G(x)$ und $\\exists x(F(x)\\land G(x))$ nicht äquivalent?",
+    "back": "In\n\n$$\n\\exists x F(x) \\land \\exists x G(x)\n$$\n\ndürfen die beiden Existenzquantoren verschiedene Werte von $x$ wählen.\n\nIn\n\n$$\n\\exists x \\bigl(F(x)\\land G(x)\\bigr)\n$$\n\nmuss **ein und dasselbe** $x$ beide Eigenschaften erfüllen.\n\nBeispiel in $U=\\mathbb{N}$:\n\n$$\n\\exists x(x\\le 2) \\land \\exists x(3\\le x)\n$$\n\nist wahr, denn z.B. $x=0$ erfüllt die erste Bedingung und $x=3$ die zweite.\n\nAber\n\n$$\n\\exists x(x\\le 2 \\land 3\\le x)\n$$\n\nist falsch."
+  },
+  {
+    "front": "[Prädikatenlogik & Beweise] Welche Richtung gilt bei $\\exists x(F(x)\\land G(x))$ immer?",
+    "back": "Allgemein gilt die logische Konsequenz\n\n$$\n\\exists x(F(x)\\land G(x))\n\\models\n\\bigl(\\exists x F(x)\\bigr)\\land \\bigl(\\exists x G(x)\\bigr).\n$$\n\nBegründung:\n\nWenn es ein $x$ gibt, das sowohl $F$ als auch $G$ erfüllt, dann gibt es insbesondere ein $x$, das $F$ erfüllt, und ein $x$, das $G$ erfüllt.\n\nDie Rückrichtung gilt im Allgemeinen nicht, weil die beiden Existenzquantoren verschiedene Zeugen wählen dürfen."
+  },
+  {
+    "front": "[Prädikatenlogik & Beweise] Warum gilt $\\forall x(F(x)\\land G(x)) \\equiv (\\forall xF(x))\\land(\\forall xG(x))$?",
+    "back": "Die Formel\n\n$$\n\\forall x(F(x)\\land G(x))\n$$\n\nsagt: Für jedes $x$ gelten beide Eigenschaften $F(x)$ und $G(x)$.\n\nDas ist genau dasselbe wie:\n\n$$\n(\\forall xF(x))\\land(\\forall xG(x)).\n$$\n\nDenn:\n\n- Wenn für jedes $x$ sowohl $F$ als auch $G$ gilt, dann gilt für jedes $x$ $F$ und für jedes $x$ $G$.\n- Wenn für jedes $x$ $F$ gilt und für jedes $x$ $G$ gilt, dann gilt für jedes $x$ beides zusammen."
+  },
+  {
+    "front": "[Prädikatenlogik & Beweise] Wie verschiebt man Negationen durch Quantoren?",
+    "back": "Die zentralen Äquivalenzen sind:\n\n$$\n\\neg \\forall x \\ F(x)\n\\equiv\n\\exists x \\ \\neg F(x)\n$$\n\nund\n\n$$\n\\neg \\exists x \\ F(x)\n\\equiv\n\\forall x \\ \\neg F(x).\n$$\n\nIntuition:\n\n- „Nicht alle $x$ erfüllen $F$“ heißt: Es gibt ein Gegenbeispiel.\n- „Es gibt kein $x$ mit $F$“ heißt: Alle $x$ erfüllen $\\neg F$.\n\nDiese Regeln sind oft nützlich, um Negationen nach innen zu schieben."
+  },
+  {
+    "front": "[Prädikatenlogik & Beweise] Wie formt man $\\neg \\forall x \\exists y(x<y)$ über $\\mathbb{N}$ um?",
+    "back": "Aus\n\n$$\n\\neg \\forall x \\exists y(x<y)\n$$\n\nwird zuerst\n\n$$\n\\exists x \\neg \\exists y(x<y).\n$$\n\nDann verschiebt man die zweite Negation:\n\n$$\n\\exists x \\forall y \\neg(x<y).\n$$\n\nWenn $<$ die übliche Ordnung ist, ist $\\neg(x<y)$ gleich $x\\ge y$. Also:\n\n$$\n\\exists x \\forall y(x\\ge y).\n$$\n\nDas bedeutet: „Es gibt ein größtes natürliches Element.“\n\nDiese Aussage ist in $\\mathbb{N}$ falsch."
+  },
+  {
+    "front": "[Prädikatenlogik & Beweise] Wie kann man „es gibt genau ein $x$ mit Eigenschaft $F(x)$“ ausdrücken?",
+    "back": "Man kann einen eindeutigen Existenzquantor definieren durch\n\n$$\n\\exists!x \\ F(x)\n\\;:\\!\\!\\iff\\;\n\\exists \\tilde{x}\\ \\forall x \\bigl(F(x) \\leftrightarrow x=\\tilde{x}\\bigr).\n$$\n\nDabei gilt:\n\n- $\\tilde{x}$ ist eine neue Variable, die nicht schon in $F$ vorkommen darf.\n- $=$ muss als Prädikat auf dem Universum verfügbar sein.\n- Die Formel sagt: Genau die Elemente, die gleich $\\tilde{x}$ sind, erfüllen $F$.\n\nAlso erfüllt genau ein Element die Eigenschaft $F$."
+  },
+  {
+    "front": "[Prädikatenlogik & Beweise] Wie kann man Primzahligkeit in Prädikatenlogik über $\\mathbb{N}$ definieren?",
+    "back": "Über $U=\\mathbb{N}$ kann man schreiben:\n\n$$\n\\mathrm{Prime}(x)\n:\\!\\!\\iff\nx>1 \\land \\forall y\\bigl(y\\mid x \\to (y=1 \\lor y=x)\\bigr).\n$$\n\nDas sagt:\n\n- $x$ ist größer als $1$,\n- jeder Teiler $y$ von $x$ ist entweder $1$ oder $x$ selbst.\n\nDie Bedingung $x>1$ ist nötig, weil $1$ sonst die Teilerbedingung erfüllen würde, aber nach Standarddefinition keine Primzahl ist."
+  },
+  {
+    "front": "[Prädikatenlogik & Beweise] Wie kann man Teilbarkeit über $\\mathbb{N}$ definieren?",
+    "back": "Für $U=\\mathbb{N}$ kann man definieren:\n\n$$\ny\\mid x\n:\\!\\!\\iff\ny>0 \\land \\exists k \\ (x=y\\cdot k).\n$$\n\nDas bedeutet: $y$ teilt $x$, wenn $x$ ein Vielfaches von $y$ ist.\n\nDie Bedingung $y>0$ passt zur Vorlesungsinterpretation über natürlichen Zahlen. In einem anderen Universum, z.B. $U=\\mathbb{Z}$, müsste man die Definition anpassen, weil auch negative Teiler üblich sind."
+  },
+  {
+    "front": "[Prädikatenlogik & Beweise] Wie definiert man Kind, Geschwister und Großeltern mit dem Prädikat $\\mathrm{Par}$?",
+    "back": "Sei\n\n$$\n\\mathrm{Par}(x,y)\n$$\n\ndie Aussage: „$x$ ist Elternteil von $y$.“\n\nDann kann man definieren:\n\n$$\n\\mathrm{Child}(x,y)\n:\\!\\!\\iff\n\\mathrm{Par}(y,x).\n$$\n\nAlso: $x$ ist Kind von $y$, wenn $y$ Elternteil von $x$ ist.\n\nGeschwister:\n\n$$\n\\mathrm{Sibling}(x,y)\n:\\!\\!\\iff\nx\\ne y \\land \\exists k\\bigl(\\mathrm{Par}(k,x)\\land \\mathrm{Par}(k,y)\\bigr).\n$$\n\nGroßelternteil:\n\n$$\n\\mathrm{Grandparent}(x,y)\n:\\!\\!\\iff\n\\exists k\\bigl(\\mathrm{Par}(x,k)\\land \\mathrm{Par}(k,y)\\bigr).\n$$"
+  },
+  {
+    "front": "[Prädikatenlogik & Beweise] Warum lässt sich „$x$ ist Vorfahr von $y$“ nicht einfach mit endlicher Prädikatenlogik aus $\\mathrm{Par}$ ausdrücken?",
+    "back": "„$x$ ist Vorfahr von $y$“ bedeutet:\n\n- $x$ ist Elternteil von $y$, oder\n- Elternteil eines Elternteils von $y$, oder\n- Elternteil eines Elternteils eines Elternteils von $y$, usw.\n\nDas ist eine **unbeschränkt lange Kette**.\n\nFür feste Länge kann man es ausdrücken, z.B. Großeltern mit einem Zwischenknoten. Aber mit nur endlich vielen Quantoren und ohne Rekursion kann man nicht beliebig lange Elternketten erfassen.\n\nMan könnte ein neues Prädikat $\\mathrm{Ancestor}$ extern definieren, aber dessen Bedeutung läge dann außerhalb der ursprünglichen Formel aus $\\mathrm{Par}$."
+  },
+  {
+    "front": "[Prädikatenlogik & Beweise] Was bedeutet Transitivität eines zweistelligen Prädikats?",
+    "back": "Ein zweistelliges Prädikat $P$ ist **transitiv**, wenn gilt:\n\n$$\n\\forall x \\forall y \\forall z\n\\bigl((P(x,y)\\land P(y,z)) \\to P(x,z)\\bigr).\n$$\n\nBeispiel:\n\nFür $P(x,y)\\equiv x\\le y$ über $\\mathbb{N}$ gilt Transitivität:\n\n$$\nx\\le y \\land y\\le z \\implies x\\le z.\n$$\n\nNicht jedes Prädikat ist transitiv; die Formel beschreibt eine Eigenschaft, die eine Relation haben kann oder nicht."
+  },
+  {
+    "front": "[Prädikatenlogik & Beweise] Was bedeutet Symmetrie eines zweistelligen Prädikats?",
+    "back": "Ein zweistelliges Prädikat $P$ ist **symmetrisch**, wenn gilt:\n\n$$\n\\forall x \\forall y \\bigl(P(x,y)\\to P(y,x)\\bigr).\n$$\n\nBeispiele:\n\n- Gleichheit $x=y$ ist symmetrisch.\n- Die Relation „$x-y$ ist durch $3$ teilbar“ ist symmetrisch.\n- Die Ordnung $x\\le y$ ist über $\\mathbb{N}$ nicht symmetrisch.\n\nSymmetrie bedeutet also: Wenn die Relation von $x$ nach $y$ gilt, gilt sie auch umgekehrt."
+  },
+  {
+    "front": "[Prädikatenlogik & Beweise] Warum ist $\\forall x(P(x)\\to \\neg P(x))$ erfüllbar, aber nicht allgemeingültig?",
+    "back": "Die Formel\n\n$$\n\\forall x(P(x)\\to \\neg P(x))\n$$\n\nist äquivalent zu\n\n$$\n\\forall x \\neg P(x).\n$$\n\nDenn $P(x)\\to \\neg P(x)$ ist genau dann wahr, wenn $P(x)$ falsch ist.\n\nSie ist **erfüllbar**: Wähle z.B. ein Prädikat $P$, das für alle $x$ falsch ist.\n\nSie ist aber **nicht allgemeingültig**: Wenn $P$ für irgendein $x$ wahr ist, dann ist\n\n$$\nP(x)\\to \\neg P(x)\n$$\n\nfalsch."
+  },
+  {
+    "front": "[Prädikatenlogik & Beweise] Was bedeutet $\\models F$?",
+    "back": "Die Schreibweise\n\n$$\n\\models F\n$$\n\nbedeutet: $F$ ist **allgemeingültig**.\n\nAlso: Für jede Interpretation ist $F$ wahr.\n\nMan kann es lesen als:\n\n„Aus keinen Voraussetzungen folgt $F$ logisch.“\n\nDas ist dieselbe Idee wie eine Tautologie, aber für prädikatenlogische Formeln statt nur aussagenlogischer Formeln."
+  },
+  {
+    "front": "[Prädikatenlogik & Beweise] Was ist der Unterschied zwischen $\\to$, $\\models$ und einer Aussageimplikation?",
+    "back": "Es gibt drei Ebenen:\n\n1. **Objektsprache innerhalb einer Formel**:\n\n$$\nF \\to G\n$$\n\nist ein logischer Operator in der Formel.\n\n2. **Metasprache / logische Konsequenz**:\n\n$$\nF \\models G\n$$\n\nbedeutet: In jeder Interpretation, in der $F$ wahr ist, ist auch $G$ wahr.\n\n3. **Aussagenebene**:\n\n„Wenn Aussage $S$ gilt, dann gilt Aussage $T$.“\n\nIn Beweisen vermischt man diese Ebenen leicht. Die Vorlesung betont die Trennung, weil viele formale Fehler genau hier entstehen."
+  },
+  {
+    "front": "[Prädikatenlogik & Beweise] Wie rechtfertigt Modus ponens eine Beweisstrategie?",
+    "back": "Modus ponens beruht auf der Tautologie bzw. logischen Konsequenz:\n\n$$\nF \\land (F\\to G) \\models G.\n$$\n\nAls Beweisstrategie:\n\nUm eine Aussage $T$ zu zeigen:\n\n1. Finde eine Hilfsaussage $S$.\n2. Beweise $S$.\n3. Beweise $S\\Rightarrow T$.\n4. Dann folgt $T$.\n\nDas ist die formale Begründung dafür, dass man in Beweisen Zwischenresultate verwenden darf."
+  },
+  {
+    "front": "[Prädikatenlogik & Beweise] Wie funktioniert ein direkter Beweis einer Implikation $S\\Rightarrow T$?",
+    "back": "Ein **direkter Beweis** zeigt $T$ direkt unter der Annahme $S$.\n\nSchema:\n\n1. Nimm $S$ als wahr an.\n2. Leite durch gültige Schritte weitere Aussagen ab.\n3. Erreiche $T$.\n\nBeispiel aus der Vorlesung:\n\nWenn $a$ und $b$ Quadratzahlen sind, dann gibt es $u,v$ mit\n\n$$\na=u^2,\\qquad b=v^2.\n$$\n\nDann\n\n$$\nab=u^2v^2=(uv)^2.\n$$\n\nAlso ist $ab$ wieder eine Quadratzahl."
+  },
+  {
+    "front": "[Prädikatenlogik & Beweise] Warum ist ein indirekter Beweis über die Kontraposition gültig?",
+    "back": "Um\n\n$$\nS\\Rightarrow T\n$$\n\nzu zeigen, darf man stattdessen zeigen:\n\n$$\n\\neg T \\Rightarrow \\neg S.\n$$\n\nDenn beide Aussagen sind logisch äquivalent:\n\n$$\n(S\\to T)\\equiv(\\neg T\\to \\neg S).\n$$\n\nBeispielidee aus der Vorlesung:\n\nZu zeigen: Wenn $x>0$ irrational ist, dann ist $\\sqrt{x}$ irrational.\n\nIndirekt:\n\n- Angenommen, $\\sqrt{x}$ ist rational.\n- Dann $\\sqrt{x}=\\frac{m}{n}$.\n- Also $x=\\frac{m^2}{n^2}$ ist rational.\n- Das widerspricht der Irrationalität von $x$."
+  },
+  {
+    "front": "[Prädikatenlogik & Beweise] Wie funktioniert ein Beweis durch Widerspruch?",
+    "back": "Um eine Aussage $S$ zu zeigen:\n\n1. Nimm $\\neg S$ an.\n2. Leite daraus eine Aussage $T$ her.\n3. Zeige zugleich $\\neg T$ oder eine offensichtlich falsche Konsequenz.\n4. Also muss die Annahme $\\neg S$ falsch sein; daher gilt $S$.\n\nFormal basiert das auf:\n\n$$\n(\\neg F\\to G)\\land \\neg G \\models F.\n$$\n\nDer Widerspruch zeigt nicht direkt $S$, sondern dass $\\neg S$ unmöglich ist."
+  },
+  {
+    "front": "[Prädikatenlogik & Beweise] Wie läuft der klassische Widerspruchsbeweis für $\\sqrt{2}$ irrational?",
+    "back": "Angenommen,\n\n$$\n\\sqrt{2}=\\frac{m}{n}\n$$\n\nmit gekürztem Bruch, also $\\gcd(m,n)=1$.\n\nDann:\n\n$$\n2=\\frac{m^2}{n^2}\n\\quad\\Rightarrow\\quad\nm^2=2n^2.\n$$\n\nAlso ist $m^2$ gerade, daher ist $m$ gerade. Schreibe $m=2k$.\n\nDann:\n\n$$\nm^2=4k^2=2n^2\n\\quad\\Rightarrow\\quad\nn^2=2k^2.\n$$\n\nAlso ist auch $n$ gerade.\n\nDann haben $m$ und $n$ beide den Teiler $2$, Widerspruch zu $\\gcd(m,n)=1$.\n\nAlso ist $\\sqrt{2}$ irrational."
+  },
+  {
+    "front": "[Prädikatenlogik & Beweise] Wie funktioniert eine Fallunterscheidung als Beweisstrategie?",
+    "back": "Um eine Aussage $S$ zu beweisen:\n\n1. Finde Fälle $R_1,\\dots,R_n$.\n2. Beweise, dass mindestens ein Fall gilt:\n\n$$\nR_1\\lor R_2\\lor \\cdots \\lor R_n.\n$$\n\n3. Beweise für jeden Fall:\n\n$$\nR_i \\Rightarrow S.\n$$\n\nDann gilt $S$.\n\nWichtig: Man muss nicht wissen, welcher Fall tatsächlich eintritt. Es genügt, dass die Fälle zusammen alle Möglichkeiten abdecken und jeder Fall zum Ziel führt.\n\nFür $n=1$ ist das genau Modus ponens."
+  },
+  {
+    "front": "[Prädikatenlogik & Beweise] Was ist die Beweisidee der vollständigen Induktion?",
+    "back": "Um eine Aussage $P(n)$ für alle $n\\in\\mathbb{N}$ zu beweisen:\n\n1. **Induktionsanfang**: Zeige $P(0)$ oder $P(1)$, je nach Startpunkt.\n2. **Induktionsschritt**: Zeige für beliebiges $n$:\n\n$$\nP(n)\\Rightarrow P(n+1).\n$$\n\nDann folgt:\n\n$$\n\\forall n\\in\\mathbb{N}\\ P(n).\n$$\n\nDie Idee ist eine unendliche Kette:\n\n$$\nP(0)\\Rightarrow P(1)\\Rightarrow P(2)\\Rightarrow \\cdots\n$$\n\nDer Anfang startet die Kette; der Schritt sorgt dafür, dass sie nie abbricht."
+  },
+  {
+    "front": "[Prädikatenlogik & Beweise] Was ist der typische Fehler bei einem Induktionsbeweis?",
+    "back": "Der häufigste Fehler ist, im Induktionsschritt $P(n+1)$ schon zu benutzen, obwohl man es erst beweisen will.\n\nErlaubt ist nur die **Induktionsannahme**:\n\n$$\nP(n)\n$$\n\nfür ein beliebiges, aber festes $n$.\n\nZu zeigen ist dann:\n\n$$\nP(n+1).\n$$\n\nDer Induktionsschritt darf also nicht lauten „Angenommen $P(n+1)$ gilt“. Dann wäre das Ziel bereits vorausgesetzt.\n\nEbenso wichtig: Der Induktionsanfang darf nicht fehlen; sonst startet die Implikationskette nicht."
+  },
+  {
+    "front": "[Mengenlehre] Warum reicht die naive Vorstellung „Menge = Ansammlung von Objekten“ nicht als Grundlage?",
+    "back": "Weil sie **selbstbezügliche Mengenbildungen** zulässt, die zu Widersprüchen führen.\n\nRussells Beispiel:\n$$A=\\{M \\mid M \\notin M\\}.$$\n\nFrage: Gilt $A\\in A$?\n\n- Falls $A\\in A$, dann erfüllt $A$ die definierende Eigenschaft nicht, also $A\\notin A$.\n- Falls $A\\notin A$, dann erfüllt $A$ die definierende Eigenschaft, also $A\\in A$.\n\nBeides führt zum Widerspruch. Deshalb muss man die **Existenz und Konstruktion von Mengen axiomatisch reglementieren**."
+  },
+  {
+    "front": "[Mengenlehre] Was ist Russells Paradox in einem Satz?",
+    "back": "Russells Paradox ist der Widerspruch, der entsteht, wenn man die Menge aller Mengen betrachtet, die sich nicht selbst enthalten:\n$$A=\\{M\\mid M\\notin M\\}.$$\n\nDann gilt:\n$$A\\in A \\iff A\\notin A.$$\n\nDie Lehre daraus: Nicht jedes formal aussehende Prädikat darf automatisch eine Menge definieren."
+  },
+  {
+    "front": "[Mengenlehre] Was ist der Grundansatz der axiomatischen Mengenlehre in der Vorlesung?",
+    "back": "Man startet mit einem **Universum** $U$ von Objekten, die alle als **Mengen** aufgefasst werden.\n\nZusätzlich gibt es ein zweistelliges Prädikat\n$$E(x,y),$$\ngeschrieben als\n$$x\\in y.$$\n\nDieses Prädikat bedeutet: „$x$ ist Element von $y$“.\n\nWichtig: Am Anfang weiß man noch fast nichts über $U$ und $\\in$. Eigenschaften wie Existenz der leeren Menge, Einermengen, Vereinigungen usw. müssen durch Axiome oder Definitionen abgesichert werden."
+  },
+  {
+    "front": "[Mengenlehre] Wie wird Gleichheit von Mengen definiert?",
+    "back": "Zwei Mengen $A$ und $B$ sind gleich, wenn sie **genau dieselben Elemente** enthalten:\n$$A=B \\iff \\forall x\\,(x\\in A \\iff x\\in B).$$\n\nInsbesondere spielt keine Rolle:\n\n- in welcher Reihenfolge Elemente notiert werden,\n- ob ein Element mehrfach aufgeschrieben wird.\n\nBeispiel:\n$$\\{1,0\\}=\\{0,1\\},$$\nund formal auch\n$$\\{a,a\\}=\\{a\\}.$$"
+  },
+  {
+    "front": "[Mengenlehre] Warum ist $\\{a,a\\}=\\{a\\}$?",
+    "back": "Weil Mengen keine Vielfachheiten zählen. Für Gleichheit zählt nur, welche Elemente enthalten sind.\n\nLinks enthält die Menge genau $a$; rechts enthält sie ebenfalls genau $a$:\n$$x\\in \\{a,a\\} \\iff x=a \\iff x\\in \\{a\\}.$$\n\nAlso gilt nach der Definition der Mengengleichheit:\n$$\\{a,a\\}=\\{a\\}.$$"
+  },
+  {
+    "front": "[Mengenlehre] Was bedeutet $A\\subseteq B$ formal?",
+    "back": "$A$ ist eine **Untermenge** von $B$, wenn jedes Element von $A$ auch Element von $B$ ist:\n$$A\\subseteq B \\iff \\forall x\\,(x\\in A \\Rightarrow x\\in B).$$\n\nWichtig: $\\subseteq$ erlaubt Gleichheit. Also gilt immer:\n$$A\\subseteq A.$$"
+  },
+  {
+    "front": "[Mengenlehre] Wie hängen Mengengleichheit und gegenseitige Inklusion zusammen?",
+    "back": "Es gilt:\n$$A=B \\iff (A\\subseteq B \\text{ und } B\\subseteq A).$$\n\nBegründung:\n\n- $A\\subseteq B$ heißt: $x\\in A \\Rightarrow x\\in B$.\n- $B\\subseteq A$ heißt: $x\\in B \\Rightarrow x\\in A$.\n- Zusammen ergibt das:\n  $$x\\in A \\iff x\\in B.$$\n\nDas ist genau die Definition von $A=B$."
+  },
+  {
+    "front": "[Mengenlehre] Was ist der Unterschied zwischen $x\\in A$ und $x\\subseteq A$?",
+    "back": "$x\\in A$ bedeutet: $x$ ist **ein Element** von $A$.\n\n$x\\subseteq A$ bedeutet: Jedes Element von $x$ ist auch Element von $A$.\n\nBeispiel:\n$$C=\\{\\emptyset,\\{\\emptyset\\}\\}.$$\n\nDann gilt:\n$$\\emptyset\\in C,$$\nweil $\\emptyset$ direkt als Element in $C$ steht.\n\nAußerdem gilt:\n$$\\emptyset\\subseteq C,$$\nweil die leere Menge keine Elemente hat, die die Bedingung verletzen könnten.\n\nAber:\n$$\\{\\emptyset\\}\\subseteq C,$$\nweil ihr einziges Element $\\emptyset$ in $C$ liegt."
+  },
+  {
+    "front": "[Mengenlehre] Warum ist $\\emptyset\\subseteq A$ für jede Menge $A$?",
+    "back": "Nach Definition:\n$$\\emptyset\\subseteq A \\iff \\forall x\\,(x\\in \\emptyset \\Rightarrow x\\in A).$$\n\nDa es kein $x$ mit $x\\in\\emptyset$ gibt, ist die Implikation für alle $x$ wahr.\n\nIntuition: Die leere Menge kann keine „verbotenen“ Elemente enthalten, weil sie gar keine Elemente enthält."
+  },
+  {
+    "front": "[Mengenlehre] Warum ist die leere Menge eindeutig?",
+    "back": "Eine leere Menge ist eine Menge $E$ mit:\n$$\\forall x\\,(x\\notin E).$$\n\nAngenommen $E$ und $E'$ sind beide leer. Dann gilt für alle $x$:\n$$x\\in E \\iff x\\in E',$$\ndenn beide Seiten sind immer falsch.\n\nNach der Definition der Mengengleichheit folgt:\n$$E=E'.$$\n\nDaher darf man von **der** leeren Menge sprechen und sie mit $\\emptyset$ bezeichnen."
+  },
+  {
+    "front": "[Mengenlehre] Welche Mengenrelationen gelten für $A=\\{\\{\\emptyset\\}\\}$, $C=\\{\\emptyset,\\{\\emptyset\\}\\}$ und $D=\\{\\{\\emptyset,\\{\\emptyset\\}\\}\\}$?",
+    "back": "Es gilt:\n$$A\\subseteq C,$$\nweil das einzige Element von $A$, nämlich $\\{\\emptyset\\}$, auch in $C$ liegt.\n\nAußerdem gilt:\n$$C\\in D,$$\nweil $D$ genau die Menge $C$ als Element enthält:\n$$D=\\{C\\}.$$\n\nAber im Allgemeinen gilt hier nicht:\n$$C\\subseteq D.$$\nDenn $\\emptyset\\in C$, aber $\\emptyset\\notin D$.\n\nDas Beispiel trennt klar **Elementbeziehung** und **Untermenge**."
+  },
+  {
+    "front": "[Mengenlehre] Warum ist die Untermenge-Relation transitiv?",
+    "back": "Wenn\n$$A\\subseteq B \\quad\\text{und}\\quad B\\subseteq C,$$\ndann gilt:\n$$A\\subseteq C.$$\n\nBeweisidee:\n\nSei $x\\in A$. Aus $A\\subseteq B$ folgt $x\\in B$. Aus $B\\subseteq C$ folgt dann $x\\in C$.\n\nAlso gilt für alle $x$:\n$$x\\in A \\Rightarrow x\\in C,$$\nund damit\n$$A\\subseteq C.$$"
+  },
+  {
+    "front": "[Mengenlehre] Warum reichen Mengen nicht aus, um geordnete Paare direkt zu modellieren?",
+    "back": "Mengen vergessen **Reihenfolge** und **Mehrfachheit**:\n$$\\{a,b\\}=\\{b,a\\},$$\nund\n$$\\{a,a\\}=\\{a\\}.$$\n\nFür ein geordnetes Paar will man aber:\n$$(a,b)=(c,d) \\iff a=c \\text{ und } b=d.$$\n\nInsbesondere soll im Allgemeinen\n$$(a,b)\\neq (b,a)$$\ngelten, falls $a\\neq b$.\n\nDeshalb braucht man eine spezielle Mengenkonstruktion für Tupel."
+  },
+  {
+    "front": "[Mengenlehre] Wie kann man ein geordnetes Paar rein mengentheoretisch definieren?",
+    "back": "Eine Standarddefinition ist das **Kuratowski-Paar**:\n$$(a,b):=\\{\\{a\\},\\{a,b\\}\\}.$$\n\nDiese Konstruktion speichert:\n\n- $a$ in der Einermenge $\\{a\\}$,\n- $a$ und $b$ gemeinsam in $\\{a,b\\}$.\n\nDamit gilt die gewünschte Eigenschaft:\n$$(a,b)=(c,d) \\iff a=c \\text{ und } b=d.$$\n\nSo kann man geordnete Paare verwenden, obwohl formal alles nur aus Mengen besteht."
+  },
+  {
+    "front": "[Mengenlehre] Wie definiert man längere Tupel aus geordneten Paaren?",
+    "back": "Man kann Tupel induktiv über geordnete Paare definieren. Zum Beispiel:\n$$(a_1,a_2,a_3):=(a_1,(a_2,a_3)).$$\n\nAllgemein kann man schreiben:\n$$(a_1,\\dots,a_k)$$\nals rekursiv geschachtelte Paare.\n\nWichtig ist nicht die konkrete Kodierung, sondern die Eigenschaft:\n$$(a_1,\\dots,a_k)=(b_1,\\dots,b_k) \\iff a_i=b_i \\text{ für alle } i.$$"
+  },
+  {
+    "front": "[Mengenlehre] Wie sind Vereinigung und Schnitt zweier Mengen definiert?",
+    "back": "Die **Vereinigung** enthält alle Elemente, die in mindestens einer der beiden Mengen liegen:\n$$A\\cup B:=\\{x\\mid x\\in A \\lor x\\in B\\}.$$\n\nDer **Schnitt** enthält alle Elemente, die in beiden Mengen liegen:\n$$A\\cap B:=\\{x\\mid x\\in A \\land x\\in B\\}.$$\n\nAxiomatisch wichtig: Man muss sicherstellen, dass solche Mengen überhaupt existieren; man darf nicht beliebige Prädikate zur Mengenbildung zulassen."
+  },
+  {
+    "front": "[Mengenlehre] Warum darf man nicht jede Formel $\\varphi(x)$ zur Menge $\\{x\\mid \\varphi(x)\\}$ machen?",
+    "back": "Weil man sonst wieder Russells Paradox erhält.\n\nWenn beliebige Formeln erlaubt wären, könnte man bilden:\n$$A=\\{x\\mid x\\notin x\\}.$$\n\nDann folgt:\n$$A\\in A \\iff A\\notin A.$$\n\nDeshalb erlaubt die axiomatische Mengenlehre nur kontrollierte Mengenbildungen, etwa Vereinigung, Schnitt, Potenzmenge usw., deren Existenz durch Axiome abgesichert wird."
+  },
+  {
+    "front": "[Mengenlehre] Wie sind Vereinigung und Schnitt über eine Menge von Mengen definiert?",
+    "back": "Für eine Menge $\\mathcal A$, deren Elemente selbst Mengen sind:\n\nDie **große Vereinigung**:\n$$\\bigcup \\mathcal A:=\\{x\\mid \\exists A\\in\\mathcal A:\\ x\\in A\\}.$$\n\nDer **große Schnitt**:\n$$\\bigcap \\mathcal A:=\\{x\\mid \\forall A\\in\\mathcal A:\\ x\\in A\\}.$$\n\nAlso:\n\n- $\\bigcup\\mathcal A$ sammelt alles, was irgendwo in einem Element von $\\mathcal A$ vorkommt.\n- $\\bigcap\\mathcal A$ enthält nur, was in allen Elementen von $\\mathcal A$ vorkommt."
+  },
+  {
+    "front": "[Mengenlehre] Wie ist die Mengendifferenz $B\\setminus A$ definiert?",
+    "back": "Die **Mengendifferenz** enthält genau die Elemente von $B$, die nicht in $A$ liegen:\n$$B\\setminus A:=\\{x\\mid x\\in B \\land x\\notin A\\}.$$\n\nBeispiel:\n$$\\{1,2,3\\}\\setminus \\{2,4\\}=\\{1,3\\}.$$\n\nNur Elemente der linken Menge können übrig bleiben."
+  },
+  {
+    "front": "[Mengenlehre] Welche Rechenregeln gelten für Schnitt und Vereinigung?",
+    "back": "Wichtige Regeln sind:\n\n**Idempotenz**\n$$A\\cup A=A,\\qquad A\\cap A=A.$$\n\n**Kommutativität**\n$$A\\cup B=B\\cup A,\\qquad A\\cap B=B\\cap A.$$\n\n**Assoziativität**\n$$(A\\cup B)\\cup C=A\\cup(B\\cup C),$$\n$$(A\\cap B)\\cap C=A\\cap(B\\cap C).$$\n\n**Distributivität**\n$$A\\cap(B\\cup C)=(A\\cap B)\\cup(A\\cap C),$$\n$$A\\cup(B\\cap C)=(A\\cup B)\\cap(A\\cup C).$$\n\nDiese Regeln folgen aus den entsprechenden logischen Regeln für $\\land$ und $\\lor$."
+  },
+  {
+    "front": "[Mengenlehre] Wie beweist man $A\\cap(B\\cup C)=(A\\cap B)\\cup(A\\cap C)$?",
+    "back": "Man betrachtet die Elemente beider Seiten.\n\nFür beliebiges $x$ gilt:\n$$x\\in A\\cap(B\\cup C)$$\ngenau dann, wenn\n$$x\\in A \\land (x\\in B \\lor x\\in C).$$\n\nMit Distributivität der Logik:\n$$x\\in A \\land (x\\in B \\lor x\\in C)$$\nist äquivalent zu\n$$(x\\in A\\land x\\in B)\\lor(x\\in A\\land x\\in C).$$\n\nDas heißt:\n$$x\\in (A\\cap B)\\cup(A\\cap C).$$\n\nDa dies für alle $x$ gilt, sind die Mengen gleich."
+  },
+  {
+    "front": "[Mengenlehre] Wie erkennt man $A\\subseteq B$ über Schnitt und Vereinigung?",
+    "back": "Es gilt:\n$$A\\subseteq B \\iff A\\cap B=A \\iff A\\cup B=B.$$\n\nIntuition:\n\n- Wenn $A\\subseteq B$, dann bringt das Schneiden mit $B$ nichts Neues:\n  $$A\\cap B=A.$$\n- Wenn $A\\subseteq B$, dann bringt das Vereinigen von $A$ mit $B$ nichts Neues:\n  $$A\\cup B=B.$$\n\nDiese Äquivalenzen sind oft praktisch, um Inklusionen algebraisch zu zeigen."
+  },
+  {
+    "front": "[Mengenlehre] Wie werden die natürlichen Zahlen als Mengen konstruiert?",
+    "back": "Man definiert:\n$$0:=\\emptyset,$$\nund den Nachfolger von $n$ durch:\n$$S(n):=n\\cup\\{n\\}.$$\n\nDann:\n$$1=S(0)=\\{\\emptyset\\},$$\n$$2=S(1)=\\{\\emptyset,\\{\\emptyset\\}\\},$$\n$$3=S(2)=\\{\\emptyset,\\{\\emptyset\\},\\{\\emptyset,\\{\\emptyset\\}\\}\\}.$$\n\nJede Zahl $n$ ist also die Menge aller kleineren natürlichen Zahlen:\n$$n=\\{0,1,\\dots,n-1\\}.$$"
+  },
+  {
+    "front": "[Mengenlehre] Warum ist die Definition $S(n)=n\\cup\\{n\\}$ passend für natürliche Zahlen?",
+    "back": "Weil $S(n)$ genau ein neues Element zu $n$ hinzufügt, nämlich $n$ selbst.\n\nWenn\n$$n=\\{0,1,\\dots,n-1\\},$$\ndann ist\n$$S(n)=n\\cup\\{n\\}=\\{0,1,\\dots,n-1,n\\}.$$\n\nDamit verhält sich $S(n)$ wie der **Nachfolger** von $n$.\n\nBeispiel:\n$$2=\\{0,1\\},$$\nalso\n$$S(2)=2\\cup\\{2\\}=\\{0,1,2\\}=3.$$"
+  },
+  {
+    "front": "[Mengenlehre] Warum muss die Existenz von $\\mathbb N$ axiomatisch abgesichert werden?",
+    "back": "Aus der Konstruktion von $0,S(0),S(S(0)),\\dots$ folgt noch nicht automatisch, dass es eine **Menge aller dieser Objekte** gibt.\n\nMan braucht ein Axiom, das garantiert, dass eine Menge existiert, die\n\n- $0$ enthält,\n- mit jedem $n$ auch $S(n)$ enthält.\n\nErst dadurch kann man die Menge der natürlichen Zahlen bilden:\n$$\\mathbb N=\\{0,1,2,\\dots\\}.$$\n\nOhne solches Axiom hätte man nur einzelne endliche Konstruktionen, aber keine unendliche Menge."
+  },
+  {
+    "front": "[Mengenlehre] Wie kann Addition auf den mengentheoretischen natürlichen Zahlen rekursiv definiert werden?",
+    "back": "Man definiert Addition über den Nachfolger:\n\n$$m+0:=m,$$\n\nund\n$$m+S(n):=S(m+n).$$\n\nDamit wird Addition rekursiv auf den zweiten Summanden zurückgeführt.\n\nBeispiel:\n$$m+2=m+S(1)=S(m+1)=S(S(m)).$$\n\nDie Definition passt zur üblichen Vorstellung: Addieren von $n$ bedeutet, $n$-mal den Nachfolger anzuwenden."
+  },
+  {
+    "front": "[Mengenlehre] Was ist die Potenzmenge einer Menge?",
+    "back": "Die **Potenzmenge** von $A$ ist die Menge aller Untermengen von $A$:\n$$\\mathcal P(A):=\\{S\\mid S\\subseteq A\\}.$$\n\nBeispiel:\n$$\\mathcal P(\\emptyset)=\\{\\emptyset\\},$$\nweil die leere Menge genau eine Untermenge hat, nämlich sich selbst.\n\nFür\n$$A=\\{\\emptyset\\}$$\ngilt:\n$$\\mathcal P(A)=\\{\\emptyset,\\{\\emptyset\\}\\}.$$"
+  },
+  {
+    "front": "[Mengenlehre] Warum ist $\\mathcal P(\\emptyset)=\\{\\emptyset\\}$ und nicht $\\emptyset$?",
+    "back": "Weil die Potenzmenge alle **Untermengen** von $\\emptyset$ enthält.\n\nDie leere Menge hat keine Elemente, aber sie hat eine Untermenge:\n$$\\emptyset\\subseteq \\emptyset.$$\n\nAlso enthält $\\mathcal P(\\emptyset)$ genau ein Element, nämlich $\\emptyset$:\n$$\\mathcal P(\\emptyset)=\\{\\emptyset\\}.$$\n\nWichtig:\n$$\\emptyset \\neq \\{\\emptyset\\}.$$\n\nDie linke Menge hat $0$ Elemente, die rechte hat $1$ Element."
+  },
+  {
+    "front": "[Mengenlehre] Was ist das kartesische Produkt zweier Mengen?",
+    "back": "Das **kartesische Produkt** von $A$ und $B$ ist die Menge aller geordneten Paare mit erster Komponente aus $A$ und zweiter Komponente aus $B$:\n$$A\\times B:=\\{(a,b)\\mid a\\in A,\\ b\\in B\\}.$$\n\nDabei sind geordnete Paare selbst mengentheoretisch kodiert, z.B. durch:\n$$(a,b)=\\{\\{a\\},\\{a,b\\}\\}.$$\n\nBeispiel:\nWenn\n$$A=\\{1,2\\},\\quad B=\\{x\\},$$\ndann\n$$A\\times B=\\{(1,x),(2,x)\\}.$$"
+  },
+  {
+    "front": "[Mengenlehre] Warum ist $A\\times B$ im Allgemeinen nicht gleich $B\\times A$?",
+    "back": "Weil geordnete Paare Reihenfolge speichern.\n\nEin Element von $A\\times B$ hat Form:\n$$(a,b)\\quad\\text{mit }a\\in A,\\ b\\in B.$$\n\nEin Element von $B\\times A$ hat Form:\n$$(b,a)\\quad\\text{mit }b\\in B,\\ a\\in A.$$\n\nIm Allgemeinen gilt:\n$$(a,b)\\neq(b,a),$$\nwenn $a\\neq b$.\n\nBeispiel:\n$$\\{1\\}\\times\\{2\\}=\\{(1,2)\\},$$\naber\n$$\\{2\\}\\times\\{1\\}=\\{(2,1)\\}.$$\n\nDiese Mengen sind verschieden."
+  },
+  {
+    "front": "[Relationen & Ordnungen] Was ist eine Relation von $A$ nach $B$?",
+    "back": "Eine **Relation** $\\rho$ von $A$ nach $B$ ist eine Teilmenge des kartesischen Produkts:\n$$\n\\rho \\subseteq A \\times B.\n$$\n\nIhre Elemente sind Tupel $(a,b)$ mit $a \\in A$, $b \\in B$.\n\nStatt\n$$\n(a,b) \\in \\rho\n$$\nschreibt man oft auch\n$$\na \\,\\rho\\, b.\n$$\n\nWichtig: Eine Relation ist allgemeiner als eine Funktion. Ein Element aus $A$ kann mit mehreren Elementen aus $B$ in Relation stehen, und mehrere Elemente aus $A$ können mit demselben Element aus $B$ in Relation stehen."
+  },
+  {
+    "front": "[Relationen & Ordnungen] Warum ist die Relation „Student belegt Fach“ im Allgemeinen keine Funktion?",
+    "back": "Sei $A$ die Menge der ETH-Studierenden und $B$ die Menge der Fächer. Die Relation\n$$\n\\text{takes} \\subseteq A \\times B\n$$\nenthält Tupel $(a,b)$, falls Student $a$ Fach $b$ belegt.\n\nSie ist im Allgemeinen **keine Funktion**, weil ein Student mehrere Fächer belegen kann. Für eine Funktion müsste zu jedem $a \\in A$ höchstens bzw. genau ein $b \\in B$ gehören.\n\nRelationen erlauben also **Mehrfachzuordnungen** auf beiden Seiten."
+  },
+  {
+    "front": "[Relationen & Ordnungen] Was ist die Umkehrrelation $\\hat{\\rho}$, und was ist daran leicht zu verwechseln?",
+    "back": "Für eine Relation\n$$\n\\rho \\subseteq A \\times B\n$$\nist die **Umkehrrelation**\n$$\n\\hat{\\rho} \\subseteq B \\times A\n$$\ndefiniert durch\n$$\n\\hat{\\rho} := \\{(b,a) \\mid (a,b) \\in \\rho\\}.\n$$\n\nSie kehrt also die Richtung der Tupel bzw. Pfeile um.\n\nGotcha: Die Umkehrrelation ist **nicht** die Negation der Relation. Zum Beispiel gilt für die Relation $\\leq$ auf $\\mathbb{N}$:\n$$\n\\widehat{\\leq} \\;=\\; \\geq,\n$$\nnicht $>$.\n\nDenn aus $a \\leq b$ wird beim Umdrehen $b \\geq a$, Gleichheit bleibt also erhalten."
+  },
+  {
+    "front": "[Relationen & Ordnungen] Wie ist die Komposition zweier Relationen definiert?",
+    "back": "Seien\n$$\n\\rho \\subseteq A \\times B, \\qquad \\sigma \\subseteq B \\times C.\n$$\n\nDann ist die **Komposition**\n$$\n\\rho \\circ \\sigma \\subseteq A \\times C\n$$\ndefiniert durch\n$$\n\\rho \\circ \\sigma\n=\n\\{(a,c) \\mid \\exists b \\in B:\\; a \\rho b \\land b \\sigma c\\}.\n$$\n\nIntuition: Es gibt einen Zwischenpunkt $b$, über den man von $a$ nach $c$ kommt.\n\nDie Komposition ist nur sinnvoll, wenn die Zielmenge der ersten Relation zur Startmenge der zweiten passt."
+  },
+  {
+    "front": "[Relationen & Ordnungen] Wie modelliert man mit Relationen „Bei welchen Dozierenden hört ein Student Vorlesungen“?",
+    "back": "Seien:\n\n- $A$: Studierende,\n- $B$: Fächer,\n- $C$: Dozierende,\n- $\\text{takes} \\subseteq A \\times B$,\n- $\\text{teaches} \\subseteq C \\times B$.\n\nDa $\\text{teaches}$ von Dozierenden zu Fächern geht, braucht man die Umkehrrelation\n$$\n\\widehat{\\text{teaches}} \\subseteq B \\times C.\n$$\n\nDann ist\n$$\n\\text{takes} \\circ \\widehat{\\text{teaches}} \\subseteq A \\times C\n$$\ndie Relation:\n$$\n(a,c) \\in \\text{takes} \\circ \\widehat{\\text{teaches}}\n$$\ngenau dann, wenn Student $a$ ein Fach belegt, das von Dozent $c$ unterrichtet wird."
+  },
+  {
+    "front": "[Relationen & Ordnungen] Was sagt das Lemma zur Umkehrung einer Komposition?",
+    "back": "Für kompatible Relationen $\\rho$ und $\\sigma$ gilt:\n$$\n\\widehat{\\rho \\circ \\sigma}\n=\n\\hat{\\sigma} \\circ \\hat{\\rho}.\n$$\n\nWichtig ist die **umgekehrte Reihenfolge**.\n\nIntuition: Wenn ein Weg zuerst über $\\rho$ und dann über $\\sigma$ läuft, dann läuft der rückwärts zuerst über $\\hat{\\sigma}$ und dann über $\\hat{\\rho}$.\n\nDas ist analog zu Funktionen oder Matrizen:\n$$\n(f \\circ g)^{-1} = g^{-1} \\circ f^{-1}.\n$$"
+  },
+  {
+    "front": "[Relationen & Ordnungen] Warum ist die Komposition von Relationen assoziativ?",
+    "back": "Für kompatible Relationen $\\rho,\\sigma,\\varphi$ gilt:\n$$\n\\rho \\circ (\\sigma \\circ \\varphi)\n=\n(\\rho \\circ \\sigma) \\circ \\varphi.\n$$\n\nBeide Seiten beschreiben dieselbe Situation:\n\nEs gibt Zwischenpunkte, sodass man von ganz links nach ganz rechts kommt. Die Klammerung entscheidet nur, **wann** man die Zwischenrelationen zusammenfasst, nicht welche Tupel am Ende erreichbar sind.\n\nDeshalb kann man bei mehrfacher Komposition oft die Klammern weglassen."
+  },
+  {
+    "front": "[Relationen & Ordnungen] Berechne $\\leq \\circ \\leq$ auf $\\mathbb{N}$.",
+    "back": "Es gilt:\n$$\n\\leq \\circ \\leq \\;=\\; \\leq.\n$$\n\nDenn $(a,c) \\in \\leq \\circ \\leq$ bedeutet:\n$$\n\\exists b \\in \\mathbb{N}:\\; a \\leq b \\land b \\leq c.\n$$\n\nDaraus folgt $a \\leq c$.\n\nUmgekehrt gilt für jedes $a \\leq c$ auch $(a,c) \\in \\leq \\circ \\leq$, denn man kann z.B. $b=a$ wählen:\n$$\na \\leq a \\land a \\leq c.\n$$\n\nAlso sind beide Relationen gleich."
+  },
+  {
+    "front": "[Relationen & Ordnungen] Was ist der Unterschied zwischen $< \\circ <$ auf $\\mathbb{N}$ und auf $\\mathbb{Q}$ oder $\\mathbb{R}$?",
+    "back": "Auf $\\mathbb{N}$ gilt:\n$$\n< \\circ < \\;=\\; \\{(a,c) \\mid a+2 \\leq c\\}.\n$$\n\nDenn zwischen $a$ und $c$ muss eine natürliche Zahl $b$ liegen:\n$$\na < b < c.\n$$\nDas geht auf $\\mathbb{N}$ nur, wenn mindestens eine Lücke dazwischen ist.\n\nAuf $\\mathbb{Q}$ oder $\\mathbb{R}$ gilt dagegen:\n$$\n< \\circ < \\;=\\; <.\n$$\n\nDenn zwischen zwei verschiedenen rationalen oder reellen Zahlen liegt immer noch eine weitere Zahl."
+  },
+  {
+    "front": "[Relationen & Ordnungen] Was bedeuten reflexiv, irreflexiv, symmetrisch, antisymmetrisch und transitiv?",
+    "back": "Für eine Relation $\\rho$ auf $A$:\n\n- **Reflexiv**:\n  $$\n  \\forall a \\in A:\\; a \\rho a.\n  $$\n\n- **Irreflexiv**:\n  $$\n  \\forall a \\in A:\\; \\neg(a \\rho a).\n  $$\n\n- **Symmetrisch**:\n  $$\n  \\forall a,b \\in A:\\; a \\rho b \\Rightarrow b \\rho a.\n  $$\n\n- **Antisymmetrisch**:\n  $$\n  \\forall a,b \\in A:\\; (a \\rho b \\land b \\rho a) \\Rightarrow a=b.\n  $$\n\n- **Transitiv**:\n  $$\n  \\forall a,b,c \\in A:\\; (a \\rho b \\land b \\rho c) \\Rightarrow a \\rho c.\n  $$\n\nIrreflexiv ist nicht die Negation von reflexiv: Die Negation von reflexiv wäre nur, dass es mindestens ein $a$ mit $\\neg(a\\rho a)$ gibt."
+  },
+  {
+    "front": "[Relationen & Ordnungen] Warum ist „antisymmetrisch“ nicht dasselbe wie „nicht symmetrisch“?",
+    "back": "Eine Relation $\\rho$ ist **antisymmetrisch**, wenn\n$$\na \\rho b \\land b \\rho a \\Rightarrow a=b.\n$$\n\nDas verbietet also gegenseitige Relationen zwischen **verschiedenen** Elementen.\n\nEs erlaubt aber durchaus $a \\rho a$.\n\nBeispiele:\n\n- $\\leq$ auf $\\mathbb{Z}$ ist antisymmetrisch, denn aus\n  $$\n  a \\leq b \\land b \\leq a\n  $$\n  folgt $a=b$.\n\n- $<$ auf $\\mathbb{Z}$ ist ebenfalls antisymmetrisch, weil es nie vorkommt, dass gleichzeitig\n  $$\n  a < b \\land b < a\n  $$\n  gilt.\n\n- $\\neq$ ist nicht antisymmetrisch, denn z.B.\n  $$\n  1 \\neq 2 \\land 2 \\neq 1,\n  $$\n  aber $1 \\neq 2$."
+  },
+  {
+    "front": "[Relationen & Ordnungen] Warum ist Transitivität äquivalent zu $\\rho^2 \\subseteq \\rho$?",
+    "back": "Für eine Relation $\\rho$ auf $A$ gilt:\n$$\n\\rho \\text{ ist transitiv}\n\\quad \\Longleftrightarrow \\quad\n\\rho^2 \\subseteq \\rho,\n$$\nwobei\n$$\n\\rho^2 = \\rho \\circ \\rho.\n$$\n\nDenn $(a,c) \\in \\rho^2$ bedeutet:\n$$\n\\exists b \\in A:\\; a \\rho b \\land b \\rho c.\n$$\n\nWenn $\\rho$ transitiv ist, folgt daraus $a \\rho c$, also $(a,c)\\in \\rho$.\n\nUmgekehrt: Wenn $\\rho^2 \\subseteq \\rho$ gilt und $a \\rho b \\land b \\rho c$, dann ist $(a,c)\\in \\rho^2$, also wegen der Inklusion auch $(a,c)\\in \\rho$."
+  },
+  {
+    "front": "[Relationen & Ordnungen] Was ist der transitive Abschluss $\\rho^\\ast$ einer Relation?",
+    "back": "Der **transitive Abschluss** oder die **transitive Hülle** einer Relation $\\rho$ ist informell:\n$$\n\\rho^\\ast = \\rho \\cup \\rho^2 \\cup \\rho^3 \\cup \\cdots.\n$$\n\nEr enthält also alle Paare, die man durch endlich viele $\\rho$-Schritte erreichen kann.\n\nBeispiel: Ist $\\text{parent}$ die Relation „ist Elternteil von“, dann ist\n$$\n\\text{parent}^\\ast\n$$\ndie Relation „ist Vorfahre von“.\n\nDenn ein Vorfahre ist entweder ein Elternteil, ein Großelternteil, ein Urgroßelternteil usw."
+  },
+  {
+    "front": "[Relationen & Ordnungen] Was ist eine Äquivalenzrelation?",
+    "back": "Eine Relation $\\rho$ auf einer Menge $A$ heißt **Äquivalenzrelation**, wenn sie\n\n1. **reflexiv** ist,\n2. **symmetrisch** ist,\n3. **transitiv** ist.\n\nAlso:\n$$\n\\forall a:\\; a\\rho a,\n$$\n$$\na\\rho b \\Rightarrow b\\rho a,\n$$\n$$\n(a\\rho b \\land b\\rho c) \\Rightarrow a\\rho c.\n$$\n\nIntuition: Eine Äquivalenzrelation formalisiert „gehört zur selben Klasse wie“.\n\nBeispiele:\n\n- Gleichheit,\n- Kongruenz modulo $m$,\n- „hat dasselbe Alter wie“."
+  },
+  {
+    "front": "[Relationen & Ordnungen] Warum ist Kongruenz modulo $m$ eine Äquivalenzrelation?",
+    "back": "Auf $\\mathbb{Z}$ definiert man:\n$$\nx \\equiv y \\pmod m\n\\quad \\Longleftrightarrow \\quad\nm \\mid (x-y),\n$$\nfür $m \\in \\mathbb{N}$, $m \\neq 0$.\n\nDiese Relation ist:\n\n- **reflexiv**, denn\n  $$\n  x-x=0\n  $$\n  ist durch $m$ teilbar.\n\n- **symmetrisch**, denn wenn $m \\mid (x-y)$, dann auch\n  $$\n  m \\mid (y-x).\n  $$\n\n- **transitiv**, denn wenn $x$ und $y$ denselben Rest modulo $m$ haben und $y$ und $z$ denselben Rest modulo $m$ haben, dann haben auch $x$ und $z$ denselben Rest modulo $m$.\n\nAlso ist $\\equiv \\pmod m$ eine Äquivalenzrelation."
+  },
+  {
+    "front": "[Relationen & Ordnungen] Was ist eine Äquivalenzklasse $[a]_\\theta$?",
+    "back": "Sei $\\theta$ eine Äquivalenzrelation auf $A$. Die **Äquivalenzklasse** von $a \\in A$ ist\n$$\n[a]_\\theta\n=\n\\{b \\in A \\mid a \\,\\theta\\, b\\}.\n$$\n\nSie enthält alle Elemente, die zu $a$ äquivalent sind.\n\nBeispiel für Kongruenz modulo $5$:\n$$\n[0]_{\\equiv 5}\n=\n\\{\\ldots,-10,-5,0,5,10,\\ldots\\}.\n$$\n\nAußerdem gilt:\n$$\n[5]_{\\equiv 5} = [0]_{\\equiv 5}.\n$$\n\nDenn $5 \\equiv 0 \\pmod 5$."
+  },
+  {
+    "front": "[Relationen & Ordnungen] Was ist die Quotientenmenge $A/\\theta$?",
+    "back": "Sei $\\theta$ eine Äquivalenzrelation auf $A$. Die **Quotientenmenge**\n$$\nA/\\theta\n$$\nist die Menge aller Äquivalenzklassen:\n$$\nA/\\theta = \\{[a]_\\theta \\mid a \\in A\\}.\n$$\n\nBeispiel:\nFür $\\mathbb{Z}$ modulo $5$ gibt es genau fünf Äquivalenzklassen:\n$$\n[0], [1], [2], [3], [4].\n$$\n\nDanach wiederholen sich die Klassen:\n$$\n[5]=[0], \\qquad [6]=[1].\n$$\n\nDie Quotientenmenge fasst Elemente zusammen, die bezüglich $\\theta$ nicht unterschieden werden."
+  },
+  {
+    "front": "[Relationen & Ordnungen] Wie hängen Äquivalenzrelationen und Partitionen zusammen?",
+    "back": "Jede Äquivalenzrelation $\\theta$ auf $A$ zerlegt $A$ in **Äquivalenzklassen**.\n\nDiese Klassen bilden eine **Partition** von $A$:\n\n1. Sie überdecken ganz $A$:\n   $$\n   \\bigcup_{C \\in A/\\theta} C = A.\n   $$\n\n2. Zwei Klassen sind entweder gleich oder disjunkt:\n   $$\n   [a]_\\theta = [b]_\\theta\n   \\quad \\text{oder} \\quad\n   [a]_\\theta \\cap [b]_\\theta = \\emptyset.\n   $$\n\nUmgekehrt definiert jede Partition eine Äquivalenzrelation: Zwei Elemente sind äquivalent genau dann, wenn sie im selben Teil der Partition liegen."
+  },
+  {
+    "front": "[Relationen & Ordnungen] Wie konstruiert man die rationalen Zahlen als Quotientenmenge?",
+    "back": "Betrachte\n$$\nA = \\mathbb{Z} \\times (\\mathbb{Z}\\setminus\\{0\\}).\n$$\n\nEin Element $(a,b)$ soll den Bruch $\\frac{a}{b}$ darstellen.\n\nDefiniere auf $A$:\n$$\n(a,b) \\sim (c,d)\n\\quad \\Longleftrightarrow \\quad\nad = bc.\n$$\n\nDann ist $\\sim$ eine Äquivalenzrelation, und man definiert:\n$$\n\\mathbb{Q} := A/\\sim.\n$$\n\nEin rationaler Wert ist also nicht ein einzelnes Tupel, sondern eine ganze Äquivalenzklasse:\n$$\n\\frac{2}{7}\n=\n[(2,7)]\n=\n\\{(2,7),(4,14),(6,21),\\ldots\\}.\n$$\n\nSo werden verschiedene Darstellungen desselben Bruchs identifiziert."
+  },
+  {
+    "front": "[Relationen & Ordnungen] Warum braucht der Transitivitätsbeweis für $(a,b)\\sim(c,d)$ eine Fallunterscheidung nach $c=0$?",
+    "back": "Für\n$$\n(a,b)\\sim(c,d)\n\\quad \\text{und} \\quad\n(c,d)\\sim(e,f)\n$$\nhat man\n$$\nad=bc,\n\\qquad\ncf=de.\n$$\n\nMan möchte daraus\n$$\naf=be\n$$\nfolgern.\n\nFalls $c\\neq 0$, kann man die Gleichungen multiplizieren:\n$$\nadcf = bcde\n$$\nund dann $c$ sowie $d$ kürzen, da beide ungleich $0$ sind. Daraus folgt\n$$\naf=be.\n$$\n\nFalls $c=0$, darf man nicht durch $c$ teilen. Dann folgt aus $ad=bc=0$ wegen $d\\neq 0$, dass $a=0$. Aus $cf=de$ folgt wegen $d\\neq 0$, dass $e=0$. Also gilt ebenfalls\n$$\naf=0=be.\n$$"
+  },
+  {
+    "front": "[Relationen & Ordnungen] Was passiert beim Schnitt zweier Äquivalenzrelationen?",
+    "back": "Der **Schnitt zweier Äquivalenzrelationen** auf derselben Menge ist wieder eine Äquivalenzrelation.\n\nBeispiel auf $\\mathbb{Z}$:\n$$\n\\equiv \\pmod 3 \\;\\cap\\; \\equiv \\pmod 5\n=\n\\equiv \\pmod {15}.\n$$\n\nDenn ein Paar $(a,b)$ liegt im Schnitt genau dann, wenn\n$$\n3 \\mid (a-b)\n\\quad \\text{und} \\quad\n5 \\mid (a-b).\n$$\n\nDas ist äquivalent dazu, dass\n$$\n15 \\mid (a-b),\n$$\nalso\n$$\na \\equiv b \\pmod {15}.\n$$"
+  },
+  {
+    "front": "[Relationen & Ordnungen] Was ist eine Ordnungsrelation?",
+    "back": "Eine Relation $\\preceq$ auf einer Menge $A$ heißt **Ordnungsrelation**, wenn sie\n\n1. **reflexiv** ist,\n2. **antisymmetrisch** ist,\n3. **transitiv** ist.\n\nAlso:\n$$\na \\preceq a,\n$$\n$$\n(a \\preceq b \\land b \\preceq a) \\Rightarrow a=b,\n$$\n$$\n(a \\preceq b \\land b \\preceq c) \\Rightarrow a \\preceq c.\n$$\n\nBeispiele:\n\n- $\\leq$ auf $\\mathbb{Z}$,\n- Teilbarkeit $\\mid$ auf $\\mathbb{N}\\setminus\\{0\\}$,\n- Inklusion $\\subseteq$ auf einer Potenzmenge $\\mathcal{P}(B)$.\n\nNichtbeispiel:\n$$\n<\n$$\nist keine Ordnungsrelation, weil $a<a$ nie gilt, also Reflexivität fehlt."
+  },
+  {
+    "front": "[Relationen & Ordnungen] Wie erhält man aus einer Ordnungsrelation ihre strikte Version?",
+    "back": "Ist $\\preceq$ eine Ordnungsrelation auf $A$, dann definiert man die **strikte Relation**\n$$\n\\prec\n$$\ndurch Entfernen der Identitätsrelation:\n$$\n\\prec \\;:=\\; \\preceq \\setminus \\operatorname{id}_A.\n$$\n\nAlso:\n$$\na \\prec b\n\\quad \\Longleftrightarrow \\quad\na \\preceq b \\land a\\neq b.\n$$\n\nBeispiel:\nAus $\\leq$ auf $\\mathbb{Z}$ wird $<$:\n$$\n< \\;=\\; \\leq \\setminus \\operatorname{id}_{\\mathbb{Z}}.\n$$"
+  },
+  {
+    "front": "[Relationen & Ordnungen] Was ist der Unterschied zwischen einer totalen und einer partiellen Ordnung?",
+    "back": "Eine Ordnung $\\preceq$ auf $A$ heißt **total**, wenn je zwei Elemente vergleichbar sind:\n$$\n\\forall a,b \\in A:\\; a \\preceq b \\lor b \\preceq a.\n$$\n\nBeispiel:\n$$\n\\leq\n$$\nauf $\\mathbb{Z}$ ist total.\n\nEine Ordnung ist **partiell**, wenn nicht alle Elemente vergleichbar sein müssen.\n\nBeispiel:\nTeilbarkeit auf $\\mathbb{N}\\setminus\\{0\\}$:\n$$\na \\preceq b \\quad \\Longleftrightarrow \\quad a \\mid b.\n$$\n\nHier sind $3$ und $5$ unvergleichbar:\n$$\n3 \\nmid 5\n\\quad \\text{und} \\quad\n5 \\nmid 3.\n$$"
+  },
+  {
+    "front": "[Relationen & Ordnungen] Was ist ein Poset?",
+    "back": "Ein **Poset** ist ein **partially ordered set**, also ein Paar\n$$\n(A,\\preceq),\n$$\nwobei $A$ eine Menge und $\\preceq$ eine Ordnungsrelation auf $A$ ist.\n\nDas bedeutet: $\\preceq$ ist reflexiv, antisymmetrisch und transitiv.\n\nBeispiele:\n\n- $$(\\mathbb{Z},\\leq),$$\n- $$(\\mathbb{N}\\setminus\\{0\\}, \\mid),$$\n- $$(\\mathcal{P}(B),\\subseteq).$$\n\nDer Begriff Poset betont, dass nicht alle Elemente vergleichbar sein müssen."
+  },
+  {
+    "front": "[Relationen & Ordnungen] Wie zeichnet man ein Hasse-Diagramm eines endlichen Posets?",
+    "back": "Ein **Hasse-Diagramm** stellt eine endliche Ordnung vereinfacht dar.\n\nMan zeichnet:\n\n1. Elemente als Punkte.\n2. $a$ unterhalb von $b$, wenn\n   $$\n   a \\prec b.\n   $$\n3. Nur **direkte Kanten**: Man lässt Kanten weg, die sich durch Transitivität ergeben.\n4. Reflexive Schleifen $a \\preceq a$ werden nicht gezeichnet.\n5. Pfeilrichtungen werden meist nicht gezeichnet, weil „nach oben“ die Ordnungsrichtung bedeutet.\n\nBeispiel für Teilbarkeit auf $\\{1,2,3,6\\}$:\n\n- $1$ liegt unten,\n- $2$ und $3$ darüber,\n- $6$ oben,\n- Kanten: $1$–$2$, $1$–$3$, $2$–$6$, $3$–$6$.\n\nDie Kante $1$–$6$ wird nicht gezeichnet, da sie transitiv folgt."
+  },
+  {
+    "front": "[Relationen & Ordnungen] Wie sieht das Hasse-Diagramm von $(\\mathcal{P}(\\{1,2\\}),\\subseteq)$ aus?",
+    "back": "Die Elemente sind:\n$$\n\\emptyset,\\quad \\{1\\},\\quad \\{2\\},\\quad \\{1,2\\}.\n$$\n\nDie Ordnung ist Inklusion:\n$$\nX \\preceq Y \\quad \\Longleftrightarrow \\quad X \\subseteq Y.\n$$\n\nDas Hasse-Diagramm ist eine Raute:\n\n- unten:\n  $$\n  \\emptyset\n  $$\n- in der Mitte:\n  $$\n  \\{1\\}, \\{2\\}\n  $$\n- oben:\n  $$\n  \\{1,2\\}\n  $$\n\nDirekte Kanten:\n\n$$\n\\emptyset \\to \\{1\\}, \\quad\n\\emptyset \\to \\{2\\},\n$$\n$$\n\\{1\\} \\to \\{1,2\\}, \\quad\n\\{2\\} \\to \\{1,2\\}.\n$$"
+  },
+  {
+    "front": "[Relationen & Ordnungen] Was ist der Unterschied zwischen maximalem Element und Maximum?",
+    "back": "In einem Poset $(A,\\preceq)$ ist ein Element $m$ **maximal**, wenn es kein echt größeres Element gibt:\n$$\n\\nexists a \\in A:\\; m \\prec a.\n$$\n\nEin Element $M$ ist ein **Maximum**, wenn es über allen Elementen liegt:\n$$\n\\forall a \\in A:\\; a \\preceq M.\n$$\n\nJedes Maximum ist maximal, aber nicht jedes maximale Element ist ein Maximum.\n\nBeispiel: In einer partiellen Ordnung können zwei unvergleichbare Elemente beide maximal sein. Dann gibt es kein Maximum.\n\nAnalog unterscheidet man **minimal** und **Minimum**."
+  },
+  {
+    "front": "[Relationen & Ordnungen] Wie sind Funktionen spezielle Relationen?",
+    "back": "Eine Funktion\n$$\nf: A \\to B\n$$\nkann als Relation\n$$\nf \\subseteq A \\times B\n$$\naufgefasst werden.\n\nSie hat aber zwei zusätzliche Eigenschaften:\n\n1. **Existenz**:\n   $$\n   \\forall a \\in A\\; \\exists b \\in B:\\; (a,b)\\in f.\n   $$\n\n2. **Eindeutigkeit**:\n   $$\n   \\forall a \\in A\\; \\forall b,c \\in B:\\;\n   ((a,b)\\in f \\land (a,c)\\in f) \\Rightarrow b=c.\n   $$\n\nAlso: Zu jedem $a\\in A$ gibt es genau ein $b\\in B$.\n\nEine allgemeine Relation darf dagegen kein, ein oder mehrere passende $b$ haben."
+  },
+  {
+    "front": "[Relationen & Ordnungen] Wann ist die Umkehrrelation einer Funktion wieder eine Funktion?",
+    "back": "Sei\n$$\nf: A \\to B\n$$\neine Funktion, aufgefasst als Relation.\n\nDie Umkehrrelation\n$$\n\\hat{f} \\subseteq B \\times A\n$$\nist im Allgemeinen **keine Funktion**.\n\nSie ist genau dann eine Funktion $B \\to A$, wenn $f$ **bijektiv** ist:\n\n- **injektiv**, damit kein $b \\in B$ zu mehreren $a \\in A$ gehört,\n- **surjektiv**, damit jedes $b \\in B$ überhaupt ein Urbild hat.\n\nBeispiel: Wenn zwei Studierende dieselbe Legi-Nummer hätten, wäre"
+  },
+  {
+    "front": "[Aussagenlogik] Wann ist ein sprachlicher Satz eine mathematische Aussage?",
+    "back": "Ein Satz ist eine **mathematische Aussage**, wenn ihm objektiv genau ein Wahrheitswert zugeordnet werden kann: **wahr** oder **falsch**.\n\nBeispiele:\n- „$101$ ist eine Primzahl“ ist eine Aussage und wahr.\n- „Es gibt unendlich viele Primzahlzwillinge“ ist eine Aussage, auch wenn der Wahrheitswert derzeit unbekannt ist.\n- „Das Wetter ist schön“ ist ohne präzise Definition keine mathematische Aussage, weil es subjektiv ist.\n\nWichtig: **Unbekannt** heißt nicht „kein Wahrheitswert“ — die Aussage ist trotzdem entweder wahr oder falsch."
+  },
+  {
+    "front": "[Aussagenlogik] Warum ist „Es gibt unendlich viele Primzahlzwillinge“ eine Aussage, obwohl niemand die Antwort kennt?",
+    "back": "Weil die Aussage **wohldefiniert** ist: Ein **Primzahlzwilling** ist ein Paar von Primzahlen der Form $(p,p+2)$, z. B. $(3,5)$ oder $(5,7)$.\n\nDie Aussage\n\n$$\n\\text{„Es gibt unendlich viele Primzahlzwillinge.“}\n$$\n\nhat also objektiv genau einen Wahrheitswert. Dass wir ihn nicht kennen, ändert nichts daran, dass die Aussage entweder wahr oder falsch ist."
+  },
+  {
+    "front": "[Aussagenlogik] Wann ist eine Implikation $S \\Rightarrow T$ falsch?",
+    "back": "Die Implikation\n\n$$\nS \\Rightarrow T\n$$\n\nist **nur dann falsch**, wenn $S$ wahr und $T$ falsch ist.\n\nWahrheitstabelle:\n\n| $S$ | $T$ | $S \\Rightarrow T$ |\n|---|---|---|\n| $0$ | $0$ | $1$ |\n| $0$ | $1$ | $1$ |\n| $1$ | $0$ | $0$ |\n| $1$ | $1$ | $1$ |\n\nInsbesondere: Aus einer falschen Voraussetzung darf in der Aussagenlogik alles folgen, ohne dass die Implikation falsch wird."
+  },
+  {
+    "front": "[Aussagenlogik] Warum ist $T \\Rightarrow S$ wahr, wenn $S$ schon sicher wahr ist?",
+    "back": "Wenn $S$ wahr ist, dann ist\n\n$$\nT \\Rightarrow S\n$$\n\nunabhängig vom Wahrheitswert von $T$ wahr.\n\nDenn die einzige Situation, in der eine Implikation falsch ist, wäre:\n\n$$\nT = 1,\\quad S = 0.\n$$\n\nDa $S$ aber wahr ist, kann dieser Fall nicht eintreten.\n\nBeispiel aus der Vorlesung:\n- $S$: „$101$ ist eine Primzahl“ ist wahr.\n- $T$: „Es gibt unendlich viele Primzahlzwillinge“ ist unbekannt.\n\nDann ist\n\n$$\nT \\Rightarrow S\n$$\n\ntrotz unbekanntem $T$ wahr."
+  },
+  {
+    "front": "[Aussagenlogik] Was ist die typische Falle bei der Interpretation von Implikationen?",
+    "back": "Eine Implikation bedeutet **keinen kausalen Zusammenhang**.\n\nDie Aussage\n\n$$\nS \\Rightarrow T\n$$\n\nheißt nur: Immer wenn $S$ wahr ist, ist auch $T$ wahr.\n\nBeispiel:\n- $S$: „Es hat geregnet.“\n- $T$: „Die Straße ist nass.“\n\nDann wirkt $S \\Rightarrow T$ kausal plausibel. Aber die kontrapositive Aussage\n\n$$\n\\neg T \\Rightarrow \\neg S\n$$\n\n„Wenn die Straße nicht nass ist, hat es nicht geregnet“ ist logisch äquivalent zu $S \\Rightarrow T$, obwohl sie nicht dieselbe kausale Richtung ausdrückt."
+  },
+  {
+    "front": "[Aussagenlogik] Warum sind $S \\Rightarrow T$ und $\\neg T \\Rightarrow \\neg S$ logisch äquivalent?",
+    "back": "Sie haben in allen Wahrheitswertbelegungen denselben Wahrheitswert.\n\nDie Implikation $S \\Rightarrow T$ ist nur falsch bei\n\n$$\nS = 1,\\quad T = 0.\n$$\n\nDie kontrapositive Implikation\n\n$$\n\\neg T \\Rightarrow \\neg S\n$$\n\nist genau dann falsch, wenn\n\n$$\n\\neg T = 1,\\quad \\neg S = 0,\n$$\n\nalso ebenfalls genau dann, wenn\n\n$$\nT = 0,\\quad S = 1.\n$$\n\nDamit sind beide Aussagen in genau denselben Fällen wahr bzw. falsch."
+  },
+  {
+    "front": "[Aussagenlogik] Was zeigt die Aussage „Diese Aussage ist falsch“ über mathematische Aussagen?",
+    "back": "Sie zeigt, dass nicht jeder grammatisch sinnvolle Satz eine wohldefinierte mathematische Aussage ist.\n\nSei\n\n$$\nU := \\text{„Diese Aussage ist falsch.“}\n$$\n\nFalls $U$ wahr ist, sagt $U$, dass $U$ falsch ist. Widerspruch.\n\nFalls $U$ falsch ist, dann ist das, was $U$ behauptet, falsch; also ist $U$ nicht falsch, sondern wahr. Wieder Widerspruch.\n\nDas Problem ist die **Selbstbezüglichkeit**. Die formale Aussagenlogik vermeidet solche Probleme, indem Formeln aus klar definierten Bausteinen konstruiert werden."
+  },
+  {
+    "front": "[Aussagenlogik] Was bedeutet $P(k)$ im Schachbrett-Beispiel mit L-förmigen Bausteinen?",
+    "back": "$P(k)$ ist die Aussage:\n\nEin $k \\times k$-Schachbrett, auf dem ein beliebiges Feld blockiert ist, kann mit **L-förmigen Bausteinen** ohne Überlappung vollständig überdeckt werden.\n\nDabei:\n- Das blockierte Feld bleibt frei.\n- Jeder L-Stein bedeckt genau $3$ Felder.\n- Jedes nicht blockierte Feld muss genau einmal bedeckt werden.\n- Die L-Steine dürfen gedreht werden.\n\nDie ursprüngliche Frage für ein normales Schachbrett ist also $P(8)$."
+  },
+  {
+    "front": "[Aussagenlogik] Warum ist $k^2-1 \\equiv 0 \\pmod 3$ notwendig für $P(k)$?",
+    "back": "Nach dem Blockieren eines Feldes bleiben\n\n$$\nk^2 - 1\n$$\n\nfreie Felder übrig.\n\nJeder L-förmige Baustein bedeckt genau $3$ Felder. Daher kann eine vollständige Überdeckung nur existieren, wenn die Anzahl freier Felder durch $3$ teilbar ist:\n\n$$\nk^2 - 1 \\equiv 0 \\pmod 3.\n$$\n\nWenn dagegen\n\n$$\nk^2 - 1 \\not\\equiv 0 \\pmod 3,\n$$\n\ndann gilt sicher\n\n$$\nP(k)=0.\n$$\n\nAber: Diese Bedingung ist nur **notwendig**, nicht automatisch hinreichend."
+  },
+  {
+    "front": "[Aussagenlogik] Warum beweist die Teilbarkeit durch $3$ noch nicht, dass ein Brett überdeckbar ist?",
+    "back": "Aus\n\n$$\nk^2 - 1 \\equiv 0 \\pmod 3\n$$\n\nfolgt nur, dass die Anzahl der freien Felder zur Größe der L-Steine passt.\n\nDas schließt ein offensichtliches Hindernis aus, liefert aber noch keine konkrete Überdeckung. Es kann weitere geometrische Hindernisse geben.\n\nFür $k=8$ gilt:\n\n$$\n8^2 - 1 = 63,\n$$\n\nund $63$ ist durch $3$ teilbar. Das zeigt nur: Die Überdeckung ist **nicht durch Zählen unmöglich**. Es beweist noch nicht $P(8)$."
+  },
+  {
+    "front": "[Aussagenlogik] Welche kleinen Fälle von $P(k)$ wurden im Schachbrett-Beispiel bestimmt?",
+    "back": "Die ersten Fälle sind:\n\n$$\nP(1)=1.\n$$\n\nDenn auf einem $1\\times1$-Brett ist das einzige Feld blockiert; es bleibt nichts zu überdecken.\n\n$$\nP(2)=1.\n$$\n\nDenn auf einem $2\\times2$-Brett bleibt nach Blockieren eines Feldes genau eine L-Form übrig.\n\n$$\nP(3)=0.\n$$\n\nDenn\n\n$$\n3^2-1=8\n$$\n\nist nicht durch $3$ teilbar.\n\nEbenso:\n\n$$\nP(6)=0,\n$$\n\nweil\n\n$$\n6^2-1=35\n$$\n\nnicht durch $3$ teilbar ist."
+  },
+  {
+    "front": "[Aussagenlogik] Wie beweist man aus $P(k)$ die Aussage $P(2k)$?",
+    "back": "Man betrachtet ein $2k \\times 2k$-Brett und teilt es in vier $k\\times k$-Quadranten.\n\nBeweisskizze:\n\n1. Ohne Beschränkung der Allgemeinheit liegt das blockierte Feld im linken oberen Quadranten.\n2. Diesen Quadranten kann man wegen $P(k)$ überdecken.\n3. Lege einen L-Stein in die Mitte, sodass er je ein Feld in den drei anderen Quadranten bedeckt.\n4. Jeder der drei übrigen Quadranten hat nun genau ein blockiertes Feld.\n5. Wegen $P(k)$ kann jeder dieser Quadranten überdeckt werden.\n\nDamit gilt:\n\n$$\nP(k)=1 \\Rightarrow P(2k)=1.\n$$"
+  },
+  {
+    "front": "[Aussagenlogik] Wie folgt aus dem Verdopplungssatz, dass das $8\\times8$-Brett überdeckbar ist?",
+    "back": "Man verwendet\n\n$$\nP(k)=1 \\Rightarrow P(2k)=1.\n$$\n\nDa\n\n$$\nP(2)=1,\n$$\n\nfolgt zuerst\n\n$$\nP(4)=1.\n$$\n\nDann wendet man den Satz erneut an:\n\n$$\nP(4)=1 \\Rightarrow P(8)=1.\n$$\n\nAlso ist ein $8\\times8$-Schachbrett mit einem beliebig blockierten Feld durch L-förmige Bausteine überdeckbar."
+  },
+  {
+    "front": "[Aussagenlogik] Was bedeutet „ohne Beschränkung der Allgemeinheit“ im Schachbrett-Beweis?",
+    "back": "**Ohne Beschränkung der Allgemeinheit** bedeutet: Man darf einen Spezialfall annehmen, weil alle anderen Fälle durch Symmetrie auf ihn zurückgeführt werden können.\n\nIm Schachbrett-Beweis nimmt man an, dass das blockierte Feld im linken oberen Quadranten liegt.\n\nFalls es in einem anderen Quadranten liegt, kann man das Brett um $90^\\circ$, $180^\\circ$ oder $270^\\circ$ drehen. Eine Überdeckung des gedrehten Falls liefert dann eine Überdeckung des ursprünglichen Falls."
+  },
+  {
+    "front": "[Aussagenlogik] Warum braucht man für eine $6\\times4$-Schokolade genau $23$ Brüche?",
+    "back": "Eine $6\\times4$-Schokolade hat\n\n$$\n6\\cdot 4 = 24\n$$\n\nStücke.\n\nAm Anfang gibt es $1$ Stück. Jeder erlaubte Bruch nimmt ein Stück und teilt es in zwei Stücke. Dadurch steigt die Anzahl der Stücke immer genau um $1$.\n\nNach $m$ Brüchen gibt es also\n\n$$\n1+m\n$$\n\nStücke.\n\nFür $24$ Einzelstücke braucht man daher\n\n$$\n1+m=24 \\Rightarrow m=23.\n$$\n\nDie Strategie ist egal: Jeder Bruch erzeugt genau ein zusätzliches Stück."
+  },
+  {
+    "front": "[Aussagenlogik] Was war der Fehler im falschen Induktionsbeweis mit den bewohnten Planeten?",
+    "back": "Die falsche Behauptung war sinngemäß:\n\nWenn in einer Menge von $n$ Planeten ein Planet bewohnt ist, dann sind alle bewohnt.\n\nDer Induktionsanfang für $n=1$ stimmt. Der Fehler liegt im Schritt von $n=1$ nach $n=2$.\n\nDer Beweis versucht, zwei $n$-elementige Teilmengen zu bilden, die sich in einem bewohnten Planeten überlappen. Für $n\\ge 2$ funktioniert diese Überlappungsidee, aber beim Schritt\n\n$$\n1 \\to 2\n$$\n\ngibt es keine gemeinsame überlappende Teilmenge, die die Argumentation trägt.\n\nDer Induktionsschritt ist also nicht für alle nötigen $n$ gültig."
+  },
+  {
+    "front": "[Aussagenlogik] Warum unterscheidet die formale Aussagenlogik zwischen Aussagen und Formeln?",
+    "back": "Eine **Aussage** ist ein inhaltlicher Satz mit Wahrheitswert, z. B. „$101$ ist eine Primzahl“.\n\nEine **Formel** der Aussagenlogik ist ein syntaktisches Objekt, gebaut aus:\n- aussagenlogischen Symbolen wie $A,B,C$,\n- Operatoren wie $\\neg,\\land,\\lor,\\to,\\leftrightarrow$,\n- Klammern.\n\nFormeln modellieren Aussagen, sind aber zunächst nur formale Ausdrücke. Diese Trennung verhindert Probleme wie selbstbezügliche Sätze und erlaubt mechanisches Rechnen mit Wahrheitswerten."
+  },
+  {
+    "front": "[Aussagenlogik] Welche Wahrheitswerte können aussagenlogische Symbole annehmen?",
+    "back": "Ein aussagenlogisches Symbol wie $A$ oder $B$ kann genau zwei Werte annehmen:\n\n$$\n0 \\quad \\text{oder} \\quad 1.\n$$\n\nDabei interpretiert man meistens:\n\n$$\n0 = \\text{falsch}, \\qquad 1 = \\text{wahr}.\n$$\n\nFormal sind $A,B,C,\\dots$ aber zunächst nur Variablen mit Werten in\n\n$$\n\\{0,1\\}.\n$$"
+  },
+  {
+    "front": "[Aussagenlogik] Wie sind die grundlegenden aussagenlogischen Operatoren definiert?",
+    "back": "Für zwei Formeln $A$ und $B$ gelten die Operatoren über ihre Wahrheitstabellen:\n\n| $A$ | $B$ | $\\neg A$ | $A\\land B$ | $A\\lor B$ | $A\\to B$ | $A\\leftrightarrow B$ |\n|---|---|---|---|---|---|---|\n| $0$ | $0$ | $1$ | $0$ | $0$ | $1$ | $1$ |\n| $0$ | $1$ | $1$ | $0$ | $1$ | $1$ | $0$ |\n| $1$ | $0$ | $0$ | $0$ | $1$ | $0$ | $0$ |\n| $1$ | $1$ | $0$ | $1$ | $1$ | $1$ | $1$ |\n\nWichtig: Dies sind **Definitionen**, keine zu beweisenden Sätze."
+  },
+  {
+    "front": "[Aussagenlogik] Warum ist das aussagenlogische Oder $\\lor$ ein einschließendes Oder?",
+    "back": "Das Oder\n\n$$\nA\\lor B\n$$\n\nist genau dann falsch, wenn beide Eingaben falsch sind.\n\nInsbesondere gilt:\n\n$$\n1\\lor 1 = 1.\n$$\n\nEs bedeutet also: „$A$ oder $B$ oder beide“.\n\nDas ist kein exklusives Oder. Ein exklusives Oder wäre nur wahr, wenn genau eine der beiden Eingaben wahr ist. Dafür müsste man einen anderen Operator definieren."
+  },
+  {
+    "front": "[Aussagenlogik] Was ist der Unterschied zwischen einer Formel und der von ihr induzierten Funktion?",
+    "back": "Eine **Formel** ist ein syntaktischer Ausdruck, z. B.\n\n$$\nA\\to B\n$$\n\noder\n\n$$\n\\neg A \\lor B.\n$$\n\nJede Formel induziert eine **Funktion**\n\n$$\n\\{0,1\\}^n \\to \\{0,1\\},\n$$\n\nwobei $n$ die Anzahl der vorkommenden Symbole ist.\n\nZwei Formeln können syntaktisch verschieden sein, aber dieselbe Funktion induzieren. Dann haben sie für jede Belegung der Variablen denselben Wahrheitswert.\n\nBeispiel:\n\n$$\nA\\to B\n$$\n\nund\n\n$$\n\\neg A \\lor B\n$$\n\nsind verschiedene Formeln, aber sie induzieren dieselbe Funktion."
+  },
+  {
+    "front": "[Aussagenlogik] Warum gilt $A\\to B \\equiv \\neg A\\lor B$?",
+    "back": "Beide Formeln haben dieselbe Wahrheitstabelle.\n\n| $A$ | $B$ | $A\\to B$ | $\\neg A\\lor B$ |\n|---|---|---|---|\n| $0$ | $0$ | $1$ | $1$ |\n| $0$ | $1$ | $1$ | $1$ |\n| $1$ | $0$ | $0$ | $0$ |\n| $1$ | $1$ | $1$ | $1$ |\n\nDaher sind sie als Formeln **äquivalent**:\n\n$$\nA\\to B \\equiv \\neg A\\lor B.\n$$\n\nMan kann die Implikation also auch als Kurzschreibweise für $\\neg A\\lor B$ auffassen."
+  },
+  {
+    "front": "[Aussagenlogik] Was ist der Unterschied zwischen $\\leftrightarrow$ und $\\equiv$?",
+    "back": "$$\nF\\leftrightarrow G\n$$\n\nist ein **aussagenlogischer Operator**. Er nimmt zwei Formeln und erzeugt daraus eine neue Formel.\n\n$$\nF\\equiv G\n$$\n\nist dagegen eine **Aussage über Formeln**: Sie bedeutet, dass $F$ und $G$ für jede Belegung denselben Wahrheitswert haben.\n\nKurz:\n\n- $F\\leftrightarrow G$ ist selbst eine Formel.\n- $F\\equiv G$ behauptet, dass zwei Formeln semantisch gleichwertig sind.\n\nBeispiel:\n\n$$\nA\\to B \\equiv \\neg A\\lor B.\n$$"
+  },
+  {
+    "front": "[Aussagenlogik] Wann heißt eine Formel allgemeingültig, erfüllbar oder unerfüllbar?",
+    "back": "Eine Formel $F$ heißt **allgemeingültig** oder **Tautologie**, wenn sie bei jeder Belegung den Wert $1$ annimmt:\n\n$$\nF \\equiv \\top.\n$$\n\nEine Formel heißt **unerfüllbar**, wenn sie bei jeder Belegung den Wert $0$ annimmt:\n\n$$\nF \\equiv \\bot.\n$$\n\nEine Formel heißt **erfüllbar**, wenn es mindestens eine Belegung gibt, für die sie den Wert $1$ annimmt.\n\nDabei ist:\n- $\\top$ die immer wahre Formel,\n- $\\bot$ die immer falsche Formel."
+  },
+  {
+    "front": "[Aussagenlogik] Was bedeutet logische Konsequenz in der Aussagenlogik?",
+    "back": "Eine Formel $G$ ist eine **logische Konsequenz** einer Formel $F$, geschrieben\n\n$$\nF \\models G,\n$$\n\nwenn jede Belegung, die $F$ wahr macht, auch $G$ wahr macht.\n\nÄquivalent dazu ist:\n\n$$\nF \\to G\n$$\n\nist eine Tautologie.\n\nFür mehrere Voraussetzungen schreibt man:\n\n$$\nF_1,\\dots,F_n \\models G,\n$$\n\nwenn jede Belegung, die alle $F_i$ wahr macht, auch $G$ wahr macht."
+  },
+  {
+    "front": "[Aussagenlogik] Wie übersetzt man die WG-Mitbewohner-Beispielmeinungen in aussagenlogische Formeln?",
+    "back": "Seien $A,B,C$ die Aussagen „Alf/Berta/Klaus ist akzeptabel“.\n\nDie drei Meinungen aus der Vorlesung können z. B. so modelliert werden:\n\n$$\nF=(A\\lor B)\\land \\neg C,\n$$\n\n$$\nG=B\\lor C,\n$$\n\n$$\nH=\\neg B\\lor A.\n$$\n\nGemeinsame Akzeptanz bedeutet:\n\n$$\nF\\land G\\land H.\n$$\n\nAus $F$ folgt $\\neg C$ und $A\\lor B$.  \nMit $G=B\\lor C$ und $\\neg C$ folgt $B$.  \nMit $H=\\neg B\\lor A$ und $B$ folgt $A$.\n\nAlso erfüllt\n\n$$\nA=1,\\quad B=1,\\quad C=0\n$$\n\nalle drei Formeln. Wenn aber genau eine Person gewählt werden muss, braucht man zusätzliche Formeln, die „genau eine“ ausdrücken."
+  },
+  {
+    "front": "[Zahlentheorie] Was sagt der Satz über Division mit Rest in $\\mathbb{Z}$?",
+    "back": "Für jedes $d \\in \\mathbb{Z}\\setminus\\{0\\}$ und jedes $a \\in \\mathbb{Z}$ existieren eindeutige $q,r \\in \\mathbb{Z}$ mit\n\n$$a = dq + r,\\qquad 0 \\le r < |d|.$$\n\nDas ist die formale Version von **Division mit Rest**. Der Rest wird als\n\n$$r_d(a)$$\n\nnotiert.\n\nBeispiel:\n\n$$100 = 11\\cdot 9 + 1,$$\n\nalso ist\n\n$$r_{11}(100)=1.$$"
+  },
+  {
+    "front": "[Zahlentheorie] Warum ist der Rest $r_m(a)$ immer kongruent zu $a$ modulo $m$?",
+    "back": "Nach Division mit Rest gilt\n\n$$a = qm + r_m(a).$$\n\nAlso\n\n$$a-r_m(a)=qm,$$\n\nund damit teilt $m$ die Differenz. Per Definition heißt das\n\n$$a \\equiv r_m(a) \\pmod m.$$\n\nIntuition: $a$ und sein Rest unterscheiden sich nur um ein Vielfaches von $m$."
+  },
+  {
+    "front": "[Zahlentheorie] Wie ist Teilbarkeit in $\\mathbb{Z}$ definiert?",
+    "back": "Für $a,b \\in \\mathbb{Z}$ gilt:\n\n$$a \\mid b \\quad \\Longleftrightarrow \\quad \\exists c \\in \\mathbb{Z}: b = ac.$$\n\nWichtig: Jede ganze Zahl teilt $0$, denn\n\n$$0 = a\\cdot 0.$$\n\nDas wird z.B. benutzt, um zu zeigen:\n\n$$a=b \\Rightarrow a \\equiv b \\pmod m,$$\n\ndenn dann ist $a-b=0$."
+  },
+  {
+    "front": "[Zahlentheorie] Wann heißt eine ganze Zahl $p$ prim?",
+    "back": "Eine Zahl $p \\in \\mathbb{Z}$ heißt **prim**, wenn\n\n$$p>1$$\n\nund für jeden Teiler $d$ gilt:\n\n$$d>1 \\land d\\mid p \\Rightarrow d=p.$$\n\nDie einzigen positiven Teiler größer als $1$ sind also nur $p$ selbst.\n\nIn dieser Vorlesung sind negative Zahlen wie $-5$ **keine** Primzahlen, weil explizit $p>1$ gefordert wird."
+  },
+  {
+    "front": "[Zahlentheorie] Warum gibt es bei ganzen Zahlen zwei größte gemeinsame Teiler, aber nur einen $\\gcd$?",
+    "back": "Der **größte gemeinsame Teiler** wird nicht bezüglich der gewöhnlichen Ordnung $\\le$ definiert, sondern bezüglich der **Teilbarkeitsrelation**.\n\nBeispiel: Für $21$ und $6$ sind sowohl $3$ als auch $-3$ größte gemeinsame Teiler, denn beide teilen $21$ und $6$, und jeder gemeinsame Teiler teilt auch $3$ bzw. $-3$.\n\nDie Notation\n\n$$\\gcd(a,b)$$\n\nbezeichnet deshalb den **eindeutigen positiven** größten gemeinsamen Teiler.\n\nBeispiel:\n\n$$\\gcd(21,6)=3.$$"
+  },
+  {
+    "front": "[Zahlentheorie] Was bedeutet es, dass der GGT „größt“ bezüglich Teilbarkeit ist?",
+    "back": "Ein $d \\in \\mathbb{Z}$ ist ein größter gemeinsamer Teiler von $a,b$, wenn:\n\n1. $d\\mid a$ und $d\\mid b$,\n2. für jeden gemeinsamen Teiler $c$ von $a$ und $b$ gilt:\n\n$$c\\mid d.$$\n\n„Größt“ heißt also: Jeder andere gemeinsame Teiler steckt als Teiler in $d$.\n\nDas ist stärker und passender als „größt“ bezüglich $\\le$, weil sonst bei negativen Teilern Probleme entstehen würden."
+  },
+  {
+    "front": "[Zahlentheorie] Warum gilt $\\gcd(m,n+qm)=\\gcd(m,n)$?",
+    "back": "Die Zahlen $n$ und $n+qm$ unterscheiden sich nur um ein Vielfaches von $m$.\n\nEin gemeinsamer Teiler von $m$ und $n$ teilt daher auch\n\n$$n+qm.$$\n\nUmgekehrt teilt ein gemeinsamer Teiler von $m$ und $n+qm$ auch\n\n$$(n+qm)-qm=n.$$\n\nAlso haben die Paare $(m,n)$ und $(m,n+qm)$ dieselben gemeinsamen Teiler. Deshalb ist auch der positive größte gemeinsame Teiler gleich:\n\n$$\\gcd(m,n+qm)=\\gcd(m,n).$$"
+  },
+  {
+    "front": "[Zahlentheorie] Warum folgt aus dem Restbegriff die zentrale Idee des euklidischen Algorithmus?",
+    "back": "Aus der Division mit Rest gilt\n\n$$n = qm + r_m(n).$$\n\nAlso unterscheiden sich $n$ und $r_m(n)$ um ein Vielfaches von $m$:\n\n$$n-r_m(n)=qm.$$\n\nMit\n\n$$\\gcd(m,n+qm)=\\gcd(m,n)$$\n\nfolgt daher:\n\n$$\\gcd(m,n)=\\gcd(m,r_m(n)).$$\n\nDas ist genau die Grundidee des **euklidischen Algorithmus**: Man ersetzt die größere Zahl wiederholt durch ihren Rest."
+  },
+  {
+    "front": "[Zahlentheorie] Was ist das Ideal $(a,b)$ in $\\mathbb{Z}$?",
+    "back": "Für $a,b\\in\\mathbb{Z}$ ist\n\n$$(a,b)=\\{ua+vb \\mid u,v\\in\\mathbb{Z}\\}.$$\n\nDas ist die Menge aller **ganzzahligen Linearkombinationen** von $a$ und $b$.\n\nBeispiel:\n\n$$(4,6)$$\n\nenthält\n\n$$4,\\;6,\\;6-4=2,\\;2\\cdot 4=8,$$\n\nund allgemein genau alle geraden Zahlen."
+  },
+  {
+    "front": "[Zahlentheorie] Was ist das Ideal $(a)$?",
+    "back": "Für $a\\in\\mathbb{Z}$ ist\n\n$$(a)=\\{ua \\mid u\\in\\mathbb{Z}\\}.$$\n\nDas ist die Menge aller ganzzahligen Vielfachen von $a$.\n\nBeispiele:\n\n$$(1)=\\mathbb{Z},$$\n\nweil jede ganze Zahl ein Vielfaches von $1$ ist.\n\n$$(4)=\\{\\ldots,-8,-4,0,4,8,\\ldots\\}.$$"
+  },
+  {
+    "front": "[Zahlentheorie] Warum gilt $(a,b)=(\\gcd(a,b))$?",
+    "back": "Das Ideal $(a,b)$ enthält alle Linearkombinationen $ua+vb$.\n\nSei $d$ das kleinste positive Element von $(a,b)$. Dann zeigt man:\n\n1. $d\\mid a$ und $d\\mid b$; sonst liefert Division mit Rest einen kleineren positiven Rest in $(a,b)$.\n2. Jeder gemeinsame Teiler $c$ von $a$ und $b$ teilt jede Linearkombination, also auch $d$.\n\nDamit ist $d=\\gcd(a,b)$.\n\nAlso bestehen die Linearkombinationen von $a,b$ genau aus den Vielfachen ihres GGT:\n\n$$(a,b)=(\\gcd(a,b)).$$"
+  },
+  {
+    "front": "[Zahlentheorie] Welche wichtige Folgerung liefert $(a,b)=(\\gcd(a,b))$?",
+    "back": "Es gibt immer ganze Zahlen $u,v\\in\\mathbb{Z}$ mit\n\n$$ua+vb=\\gcd(a,b).$$\n\nDas ist die **Bézout-Darstellung** des größten gemeinsamen Teilers.\n\nBesonders wichtig: Wenn\n\n$$\\gcd(a,b)=1,$$\n\ndann existieren $u,v$ mit\n\n$$ua+vb=1.$$\n\nDiese Darstellung ist später entscheidend für modulare Inversen."
+  },
+  {
+    "front": "[Zahlentheorie] Warum ist $(3,5)=\\mathbb{Z}$, aber $(28,4)=(4)$?",
+    "back": "Für $3$ und $5$ gilt\n\n$$\\gcd(3,5)=1.$$\n\nAlso\n\n$$(3,5)=(1)=\\mathbb{Z}.$$\n\nDas heißt: Jede ganze Zahl ist eine Linearkombination von $3$ und $5$.\n\nFür $28$ und $4$ gilt\n\n$$\\gcd(28,4)=4.$$\n\nAlso\n\n$$(28,4)=(4).$$\n\nDie Linearkombinationen von $28$ und $4$ ergeben genau die Vielfachen von $4$."
+  },
+  {
+    "front": "[Zahlentheorie] Was besagt das Fundamentaltheorem der Arithmetik?",
+    "back": "Jede ganze Zahl $x>1$ besitzt eine eindeutige Primfaktorzerlegung:\n\n$$x=\\prod_{i=1}^r p_i^{e_i},$$\n\nwobei\n\n$$p_1<p_2<\\cdots<p_r$$\n\nPrimzahlen sind und\n\n$$e_i\\in\\mathbb{N}\\setminus\\{0\\}.$$\n\nDie Exponenten dürfen nicht $0$ sein, sonst wäre die Darstellung nicht eindeutig, weil man beliebige Faktoren wie $7^0$ hinzufügen könnte.\n\nWichtig: Die Existenz und Eindeutigkeit gelten in $\\mathbb{Z}$, aber nicht automatisch in beliebigen algebraischen Strukturen."
+  },
+  {
+    "front": "[Zahlentheorie] Warum ist Faktorisierung kryptographisch interessant?",
+    "back": "Das Fundamentaltheorem garantiert zwar, dass die Primfaktorzerlegung eindeutig existiert, aber es gibt keinen allgemein effizienten bekannten Algorithmus, der große Zahlen schnell faktorisiert.\n\nFür kleine Zahlen ist Faktorisierung leicht. Für Zahlen mit z.B. Tausenden Binärstellen wird sie praktisch sehr schwer.\n\nKryptographische Verfahren nutzen genau diese Asymmetrie:\n\n- Multiplikation großer Primzahlen ist effizient.\n- Aus dem Produkt die Primfaktoren zurückzugewinnen ist schwer.\n\nDiese Schwierigkeit ist eine Grundlage moderner Kryptographie, z.B. bei RSA-artigen Verfahren."
+  },
+  {
+    "front": "[Zahlentheorie] Wie ist Kongruenz modulo $m$ definiert?",
+    "back": "Für $a,b,m\\in\\mathbb{Z}$ gilt:\n\n$$a\\equiv b \\pmod m \\quad \\Longleftrightarrow \\quad m\\mid (a-b).$$\n\nDas bedeutet: $a$ und $b$ unterscheiden sich um ein Vielfaches von $m$.\n\nBeispiel:\n\n$$16\\equiv 1 \\pmod{15},$$\n\ndenn\n\n$$16-1=15.$$"
+  },
+  {
+    "front": "[Zahlentheorie] Warum kann man mit Kongruenzen fast wie mit Gleichheiten rechnen?",
+    "back": "Wenn\n\n$$a\\equiv b \\pmod m$$\n\nund\n\n$$c\\equiv d \\pmod m,$$\n\ndann gilt:\n\n$$a+c\\equiv b+d \\pmod m$$\n\nund\n\n$$ac\\equiv bd \\pmod m.$$\n\nGrund: Die jeweiligen Differenzen sind Vielfache von $m$, und Summen bzw. Produkte dieser Terme bleiben modulo $m$ verträglich.\n\nDarum darf man bei Rechnungen modulo $m$ Zwischenterme durch kongruente Reste ersetzen."
+  },
+  {
+    "front": "[Zahlentheorie] Warum darf man bei Polynomen die Argumente durch ihre Reste ersetzen?",
+    "back": "Für ein Polynom $f$ über $\\mathbb{Z}$ gilt:\n\n$$f(a_1,\\ldots,a_k)\\equiv f(r_m(a_1),\\ldots,r_m(a_k)) \\pmod m.$$\n\nDer Grund ist, dass Kongruenz modulo $m$ mit Addition und Multiplikation kompatibel ist.\n\nDa Polynome nur aus Addition, Multiplikation und ganzzahligen Koeffizienten aufgebaut sind, bleibt die Kongruenz beim Einsetzen erhalten.\n\nPraktischer Nutzen: Statt beliebiger ganzer Zahlen muss man nur die Reste\n\n$$0,1,\\ldots,m-1$$\n\nprüfen."
+  },
+  {
+    "front": "[Zahlentheorie] Wie zeigt man mit Kongruenzen, dass $x^3+x^2=y^4+y+1$ keine ganzzahlige Lösung hat?",
+    "back": "Betrachte die Gleichung modulo $2$.\n\nFür jedes $x$ gilt:\n\n$$x^3+x^2\\equiv 0 \\pmod 2.$$\n\nDenn für $x\\equiv 0$ ist die linke Seite $0$, und für $x\\equiv 1$ ist sie\n\n$$1^3+1^2=2\\equiv 0 \\pmod 2.$$\n\nFür jedes $y$ gilt dagegen:\n\n$$y^4+y+1\\equiv 1 \\pmod 2.$$\n\nAlso wäre eine Lösung zugleich\n\n$$0\\equiv 1 \\pmod 2,$$\n\nwas unmöglich ist. Daher gibt es keine Lösung in $\\mathbb{Z}$."
+  },
+  {
+    "front": "[Zahlentheorie] Wie zeigt man mit Kongruenzen, dass $x^3-x=y^2+1$ keine ganzzahlige Lösung hat?",
+    "back": "Betrachte die Gleichung modulo $3$.\n\nLinks:\n\n- $x\\equiv 0$: $0^3-0=0$,\n- $x\\equiv 1$: $1^3-1=0$,\n- $x\\equiv 2$: $2^3-2=8-2=6\\equiv 0$.\n\nAlso\n\n$$x^3-x\\equiv 0 \\pmod 3.$$\n\nRechts:\n\n- $y\\equiv 0$: $y^2+1\\equiv 1$,\n- $y\\equiv 1$: $y^2+1\\equiv 2$,\n- $y\\equiv 2$: $y^2+1\\equiv 4+1=5\\equiv 2$.\n\nDie rechte Seite ist also nie $0$ modulo $3$. Daher existiert keine ganzzahlige Lösung."
+  },
+  {
+    "front": "[Zahlentheorie] Was ist $\\mathbb{Z}_m$ und warum ist es nützlich?",
+    "back": "Für $m>0$ ist\n\n$$\\mathbb{Z}_m=\\{0,1,\\ldots,m-1\\}.$$\n\nDiese Menge repräsentiert die möglichen Reste modulo $m$.\n\nIn $\\mathbb{Z}_m$ rechnet man wie in $\\mathbb{Z}$, reduziert aber nach Bedarf wieder modulo $m$.\n\nNutzen:\n\n- Rechnungen werden endlich.\n- Man kann Gleichungen modulo $m$ durch Prüfen endlich vieler Fälle untersuchen.\n- Computer können mit endlichen Strukturen effizient umgehen."
+  },
+  {
+    "front": "[Zahlentheorie] Wie berechnet man $2^{20}\\bmod 15$ geschickt?",
+    "back": "Man nutzt\n\n$$2^4=16\\equiv 1 \\pmod{15}.$$\n\nDann:\n\n$$2^{20}=(2^4)^5.$$\n\nAlso\n\n$$(2^4)^5\\equiv 1^5\\equiv 1 \\pmod{15}.$$\n\nSomit ist\n\n$$2^{20}\\equiv 1 \\pmod{15}.$$\n\nDer Trick ist, Zwischenterme durch kongruente kleinere Reste zu ersetzen."
+  },
+  {
+    "front": "[Zahlentheorie] Was ist die typische Falle beim modularen Potenzieren?",
+    "back": "Man darf die **Basis** modulo $m$ reduzieren, aber nicht einfach den **Exponenten** modulo $m$.\n\nZum Beispiel ist es legitim:\n\n$$16\\equiv 1 \\pmod{15} \\Rightarrow 16^5\\equiv 1^5 \\pmod{15}.$$\n\nAber aus\n\n$$17\\equiv 6 \\pmod{11}$$\n\nfolgt nicht allgemein:\n\n$$7^{17}\\equiv 7^6 \\pmod{11}.$$\n\nExponentenreduktion braucht zusätzliche Sätze und Bedingungen. Die einfache Kongruenzregel erlaubt nur das Ersetzen von Termen, die als Werte in Addition/Multiplikation vorkommen."
+  },
+  {
+    "front": "[Zahlentheorie] Wie kann man $7^{17}\\bmod 11$ berechnen?",
+    "back": "Eine mögliche Rechnung:\n\n$$7^{17}=7^2\\cdot (7^3)^5.$$\n\nNun ist\n\n$$7^3=343\\equiv 2 \\pmod{11}.$$\n\nAlso\n\n$$7^{17}\\equiv 7^2\\cdot 2^5 \\pmod{11}.$$\n\nWeiter:\n\n$$7^2=49\\equiv 5 \\pmod{11},$$\n\nund\n\n$$2^5=32\\equiv 10 \\pmod{11}.$$\n\nAlso\n\n$$7^{17}\\equiv 5\\cdot 10=50\\equiv 6 \\pmod{11}.$$"
+  },
+  {
+    "front": "[Zahlentheorie] Wann existiert ein multiplikatives Inverses modulo $m$?",
+    "back": "Für $a,m\\in\\mathbb{Z}$ existiert ein $x\\in\\mathbb{Z}_m$ mit\n\n$$ax\\equiv 1 \\pmod m$$\n\ngenau dann, wenn\n\n$$\\gcd(a,m)=1.$$\n\nDann sind $a$ und $m$ **teilerfremd**.\n\nWarum? Aus Bézout folgt bei $\\gcd(a,m)=1$:\n\n$$ua+vm=1.$$\n\nModulo $m$ verschwindet $vm$, also\n\n$$ua\\equiv 1 \\pmod m.$$\n\nDamit ist $u$ ein Inverses von $a$ modulo $m$."
+  },
+  {
+    "front": "[Zahlentheorie] Warum hat $2$ modulo $6$ kein multiplikatives Inverses?",
+    "back": "Ein Inverses von $2$ modulo $6$ wäre ein $x$ mit\n\n$$2x\\equiv 1 \\pmod 6.$$\n\nAber $2x$ ist immer gerade. Eine Zahl, die modulo $6$ kongruent zu $1$ ist, ist ungerade.\n\nFormal:\n\n$$\\gcd(2,6)=2\\ne 1.$$\n\nAlso existiert kein multiplikatives Inverses von $2$ modulo $6$."
+  },
+  {
+    "front": "[Zahlentheorie] Warum ist $8$ das Inverse von $5$ modulo $13$?",
+    "back": "Man prüft:\n\n$$5\\cdot 8=40.$$\n\nDa\n\n$$40=3\\cdot 13+1,$$\n\ngilt\n\n$$40\\equiv 1 \\pmod{13}.$$\n\nAlso\n\n$$5\\cdot 8\\equiv 1 \\pmod{13}.$$\n\nDamit ist\n\n$$5^{-1}\\equiv 8 \\pmod{13}.$$"
+  },
+  {
+    "front": "[Zahlentheorie] Warum ist $13$ das Inverse von $7$ modulo $90$?",
+    "back": "Man rechnet:\n\n$$7\\cdot 13=91.$$\n\nDa\n\n$$91\\equiv 1 \\pmod{90},$$\n\ngilt\n\n$$7\\cdot 13\\equiv 1 \\pmod{90}.$$\n\nAlso ist\n\n$$7^{-1}\\equiv 13 \\pmod{90}.$$"
+  },
+  {
+    "front": "[Zahlentheorie] Was besagt der chinesische Restsatz?",
+    "back": "Seien\n\n$$m_1,\\ldots,m_r>0$$\n\npaarweise teilerfremd und\n\n$$M=\\prod_{i=1}^r m_i.$$\n\nDann ist für beliebige rechte Seiten\n\n$$a_i\\in \\mathbb{Z}_{m_i}$$\n\ndas Kongruenzsystem\n\n$$x\\equiv a_1 \\pmod{m_1},$$\n\n$$\\vdots$$\n\n$$x\\equiv a_r \\pmod{m_r}$$\n\neindeutig lösbar für\n\n$$x\\in\\mathbb{Z}_M.$$\n\nDas heißt: Es gibt genau eine Lösung modulo $M$."
+  },
+  {
+    "front": "[Zahlentheorie] Warum braucht der chinesische Restsatz die paarweise Teilerfremdheit?",
+    "back": "Ohne Teilerfremdheit können sich Bedingungen widersprechen.\n\nBeispiel:\n\n$$x\\equiv 0 \\pmod 3$$\n\nund\n\n$$x\\equiv 1 \\pmod 6.$$\n\nDie erste Bedingung sagt: $x$ ist durch $3$ teilbar.\n\nDie zweite Bedingung sagt: $x$ hat beim Teilen durch $6$ Rest $1$, ist also nicht durch $3$ teilbar.\n\nBeides kann nicht gleichzeitig gelten. Paarweise Teilerfremdheit verhindert solche direkten Konflikte und garantiert Existenz und Eindeutigkeit modulo dem Produkt."
+  },
+  {
+    "front": "[Zahlentheorie] Wie konstruiert der Beweis des chinesischen Restsatzes die Lösung?",
+    "back": "Setze\n\n$$M=\\prod_{i=1}^r m_i,\\qquad M_i=\\frac{M}{m_i}.$$\n\nDa die $m_i$ paarweise teilerfremd sind, gilt\n\n$$\\gcd(M_i,m_i)=1.$$\n\nAlso existiert ein Inverses $N_i$ mit\n\n$$M_iN_i\\equiv 1 \\pmod{m_i}.$$\n\nFür $k\\ne i$ gilt dagegen:\n\n$$M_iN_i\\equiv 0 \\pmod{m_k},$$\n\nweil $M_i$ ein Vielfaches von $m_k$ ist.\n\nDie Lösung ist dann\n\n$$x\\equiv \\sum_{i=1}^r a_iM_iN_i \\pmod M.$$"
+  },
+  {
+    "front": "[Zahlentheorie] Löse $x\\equiv 2\\pmod 3$ und $x\\equiv 1\\pmod 4$.",
+    "back": "Hier sind\n\n$$m_1=3,\\quad m_2=4,\\quad M=12.$$\n\nDurch direktes Prüfen:\n\nZahlen mit\n\n$$x\\equiv 2\\pmod 3$$\n\nsind\n\n$$2,5,8,11,\\ldots$$\n\nDavon erfüllt\n\n$$5\\equiv 1\\pmod 4.$$\n\nAlso ist\n\n$$x\\equiv 5\\pmod{12}.$$\n\nDie Lösungen in $\\mathbb{Z}$ sind\n\n$$x=5+12k,\\qquad k\\in\\mathbb{Z}.$$"
+  },
+  {
+    "front": "[Zahlentheorie] Warum ist die Lösung im chinesischen Restsatz eindeutig modulo $M$?",
+    "back": "Seien $x$ und $x'$ zwei Lösungen. Dann gilt für jedes $k$:\n\n$$x\\equiv x' \\pmod{m_k}.$$\n\nAlso teilt jedes $m_k$ die Differenz:\n\n$$m_k\\mid (x-x').$$\n\nDa die $m_k$ paarweise teilerfremd sind, teilt auch ihr Produkt\n\n$$M=\\prod_{k=1}^r m_k$$\n\ndie Differenz:\n\n$$M\\mid (x-x').$$\n\nWenn beide $x,x'\\in\\mathbb{Z}_M$ liegen, also zwischen $0$ und $M-1$, kann ihre Differenz nur ein Vielfaches von $M$ sein, wenn\n\n$$x=x'.$$"
+  },
+  {
+    "front": "[Zahlentheorie] Was unterscheidet symmetrische Kryptographie vom Diffie-Hellman-Ansatz?",
+    "back": "Bei **symmetrischer Kryptographie** besitzen Sender und Empfänger dasselbe geheime Passwort bzw. denselben geheimen Schlüssel. Problem: Dieses Geheimnis muss vorher sicher ausgetauscht werden.\n\nDer **Diffie-Hellman-Ansatz** löst genau dieses Schlüsselaustauschproblem:\n\n- Zwei Parteien kommunizieren öffentlich.\n- Ein Angreifer darf alles mithören.\n- Trotzdem erhalten beide am Ende ein gemeinsames Geheimnis.\n\nDie mathematische Grundlage sind Rechnungen modulo einer großen Zahl, insbesondere effizientes modulares Potenzieren und die Schwierigkeit, aus öffentlichen Potenzen den geheimen Exponenten zurückzugewinnen."
+  },
+  {
+    "front": "[Zahlentheorie] Wie funktioniert der Diffie-Hellman-Schlüsselaustausch auf hoher Ebene?",
+    "back": "Öffentlich bekannt sind eine große Primzahl $p$ und eine Basis $g$.\n\nAlice wählt geheim $a$ und sendet\n\n$$A\\equiv g^a \\pmod p.$$\n\nBob wählt geheim $b$ und sendet\n\n$$B\\equiv g^b \\pmod p.$$\n\nAlice berechnet\n\n$$B^a\\equiv (g^b)^a=g^{ab}\\pmod p.$$\n\nBob berechnet\n\n$$A^b\\equiv (g^a)^b=g^{ab}\\pmod p.$$\n\nBeide erhalten also dasselbe gemeinsame Geheimnis\n\n$$g^{ab}\\pmod p,$$\n\nohne $a$ oder $b$ direkt zu übertragen."
+  },
+  {
+    "front": "[Zahlentheorie] Warum passt modularer Exponentiation perfekt zu kryptographischen Verfahren wie Diffie-Hellman?",
+    "back": "Modulares Potenzieren ist in eine Richtung effizient berechenbar:\n\n$$g^a \\pmod p$$\n\nkann auch für sehr große Zahlen mit Verfahren wie **Square and Multiply** effizient berechnet werden.\n\nDie Umkehrung ist aber schwer:\n\nAus\n\n$$A\\equiv g^a \\pmod p$$\n\ndas geheime $a$ zu bestimmen, ist das **diskrete Logarithmusproblem**.\n\nDiffie-Hellman nutzt genau diese Asymmetrie:\n\n- Vorwärtsrechnung: effizient.\n- Rückwärtsrechnung: praktisch schwer bei geeigneten Parametern."
+  },
+  {
+    "front": "[Mächtigkeit] Wann heißen zwei Mengen gleichmächtig?",
+    "back": "Zwei Mengen $A$ und $B$ heißen **gleichmächtig**, geschrieben\n$$A \\sim B,$$\nwenn es eine **Bijektion**\n$$f: A \\to B$$\ngibt.\n\nIntuition: Die Elemente von $A$ und $B$ können ohne Auslassungen und ohne Kollisionen paarweise zugeordnet werden."
+  },
+  {
+    "front": "[Mächtigkeit] Was bedeutet $A \\preceq B$ im Kontext der Mächtigkeit?",
+    "back": "$$A \\preceq B$$\nbedeutet: Es gibt eine **injektive** Funktion\n$$f: A \\to B.$$\n\nMan sagt: $A$ wird von $B$ **dominiert**.  \nIntuitiv kann man $A$ nach Umbenennung als Teilmenge von $B$ auffassen.\n\nWichtig: $A \\preceq B$ bedeutet nicht unbedingt $A \\subseteq B$."
+  },
+  {
+    "front": "[Mächtigkeit] Wann heißt eine Menge abzählbar?",
+    "back": "Eine Menge $A$ heißt **abzählbar**, wenn\n$$A \\preceq \\mathbb{N}$$\ngilt, also wenn es eine injektive Funktion\n$$f: A \\to \\mathbb{N}$$\ngibt.\n\nFalls keine solche Injektion existiert, heißt $A$ **überabzählbar**."
+  },
+  {
+    "front": "[Mächtigkeit] Warum ist $\\mathbb{Z} \\sim \\mathbb{N}$ trotz $\\mathbb{N} \\subsetneq \\mathbb{Z}$?",
+    "back": "Weil es eine Bijektion zwischen $\\mathbb{N}$ und $\\mathbb{Z}$ gibt, z. B. durch Aufzählen der ganzen Zahlen als\n$$0,-1,1,-2,2,-3,3,\\dots$$\n\nEine mögliche Funktion ist sinngemäß:\n$$0 \\mapsto 0,\\quad 1 \\mapsto -1,\\quad 2 \\mapsto 1,\\quad 3 \\mapsto -2,\\quad 4 \\mapsto 2,\\dots$$\n\nDas zeigt: Bei unendlichen Mengen kann eine echte Obermenge gleichmächtig zur Teilmenge sein."
+  },
+  {
+    "front": "[Mächtigkeit] Warum reicht es, eine Bijektion $\\mathbb{N} \\to \\mathbb{Z}$ anzugeben, um $\\mathbb{Z} \\sim \\mathbb{N}$ zu zeigen?",
+    "back": "Wenn\n$$f: A \\to B$$\nbijektiv ist, dann ist die Umkehrrelation ebenfalls eine Funktion\n$$f^{-1}: B \\to A,$$\nund sie ist wieder bijektiv.\n\nAlso gilt:\n$$A \\sim B \\iff B \\sim A.$$\n\nFür $\\mathbb{Z} \\sim \\mathbb{N}$ reicht daher entweder eine Bijektion $\\mathbb{Z} \\to \\mathbb{N}$ oder eine Bijektion $\\mathbb{N} \\to \\mathbb{Z}$."
+  },
+  {
+    "front": "[Mächtigkeit] Warum sind das offene Intervall $(0,1)$ und $\\mathbb{R}$ gleichmächtig?",
+    "back": "Man kann eine Bijektion\n$$f: \\mathbb{R} \\to (0,1)$$\nangeben, z. B.\n$$f(x)=\\frac{1}{e^x+1}.$$\n\nFür jedes $x \\in \\mathbb{R}$ gilt:\n- $e^x>0$,\n- also $e^x+1>1$,\n- daher $0<f(x)<1$.\n\nDie Funktion ist injektiv, weil verschiedene $x$ verschiedene Werte $e^x$ liefern. Außerdem besitzt sie eine Umkehrfunktion mit Logarithmus, also ist sie bijektiv."
+  },
+  {
+    "front": "[Mächtigkeit] Welche Eigenschaften hat die Gleichmächtigkeit $\\sim$?",
+    "back": "Die Relation $\\sim$ ist eine **Äquivalenzrelation** auf Mengen:\n\n1. **Reflexiv:**  \n   $$A \\sim A$$  \n   durch die Identität $\\operatorname{id}_A$.\n\n2. **Symmetrisch:**  \n   Aus $A \\sim B$ folgt $B \\sim A$, weil Bijektionen Umkehrabbildungen besitzen.\n\n3. **Transitiv:**  \n   Aus $A \\sim B$ und $B \\sim C$ folgt $A \\sim C$, weil die Komposition von Bijektionen wieder bijektiv ist."
+  },
+  {
+    "front": "[Mächtigkeit] Warum ist $\\preceq$ keine Ordnungsrelation auf Mengen?",
+    "back": "Die Relation $\\preceq$ ist zwar **reflexiv** und **transitiv**, aber nicht antisymmetrisch.\n\nAntisymmetrie würde verlangen:\n$$A \\preceq B \\ \\text{und}\\ B \\preceq A \\implies A=B.$$\n\nDas ist falsch, z. B. gilt:\n$$\\mathbb{N} \\preceq \\mathbb{Z}\n\\quad\\text{und}\\quad\n\\mathbb{Z} \\preceq \\mathbb{N},$$\naber\n$$\\mathbb{N} \\neq \\mathbb{Z}.$$\n\nMan erhält nur Gleichmächtigkeit, nicht Gleichheit der Mengen."
+  },
+  {
+    "front": "[Mächtigkeit] Was besagt der Satz von Cantor–Bernstein in dieser Vorlesung?",
+    "back": "Wenn\n$$A \\preceq B\n\\quad\\text{und}\\quad\nB \\preceq A,$$\ndann gilt\n$$A \\sim B.$$\n\nDas heißt: Existieren Injektionen in beide Richtungen, dann existiert auch eine Bijektion.\n\nDie Aussage ist intuitiv, aber der Beweis ist nicht trivial: Die beiden Injektionen können die Mengen strukturell sehr unterschiedlich einbetten."
+  },
+  {
+    "front": "[Mächtigkeit] Warum folgt aus $A \\subseteq B$ sofort $A \\preceq B$?",
+    "back": "Wenn\n$$A \\subseteq B,$$\ndann ist die Identitätsabbildung auf $A$\n$$\\operatorname{id}_A: A \\to B,\\quad a \\mapsto a$$\neine injektive Funktion.\n\nAlso gilt direkt nach Definition:\n$$A \\preceq B.$$"
+  },
+  {
+    "front": "[Mächtigkeit] Was sagt Theorem 3.17 über abzählbare Mengen?",
+    "back": "Für eine Menge $A$ gilt:\n$$A \\text{ ist abzählbar}\n\\iff\nA \\text{ ist endlich oder } A \\sim \\mathbb{N}.$$\n\nÄquivalent:\nWenn eine Menge in $\\mathbb{N}$ injektiv eingebettet werden kann, dann ist sie entweder endlich oder bereits gleichmächtig zu $\\mathbb{N}$.\n\nEs gibt also keine Mächtigkeit „zwischen endlich und $\\mathbb{N}$“."
+  },
+  {
+    "front": "[Mächtigkeit] Warum ist eine unendliche Teilmenge von $\\mathbb{N}$ gleichmächtig zu $\\mathbb{N}$?",
+    "back": "Sei $C \\subseteq \\mathbb{N}$ unendlich. Da $\\mathbb{N}$ wohlgeordnet ist, besitzt jede nichtleere Teilmenge ein kleinstes Element.\n\nMan definiert rekursiv:\n- $c_0 =$ kleinstes Element von $C$,\n- $c_1 =$ kleinstes Element von $C \\setminus \\{c_0\\}$,\n- $c_2 =$ kleinstes Element von $C \\setminus \\{c_0,c_1\\}$,\n- usw.\n\nDann ist\n$$g(c_i)=i$$\neine Bijektion\n$$g: C \\to \\mathbb{N}.$$\n\nDie Unendlichkeit garantiert, dass das Verfahren nie abbricht."
+  },
+  {
+    "front": "[Mächtigkeit] Welche Rolle spielt die Wohlordnung von $\\mathbb{N}$ im Beweis von Theorem 3.17?",
+    "back": "Die Wohlordnung von $\\mathbb{N}$ garantiert:\n\nJede nichtleere Teilmenge\n$$C \\subseteq \\mathbb{N}$$\nhat ein kleinstes Element.\n\nIm Beweis wird dadurch eine unendliche Teilmenge von $\\mathbb{N}$ der Reihe nach aufgezählt:\n$$c_0,c_1,c_2,\\dots$$\n\nOhne Wohlordnung könnte man nicht sicher sein, dass der jeweils „nächste“ Eintrag existiert.\n\nBeispiel: $\\mathbb{Z}$ ist mit der üblichen Ordnung nicht wohlgeordnet, denn $\\mathbb{Z}$ selbst hat kein kleinstes Element."
+  },
+  {
+    "front": "[Mächtigkeit] Warum ist eine Funktion $f:A\\to f(A)$ automatisch surjektiv?",
+    "back": "Das **Bild** von $f$ ist definiert als\n$$f(A)=\\{f(a)\\mid a\\in A\\}.$$\n\nWenn man den Zielbereich von $B$ auf $f(A)$ einschränkt, erhält man\n$$f:A\\to f(A).$$\n\nDiese Funktion ist nach Definition surjektiv, weil jedes Element von $f(A)$ gerade als Wert $f(a)$ für ein $a\\in A$ entsteht.\n\nFalls $f:A\\to B$ zusätzlich injektiv war, ist\n$$f:A\\to f(A)$$\nsogar bijektiv."
+  },
+  {
+    "front": "[Mächtigkeit] Was bedeutet $A^\\ast$?",
+    "back": "Für eine Menge $A$ bezeichnet\n$$A^\\ast$$\ndie Menge aller **endlichen Folgen** über $A$.\n\nBeispiel:\n$$\\{0,1\\}^\\ast$$\nist die Menge aller endlichen Bitstrings:\n$$\\varepsilon,\\ 0,\\ 1,\\ 00,\\ 01,\\ 10,\\ 11,\\ 000,\\dots$$\n\nDabei bezeichnet $\\varepsilon$ die leere Folge.\n\nWichtig: In $A^\\ast$ sind nur endliche Folgen enthalten, aber beliebig lange."
+  },
+  {
+    "front": "[Mächtigkeit] Was bedeutet $|x|$ für einen Bitstring $x$?",
+    "back": "Für einen endlichen String oder eine endliche Folge $x$ bezeichnet\n$$|x|$$\ndie **Länge** von $x$, also die Anzahl seiner Einträge.\n\nBeispiele:\n$$|01|=2,$$\n$$|\\varepsilon|=0,$$\n$$|00011|=5.$$\n\nAchtung: Dieselbe Schreibweise $|\\cdot|$ wird auch für Kardinalitäten endlicher Mengen und für Beträge reeller Zahlen verwendet."
+  },
+  {
+    "front": "[Mächtigkeit] Was ist Konkatenation von Bitstrings?",
+    "back": "Die **Konkatenation** ist das Hintereinanderschreiben von Folgen oder Strings.\n\nBeispiel:\n$$01 \\cdot 101 = 01101.$$\n\nOft wird der Punkt weggelassen:\n$$01\\,101 = 01101.$$\n\nDie leere Folge $\\varepsilon$ ist neutral:\n$$x\\varepsilon = \\varepsilon x = x.$$"
+  },
+  {
+    "front": "[Mächtigkeit] Warum ist $\\{0,1\\}^\\ast \\sim \\mathbb{N}$?",
+    "back": "Man kodiert jeden endlichen Bitstring $x$ als natürliche Zahl:\n$$f(x)=\\operatorname{Zahl}(1x)-1.$$\n\nDabei bedeutet $\\operatorname{Zahl}(1x)$: Interpretiere den Bitstring $1x$ als Binärzahl.\n\nBeispiele:\n$$f(\\varepsilon)=\\operatorname{Zahl}(1)-1=0,$$\n$$f(0)=\\operatorname{Zahl}(10)-1=2-1=1,$$\n$$f(1)=\\operatorname{Zahl}(11)-1=3-1=2.$$\n\nDie vorangestellte $1$ verhindert führende-Nullen-Kollisionen, und das $-1$ sorgt dafür, dass auch $0$ getroffen wird."
+  },
+  {
+    "front": "[Mächtigkeit] Warum wäre die naive Kodierung eines Bitstrings als Binärzahl nicht injektiv?",
+    "back": "Wenn man einen Bitstring $x$ einfach als Binärzahl interpretiert, entstehen Kollisionen durch führende Nullen:\n\n$$0,\\ 00,\\ 000,\\dots$$\nwürden alle als Zahl $0$ interpretiert.\n\nEbenso:\n$$1,\\ 01,\\ 001,\\dots$$\nwürden alle als Zahl $1$ interpretiert.\n\nDaher ist die naive Abbildung\n$$x \\mapsto \\operatorname{Zahl}(x)$$\nnicht injektiv.\n\nDie Reparatur ist z. B.:\n$$x \\mapsto \\operatorname{Zahl}(1x)-1.$$"
+  },
+  {
+    "front": "[Mächtigkeit] Warum ist $f(x)=\\operatorname{Zahl}(1x)-1$ injektiv?",
+    "back": "Aus dem Wert\n$$f(x)+1=\\operatorname{Zahl}(1x)$$\nerhält man die eindeutige Binärdarstellung von $\\operatorname{Zahl}(1x)$.\n\nDiese Binärdarstellung beginnt mit einer $1$ und danach steht exakt $x$.\n\nAlso kann man aus $f(x)$ den ursprünglichen Bitstring $x$ eindeutig rekonstruieren.\n\nDaher können zwei verschiedene Bitstrings nicht auf dieselbe natürliche Zahl abgebildet werden."
+  },
+  {
+    "front": "[Mächtigkeit] Warum ist $f(x)=\\operatorname{Zahl}(1x)-1$ surjektiv auf $\\mathbb{N}$?",
+    "back": "Sei $n\\in\\mathbb{N}$. Betrachte $n+1$ und schreibe es in Binärdarstellung.\n\nDa $n+1\\ge 1$, beginnt diese Binärdarstellung mit einer $1$. Entfernt man diese erste $1$, bleibt ein Bitstring $x$ übrig.\n\nDann gilt:\n$$\\operatorname{Zahl}(1x)=n+1,$$\nalso\n$$f(x)=\\operatorname{Zahl}(1x)-1=n.$$\n\nDamit wird jede natürliche Zahl getroffen."
+  },
+  {
+    "front": "[Mächtigkeit] Was besagt das Theorem: Wenn $A$ abzählbar ist, dann ist $A^\\ast$ abzählbar?",
+    "back": "Ist $A$ abzählbar, dann ist auch die Menge aller endlichen Folgen über $A$ abzählbar:\n$$A \\text{ abzählbar} \\implies A^\\ast \\text{ abzählbar}.$$\n\nDie Idee:\n\n1. Da $A$ abzählbar ist, kann jedes Element $a\\in A$ eindeutig als Bitstring kodiert werden.\n2. Eine endliche Folge\n   $$a_1,\\dots,a_n$$\n   wird dann als ein einziger Bitstring kodiert.\n3. Dieser Bitstring kann wiederum als natürliche Zahl kodiert werden.\n\nWichtig: Es geht um endliche Folgen. Für unendliche Folgen gilt das nicht."
+  },
+  {
+    "front": "[Mächtigkeit] Warum reicht es bei $A^\\ast$ aus, eine injektive Kodierung als Bitstrings zu finden?",
+    "back": "Weil bereits gezeigt wurde:\n$$\\{0,1\\}^\\ast \\sim \\mathbb{N}.$$\n\nWenn man also eine Injektion\n$$A^\\ast \\to \\{0,1\\}^\\ast$$\nfindet, dann erhält man durch Komposition eine Injektion\n$$A^\\ast \\to \\mathbb{N}.$$\n\nDamit ist $A^\\ast$ abzählbar."
+  },
+  {
+    "front": "[Mächtigkeit] Warum kann man die Kodierungen $f(a_1)f(a_2)\\dots f(a_n)$ nicht einfach ohne Trennzeichen konkatenieren?",
+    "back": "Weil die einzelnen Codes unterschiedliche Längen haben können.\n\nAus dem Gesamtstring wäre dann im Allgemeinen nicht rekonstruierbar, wo\n$$f(a_i)$$\nendet und\n$$f(a_{i+1})$$\nbeginnt.\n\nBeispielhaft könnte derselbe String verschieden zerlegt werden:\n$$01011 = 0|1011 = 01|011 = 010|11.$$\n\nFür eine injektive Kodierung muss die Zerlegung eindeutig rekonstruierbar sein."
+  },
+  {
+    "front": "[Mächtigkeit] Wie kodiert man eine Folge $a_1,\\dots,a_n$ eindeutig als Bitstring?",
+    "back": "Sei\n$$f:A\\to \\{0,1\\}^\\ast$$\neine injektive Kodierung einzelner Elemente.\n\nDann kann man jedes $f(a_i)$ mit seiner Länge markieren:\n$$0^{|f(a_i)|}1f(a_i).$$\n\nDie ganze Folge wird kodiert als\n$$0^{|f(a_1)|}1f(a_1)\\,\n0^{|f(a_2)|}1f(a_2)\\,\n\\dots\\,\n0^{|f(a_n)|}1f(a_n).$$\n\nBeim Dekodieren zählt man zuerst die Nullen bis zur ersten $1$; diese Anzahl gibt an, wie viele Bits danach zum nächsten Code gehören."
+  },
+  {
+    "front": "[Mächtigkeit] Was ist $\\{0,1\\}^{\\mathbb{N}}$?",
+    "back": "$$\\{0,1\\}^{\\mathbb{N}}$$\nist die Menge aller Funktionen\n$$g:\\mathbb{N}\\to \\{0,1\\}.$$\n\nMan kann sie als Menge aller **unendlichen Bitstrings** auffassen:\n$$g(0)g(1)g(2)g(3)\\dots$$\n\nJede Funktion entscheidet für jede natürliche Zahl $n$, ob an Position $n$ eine $0$ oder eine $1$ steht."
+  },
+  {
+    "front": "[Mächtigkeit] Was ist der Unterschied zwischen $\\{0,1\\}^\\ast$ und $\\{0,1\\}^{\\mathbb{N}}$?",
+    "back": "$$\\{0,1\\}^\\ast$$\nenthält alle **endlichen** Bitstrings:\n$$\\varepsilon,\\ 0,\\ 1,\\ 00,\\dots$$\n\n$$\\{0,1\\}^{\\mathbb{N}}$$\nenthält alle **unendlichen** Bitstrings bzw. Funktionen\n$$\\mathbb{N}\\to\\{0,1\\}.$$\n\nDer Mächtigkeitsunterschied ist wesentlich:\n$$\\{0,1\\}^\\ast \\sim \\mathbb{N},$$\naber\n$$\\{0,1\\}^{\\mathbb{N}}$$\nist überabzählbar."
+  },
+  {
+    "front": "[Mächtigkeit] Was besagt Cantors Diagonalisierungsargument für unendliche Bitstrings?",
+    "back": "Die Menge\n$$\\{0,1\\}^{\\mathbb{N}}$$\nist **nicht abzählbar**.\n\nAngenommen, sie wäre abzählbar. Dann gäbe es eine vollständige Liste aller unendlichen Bitstrings:\n$$g_0,g_1,g_2,\\dots$$\n\nMan konstruiert nun einen neuen Bitstring $g$ durch Diagonalwechsel:\n$$g(i)=1-g_i(i).$$\n\nDann unterscheidet sich $g$ vom $i$-ten Listenbitstring $g_i$ an Position $i$.\n\nAlso kommt $g$ in der Liste nicht vor — Widerspruch zur Vollständigkeit der Liste."
+  },
+  {
+    "front": "[Mächtigkeit] Warum liegt der diagonal konstruierte Bitstring $g$ wieder in $\\{0,1\\}^{\\mathbb{N}}$?",
+    "back": "Für jedes\n$$i\\in\\mathbb{N}$$\nist\n$$g_i(i)\\in\\{0,1\\}.$$\n\nAlso ist auch\n$$g(i)=1-g_i(i)$$\nwieder entweder $0$ oder $1$.\n\nDamit ist $g$ eine Funktion\n$$g:\\mathbb{N}\\to\\{0,1\\},$$\nalso ein Element von\n$$\\{0,1\\}^{\\mathbb{N}}.$$"
+  },
+  {
+    "front": "[Mächtigkeit] Wo entsteht der Widerspruch im Diagonalisierungsbeweis?",
+    "back": "Wenn die Liste vollständig wäre, müsste der diagonal konstruierte Bitstring $g$ an irgendeiner Stelle vorkommen, also\n$$g=g_{i^\\ast}$$\nfür ein $i^\\ast\\in\\mathbb{N}$.\n\nDann gilt aber an Position $i^\\ast$:\n$$g(i^\\ast)=1-g_{i^\\ast}(i^\\ast).$$\n\nDa $g=g_{i^\\ast}$ ist, folgt:\n$$g(i^\\ast)=1-g(i^\\ast),$$\nwas für $g(i^\\ast)\\in\\{0,1\\}$ unmöglich ist.\n\nDas ist der Widerspruch."
+  },
+  {
+    "front": "[Mächtigkeit] Warum zeigt Diagonalisierung mehr als nur „die konkrete Liste ist unvollständig“?",
+    "back": "Die angenommene Liste war beliebig, aber als vollständige Aufzählung aller Elemente von\n$$\\{0,1\\}^{\\mathbb{N}}$$\ngedacht.\n\nDas Diagonalargument konstruiert zu jeder solchen Liste ein Element, das garantiert nicht in ihr vorkommt.\n\nAlso kann keine Liste alle unendlichen Bitstrings enthalten. Deshalb existiert keine Bijektion\n$$\\mathbb{N}\\to \\{0,1\\}^{\\mathbb{N}},$$\nund die Menge ist überabzählbar."
+  },
+  {
+    "front": "[Ringe & Körper] Welche drei Strukturen müssen in einem Ring zusammenpassen?",
+    "back": "Ein **Ring** $R$ besteht aus einer Menge mit zwei Operationen $+$ und $\\cdot$ sowie Elementen $0,1$:\n\n1. $(R,+,-,0)$ ist eine **kommutative Gruppe**.\n2. $(R,\\cdot,1)$ ist ein **Monoid**: Multiplikation ist assoziativ und hat neutrales Element $1$, aber Inversen müssen nicht existieren.\n3. Addition und Multiplikation sind durch die **Distributivgesetze** verbunden:\n$$\na(b+c)=ab+ac,\\qquad (b+c)a=ba+ca.\n$$\n\nDie Multiplikation muss nicht kommutativ sein."
+  },
+  {
+    "front": "[Ringe & Körper] Wann heißt ein Ring kommutativ, und warum ist das nicht automatisch Teil der Ringdefinition?",
+    "back": "Ein Ring heißt **kommutativ**, wenn seine Multiplikation kommutativ ist:\n$$\nab=ba \\quad \\text{für alle } a,b\\in R.\n$$\n\nDie Addition ist in jedem Ring bereits per Definition kommutativ. Die Multiplikation aber nicht: Der Ring der $2\\times 2$-Matrizen über $\\mathbb{Z}$ ist ein Ring, aber im Allgemeinen gilt für Matrizen\n$$\nAB\\neq BA.\n$$"
+  },
+  {
+    "front": "[Ringe & Körper] Warum gilt in jedem Ring automatisch $0\\cdot a=a\\cdot 0=0$?",
+    "back": "Das folgt aus den Ringaxiomen, insbesondere aus Distributivität und additiver Inversenbildung.\n\nFür $a\\cdot 0$:\n$$\na\\cdot 0=a\\cdot(0+0)=a\\cdot 0+a\\cdot 0.\n$$\n\nAddiert man auf beiden Seiten das additive Inverse von $a\\cdot 0$, erhält man:\n$$\n0=a\\cdot 0.\n$$\n\nAnalog zeigt man $0\\cdot a=0$ mit dem anderen Distributivgesetz."
+  },
+  {
+    "front": "[Ringe & Körper] Warum kann in einem nichttrivialen Ring $1$ nicht gleich $0$ sein?",
+    "back": "Angenommen $1=0$ und sei $a\\in R$ beliebig. Dann gilt:\n$$\na=a\\cdot 1=a\\cdot 0=0.\n$$\n\nAlso wäre jedes Element gleich $0$, und der Ring hätte nur ein Element. Daher gilt in jedem Ring mit mehr als einem Element:\n$$\n1\\neq 0.\n$$\n\nDer einzige Ring mit $1=0$ ist der **triviale Ring** mit genau einem Element."
+  },
+  {
+    "front": "[Ringe & Körper] Was misst die Charakteristik eines Rings?",
+    "back": "Die **Charakteristik** $\\operatorname{char}(R)$ ist die kleinste positive Zahl $i$, für die gilt:\n$$\n\\underbrace{1+1+\\dots+1}_{i\\text{-mal}}=0.\n$$\n\nFalls es keine solche Zahl gibt, setzt man:\n$$\n\\operatorname{char}(R)=0.\n$$\n\nBeispiele:\n$$\n\\operatorname{char}(\\mathbb{Z})=0,\n$$\nweil wiederholtes Addieren von $1$ nie $0$ ergibt.\n\nFür den Restklassenring $\\mathbb{Z}_m$ gilt:\n$$\n\\operatorname{char}(\\mathbb{Z}_m)=m.\n$$"
+  },
+  {
+    "front": "[Ringe & Körper] Wann ist ein Element eines Rings eine Einheit?",
+    "back": "Ein Element $a\\in R$ heißt **Einheit**, wenn es ein multiplikatives Inverses besitzt, also ein $b\\in R$ mit\n$$\nab=ba=1.\n$$\n\nDann schreibt man:\n$$\nb=a^{-1}.\n$$\n\nDie Menge aller Einheiten heißt\n$$\nR^\\ast.\n$$\n\nFür jeden Ring ist $R^\\ast$ mit der Multiplikation eine **Gruppe**."
+  },
+  {
+    "front": "[Ringe & Körper] Welche Einheiten hat $\\mathbb{Z}$, und warum gibt es nicht mehr?",
+    "back": "In $\\mathbb{Z}$ sind genau\n$$\n1 \\quad \\text{und} \\quad -1\n$$\nEinheiten.\n\nDenn nur für diese Zahlen existiert ein ganzzahliges multiplikatives Inverses:\n$$\n1\\cdot 1=1,\\qquad (-1)\\cdot(-1)=1.\n$$\n\nFür $2,3,\\dots$ wäre das Inverse z.B. $\\frac12,\\frac13,\\dots$, aber diese liegen nicht in $\\mathbb{Z}$."
+  },
+  {
+    "front": "[Ringe & Körper] Welche Elemente sind in $\\mathbb{Z}_m$ Einheiten?",
+    "back": "In $\\mathbb{Z}_m$ sind genau die Restklassen $a$ Einheiten, die teilerfremd zu $m$ sind:\n$$\na\\in \\mathbb{Z}_m^\\ast\n\\iff\n\\gcd(a,m)=1.\n$$\n\nBeispiel:\n- In $\\mathbb{Z}_4$ ist $2$ keine Einheit, denn $\\gcd(2,4)=2$.\n- In $\\mathbb{Z}_5$ sind $1,2,3,4$ alle Einheiten, weil $5$ prim ist."
+  },
+  {
+    "front": "[Ringe & Körper] Warum ist $\\mathbb{Z}_m$ genau dann ein Körper, wenn $m$ prim ist?",
+    "back": "Ein Körper verlangt, dass jedes von $0$ verschiedene Element invertierbar ist.\n\nIn $\\mathbb{Z}_m$ ist $a\\neq 0$ genau dann invertierbar, wenn\n$$\n\\gcd(a,m)=1.\n$$\n\nFalls $m=p$ prim ist, sind alle Zahlen\n$$\n1,\\dots,p-1\n$$\nteilerfremd zu $p$, also invertierbar. Daher ist $\\mathbb{Z}_p$ ein Körper.\n\nFalls $m$ zusammengesetzt ist, gibt es ein $a$ mit\n$$\n1<a<m,\\qquad \\gcd(a,m)>1,\n$$\nalso ein nichtinvertierbares Nichtnull-Element. Dann ist $\\mathbb{Z}_m$ kein Körper."
+  },
+  {
+    "front": "[Ringe & Körper] Was ist ein Nullteiler, und warum sind Nullteiler algebraisch störend?",
+    "back": "Ein **Nullteiler** ist ein von $0$ verschiedenes Element $a\\in R$, für das es ein $b\\neq 0$ gibt mit\n$$\nab=0.\n$$\n\nNullteiler sind störend, weil Produkte verschwinden können, obwohl kein Faktor $0$ ist.\n\nBeispiel in $\\mathbb{Z}_6$:\n$$\n2\\cdot 3=6\\equiv 0 \\pmod 6,\n$$\nobwohl\n$$\n2\\neq 0,\\qquad 3\\neq 0.\n$$"
+  },
+  {
+    "front": "[Ringe & Körper] Wann heißt ein Ring Integritätsbereich?",
+    "back": "Ein kommutativer Ring mit $1\\neq 0$ heißt **Integritätsbereich**, wenn er keine Nullteiler besitzt.\n\nÄquivalent:\n$$\nab=0 \\implies a=0 \\text{ oder } b=0.\n$$\n\nBeispiele:\n$$\n\\mathbb{Z},\\mathbb{Q},\\mathbb{R},\\mathbb{C}\n$$\nsind Integritätsbereiche.\n\nFür $\\mathbb{Z}_m$ gilt:\n$$\n\\mathbb{Z}_m \\text{ ist Integritätsbereich}\n\\iff\nm \\text{ ist prim}.\n$$"
+  },
+  {
+    "front": "[Ringe & Körper] Warum ist jeder Körper automatisch ein Integritätsbereich?",
+    "back": "Sei $F$ ein Körper und\n$$\nuv=0\n$$\nmit $u\\neq 0$.\n\nDa $F$ ein Körper ist, besitzt $u$ ein Inverses $u^{-1}$. Also:\n$$\nv=1v=(u^{-1}u)v=u^{-1}(uv)=u^{-1}\\cdot 0=0.\n$$\n\nDamit gilt:\n$$\nuv=0 \\implies u=0 \\text{ oder } v=0.\n$$\n\nAlso hat $F$ keine Nullteiler und ist ein Integritätsbereich."
+  },
+  {
+    "front": "[Ringe & Körper] Was ist ein Körper im Vergleich zu einem allgemeinen Ring?",
+    "back": "Ein **Körper** ist ein kommutativer Ring $F$, in dem jedes Element außer $0$ invertierbar ist:\n$$\nF^\\ast=F\\setminus\\{0\\}.\n$$\n\nÄquivalent:\n- $(F,+)$ ist eine kommutative Gruppe.\n- $(F\\setminus\\{0\\},\\cdot)$ ist eine kommutative Gruppe.\n\nIn einem Körper darf man durch jedes Nichtnull-Element dividieren. Beispiele:\n$$\n\\mathbb{Q},\\mathbb{R},\\mathbb{C},\\mathbb{Z}_p \\text{ für } p \\text{ prim}.\n$$"
+  },
+  {
+    "front": "[Ringe & Körper] Was bedeutet $GF(n)$, und für welche $n$ kennt man endliche Körper?",
+    "back": "$GF(n)$ steht für **Galois Field**, also einen endlichen Körper mit $n$ Elementen.\n\nFür jede Primzahl $p$ gilt:\n$$\nGF(p)\\cong \\mathbb{Z}_p.\n$$\n\nAllgemein existieren endliche Körper genau für Primzahlpotenzen:\n$$\nn=p^k.\n$$\n\nBeispiele:\n$$\nGF(2),\\ GF(4),\\ GF(8),\\ GF(9)\n$$\nexistieren.\n\nAber:\n$$\nGF(6)\n$$\nexistiert nicht, weil $6$ keine Primzahlpotenz ist."
+  },
+  {
+    "front": "[Ringe & Körper] Warum ist $GF(4)$ nicht dasselbe wie $\\mathbb{Z}_4$?",
+    "back": "$GF(4)$ ist ein Körper mit $4$ Elementen.\n\n$\\mathbb{Z}_4$ ist kein Körper, denn $2$ ist ein Nullteiler:\n$$\n2\\cdot 2=4\\equiv 0 \\pmod 4.\n$$\n\nAlso kann $\\mathbb{Z}_4$ nicht $GF(4)$ sein.\n\nDer Körper mit $4$ Elementen muss anders konstruiert werden, nämlich über einen Polynomquotienten wie\n$$\nGF(2)[x]/(m(x))\n$$\nmit einem irreduziblen Polynom $m(x)$ vom Grad $2$."
+  },
+  {
+    "front": "[Ringe & Körper] Was ist der Polynomring $F[x]$ über einem Körper $F$?",
+    "back": "$F[x]$ ist der Ring aller Polynome in einer Variablen $x$ mit Koeffizienten aus $F$:\n$$\na_nx^n+\\dots+a_1x+a_0,\\qquad a_i\\in F.\n$$\n\nAddition und Multiplikation funktionieren wie gewohnt, aber die Koeffizienten werden in $F$ verrechnet.\n\nBeispiel über $GF(7)$:\n$$\n(3x+5)+(6x+4)=9x+9\\equiv 2x+2 \\pmod 7.\n$$"
+  },
+  {
+    "front": "[Ringe & Körper] Warum ist $F[x]$ im Allgemeinen kein Körper, obwohl $F$ ein Körper ist?",
+    "back": "In $F[x]$ ist z.B. das Polynom $x$ nicht invertierbar.\n\nWäre $x$ invertierbar, gäbe es ein Polynom $g(x)$ mit\n$$\nxg(x)=1.\n$$\n\nAber der Grad der linken Seite ist mindestens $1$, sofern $g(x)\\neq 0$, während $1$ Grad $0$ hat. Das ist unmöglich.\n\nDie Einheiten in $F[x]$ sind genau die von $0$ verschiedenen konstanten Polynome:\n$$\nF[x]^\\ast=F^\\ast.\n$$"
+  },
+  {
+    "front": "[Ringe & Körper] Was bedeutet es, dass ein Polynom normiert bzw. monisch ist?",
+    "back": "Ein Polynom heißt **normiert** oder **monisch**, wenn sein Leitkoeffizient $1$ ist.\n\nBeispiel:\n$$\nx^2+3x+5\n$$\nist monisch.\n\nDas Polynom\n$$\n2x^3+x+1\n$$\nist über einem Körper mit $2\\neq 0$ nicht monisch. Über einem Körper kann man es aber normieren, indem man mit dem Inversen des Leitkoeffizienten multipliziert, z.B. über $\\mathbb{R}$:\n$$\n\\frac12(2x^3+x+1)=x^3+\\frac12x+\\frac12.\n$$"
+  },
+  {
+    "front": "[Ringe & Körper] Warum definiert man den Grad des Nullpolynoms als $-\\infty$?",
+    "back": "Für Nichtnull-Polynome ist der Grad der höchste vorkommende Exponent.\n\nFür das Nullpolynom setzt man:\n$$\n\\deg(0)=-\\infty.\n$$\n\nDas ist eine Konvention, damit die Gradformel bei Multiplikation sauber bleibt:\n$$\n\\deg(fg)=\\deg(f)+\\deg(g).\n$$\n\nWenn $f=0$, dann ist $fg=0$, also:\n$$\n\\deg(fg)=-\\infty.\n$$\n\nDas passt zu\n$$\n-\\infty+\\deg(g)=-\\infty.\n$$"
+  },
+  {
+    "front": "[Ringe & Körper] Was kann in Polynomringen über Ringen mit Nullteilern schiefgehen?",
+    "back": "Über Ringen mit Nullteilern kann der führende Koeffizient eines Produkts verschwinden.\n\nBeispiel in $\\mathbb{Z}_4[x]$:\n$$\n(2x^2+1)(2x+1).\n$$\n\nDer höchste Term wäre\n$$\n2x^2\\cdot 2x=4x^3\\equiv 0x^3 \\pmod 4.\n$$\n\nAlso fällt der Grad-$3$-Term weg, und es bleibt:\n$$\n(2x^2+1)(2x+1)=2x^2+2x+1.\n$$\n\nDer Grad des Produkts ist also nicht die Summe der Grade. Genau solche Effekte verhindern Integritätsbereich-Eigenschaften."
+  },
+  {
+    "front": "[Ringe & Körper] Wie funktioniert Polynomdivision über einem Körper?",
+    "back": "Für $a(x),b(x)\\in F[x]$ mit $b(x)\\neq 0$ gibt es eindeutig bestimmte Polynome $q(x),r(x)\\in F[x]$ mit\n$$\na(x)=b(x)q(x)+r(x)\n$$\nund\n$$\n\\deg(r)<\\deg(b).\n$$\n\nDas ist die Division mit Rest für Polynome.\n\nWichtig: Sie funktioniert über einem Körper, weil man Leitkoeffizienten invertieren kann. Beim Wegdividieren des höchsten Terms muss man durch den Leitkoeffizienten von $b(x)$ teilen können."
+  },
+  {
+    "front": "[Ringe & Körper] Wie ist der größte gemeinsame Teiler zweier Polynome definiert?",
+    "back": "Für $a(x),b(x)\\in F[x]$ ist\n$$\n\\gcd(a,b)\n$$\ndas **normierte** Polynom maximalen Grades, das sowohl $a$ als auch $b$ teilt.\n\nWarum normiert? Größte gemeinsame Teiler sind nur bis auf Multiplikation mit Einheiten eindeutig. In $F[x]$ sind die Einheiten die Nichtnull-Konstanten. Durch Normierung wählt man einen eindeutigen Repräsentanten.\n\nAnalog zu $\\mathbb{Z}$, wo man den positiven größten gemeinsamen Teiler auswählt."
+  },
+  {
+    "front": "[Ringe & Körper] Was bedeutet Irreduzibilität allgemein in einem Integritätsbereich?",
+    "back": "Sei $R$ ein Integritätsbereich. Ein Element $a\\in R$ heißt **irreduzibel**, wenn:\n\n1. $a$ keine Einheit ist,\n2. jede Faktorisierung\n$$\na=bc\n$$\ntrivial ist, d.h. mindestens einer der Faktoren $b,c$ ist eine Einheit.\n\nIntuition: Ein irreduzibles Element lässt sich nicht sinnvoll weiter zerlegen.\n\nIn $\\mathbb{Z}$ sind genau die positiven und negativen Primzahlen irreduzibel:\n$$\n\\pm 2,\\pm 3,\\pm 5,\\dots\n$$"
+  },
+  {
+    "front": "[Ringe & Körper] Wie lautet Irreduzibilität speziell für Polynome über einem Körper?",
+    "back": "Ein Polynom $f(x)\\in F[x]$ heißt **irreduzibel**, wenn:\n\n1. $\\deg(f)\\ge 1$,\n2. jeder Teiler $g(x)$ von $f(x)$ trivial ist.\n\nDas heißt: Wenn\n$$\ng(x)\\mid f(x),\n$$\ndann gilt entweder\n$$\n\\deg(g)=0\n$$\noder\n$$\ng(x)=c f(x)\n$$\nfür ein $c\\in F^\\ast$.\n\nAlso hat $f$ keine echte Faktorisierung in Polynome kleineren positiven Grades."
+  },
+  {
+    "front": "[Ringe & Körper] Warum spielen irreduzible Polynome die Rolle von Primzahlen?",
+    "back": "Bei den ganzen Zahlen konstruiert man Körper durch\n$$\n\\mathbb{Z}/p\\mathbb{Z}\n$$\nmit einer Primzahl $p$.\n\nAnalog konstruiert man aus einem Polynomring $F[x]$ neue Körper durch Quotienten\n$$\nF[x]/(m(x)),\n$$\nwenn $m(x)$ irreduzibel ist.\n\nDie Analogie ist:\n\n$$\n\\text{Primzahl in } \\mathbb{Z}\n\\quad \\leftrightarrow \\quad\n\\text{irreduzibles Polynom in } F[x].\n$$\n\nIn beiden Fällen verhindert die Irreduzibilität nichttriviale Nullteiler im Quotienten."
+  },
+  {
+    "front": "[Ringe & Körper] Wie konstruiert man aus $GF(p)$ größere endliche Körper?",
+    "back": "Man geht in drei Schritten vor:\n\n1. Starte mit dem Primkörper\n$$\nGF(p)\\cong \\mathbb{Z}_p.\n$$\n\n2. Bilde den Polynomring\n$$\nGF(p)[x].\n$$\n\n3. Wähle ein irreduzibles Polynom $m(x)$ vom Grad $d$ und bilde den Quotienten\n$$\nGF(p)[x]/(m(x)).\n$$\n\nDann entsteht ein endlicher Körper mit\n$$\np^d\n$$\nElementen:\n$$\nGF(p)[x]/(m(x))\\cong GF(p^d).\n$$"
+  },
+  {
+    "front": "[Ringe & Körper] Warum hat $F[x]/(m(x))$ genau $|F|^{\\deg m}$ Elemente?",
+    "back": "Sei $F$ ein endlicher Körper mit $q=|F|$ und sei\n$$\n\\deg(m)=d.\n$$\n\nIn $F[x]/(m(x))$ rechnet man Polynome modulo $m(x)$. Durch Division mit Rest hat jede Restklasse einen eindeutigen Repräsentanten $r(x)$ mit\n$$\n\\deg(r)<d.\n$$\n\nAlso hat jeder Repräsentant die Form\n$$\na_{d-1}x^{d-1}+\\dots+a_1x+a_0,\n\\qquad a_i\\in F.\n$$\n\nFür jeden der $d$ Koeffizienten gibt es $q$ Möglichkeiten. Daher:\n$$\n|F[x]/(m(x))|=q^d.\n$$"
+  },
+  {
+    "front": "[Ringe & Körper] Warum muss $m(x)$ irreduzibel sein, damit $F[x]/(m(x))$ ein Körper wird?",
+    "back": "Wenn $m(x)$ reduzibel ist, etwa\n$$\nm(x)=a(x)b(x)\n$$\nmit $\\deg(a),\\deg(b)\\ge 1$, dann gilt im Quotienten:\n$$\n[a(x)]\\cdot[b(x)]=[m(x)]=[0].\n$$\n\nAber $[a(x)]$ und $[b(x)]$ sind nicht $0$, da ihre Grade kleiner als $\\deg(m)$ sind. Also entstehen Nullteiler.\n\nEin Körper darf keine Nullteiler haben. Daher muss $m(x)$ irreduzibel sein.\n\nIst $m(x)$ irreduzibel, dann ist der Quotient tatsächlich ein Körper."
+  },
+  {
+    "front": "[Ringe & Körper] Wie rechnet man konkret in einem Quotienten $F[x]/(m(x))$?",
+    "back": "Man rechnet mit Polynomen, reduziert aber nach jeder Operation den Rest modulo $m(x)$.\n\nBeispielprinzip:\nWenn im Quotienten\n$$\nm(x)=x^2+x+1\n$$\ngleich $0$ gesetzt wird, dann gilt:\n$$\nx^2+x+1=0,\n$$\nalso\n$$\nx^2=-x-1.\n$$\n\nÜber $GF(2)$ ist $-1=1$ und $-x=x$, also:\n$$\nx^2=x+1.\n$$\n\nDamit kann man jede Potenz $x^k$ auf ein Polynom vom Grad $<2$ reduzieren. Die Elemente haben dann die Form:\n$$\n0,\\ 1,\\ x,\\ x+1.\n$$"
+  },
+  {
+    "front": "[Gruppen] Was ist eine algebraische Struktur in diesem Kapitel?",
+    "back": "Eine **algebraische Struktur** besteht aus einer Menge zusammen mit Operationen auf dieser Menge, z. B.\n$$\n(\\mathbb{Z}_m, +_m), \\qquad (\\mathbb{Z}_m, \\cdot_m).\n$$\n\nWichtig ist: Die Operation muss wieder in die Menge zurückführen. Für $+_m$ oder $\\cdot_m$ bedeutet das: Man rechnet zuerst in $\\mathbb{Z}$ und reduziert danach modulo $m$.\n\nBeispiel:\n$$\n2 \\cdot_5 3 = 6 \\bmod 5 = 1.\n$$"
+  },
+  {
+    "front": "[Gruppen] Warum ist Assoziativität für algebraische Strukturen so wichtig?",
+    "back": "**Assoziativität** bedeutet:\n$$\n(x * y) * z = x * (y * z)\n$$\nfür alle $x,y,z$.\n\nSie erlaubt, Klammern wegzulassen und Ausdrücke wie\n$$\nx_1 * x_2 * \\dots * x_n\n$$\nsinnvoll zu schreiben, ohne jedes Mal die Auswertungsreihenfolge festzulegen.\n\nOhne Assoziativität kann derselbe Ausdruck je nach Klammerung verschiedene Werte haben. Dann wird „Rechnen“ mit der Struktur schnell unübersichtlich."
+  },
+  {
+    "front": "[Gruppen] Was ist der Unterschied zwischen linksneutralem, rechtsneutralem und neutralem Element?",
+    "back": "Ein Element $e$ heißt **linksneutral**, falls\n$$\ne * x = x\n$$\nfür alle $x$ gilt.\n\nEs heißt **rechtsneutral**, falls\n$$\nx * e = x\n$$\nfür alle $x$ gilt.\n\nEs heißt **neutral**, falls es beides ist:\n$$\ne * x = x * e = x.\n$$\n\nIn nicht-kommutativen Strukturen muss man links und rechts unterscheiden; bei kommutativen Operationen fällt der Unterschied automatisch weg."
+  },
+  {
+    "front": "[Gruppen] Warum können ein linksneutrales und ein rechtsneutrales Element nicht verschieden sein, wenn beide existieren?",
+    "back": "Sei $e$ linksneutral und $e'$ rechtsneutral. Dann gilt:\n$$\ne = e * e'\n$$\nweil $e'$ rechtsneutral ist.\n\nAndererseits gilt:\n$$\ne * e' = e'\n$$\nweil $e$ linksneutral ist.\n\nAlso:\n$$\ne = e'.\n$$\n\nWichtig: Daraus folgt **nicht**, dass jedes linksneutrale Element automatisch rechtsneutral ist. Es folgt nur: Falls beide Arten existieren, sind sie gleich."
+  },
+  {
+    "front": "[Gruppen] Was ist ein Monoid?",
+    "back": "Ein **Monoid** ist eine Struktur\n$$\n(S, *, e)\n$$\nmit:\n\n1. **Assoziativität**:\n$$\n(x*y)*z = x*(y*z)\n$$\n\n2. **neutralem Element** $e$:\n$$\ne*x = x*e = x.\n$$\n\nBeispiel:\n$$\n(\\{0,1\\}^*, \\text{Konkatination}, \\varepsilon)\n$$\nist ein Monoid. Die Menge besteht aus allen endlichen Bitstrings, die Operation hängt Strings aneinander, und $\\varepsilon$ ist der leere String."
+  },
+  {
+    "front": "[Gruppen] Warum ist $(\\{0,1\\}^*, \\text{Konkatination}, \\varepsilon)$ ein Monoid, aber keine Gruppe?",
+    "back": "Es ist ein **Monoid**, weil Konkatination assoziativ ist:\n$$\n(xy)z = x(yz),\n$$\nund der leere String $\\varepsilon$ neutral ist:\n$$\n\\varepsilon x = x\\varepsilon = x.\n$$\n\nEs ist aber **keine Gruppe**, weil nicht jeder String ein Inverses hat. Für einen nichtleeren String $x$ gibt es keinen String $y$ mit\n$$\nxy = \\varepsilon\n$$\noder\n$$\nyx = \\varepsilon.\n$$\n\nKonkatination macht Strings höchstens länger, aber nie wieder leer."
+  },
+  {
+    "front": "[Gruppen] Was ist eine Gruppe?",
+    "back": "Eine **Gruppe** ist ein Monoid, in dem jedes Element ein Inverses besitzt.\n\nFormal ist\n$$\n(G, *, \\hat{\\ }, e)\n$$\neine Gruppe, falls:\n\n1. **Assoziativität**:\n$$\n(x*y)*z = x*(y*z)\n$$\n\n2. **neutrales Element**:\n$$\ne*x = x*e = x\n$$\n\n3. **Inverse**:\n$$\nx * \\hat{x} = \\hat{x} * x = e.\n$$\n\nKommutativität wird **nicht** gefordert. Eine Gruppe kann also nicht-kommutativ sein."
+  },
+  {
+    "front": "[Gruppen] Was ist der Unterschied zwischen Linksinversen, Rechtsinversen und Inversen?",
+    "back": "Ein Element $b$ heißt **Linksinverses** von $a$, falls\n$$\nb*a = e.\n$$\n\nEs heißt **Rechtsinverses** von $a$, falls\n$$\na*b = e.\n$$\n\nEs heißt **Inverses**, falls beides gilt:\n$$\na*b = b*a = e.\n$$\n\nIn Gruppen besitzt jedes Element ein Inverses. In allgemeineren Monoiden können einseitige Inverse existieren, ohne dass zweiseitige Inverse existieren."
+  },
+  {
+    "front": "[Gruppen] Warum sind Linksinverses und Rechtsinverses gleich, falls beide existieren?",
+    "back": "Sei $b$ ein Linksinverses von $a$:\n$$\nb*a = e.\n$$\n\nSei $c$ ein Rechtsinverses von $a$:\n$$\na*c = e.\n$$\n\nDann:\n$$\nb = b*e = b*(a*c) = (b*a)*c = e*c = c.\n$$\n\nDie entscheidende Eigenschaft ist **Assoziativität**. Ohne sie dürfte man nicht umklammern."
+  },
+  {
+    "front": "[Gruppen] Was zeigt das Monoid aller Funktionen $\\mathbb{N}\\to\\mathbb{N}$ über einseitige Inverse?",
+    "back": "Betrachte das Monoid\n$$\n(\\mathbb{N}^{\\mathbb{N}}, \\circ, \\operatorname{id}_{\\mathbb{N}})\n$$\naller Funktionen $\\mathbb{N}\\to\\mathbb{N}$ mit Komposition.\n\nDie Funktion\n$$\nf(n)=n+1\n$$\nhat ein **Linksinverses**:\n$$\ng(n)=n-1 \\quad \\text{für } n\\ge 1\n$$\nmit passender Definition auf $0$, sodass\n$$\ng\\circ f = \\operatorname{id}.\n$$\n\nAber $f$ hat kein Rechtsinverses, denn kein Wert wird von $f$ auf $0$ abgebildet. Also kann kein $h$ existieren mit\n$$\nf\\circ h = \\operatorname{id}.\n$$"
+  },
+  {
+    "front": "[Gruppen] Welche Standardbeispiele für Gruppen sollte man kennen?",
+    "back": "Wichtige Beispiele:\n\n- **Additive Restklassengruppe**\n$$\n(\\mathbb{Z}_m, +_m, -_m, 0)\n$$\nfür jedes $m$.\n\n- **Ganze Zahlen mit Addition**\n$$\n(\\mathbb{Z}, +, -, 0).\n$$\n\n- **Rationale Zahlen ohne $0$ mit Multiplikation**\n$$\n(\\mathbb{Q}\\setminus\\{0\\}, \\cdot, x\\mapsto x^{-1}, 1).\n$$\n\n- **Multiplikative Einheitengruppe modulo $m$**\n$$\n\\mathbb{Z}_m^* = \\{x\\in \\mathbb{Z}_m : \\gcd(x,m)=1\\}.\n$$"
+  },
+  {
+    "front": "[Gruppen] Warum ist $(\\mathbb{Z}_m, \\cdot_m)$ im Allgemeinen keine Gruppe?",
+    "back": "Das Problem sind fehlende multiplikative Inverse.\n\nBeispiel in $\\mathbb{Z}_6$:\n$$\n2\\cdot_6 1=2,\\quad\n2\\cdot_6 2=4,\\quad\n2\\cdot_6 3=0,\\quad\n2\\cdot_6 4=2,\\quad\n2\\cdot_6 5=4.\n$$\n\nNie kommt $1$ heraus. Also hat $2$ kein multiplikatives Inverses modulo $6$.\n\nAllgemein ist $x$ modulo $m$ genau dann multiplikativ invertierbar, wenn\n$$\n\\gcd(x,m)=1.\n$$"
+  },
+  {
+    "front": "[Gruppen] Was ist $\\mathbb{Z}_m^*$ und warum ist es eine Gruppe?",
+    "back": "Die **multiplikative Gruppe modulo $m$** ist\n$$\n\\mathbb{Z}_m^* = \\{x\\in \\mathbb{Z}_m : \\gcd(x,m)=1\\}\n$$\nmit Multiplikation modulo $m$.\n\nSie ist eine Gruppe, weil:\n\n- Produkt teilerfremder Zahlen zu $m$ wieder teilerfremd zu $m$ ist.\n- $1$ ist neutrales Element.\n- Für jedes $x$ mit $\\gcd(x,m)=1$ existiert ein modulares Inverses $x^{-1}$ mit\n$$\nx x^{-1} \\equiv 1 \\pmod m.\n$$\n\nBeispiel:\n$$\n\\mathbb{Z}_6^*=\\{1,5\\},\n$$\ndenn nur $1$ und $5$ sind teilerfremd zu $6$."
+  },
+  {
+    "front": "[Gruppen] Warum ist $\\mathbb{Z}_p\\setminus\\{0\\}$ mit Multiplikation modulo $p$ eine Gruppe, wenn $p$ prim ist?",
+    "back": "Wenn $p$ prim ist, dann gilt für jedes\n$$\nx\\in\\{1,\\dots,p-1\\}\n$$\nautomatisch\n$$\n\\gcd(x,p)=1.\n$$\n\nAlso besitzt jedes solche $x$ ein modulares Inverses modulo $p$.\n\nDamit ist\n$$\n\\mathbb{Z}_p^* = \\mathbb{Z}_p\\setminus\\{0\\}\n$$\neine Gruppe bezüglich Multiplikation modulo $p$.\n\nDie $0$ muss ausgeschlossen werden, weil\n$$\n0\\cdot y \\equiv 0 \\pmod p\n$$\nnie $1$ ergibt."
+  },
+  {
+    "front": "[Gruppen] Wie bildet man das direkte Produkt zweier Gruppen?",
+    "back": "Für Gruppen\n$$\n(G_1,*_1) \\quad \\text{und} \\quad (G_2,*_2)\n$$\nist das **direkte Produkt**\n$$\nG_1\\times G_2\n$$\ndie Gruppe auf der Menge aller Paare $(a_1,a_2)$ mit komponentenweiser Operation:\n$$\n(a_1,a_2)*(b_1,b_2)\n=\n(a_1 *_1 b_1,\\; a_2 *_2 b_2).\n$$\n\nDas neutrale Element ist\n$$\n(e_1,e_2),\n$$\nund das Inverse ist\n$$\n(a_1,a_2)^{-1}=(a_1^{-1},a_2^{-1}).\n$$"
+  },
+  {
+    "front": "[Gruppen] Warum ist $\\mathbb{Z}_2\\times \\mathbb{Z}_2$ nicht dasselbe wie $\\mathbb{Z}_4$?",
+    "back": "Beide Gruppen haben $4$ Elemente, aber ihre Struktur ist verschieden.\n\nIn\n$$\n\\mathbb{Z}_2\\times \\mathbb{Z}_2\n$$\nist jedes Element selbstinvers:\n$$\nx+x=(0,0).\n$$\n\nIn\n$$\n\\mathbb{Z}_4\n$$\ngilt das nicht. Zum Beispiel:\n$$\n1+1=2 \\neq 0.\n$$\n\nAlso kann keine Umbenennung der Elemente die Operationen identisch machen. Die Gruppen sind **nicht isomorph**."
+  },
+  {
+    "front": "[Gruppen] Was ist die symmetrische Gruppe $S_n$?",
+    "back": "Die **symmetrische Gruppe** $S_n$ besteht aus allen Bijektionen\n$$\nf:\\mathbb{Z}_n\\to \\mathbb{Z}_n.\n$$\n\nDiese Bijektionen heißen **Permutationen**. Die Gruppenoperation ist Funktionskomposition:\n$$\nf\\circ g.\n$$\n\nDas neutrale Element ist die Identität\n$$\n\\operatorname{id}_{\\mathbb{Z}_n}.\n$$\n\nDas Inverse einer Permutation ist die inverse Funktion.\n\nFür $n=3$ hat $S_3$ genau\n$$\n3! = 6\n$$\nElemente."
+  },
+  {
+    "front": "[Gruppen] Warum ist $S_3$ ein erstes Beispiel für eine nicht-kommutative Gruppe?",
+    "back": "In $S_3$ ist die Operation Komposition von Permutationen. Diese ist im Allgemeinen nicht kommutativ.\n\nBeispiel: Vertausche zuerst $0$ und $1$, danach $1$ und $2$. Das ergibt eine andere Permutation als zuerst $1$ und $2$ zu vertauschen und danach $0$ und $1$.\n\nAlso gibt es $\\sigma,\\tau\\in S_3$ mit\n$$\n\\sigma\\circ\\tau \\neq \\tau\\circ\\sigma.\n$$\n\nTrotzdem ist $S_3$ eine Gruppe, weil Komposition assoziativ ist, die Identität neutral ist und jede Bijektion eine inverse Bijektion besitzt."
+  },
+  {
+    "front": "[Gruppen] Was ist ein Gruppenhomomorphismus?",
+    "back": "Ein **Gruppenhomomorphismus** zwischen\n$$\n(G_1,*_1)\n\\quad\\text{und}\\quad\n(G_2,*_2)\n$$\nist eine Abbildung\n$$\n\\varphi:G_1\\to G_2\n$$\nmit\n$$\n\\varphi(a *_1 b)=\\varphi(a)*_2\\varphi(b)\n$$\nfür alle $a,b\\in G_1$.\n\nEr erhält also die Gruppenstruktur: Erst in $G_1$ verknüpfen und dann abbilden ist dasselbe wie erst abbilden und dann in $G_2$ verknüpfen."
+  },
+  {
+    "front": "[Gruppen] Was ist ein Gruppenisomorphismus und was bedeutet „bis auf Umbenennung“?",
+    "back": "Ein **Gruppenisomorphismus** ist ein bijektiver Gruppenhomomorphismus.\n\nWenn es einen Isomorphismus\n$$\n\\varphi:G_1\\to G_2\n$$\ngibt, schreibt man\n$$\nG_1\\cong G_2.\n$$\n\nDann haben $G_1$ und $G_2$ dieselbe Gruppenstruktur; die Elemente heißen nur anders.\n\n„Bis auf Umbenennung“ bedeutet genau: Die Gruppen sind isomorph."
+  },
+  {
+    "front": "[Gruppen] Warum gilt $\\mathbb{Z}_6 \\cong \\mathbb{Z}_3\\times \\mathbb{Z}_2$?",
+    "back": "Definiere\n$$\n\\varphi:\\mathbb{Z}_6\\to \\mathbb{Z}_3\\times \\mathbb{Z}_2,\n\\qquad\n\\varphi(x)=(x\\bmod 3,\\; x\\bmod 2).\n$$\n\nDiese Abbildung ist bijektiv, weil die Reste modulo $3$ und modulo $2$ zusammen einen eindeutigen Rest modulo $6$ bestimmen.\n\nAußerdem erhält sie Addition:\n$$\n\\varphi(x+y)=\\varphi(x)+\\varphi(y)\n$$\nkomponentenweise.\n\nDamit ist $\\varphi$ ein Isomorphismus:\n$$\n\\mathbb{Z}_6 \\cong \\mathbb{Z}_3\\times \\mathbb{Z}_2.\n$$\n\nDas ist ein Spezialfall des chinesischen Restsatzes."
+  },
+  {
+    "front": "[Gruppen] Was bedeutet es, dass eine Gruppe zyklisch ist?",
+    "back": "Eine Gruppe $G$ heißt **zyklisch**, wenn es ein Element $g\\in G$ gibt, sodass jedes Element von $G$ als Potenz beziehungsweise Vielfaches von $g$ entsteht:\n$$\nG=\\langle g\\rangle.\n$$\n\nBei additiver Schreibweise:\n$$\n\\langle g\\rangle=\\{kg : k\\in\\mathbb{Z}\\}.\n$$\n\nBei multiplikativer Schreibweise:\n$$\n\\langle g\\rangle=\\{g^k : k\\in\\mathbb{Z}\\}.\n$$\n\nDas Element $g$ heißt **Erzeuger** oder **Generator**.\n\nBeispiel:\n$$\n\\mathbb{Z}_6\n$$\nist zyklisch, denn $1$ erzeugt alle Elemente durch wiederholte Addition."
+  },
+  {
+    "front": "[Gruppen] Welche Elemente erzeugen $\\mathbb{Z}_m$ als additive Gruppe?",
+    "back": "In der additiven Gruppe\n$$\n\\mathbb{Z}_m\n$$\nerzeugt ein Element $a$ genau dann die ganze Gruppe, wenn\n$$\n\\gcd(a,m)=1.\n$$\n\nBeispiel in $\\mathbb{Z}_6$:\n\n- $1$ erzeugt alle Elemente:\n$$\n0,1,2,3,4,5.\n$$\n\n- $2$ erzeugt nur\n$$\n0,2,4.\n$$\n\nDenn\n$$\n\\gcd(2,6)=2\\neq 1.\n$$"
+  },
+  {
+    "front": "[Gruppen] Was ist die Ordnung eines Gruppenelements?",
+    "back": "Die **Ordnung** eines Elements $g\\in G$ ist die kleinste positive Zahl $k$ mit\n$$\ng^k=e\n$$\nbei multiplikativer Schreibweise.\n\nBei additiver Schreibweise ist es die kleinste positive Zahl $k$ mit\n$$\nkg=0.\n$$\n\nBeispiel in $\\mathbb{Z}_6$:\n$$\n\\operatorname{ord}(2)=3,\n$$\ndenn\n$$\n2+2+2=6\\equiv 0 \\pmod 6,\n$$\naber $2\\neq 0$ und $2+2=4\\neq 0$."
+  },
+  {
+    "front": "[Gruppen] Was ist eine Untergruppe?",
+    "back": "Eine Teilmenge $H\\subseteq G$ heißt **Untergruppe**, falls $H$ mit derselben Operation selbst eine Gruppe ist.\n\nMan schreibt:\n$$\nH\\le G.\n$$\n\nDazu muss insbesondere gelten:\n\n- $e\\in H$,\n- für $a,b\\in H$ ist auch $a*b\\in H$,\n- für $a\\in H$ ist auch $a^{-1}\\in H$.\n\nEin praktisches Kriterium:\n$$\nH\\le G\n\\quad\\Longleftrightarrow\\quad\nH\\neq\\emptyset \\text{ und } ab^{-1}\\in H \\text{ für alle } a,b\\in H.\n$$"
+  },
+  {
+    "front": "[Gruppen] Warum ist $\\langle g\\rangle$ immer eine Untergruppe von $G$?",
+    "back": "Für ein Element $g\\in G$ definiert man\n$$\n\\langle g\\rangle=\\{g^k:k\\in\\mathbb{Z}\\}.\n$$\n\nDiese Menge ist eine Untergruppe, weil:\n\n- Das neutrale Element ist enthalten:\n$$\ne=g^0.\n$$\n\n- Produkte bleiben enthalten:\n$$\ng^a g^b = g^{a+b}.\n$$\n\n- Inverse bleiben enthalten:\n$$\n(g^a)^{-1}=g^{-a}.\n$$\n\nAlso ist $\\langle g\\rangle$ die von $g$ erzeugte **zyklische Untergruppe**."
+  },
+  {
+    "front": "[Gruppen] Was sagt der Satz von Lagrange?",
+    "back": "Sei $G$ eine endliche Gruppe und $H\\le G$ eine Untergruppe. Dann teilt die Größe von $H$ die Größe von $G$:\n$$\n|H| \\mid |G|.\n$$\n\nÄquivalent:\n$$\n|G| = [G:H]\\cdot |H|,\n$$\nwobei $[G:H]$ die Anzahl der Nebenklassen von $H$ in $G$ ist.\n\nWichtige Konsequenz: Für jedes $g\\in G$ teilt die Ordnung von $g$ die Gruppenordnung:\n$$\n\\operatorname{ord}(g)\\mid |G|.\n$$"
+  },
+  {
+    "front": "[Gruppen] Warum folgt aus Lagrange, dass Gruppen primer Ordnung zyklisch sind?",
+    "back": "Sei $G$ eine Gruppe mit\n$$\n|G|=p\n$$\nfür eine Primzahl $p$.\n\nNimm ein Element $g\\neq e$. Dann hat $\\langle g\\rangle$ mindestens zwei Elemente:\n$$\ne \\quad \\text{und} \\quad g.\n$$\n\nNach Lagrange gilt:\n$$\n|\\langle g\\rangle| \\mid p.\n$$\n\nDa $p$ prim ist, sind die einzigen Teiler $1$ und $p$. Weil $|\\langle g\\rangle|\\neq 1$, muss gelten:\n$$\n|\\langle g\\rangle|=p.\n$$\n\nAlso:\n$$\n\\langle g\\rangle=G.\n$$\n\nDamit ist $G$ zyklisch und isomorph zu $\\mathbb{Z}_p$."
+  },
+  {
+    "front": "[Gruppen] Wie folgt der kleine Satz von Fermat aus Gruppentheorie?",
+    "back": "Für eine Primzahl $p$ und $a\\not\\equiv 0\\pmod p$ liegt $a$ in der Gruppe\n$$\n\\mathbb{Z}_p^*.\n$$\n\nDiese Gruppe hat\n$$\n|\\mathbb{Z}_p^*|=p-1\n$$\nElemente.\n\nNach Lagrange gilt für jedes Gruppenelement:\n$$\na^{p-1}\\equiv 1\\pmod p.\n$$\n\nDas ist der **kleine Satz von Fermat**.\n\nÄquivalent gilt für alle ganzen Zahlen $a$:\n$$\na^p\\equiv a\\pmod p.\n$$"
+  },
+  {
+    "front": "[Gruppen] Was ist die Grundidee von RSA?",
+    "back": "RSA arbeitet modulo\n$$\nN=pq\n$$\nfür zwei große Primzahlen $p,q$.\n\nMan berechnet\n$$\n\\varphi(N)=(p-1)(q-1)\n$$\nund wählt einen öffentlichen Exponenten $e$ mit\n$$\n\\gcd(e,\\varphi(N))=1.\n$$\n\nDann bestimmt man $d$ als modulares Inverses von $e$ modulo $\\varphi(N)$:\n$$\ned\\equiv 1\\pmod{\\varphi(N)}.\n$$\n\nVerschlüsselung:\n$$\nc\\equiv m^e\\pmod N.\n$$\n\nEntschlüsselung:\n$$\nm\\equiv c^d\\pmod N.\n$$\n\nÖffentlich ist $(N,e)$, geheim ist $d$ beziehungsweise die Faktorisierung $N=pq$."
+  },
+  {
+    "front": "[Gruppen] Warum funktioniert die RSA-Entschlüsselung?",
+    "back": "Da\n$$\ned\\equiv 1\\pmod{\\varphi(N)},\n$$\ngibt es ein $k$ mit\n$$\ned=1+k\\varphi(N).\n$$\n\nFür Nachrichten $m\\in \\mathbb{Z}_N^*$ liefert Eulers Satz:\n$$\nm^{\\varphi(N)}\\equiv 1\\pmod N.\n$$\n\nAlso:\n$$\nc^d \\equiv (m^e)^d = m^{ed}\n= m^{1+k\\varphi(N)}\n= m(m^{\\varphi(N)})^k\n\\equiv m\\pmod N.\n$$\n\nFür allgemeine $m\\in\\mathbb{Z}_N$ zeigt man die Korrektheit über die Kongruenzen modulo $p$ und modulo $q$ und kombiniert sie mit dem chinesischen Restsatz."
+  },
+  {
+    "front": "[Gruppen] Warum muss bei RSA $\\gcd(e,\\varphi(N))=1$ gelten?",
+    "back": "Man braucht $d$ mit\n$$\ned\\equiv 1\\pmod{\\varphi(N)}.\n$$\n\nEin solches modulares Inverses existiert genau dann, wenn\n$$\n\\gcd(e,\\varphi(N))=1.\n$$\n\nOhne diese Bedingung kann man keinen Entschlüsselungsexponenten $d$ definieren, der die Potenzierung mit $e$ rückgängig macht.\n\nDie Bedingung ist also nicht nur technisch, sondern notwendig für die algebraische Korrektheit von RSA."
+  },
+  {
+    "front": "[Fehlerkorrigierende Codes] Warum braucht Fehlerkorrektur Redundanz, und warum ist sie keine Verschlüsselung?",
+    "back": "Bei **fehlerkorrigierenden Codes** wird eine Nachricht $a \\in A^k$ durch eine Kodierungsfunktion\n$$E: A^k \\to A^n, \\qquad n > k$$\nin ein längeres Codewort $E(a)$ umgewandelt.\n\nDer Zweck ist **Redundanz**: Auch wenn einige Symbole auf dem Kanal gestört werden, soll der Empfänger $a$ rekonstruieren können.\n\nDas ist **keine Verschlüsselung**:\n- Fehlerkorrektur soll Information robust übertragen.\n- Verschlüsselung soll Information vor Unbefugten verbergen.\n- Ein Abhörer darf bei Fehlerkorrektur prinzipiell alles lesen können; das Ziel ist nur Korrektheit trotz Störungen."
+  },
+  {
+    "front": "[Fehlerkorrigierende Codes] Was ist der Unterschied zwischen einer Auslöschung und einem Fehler in einem gestörten Kanal?",
+    "back": "Eine **Auslöschung** liegt vor, wenn der Empfänger weiß, dass an einer Stelle ein Symbol verloren oder unlesbar ist.\n\nEin **Fehler** liegt vor, wenn ein Symbol verändert wurde, ohne dass der Empfänger weiß, wo.\n\nFehler sind schwieriger zu korrigieren, weil die Positionen der Störungen unbekannt sind. In der Vorlesung wird deshalb der schwierigere Fall betrachtet: Es kommen Symbole an, aber einige davon können unbemerkt falsch sein."
+  },
+  {
+    "front": "[Fehlerkorrigierende Codes] Was ist ein Codewort und was ist ein Code?",
+    "back": "Zu einer Kodierungsfunktion\n$$E: A^k \\to A^n$$\nheißt jedes Bild $E(a)$ ein **Codewort**.\n\nDer **Code** ist die Menge aller Codewörter:\n$$C = \\{E(a) \\mid a \\in A^k\\} \\subseteq A^n.$$\n\nDer Empfänger erhält typischerweise kein exaktes Codewort, sondern ein gestörtes Wort $y \\in A^n$. Dekodieren bedeutet dann: Finde das Codewort, das am plausibelsten zu $y$ gehört."
+  },
+  {
+    "front": "[Fehlerkorrigierende Codes] Wie misst die Hammingdistanz den Abstand zwischen zwei Wörtern?",
+    "back": "Die **Hammingdistanz** $d_H(x,y)$ zweier Wörter $x,y \\in A^n$ ist die Anzahl der Positionen, an denen sie sich unterscheiden:\n$$d_H(x,y)=|\\{i \\mid x_i \\neq y_i\\}|.$$\n\nBeispiel:\n$$x=00111,\\qquad y=11011.$$\nSie unterscheiden sich an den ersten beiden Positionen, also\n$$d_H(x,y)=2.$$\n\nFür Fehlerkorrektur ist diese Distanz natürlich: Ein Fehler an einer Stelle verändert genau eine Koordinate."
+  },
+  {
+    "front": "[Fehlerkorrigierende Codes] Was ist die Minimaldistanz eines Codes, und warum ist sie zentral für Fehlerkorrektur?",
+    "back": "Die **Minimaldistanz** eines Codes $C \\subseteq A^n$ ist\n$$d_{\\min}=\\min_{\\substack{c,c'\\in C\\\\ c\\neq c'}} d_H(c,c').$$\n\nSie misst, wie nah zwei verschiedene gültige Codewörter einander kommen können.\n\nJe größer $d_{\\min}$ ist, desto mehr Fehler sind nötig, um ein Codewort in die Nähe eines anderen Codeworts zu bringen. Deshalb bestimmt $d_{\\min}$ direkt, wie viele Fehler garantiert korrigierbar sind."
+  },
+  {
+    "front": "[Fehlerkorrigierende Codes] Wie viele Fehler kann ein Code mit Minimaldistanz $d_{\\min}$ garantiert korrigieren?",
+    "back": "Ein Code mit Minimaldistanz $d_{\\min}$ kann garantiert\n$$t=\\left\\lfloor \\frac{d_{\\min}-1}{2}\\right\\rfloor$$\nFehler korrigieren.\n\nBegründung: Um jedes Codewort legt man eine Hamming-Kugel vom Radius $t$. Solange\n$$2t < d_{\\min}$$\ngilt, überlappen sich diese Kugeln nicht. Ein empfangenes Wort mit höchstens $t$ Fehlern liegt dann eindeutig näher bei seinem ursprünglichen Codewort als bei jedem anderen."
+  },
+  {
+    "front": "[Fehlerkorrigierende Codes] Warum reicht doppeltes Senden nicht aus, um einen einzelnen Bitfehler sicher zu korrigieren?",
+    "back": "Beim doppelten Senden wird aus einem Bit $a$ das Paar $(a,a)$.\n\nWenn $0$ gesendet wird, kommt bei einem Fehler z. B. $(1,0)$ an. Der Empfänger weiß dann nicht:\n- War ursprünglich $(0,0)$ und das erste Bit wurde verfälscht?\n- Oder war ursprünglich $(1,1)$ und das zweite Bit wurde verfälscht?\n\nDoppeltes Senden erlaubt also **Fehlererkennung**, aber keine eindeutige **Fehlerkorrektur** eines einzelnen Fehlers."
+  },
+  {
+    "front": "[Fehlerkorrigierende Codes] Wie funktioniert der Wiederholungscode, und wie viele Fehler korrigiert er im Worst Case?",
+    "back": "Beim **$m$-fachen Wiederholungscode** wird jedes Symbol $m$-mal gesendet:\n$$a_0a_1\\ldots a_{k-1}\n\\mapsto\n\\underbrace{a_0\\ldots a_0}_{m\\text{-mal}}\n\\underbrace{a_1\\ldots a_1}_{m\\text{-mal}}\n\\cdots\n\\underbrace{a_{k-1}\\ldots a_{k-1}}_{m\\text{-mal}}.$$\n\nDekodiert wird per **Mehrheitsentscheid** in jedem Block.\n\nIm Worst Case korrigiert er\n$$\\left\\lfloor \\frac{m-1}{2}\\right\\rfloor$$\nFehler pro Blockstruktur garantiert. Für $m=3$ also einen Fehler, für $m=5$ zwei Fehler.\n\nDer Nachteil: Die Länge wächst multiplikativ um den Faktor $m$."
+  },
+  {
+    "front": "[Fehlerkorrigierende Codes] Warum korrigiert ein dreifacher Wiederholungscode nur einen Fehler garantiert, obwohl mehrere Fehler günstig liegen können?",
+    "back": "Beim dreifachen Wiederholungscode stehen pro ursprünglichem Symbol drei Kopien.\n\nWenn zwei Fehler in verschiedenen Blöcken liegen, kann man eventuell beide korrigieren. Im **Worst Case** können aber zwei Fehler im selben Dreierblock liegen:\n$$000 \\mapsto 110.$$\nDann entscheidet die Mehrheit falsch und dekodiert zu $1$ statt $0$.\n\nFehlerkorrektur garantiert immer gegen die ungünstigste Lage der Fehler. Deshalb garantiert der dreifache Wiederholungscode nur einen Fehler."
+  },
+  {
+    "front": "[Fehlerkorrigierende Codes] Warum ist der angegebene $(5,2)$-Code besser als dreifache Wiederholung?",
+    "back": "Der Code über dem Alphabet $\\{0,1\\}$ hat die Codewörter\n$$00000,\\quad 11100,\\quad 00111,\\quad 11011.$$\n\nEr kodiert $2$ Bits, also $4$ mögliche Nachrichten, in $5$ Bits.\n\nDie Minimaldistanz ist $3$, denn je zwei verschiedene Codewörter unterscheiden sich in mindestens drei Positionen. Daher kann der Code\n$$\\left\\lfloor \\frac{3-1}{2}\\right\\rfloor = 1$$\nFehler korrigieren.\n\nDreifache Wiederholung von $2$ Bits bräuchte $6$ Bits, um ebenfalls einen Fehler zu korrigieren. Dieser Code spart also ein Bit."
+  },
+  {
+    "front": "[Fehlerkorrigierende Codes] Warum benutzt man für Reed-Solomon-Codes ein größeres Alphabet als nur $\\{0,1\\}$?",
+    "back": "Reed-Solomon-Codes brauchen ein Alphabet, das ein **endlicher Körper** $F$ ist, und zwar mit mindestens $n$ verschiedenen Auswertungsstellen:\n$$|F| \\ge n.$$\n\nÜber $\\{0,1\\}$ gibt es nur zwei Körperelemente, also zu wenige verschiedene Stellen für lange Codes.\n\nPraktisch beliebt ist z. B.\n$$\\mathrm{GF}(2^8),$$\nein Körper mit $256$ Elementen. Seine Elemente können als Bytes interpretiert werden; Addition entspricht dabei bitweisem XOR. Das ist für Computer sehr effizient."
+  },
+  {
+    "front": "[Fehlerkorrigierende Codes] Wie kodiert ein Reed-Solomon-Code eine Nachricht?",
+    "back": "Sei $F$ ein endlicher Körper und seien\n$$\\alpha_0,\\ldots,\\alpha_{n-1}\\in F$$\npaarweise verschieden.\n\nEine Nachricht\n$$a=(a_0,\\ldots,a_{k-1})\\in F^k$$\nwird als Koeffizientenvektor eines Polynoms interpretiert:\n$$A(x)=a_0+a_1x+\\cdots+a_{k-1}x^{k-1}.$$\n\nDas Codewort ist der Auswertungsvektor\n$$E(a)=\\bigl(A(\\alpha_0),A(\\alpha_1),\\ldots,A(\\alpha_{n-1})\\bigr)\\in F^n.$$\n\nDie Redundanz entsteht dadurch, dass ein Polynom vom Grad höchstens $k-1$ an $n>k$ Stellen ausgewertet wird."
+  },
+  {
+    "front": "[Fehlerkorrigierende Codes] Welche Rolle spielt Polynominterpolation bei Reed-Solomon-Codes?",
+    "back": "Ein Polynom vom Grad höchstens $d$ ist durch seine Werte an $d+1$ paarweise verschiedenen Stellen eindeutig bestimmt.\n\nFür Reed-Solomon gilt: Das Nachrichtenpolynom hat Grad höchstens $k-1$. Daher reichen $k$ korrekte Auswertungen aus, um es eindeutig zu rekonstruieren.\n\nBei Fehlern braucht man eine robuste Variante: Man sucht ein Polynom vom Grad höchstens $k-1$, das mit möglichst vielen empfangenen Auswertungen übereinstimmt."
+  },
+  {
+    "front": "[Fehlerkorrigierende Codes] Warum haben Reed-Solomon-Codes Minimaldistanz $n-k+1$?",
+    "back": "Seien $A(x)$ und $B(x)$ zwei verschiedene Nachrichtenpolynome vom Grad höchstens $k-1$.\n\nWenn ihre Codewörter an $k$ Stellen übereinstimmen, dann gilt\n$$A(\\alpha_i)=B(\\alpha_i)$$\nfür $k$ verschiedene $\\alpha_i$.\n\nDann hat\n$$A(x)-B(x)$$\nmindestens $k$ Nullstellen, aber Grad höchstens $k-1$. Das ist nur möglich, wenn\n$$A(x)-B(x)=0,$$\nalso $A=B$, Widerspruch.\n\nAlso stimmen zwei verschiedene Codewörter in höchstens $k-1$ Positionen überein. Sie unterscheiden sich daher in mindestens\n$$n-(k-1)=n-k+1$$\nPositionen."
+  },
+  {
+    "front": "[Fehlerkorrigierende Codes] Wie viele Fehler korrigiert ein Reed-Solomon-Code der Länge $n$ und Dimension $k$?",
+    "back": "Ein Reed-Solomon-Code hat Minimaldistanz\n$$d_{\\min}=n-k+1.$$\n\nDaher korrigiert er garantiert\n$$t=\\left\\lfloor \\frac{d_{\\min}-1}{2}\\right\\rfloor\n=\n\\left\\lfloor \\frac{n-k}{2}\\right\\rfloor$$\nFehler.\n\nDie Redundanz $n-k$ skaliert additiv: Fügt man mehr Auswertungen hinzu, wächst die korrigierbare Fehlerzahl etwa um die Hälfte der zusätzlichen Symbole."
+  },
+  {
+    "front": "[Fehlerkorrigierende Codes] Warum sind Reed-Solomon-Codes effizienter als Wiederholungscodes?",
+    "back": "Beim Wiederholungscode muss man für $t$ garantierte Fehlerkorrekturen ungefähr $2t+1$ Kopien senden. Die Länge wächst also **multiplikativ**.\n\nBeim Reed-Solomon-Code genügt ungefähr\n$$n-k \\approx 2t$$\nzusätzliche Redundanz. Die Länge wächst also nur **additiv**.\n\nDas ist der entscheidende Vorteil: Statt die ganze Nachricht mehrfach zu senden, fügt man kontrolliert zusätzliche Polynomauswertungen hinzu."
+  },
+  {
+    "front": "[Fehlerkorrigierende Codes] Wie dekodiert man Reed-Solomon-Codes konzeptionell bei Fehlern?",
+    "back": "Man erhält einen Vektor\n$$y=(y_0,\\ldots,y_{n-1}),$$\nder idealerweise\n$$y_i=A(\\alpha_i)$$\nwäre, aber einige Einträge können fehlerhaft sein.\n\nDekodieren bedeutet: Finde ein Polynom $A(x)$ vom Grad höchstens $k-1$, das mit möglichst vielen Paaren\n$$(\\alpha_i,y_i)$$\nübereinstimmt.\n\nFalls höchstens\n$$\\left\\lfloor \\frac{n-k}{2}\\right\\rfloor$$\nFehler aufgetreten sind, ist dieses Polynom eindeutig das ursprüngliche Nachrichtenpolynom."
+  },
+  {
+    "front": "[Fehlerkorrigierende Codes] Warum ist es wichtig, dass die Auswertungsstellen $\\alpha_i$ paarweise verschieden sind?",
+    "back": "Polynominterpolation funktioniert nur mit **verschiedenen** Stützstellen.\n\nWenn zwei Auswertungsstellen gleich wären, etwa $\\alpha_i=\\alpha_j$, dann liefern die Werte $A(\\alpha_i)$ und $A(\\alpha_j)$ keine unabhängige Information über das Polynom.\n\nFür Reed-Solomon-Codes braucht man $n$ paarweise verschiedene Stellen, damit:\n- $k$ korrekte Werte das Polynom eindeutig bestimmen,\n- verschiedene Polynome in höchstens $k-1$ Positionen übereinstimmen,\n- die Minimaldistanz $n-k+1$ gilt."
+  },
+  {
+    "front": "[Fehlerkorrigierende Codes] Wo werden Reed-Solomon-Codes praktisch eingesetzt?",
+    "back": "Reed-Solomon-Codes werden eingesetzt, wenn Daten trotz lokaler oder zufälliger Störungen zuverlässig rekonstruierbar sein sollen.\n\nBeispiele aus der Vorlesung:\n- optische Medien wie CDs, DVDs, Blu-rays,\n- Kommunikation mit Raumsonden, z. B. Marssonden,\n- DSL,\n- ECC-RAM.\n\nBei CDs/DVDs werden Daten zusätzlich verteilt abgelegt, damit ein Kratzer nicht viele Symbole desselben Codeblocks zerstört."
+  },
+  {
+    "front": "[Fehlerkorrigierende Codes] Was ist das Ziel von Secret Sharing?",
+    "back": "Beim **Secret Sharing** soll ein Geheimnis\n$$s \\in F$$\nauf $n$ Personen verteilt werden, sodass ein Schwellenwert $t$ gilt:\n\n1. Jede Gruppe von höchstens $t-1$ Personen erhält **keine Information** über $s$.\n2. Jede Gruppe von mindestens $t$ Personen kann $s$ rekonstruieren.\n\nDas Ziel ist also nicht Fehlerkorrektur, sondern kontrollierter Zugriff: Erst genügend viele Teilnehmende zusammen können das Geheimnis berechnen."
+  },
+  {
+    "front": "[Fehlerkorrigierende Codes] Wie funktioniert Secret Sharing im Spezialfall $t=n$ mit Summen?",
+    "back": "Für $t=n$ kann man Shares\n$$y_1,\\ldots,y_n \\in F$$\nso wählen, dass\n$$\\sum_{i=1}^n y_i = s.$$\n\nEine einfache Konstruktion:\n- Wähle $y_1,\\ldots,y_{n-1}$ unabhängig und gleichverteilt zufällig.\n- Setze\n$$y_n = s-\\sum_{i=1}^{n-1} y_i.$$\n\nErst alle $n$ Shares zusammen ergeben $s$. Jede Menge von nur $n-1$ Shares sieht weiterhin gleichverteilt zufällig aus und enthält keine Information über $s$."
+  },
+  {
+    "front": "[Fehlerkorrigierende Codes] Wie konstruiert Shamir Secret Sharing die Shares?",
+    "back": "Sei $F$ ein endlicher Körper mit\n$$|F|\\ge n+1.$$\nWähle paarweise verschiedene Stellen\n$$\\alpha_0=0,\\alpha_1,\\ldots,\\alpha_n \\in F.$$\n\nFür ein Geheimnis $s\\in F$ wähle zufällig ein Polynom\n$$A(x)\\in F[x]$$\nvom Grad höchstens $t-1$ unter der Bedingung\n$$A(0)=s.$$\n\nPerson $i$ erhält den Share\n$$A(\\alpha_i), \\qquad i=1,\\ldots,n.$$\n\nDas Geheimnis ist also der Wert des Polynoms an der Stelle $0$."
+  },
+  {
+    "front": "[Fehlerkorrigierende Codes] Warum können bei Shamir Secret Sharing beliebige $t$ Personen das Geheimnis rekonstruieren?",
+    "back": "Beliebige $t$ Personen kennen $t$ Werte\n$$A(\\alpha_{i_1}),\\ldots,A(\\alpha_{i_t})$$\nan paarweise verschiedenen Stellen.\n\nDa\n$$\\deg A \\le t-1,$$\nbestimmen diese $t$ Stützstellen das Polynom $A(x)$ eindeutig durch Interpolation.\n\nDanach berechnet man einfach\n$$s=A(0).$$\n\nDie Rekonstruktion ist also direkt eine Anwendung der eindeutigen Polynominterpolation."
+  },
+  {
+    "front": "[Fehlerkorrigierende Codes] Warum verraten bei Shamir Secret Sharing $t-1$ Shares keine Information über das Geheimnis?",
+    "back": "$t-1$ Personen kennen nur $t-1$ Auswertungen des Polynoms $A(x)$.\n\nFür jedes mögliche Geheimnis $s'\\in F$ kann man zusätzlich die Bedingung\n$$A(0)=s'$$\nsetzen. Zusammen mit den $t-1$ bekannten Shares hat man dann $t$ Stützstellen.\n\nDurch Interpolation gibt es ein Polynom vom Grad höchstens $t-1$, das alle diese Bedingungen erfüllt.\n\nAlso ist jedes mögliche $s'$ mit den beobachteten $t-1$ Shares vereinbar. Daher enthalten sie keine Information über das tatsächliche Geheimnis."
+  },
+  {
+    "front": "[Fehlerkorrigierende Codes] Welche gemeinsame algebraische Idee steckt hinter Reed-Solomon-Codes und Shamir Secret Sharing?",
+    "back": "Beide Verfahren nutzen dieselbe Grundidee:\n\nEin Polynom niedrigen Grades wird durch genügend viele Auswertungen eindeutig bestimmt, aber durch zu wenige Auswertungen nicht.\n\nBei **Reed-Solomon-Codes**:\n- Nachricht = Koeffizienten eines Polynoms,\n- Codewort = viele Auswertungen,\n- Redundanz erlaubt Fehlerkorrektur.\n\nBei **Shamir Secret Sharing**:\n- Geheimnis = Wert $A(0)$,\n- Shares = Auswertungen $A(\\alpha_i)$,\n- erst $t$ Shares bestimmen das Polynom und damit das Geheimnis."
+  },
+  {
+    "front": "[Kalküle & Resolution] Worin liegt der Unterschied zwischen syntaktischer Gleichheit und logischer Äquivalenz von Formeln?",
+    "back": "**Syntaktische Gleichheit** $F = G$ bedeutet: $F$ und $G$ sind als Wörter über dem Formelalphabet **Symbol für Symbol identisch**.\n\n**Logische Äquivalenz** $F \\equiv G$ bedeutet: Für jede passende Interpretation $A$ gilt\n$$A(F) = A(G).$$\n\nAlso: Aus $F = G$ folgt $F \\equiv G$, aber nicht umgekehrt. Zwei Formeln können verschieden aussehen und trotzdem unter jeder Interpretation gleich auswerten."
+  },
+  {
+    "front": "[Kalküle & Resolution] Wie verschiebt man eine Negation über Quantoren, und warum ist das semantisch plausibel?",
+    "back": "Es gelten die logischen Äquivalenzen\n$$\\neg \\exists x\\, F \\equiv \\forall x\\, \\neg F,$$\n$$\\neg \\forall x\\, F \\equiv \\exists x\\, \\neg F.$$\n\nSemantische Intuition:\n\n- „Es gibt kein $x$, sodass $F$ gilt“ heißt genau: „Für alle $x$ gilt $F$ nicht.“\n- „Nicht für alle $x$ gilt $F$“ heißt genau: „Es gibt ein $x$, für das $F$ nicht gilt.“\n\nDer Beweis läuft immer über eine beliebige passende Interpretation $A$ und die Definition der Quantorsemantik."
+  },
+  {
+    "front": "[Kalküle & Resolution] Was ist die Diagonalisierungsformel aus Theorem 6.12?",
+    "back": "Theorem 6.12 sagt, dass die folgende Formel allgemeingültig ist:\n$$\n\\neg \\exists x\\, \\forall y \\bigl(P(y,x) \\leftrightarrow \\neg P(y,y)\\bigr).\n$$\n\nÄquivalent dazu:\n$$\n\\forall x\\, \\exists y \\bigl(P(y,x) \\leftrightarrow P(y,y)\\bigr).\n$$\n\nIntuition: Für jedes $x$ kann man $y=x$ wählen. Dann steht\n$$\nP(x,x) \\leftrightarrow P(x,x),\n$$\nalso eine immer wahre Äquivalenz."
+  },
+  {
+    "front": "[Kalküle & Resolution] Warum ist Theorem 6.12 ein Diagonalisierungsargument?",
+    "back": "Die Formel\n$$\n\\neg \\exists x\\, \\forall y \\bigl(P(y,x) \\leftrightarrow \\neg P(y,y)\\bigr)\n$$\nverbietet ein Objekt $x$, das für jedes $y$ genau das Gegenteil von $P(y,y)$ tut.\n\nDas ist **Diagonalisierung**:\n\n- Man betrachtet die „Diagonale“ $P(y,y)$.\n- Dann versucht man, ein Objekt zu bauen, das auf dieser Diagonale überall das Gegenteil macht.\n- Setzt man $y=x$, müsste gelten:\n  $$\n  P(x,x) \\leftrightarrow \\neg P(x,x),\n  $$\n  was unmöglich ist."
+  },
+  {
+    "front": "[Kalküle & Resolution] Wie formalisiert Theorem 6.12 Russells Paradox?",
+    "back": "Wähle als Universum alle Mengen und interpretiere\n$$\nP(y,x) = 1 \\quad \\Longleftrightarrow \\quad y \\in x.\n$$\n\nDann liefert Theorem 6.12:\n$$\n\\neg \\exists M\\, \\forall N \\bigl(N \\in M \\leftrightarrow N \\notin N\\bigr).\n$$\n\nAlso: Es gibt keine Menge $M$, die genau alle Mengen enthält, die sich nicht selbst enthalten.\n\nDas ist die formale Version von **Russells Paradox**: Die „Menge aller Mengen, die sich nicht selbst enthalten“ kann keine Menge sein."
+  },
+  {
+    "front": "[Kalküle & Resolution] Wie zeigt Theorem 6.12, dass es nichtberechenbare Funktionen gibt?",
+    "back": "Betrachte eine Aufzählung aller Programme\n$$\n\\pi_0,\\pi_1,\\pi_2,\\dots\n$$\ndie eine natürliche Zahl als Eingabe nehmen und ein Bit ausgeben.\n\nSetze\n$$\nP(y,x)=1 \\quad \\Longleftrightarrow \\quad \\pi_x(y)=1.\n$$\n\nTheorem 6.12 impliziert:\n$$\n\\neg \\exists x\\, \\forall y \\bigl(\\pi_x(y)=1 \\leftrightarrow \\pi_y(y)\\neq 1\\bigr).\n$$\n\nAlso gibt es kein Programm, das die Diagonalfunktion\n$$\nd(y)=1-\\pi_y(y)\n$$\nberechnet. Damit existieren Funktionen $\\mathbb{N}\\to\\{0,1\\}$, die von keinem Programm berechnet werden."
+  },
+  {
+    "front": "[Kalküle & Resolution] Warum reicht die Abzählbarkeit von Programmen für das Diagonalisierungsargument?",
+    "back": "Jedes Programm hat eine **endliche Beschreibung**, z.B. als Quelltext oder Bitstring. Endliche Bitstrings sind abzählbar, also kann man alle Programme als\n$$\n\\pi_0,\\pi_1,\\pi_2,\\dots\n$$\naufzählen.\n\nDie Diagonalfunktion\n$$\nd(y)=1-\\pi_y(y)\n$$\nunterscheidet sich von jedem Programm $\\pi_x$ mindestens an der Stelle $y=x$:\n$$\nd(x)=1-\\pi_x(x).\n$$\n\nDamit kann kein Programm in der Liste diese Funktion berechnen."
+  },
+  {
+    "front": "[Kalküle & Resolution] Was ist ein formaler Kalkül?",
+    "back": "Ein **Kalkül** $K$ ist eine endliche Menge mechanischer **Ableitungsregeln**.\n\nEine Ableitungsregel hat die Form:\n$$\nM \\vdash_R F,\n$$\nwobei $M$ eine Menge von Formeln ist und $F$ eine neue Formel.\n\nWichtig: $\\vdash$ ist ein **syntaktisches Ableitungssymbol**, kein semantisches Folgerungssymbol. Eine Regel sagt nur: Aus diesen Formeln darf man nach festgelegtem Muster diese Formel hinschreiben.\n\nOb diese Ableitung logisch sinnvoll ist, wird durch **Korrektheit/Soundness** geprüft."
+  },
+  {
+    "front": "[Kalküle & Resolution] Was ist der Unterschied zwischen $\\vdash$ und $\\models$?",
+    "back": "$$M \\vdash_K F$$\nbedeutet: $F$ ist aus $M$ mit den Regeln des Kalküls $K$ **syntaktisch herleitbar**.\n\n$$M \\models F$$\nbedeutet: $F$ ist eine **logische Konsequenz** von $M$, also jede Interpretation, die alle Formeln in $M$ wahr macht, macht auch $F$ wahr.\n\nKurz:\n\n- $\\vdash$ = Beweisbarkeit im Kalkül.\n- $\\models$ = semantische Wahrheit/Folgerung.\n\nEin guter Kalkül soll diese beiden Begriffe möglichst verbinden."
+  },
+  {
+    "front": "[Kalküle & Resolution] Wann heißt ein Kalkül korrekt bzw. sound?",
+    "back": "Ein Kalkül $K$ heißt **korrekt** oder **sound**, wenn jede herleitbare Formel auch semantisch folgt:\n$$\nM \\vdash_K F \\quad \\Longrightarrow \\quad M \\models F.\n$$\n\nIntuition: Aus wahren Annahmen kann der Kalkül nichts Falsches ableiten.\n\nWenn jede einzelne Ableitungsregel korrekt ist, dann ist auch jede mehrschrittige Ableitung korrekt, weil logische Konsequenz transitiv ist."
+  },
+  {
+    "front": "[Kalküle & Resolution] Wann heißt ein Kalkül vollständig?",
+    "back": "Ein Kalkül $K$ heißt **vollständig**, wenn jede semantische Konsequenz auch syntaktisch herleitbar ist:\n$$\nM \\models F \\quad \\Longrightarrow \\quad M \\vdash_K F.\n$$\n\nIntuition: Alles, was logisch aus $M$ folgt, kann der Kalkül auch beweisen.\n\nKorrektheit und Vollständigkeit sind verschieden:\n\n- **Soundness**: Der Kalkül beweist nichts Falsches.\n- **Vollständigkeit**: Der Kalkül verpasst keine wahren Konsequenzen."
+  },
+  {
+    "front": "[Kalküle & Resolution] Warum kann eine Ableitungsregel mit widersprüchlichen Voraussetzungen korrekt sein?",
+    "back": "Beispiel:\n$$\n\\{F,\\neg F\\} \\vdash G.\n$$\n\nDiese Regel ist **korrekt**, weil es keine Interpretation gibt, die gleichzeitig $F$ und $\\neg F$ wahr macht.\n\nAlso gilt semantisch:\n$$\n\\{F,\\neg F\\} \\models G\n$$\nvakuos: Jede Interpretation, die die linke Seite erfüllt, erfüllt auch $G$ — denn es gibt keine solche Interpretation."
+  },
+  {
+    "front": "[Kalküle & Resolution] Warum ist Modus Ponens eine korrekte Ableitungsregel?",
+    "back": "**Modus Ponens**:\n$$\n\\{F, F\\to G\\} \\vdash G.\n$$\n\nKorrektheit: Sei $A$ eine Interpretation mit\n$$\nA(F)=1\n$$\nund\n$$\nA(F\\to G)=1.\n$$\n\nEine Implikation $F\\to G$ ist nur dann falsch, wenn $F$ wahr und $G$ falsch ist. Da $F$ wahr ist und $F\\to G$ ebenfalls wahr ist, muss also\n$$\nA(G)=1\n$$\ngelten.\n\nDamit folgt:\n$$\n\\{F,F\\to G\\}\\models G.\n$$"
+  },
+  {
+    "front": "[Kalküle & Resolution] Warum ist der Beispielkalkül mit nur Implikationsregeln nicht vollständig?",
+    "back": "Der Beispielkalkül enthält nur Regeln, die Formeln mit Implikationen erzeugen oder verwenden, z.B. Modus Ponens.\n\nEr kann daher keine allgemeinen Regeln für Negation oder Konjunktion ausdrücken. Zum Beispiel gilt semantisch:\n$$\n\\neg\\neg A \\models A.\n$$\n\nAber wenn der Kalkül keine Regel hat, die mit $\\neg$ arbeitet, kann er diese Folgerung nicht herleiten.\n\nAlso kann der Kalkül sound sein, aber trotzdem **nicht vollständig**."
+  },
+  {
+    "front": "[Kalküle & Resolution] Wie leitet man aus $A\\to B$ und $B\\to C$ mit dem Beispielkalkül $A\\to C$ her?",
+    "back": "Die Idee ist, die Transitivität der Implikation syntaktisch über die Regeln zu bauen.\n\nGegeben:\n$$\n1:\\ A\\to B,\\qquad 2:\\ B\\to C.\n$$\n\nMit den Axiomschemata des Kalküls leitet man passende Zwischenformeln her, insbesondere eine Formel, deren rechte Seite am Ende $A\\to C$ enthält. Dann wendet man mehrfach **Modus Ponens** an:\n\n1. Aus $B\\to C$ und einer passenden Instanz eines Axioms folgt:\n   $$\n   A\\to (B\\to C).\n   $$\n2. Zusammen mit einer weiteren Instanz folgt:\n   $$\n   (A\\to B)\\to(A\\to C).\n   $$\n3. Mit $A\\to B$ folgt durch Modus Ponens:\n   $$\n   A\\to C.\n   $$\n\nWichtig ist nicht die Semantik der Implikation, sondern die erlaubten syntaktischen Regeln."
+  },
+  {
+    "front": "[Kalküle & Resolution] Was ist eine Klausel im Resolutionskalkül?",
+    "back": "Eine **Klausel** ist eine Disjunktion von Literalen, z.B.\n$$\nA \\vee \\neg B \\vee C.\n$$\n\nIm Resolutionskalkül betrachtet man sie oft als Menge von Literalen:\n$$\n\\{A,\\neg B,C\\}.\n$$\n\nDabei gilt:\n\n- Reihenfolge spielt keine Rolle.\n- Doppelte Literale werden ignoriert.\n- Semantisch steht zwischen den Literalen ein $\\vee$.\n\nEine Menge von Klauseln entspricht einer Formel in **konjunktiver Normalform**:\n$$\nK_1 \\wedge K_2 \\wedge \\cdots \\wedge K_m.\n$$"
+  },
+  {
+    "front": "[Kalküle & Resolution] Wie lautet die Resolutionsregel?",
+    "back": "Seien $K_1,K_2$ Klauseln. Falls ein Literal $L$ in $K_1$ vorkommt und das komplementäre Literal $\\overline L$ in $K_2$, dann darf man die **Resolvente**\n$$\n(K_1\\setminus\\{L\\}) \\cup (K_2\\setminus\\{\\overline L\\})\n$$\nableiten.\n\nKurz:\n$$\n\\frac{K_1 \\quad K_2}{(K_1\\setminus\\{L\\})\\cup(K_2\\setminus\\{\\overline L\\})}.\n$$\n\nBeispiel:\n$$\n\\{A,B\\},\\ \\{\\neg A,C\\}\n$$\nresolviert bezüglich $A$ ergibt\n$$\n\\{B,C\\}.\n$$"
+  },
+  {
+    "front": "[Kalküle & Resolution] Berechne die Resolventen von $\\{A,\\neg B,\\neg C\\}$ und $\\{\\neg A,C,D,\\neg E\\}$.",
+    "back": "Es gibt zwei mögliche komplementäre Literalpaare.\n\nBezüglich $A$ und $\\neg A$:\n$$\n\\{A,\\neg B,\\neg C\\},\\ \\{\\neg A,C,D,\\neg E\\}\n$$\nergibt\n$$\n\\{\\neg B,\\neg C,C,D,\\neg E\\}.\n$$\n\nBezüglich $\\neg C$ und $C$:\n$$\n\\{A,\\neg B,\\neg C\\},\\ \\{\\neg A,C,D,\\neg E\\}\n$$\nergibt\n$$\n\\{A,\\neg B,\\neg A,D,\\neg E\\}.\n$$\n\nDie Resolvente ist nicht eindeutig: Sie hängt davon ab, bezüglich welches Literalpaars man resolviert."
+  },
+  {
+    "front": "[Kalküle & Resolution] Warum ist die leere Klausel im Resolutionskalkül so wichtig?",
+    "back": "Die **leere Klausel** $\\emptyset$ entspricht der leeren Disjunktion.\n\nEine Disjunktion ist wahr, wenn mindestens eines ihrer Literale wahr ist. Bei der leeren Disjunktion gibt es kein Literal, das wahr sein könnte. Daher ist\n$$\n\\emptyset\n$$\nimmer falsch.\n\nWenn man aus einer Klauselmenge $\\mathcal K$ die leere Klausel ableiten kann,\n$$\n\\mathcal K \\vdash_{\\mathrm{res}} \\emptyset,\n$$\ndann zeigt das — wegen Soundness — dass $\\mathcal K$ unerfüllbar ist."
+  },
+  {
+    "front": "[Kalküle & Resolution] Wie zeigt man mit Resolution eine logische Konsequenz $F\\models G$?",
+    "back": "Man zeigt stattdessen die Unerfüllbarkeit von\n$$\nF \\wedge \\neg G.\n$$\n\nDenn:\n$$\nF\\models G\n$$\nbedeutet: Es gibt keine Belegung, unter der $F$ wahr und $G$ falsch ist.\n\nAlso:\n\n1. Wandle $F\\wedge \\neg G$ in konjunktive Normalform um.\n2. Schreibe die CNF als Klauselmenge.\n3. Leite mit Resolution die leere Klausel $\\emptyset$ her.\n\nDann gilt:\n$$\nF \\wedge \\neg G \\text{ unerfüllbar}\n\\quad \\Longrightarrow \\quad\nF\\models G.\n$$"
+  },
+  {
+    "front": "[Kalküle & Resolution] Zeige mit Resolution, dass aus $F=(A\\vee B)\\wedge(A\\to \\neg C)\\wedge\\neg(B\\wedge C)$ die Formel $G=\\neg C$ folgt.",
+    "back": "Zuerst:\n$$\nA\\to \\neg C \\equiv \\neg A\\vee \\neg C,\n$$\n$$\n\\neg(B\\wedge C)\\equiv \\neg B\\vee \\neg C.\n$$\n\nFür $F\\wedge \\neg G$ erhält man die Klauseln:\n$$\n\\{A,B\\},\\quad \\{\\neg A,\\neg C\\},\\quad \\{\\neg B,\\neg C\\},\\quad \\{C\\}.\n$$\n\nResolution:\n\n1. Aus $\\{A,B\\}$ und $\\{\\neg A,\\neg C\\}$:\n   $$\n   \\{B,\\neg C\\}.\n   $$\n2. Aus $\\{B,\\neg C\\}$ und $\\{C\\}$:\n   $$\n   \\{B\\}.\n   $$\n3. Aus $\\{\\neg B,\\neg C\\}$ und $\\{C\\}$:\n   $$\n   \\{\\neg B\\}.\n   $$\n4. Aus $\\{B\\}$ und $\\{\\neg B\\}$:\n   $$\n   \\emptyset.\n   $$\n\nAlso ist $F\\wedge\\neg G$ unerfüllbar, somit $F\\models G$."
+  },
+  {
+    "front": "[Kalküle & Resolution] Warum ist die Resolutionsregel sound?",
+    "back": "Seien\n$$\nK_1 = \\{L\\}\\cup R_1,\\qquad K_2=\\{\\overline L\\}\\cup R_2.\n$$\n\nDie Resolvente ist\n$$\nR_1\\cup R_2.\n$$\n\nAngenommen, eine Belegung erfüllt $K_1$ und $K_2$, aber nicht die Resolvente. Dann sind alle Literale in $R_1\\cup R_2$ falsch.\n\nDa $K_1$ trotzdem wahr ist, muss $L$ wahr sein. Da $K_2$ trotzdem wahr ist, muss $\\overline L$ wahr sein. Das ist unmöglich.\n\nAlso erfüllt jede Belegung, die $K_1$ und $K_2$ erfüllt, auch die Resolvente. Daher ist Resolution korrekt."
+  },
+  {
+    "front": "[Kalküle & Resolution] Was bedeutet Vollständigkeit des Resolutionskalküls für Unerfüllbarkeit?",
+    "back": "Für Klauselmengen gilt:\n$$\n\\mathcal K \\text{ ist unerfüllbar}\n\\quad \\Longleftrightarrow \\quad\n\\mathcal K \\vdash_{\\mathrm{res}} \\emptyset.\n$$\n\nDas ist eine eingeschränkte Vollständigkeit:\n\n- Resolution beweist nicht beliebige Formeln direkt.\n- Resolution ist vollständig für den Nachweis von **Unerfüllbarkeit** von CNF-Formeln.\n\nZusammen mit Soundness ergibt sich:\n$$\n\\mathcal K \\vdash_{\\mathrm{res}} \\emptyset\n$$\ngenau dann, wenn die zugehörige CNF-Formel keine erfüllende Belegung hat."
+  },
+  {
+    "front": "[Kalküle & Resolution] Warum ist Resolution trotz nur einer Regel mächtig?",
+    "back": "Resolution arbeitet nur mit Klauseln und hat nur eine Ableitungsregel. Trotzdem ist sie mächtig, weil jede aussagenlogische Formel in eine äquivalente CNF-Form gebracht werden kann.\n\nFür logische Konsequenzen nutzt man den Trick:\n$$\nF\\models G\n\\quad \\Longleftrightarrow \\quad\nF\\wedge \\neg G \\text{ ist unerfüllbar}.\n$$\n\nDa Resolution vollständig für Unerfüllbarkeit von CNF-Formeln ist, kann man damit viele semantische Aussagen auf einen mechanischen Ableitungsprozess reduzieren."
+  },
+  {
+    "front": "[Kalküle & Resolution] Was ist der typische Prüfungsfehler beim Resolutionskalkül?",
+    "back": "Ein häufiger Fehler ist, die Klauseln semantisch zu vereinfachen oder beliebige logische Äquivalenzen als Ableitungsschritte zu benutzen.\n\nIm Resolutionskalkül sind nur Schritte der Form erlaubt:\n$$\n\\{L\\}\\cup R_1,\\quad \\{\\overline L\\}\\cup R_2\n\\quad \\leadsto \\quad\nR_1\\cup R_2.\n$$\n\nAlles andere — z.B. „intuitiv kürzen“, Umformen mit De-Morgan oder Verteilen — gehört zur **Vorbereitung in CNF**, nicht zur eigentlichen Resolutionsableitung.\n\nInnerhalb der Ableitung zählt nur die mechanische Resolutionsregel."
+  },
+  {
+    "front": "[Beweissysteme & Semantik] Woraus besteht ein Beweissystem $\\Pi$ und welche Rolle spielen seine vier Bestandteile?",
+    "back": "Ein **Beweissystem** ist ein Tupel\n$$\\Pi=(S,P,\\tau,\\varphi).$$\n\n- $S$: Menge der **Aussagen**; syntaktisch kann man sie z.B. als Bitstrings auffassen.\n- $P$: Menge der **Beweise**; ebenfalls zunächst nur formale Objekte.\n- $\\tau:S\\to\\{0,1\\}$: **Semantik**; definiert, welche Aussagen wahr sind.\n- $\\varphi:S\\times P\\to\\{0,1\\}$: **Verifikationsfunktion**; prüft, ob $p\\in P$ als Beweis für $s\\in S$ akzeptiert wird.\n\nDie Idee: $\\tau$ ist die „Ground Truth“, muss aber nicht effizient berechenbar sein. $\\varphi$ soll idealerweise effizient sein und mithilfe eines Beweises schnell bestätigen, dass eine Aussage wahr ist."
+  },
+  {
+    "front": "[Beweissysteme & Semantik] Warum unterscheidet man in einem Beweissystem zwischen Semantik $\\tau$ und Verifikationsfunktion $\\varphi$?",
+    "back": "$\\tau(s)$ definiert direkt, ob $s$ wahr ist, kann aber schwer oder ineffizient zu berechnen sein.\n\n$\\varphi(s,p)$ bekommt zusätzlich einen **Beweis** $p$ und soll effizient prüfen, ob $p$ die Wahrheit von $s$ überzeugend belegt.\n\nBeispiel: Für einen Graphen $G$ kann $\\tau(G)=1$ bedeuten: „$G$ ist $3$-färbbar.“ Das direkt zu entscheiden ist schwierig. Wenn aber jemand eine konkrete $3$-Färbung $f$ liefert, kann $\\varphi(G,f)$ effizient prüfen, ob jede Kante verschieden gefärbte Endpunkte hat."
+  },
+  {
+    "front": "[Beweissysteme & Semantik] Was bedeutet Vollständigkeit eines Beweissystems?",
+    "back": "Ein Beweissystem $\\Pi=(S,P,\\tau,\\varphi)$ heißt **vollständig**, wenn jede wahre Aussage einen akzeptierten Beweis besitzt:\n$$\n\\forall s\\in S:\\ \\tau(s)=1 \\implies \\exists p\\in P:\\ \\varphi(s,p)=1.\n$$\n\nIntuition: Alles, was gemäß Semantik wahr ist, ist im Beweissystem auch beweisbar.\n\nWichtig: Es muss nicht jeder Beweis für eine wahre Aussage akzeptiert werden — es reicht, dass mindestens ein guter Beweis existiert."
+  },
+  {
+    "front": "[Beweissysteme & Semantik] Was bedeutet Soundness/Korrektheit eines Beweissystems?",
+    "back": "Ein Beweissystem heißt **sound** bzw. **korrekt**, wenn keine falsche Aussage einen akzeptierten Beweis besitzt:\n$$\n\\forall s\\in S:\\ \\tau(s)=0 \\implies \\forall p\\in P:\\ \\varphi(s,p)=0.\n$$\n\nÄquivalent:\n$$\n\\varphi(s,p)=1 \\implies \\tau(s)=1.\n$$\n\nIntuition: Das Beweissystem beweist niemals falsche Aussagen."
+  },
+  {
+    "front": "[Beweissysteme & Semantik] Warum sind Vollständigkeit und Soundness asymmetrisch definiert?",
+    "back": "Bei **Vollständigkeit** fordert man:\n$$\n\\tau(s)=1 \\implies \\exists p:\\varphi(s,p)=1.\n$$\n\nBei **Soundness** fordert man:\n$$\n\\tau(s)=0 \\implies \\forall p:\\varphi(s,p)=0.\n$$\n\nDas System soll also Beweise für wahre Aussagen liefern, aber nicht notwendigerweise Beweise für falsche Aussagen.\n\nEin Beweissystem für „$G$ ist $3$-färbbar“ muss zeigen können, dass ein $3$-färbbarer Graph wirklich $3$-färbbar ist. Es muss aber nicht automatisch ein effizientes Zertifikat dafür geben, dass ein Graph **nicht** $3$-färbbar ist."
+  },
+  {
+    "front": "[Beweissysteme & Semantik] Was ist die Sprache $L$ eines Beweissystems?",
+    "back": "Die **Sprache** eines Beweissystems ist die Menge aller wahren Aussagen:\n$$\nL=\\{s\\in S:\\tau(s)=1\\}.\n$$\n\nSie hängt nur von $S$ und $\\tau$ ab, nicht direkt von den Beweisen $P$ oder der Verifikationsfunktion $\\varphi$.\n\nIn der Informatik beschreibt eine Sprache oft genau die Instanzen eines Entscheidungsproblems, für die die Antwort „ja“ ist."
+  },
+  {
+    "front": "[Beweissysteme & Semantik] Wie sieht das Beweissystem für $3$-Färbbarkeit von Graphen aus?",
+    "back": "Für das Problem „Ist ein Graph $G$ $3$-färbbar?“ setzt man:\n\n- $S$: Menge aller Graphen $G=(V,E)$.\n- $\\tau(G)=1$ genau dann, wenn $G$ $3$-färbbar ist.\n- $P$: mögliche Färbungen $f:V\\to\\{0,1,2\\}$.\n- $\\varphi(G,f)=1$ genau dann, wenn für jede Kante $(u,v)\\in E$ gilt:\n  $$\n  f(u)\\neq f(v).\n  $$\n\nDieses Beweissystem ist vollständig und sound: Jeder $3$-färbbare Graph hat eine gültige Färbung, und eine akzeptierte Färbung beweist tatsächlich $3$-Färbbarkeit."
+  },
+  {
+    "front": "[Beweissysteme & Semantik] Warum ist eine konkrete $3$-Färbung ein effizient prüfbarer Beweis für $3$-Färbbarkeit?",
+    "back": "Eine Färbung $f:V\\to\\{0,1,2\\}$ kann man prüfen, indem man jede Kante $(u,v)\\in E$ durchgeht und testet:\n$$\nf(u)\\neq f(v).\n$$\n\nDas braucht Zeit proportional zur Anzahl der Kanten, also effizient in der Eingabegröße des Graphen.\n\nDer schwierige Teil ist nicht das Prüfen einer gegebenen Färbung, sondern das Finden einer solchen Färbung."
+  },
+  {
+    "front": "[Beweissysteme & Semantik] Warum ist das Komplementproblem „$G$ ist nicht $3$-färbbar“ viel schwieriger als $3$-Färbbarkeit?",
+    "back": "Für „$G$ ist $3$-färbbar“ ist ein Beweis einfach: eine gültige $3$-Färbung.\n\nFür „$G$ ist nicht $3$-färbbar“ müsste ein Beweis effizient überzeugen, dass **keine** mögliche $3$-Färbung existiert. Dafür ist kein analog einfaches Zertifikat bekannt.\n\nMit uneingeschränkt langsamer Verifikation könnte $\\varphi$ alle Färbungen ausprobieren. Interessant ist aber ein effizientes, z.B. polynomielles, $\\varphi$. Ob solche Komplement-Zertifikate immer existieren, hängt mit der Frage zusammen, ob entsprechende Komplexitätsklassen unter Komplement abgeschlossen sind."
+  },
+  {
+    "front": "[Beweissysteme & Semantik] Wie sieht ein Beweissystem für zusammengesetzte Zahlen aus?",
+    "back": "Man nimmt:\n\n- $S=\\mathbb{N}$.\n- $\\tau(n)=1$ genau dann, wenn $n$ **keine Primzahl** ist, also zusammengesetzt ist.\n- Ein Beweis $p$ ist ein echter Teiler von $n$.\n- $\\varphi(n,p)=1$ genau dann, wenn\n  $$\n  1<p<n\n  $$\n  und\n  $$\n  p\\mid n.\n  $$\n\nEin echter Teiler beweist effizient, dass $n$ zusammengesetzt ist."
+  },
+  {
+    "front": "[Beweissysteme & Semantik] Warum ist „effizient in $n$“ nicht dasselbe wie „effizient in der Eingabelänge“?",
+    "back": "Eine Zahl $n$ wird binär mit ungefähr\n$$\n\\log_2 n\n$$\nBits dargestellt.\n\nEin Algorithmus, der bis $n$ zählt oder alle Teiler bis $\\sqrt n$ testet, kann zwar polynomial in $n$ sein, ist aber exponentiell in der Bitlänge der Eingabe.\n\nIn der theoretischen Informatik misst man Effizienz normalerweise in der **Länge der Eingabe**, also hier in $\\log n$, nicht in $n$ selbst."
+  },
+  {
+    "front": "[Beweissysteme & Semantik] Was ist der Unterschied zwischen logischer Implikation $\\models$ und Ableitbarkeit $\\vdash$?",
+    "back": "$\\models$ ist ein **semantischer** Begriff:\n$$\nM\\models F\n$$\nbedeutet: Immer wenn alle Formeln in $M$ wahr sind, ist auch $F$ wahr.\n\n$\\vdash$ ist ein **syntaktischer** Begriff:\n$$\nM\\vdash F\n$$\nbedeutet: $F$ kann aus $M$ durch erlaubte Ableitungsregeln formal hergeleitet werden.\n\nIdeal ist ein Beweissystem, in dem beide Begriffe zusammenpassen:\n\n- Soundness: $M\\vdash F \\implies M\\models F$.\n- Vollständigkeit: $M\\models F \\implies M\\vdash F$."
+  },
+  {
+    "front": "[Beweissysteme & Semantik] Was ist eine Ableitungsregel und warum muss sie mechanisch prüfbar sein?",
+    "back": "Eine **Ableitungsregel** beschreibt, wie man aus bereits vorhandenen Formeln eine neue Formel ableiten darf.\n\nBeispiel: **Modus Ponens**\n$$\n\\{F,\\ F\\to G\\}\\vdash G.\n$$\n\nIn einem formalen Beweissystem besteht ein Beweis aus einer endlichen Folge solcher Regelanwendungen. Die Verifikationsfunktion $\\varphi$ prüft dann Schritt für Schritt, ob jede Ableitung einer erlaubten Regel entspricht.\n\nDarum müssen die Regeln fest vorgegeben und mechanisch prüfbar sein."
+  },
+  {
+    "front": "[Beweissysteme & Semantik] Wie funktioniert der Beispielbeweis von $E$ aus den vier Formeln $A\\land B$, $A\\to(C\\lor D)$, $C\\to E$, $D\\to E$?",
+    "back": "Gegeben:\n$$\n1: A\\land B,\\quad 2: A\\to(C\\lor D),\\quad 3:C\\to E,\\quad 4:D\\to E.\n$$\n\nAbleitung:\n\n1. Aus $A\\land B$ folgt $A$.\n2. Aus $A$ und $A\\to(C\\lor D)$ folgt per Modus Ponens:\n   $$\n   C\\lor D.\n   $$\n3. Aus $C\\to E$ und $D\\to E$ folgt per Fallunterscheidung:\n   $$\n   (C\\lor D)\\to E.\n   $$\n4. Aus $C\\lor D$ und $(C\\lor D)\\to E$ folgt per Modus Ponens:\n   $$\n   E.\n   $$\n\nDamit ist syntaktisch gezeigt:\n$$\n\\{1,2,3,4\\}\\vdash E.\n$$"
+  },
+  {
+    "front": "[Beweissysteme & Semantik] Welche Rolle spielen feste Regeln in einem formalen Beweissystem?",
+    "back": "In einem echten Beweissystem dürfen die Ableitungsregeln nicht ad hoc während eines Beweises erfunden werden.\n\nStattdessen gibt es einen festen Regelsatz, z.B.:\n\n- Modus Ponens,\n- Eliminationsregeln für $\\land$,\n- Regeln für Fallunterscheidungen.\n\nDie Verifikationsfunktion $\\varphi$ prüft dann nur, ob ein gegebener Beweis eine korrekte Folge von Anwendungen dieser festen Regeln ist.\n\nWenn die Regeln zu schwach sind, kann das System unvollständig sein. Wenn sie falsche Schlüsse erlauben, ist es nicht sound."
+  },
+  {
+    "front": "[Beweissysteme & Semantik] Was ist eine Logik im Vergleich zu einem allgemeinen Beweissystem?",
+    "back": "Eine **Logik** ist eine spezielle Art von Beweissystem, bei dem die Aussagen durch formale Ausdrücke bzw. Formeln über einem Alphabet gegeben sind.\n\nMan betrachtet:\n\n- ein Alphabet $\\Lambda$ von Symbolen,\n- Variablen $V\\subseteq \\Lambda$,\n- Formeln als endliche Wörter über $\\Lambda$,\n- Interpretationen, die freien Variablen Werte zuweisen,\n- eine Semantik, die Formeln unter Interpretationen zu Wahrheitswerten auswertet.\n\nAussagenlogik und Prädikatenlogik sind konkrete Beispiele solcher Logiken."
+  },
+  {
+    "front": "[Beweissysteme & Semantik] Was ist in einer Logik eine freie Variable?",
+    "back": "Eine Variable ist **frei**, wenn ihr Wert von außen durch eine Interpretation festgelegt werden muss.\n\nFormal gibt es eine Funktion\n$$\n\\operatorname{Free}(F)\\subseteq \\{1,\\dots,|F|\\},\n$$\ndie angibt, an welchen Positionen in der Formel $F$ freie Variablen vorkommen.\n\nIn der Aussagenlogik sind alle vorkommenden Aussagenvariablen frei.\n\nBeispiel:\n$$\nF=A\\lor \\neg B.\n$$\nWenn man jedes Symbol zählt, liegen die freien Variablen an den Positionen von $A$ und $B$, also z.B.\n$$\n\\operatorname{Free}(F)=\\{1,4\\}.\n$$"
+  },
+  {
+    "front": "[Beweissysteme & Semantik] Warum ist der Begriff „frei“ in der Prädikatenlogik subtiler als in der Aussagenlogik?",
+    "back": "In der Prädikatenlogik können Variablen durch Quantoren gebunden werden.\n\nBeispiel:\n$$\n\\exists x\\ \\forall y\\ \\bigl(P(x)\\lor Q(f(y),z)\\bigr).\n$$\n\nHier sind $x$ und $y$ nicht frei, weil sie durch $\\exists x$ bzw. $\\forall y$ gebunden sind.\n\nFrei bzw. durch eine Interpretation festzulegen sind dagegen:\n\n- das Prädikat $P$,\n- das Prädikat $Q$,\n- die Funktion $f$,\n- die Variable $z$,\n- sowie das zugrunde liegende Universum.\n\nDie genaue Auswertung hängt also nicht nur von Wahrheitswerten einzelner Variablen ab, sondern auch von Strukturen, Funktionen und Prädikaten."
+  },
+  {
+    "front": "[Beweissysteme & Semantik] Was ist eine Interpretation in der Aussagenlogik?",
+    "back": "Eine **Interpretation** weist den freien Aussagenvariablen Wahrheitswerte zu.\n\nBeispiel:\n$$\n\\mathcal A(A)=0,\\qquad \\mathcal A(B)=1.\n$$\n\nDann kann man die Formel\n$$\nA\\lor \\neg B\n$$\nauswerten:\n$$\n\\mathcal A(A\\lor \\neg B)=0\\lor \\neg 1=0\\lor 0=0.\n$$\n\nIn der Aussagenlogik sind Interpretationen also genau die Belegungen der Variablen mit $0$ oder $1$."
+  },
+  {
+    "front": "[Beweissysteme & Semantik] Was macht die Semantik $\\sigma$ einer Logik?",
+    "back": "Die **Semantik** $\\sigma$ beschreibt, wie eine Formel unter einer Interpretation ausgewertet wird:\n$$\n\\sigma(\\mathcal A,F)\\in\\{0,1\\}.\n$$\n\nOft schreibt man vereinfacht:\n$$\n\\mathcal A(F).\n$$\n\nFür die logischen Junktoren ist die Auswertung in jeder Logik wie gewohnt definiert, z.B.\n$$\n\\mathcal A(F\\lor G)=1\n$$\ngenau dann, wenn\n$$\n\\mathcal A(F)=1\n$$\noder\n$$\n\\mathcal A(G)=1.\n$$\n\nDie konkrete Logik bestimmt zusätzlich, wie atomare Formeln, Prädikate oder Funktionen ausgewertet werden."
+  },
+  {
+    "front": "[Beweissysteme & Semantik] Was bedeutet es, dass $F$ eine Tautologie bzw. unerfüllbar ist?",
+    "back": "Eine Formel $F$ ist eine **Tautologie**, wenn sie unter jeder Interpretation wahr ist:\n$$\n\\forall \\mathcal A:\\ \\mathcal A(F)=1.\n$$\n\nSie ist **unerfüllbar**, wenn sie unter jeder Interpretation falsch ist:\n$$\n\\forall \\mathcal A:\\ \\mathcal A(F)=0.\n$$\n\nBeispiele in der Aussagenlogik:\n\n- Tautologie:\n  $$\n  A\\lor \\neg A.\n  $$\n- Unerfüllbar:\n  $$\n  A\\land \\neg A.\n  $$"
+  },
+  {
+    "front": "[Beweissysteme & Semantik] Wie sind logische Äquivalenz und logische Implikation über Interpretationen definiert?",
+    "back": "Zwei Formeln $F$ und $G$ sind **logisch äquivalent**, geschrieben\n$$\nF\\equiv G,\n$$\nwenn sie unter jeder Interpretation denselben Wahrheitswert haben:\n$$\n\\forall \\mathcal A:\\ \\mathcal A(F)=\\mathcal A(G).\n$$\n\nEine Formel $F$ **impliziert logisch** eine Formel $G$, geschrieben\n$$\nF\\models G,\n$$\nwenn jede Interpretation, die $F$ wahr macht, auch $G$ wahr macht:\n$$\n\\forall \\mathcal A:\\ \\mathcal A(F)=1 \\implies \\mathcal A(G)=1.\n$$"
+  },
+  {
+    "front": "[Beweissysteme & Semantik] Warum gilt die Distributivität $F\\land(G\\lor H)\\equiv (F\\land G)\\lor(F\\land H)$ in jeder Logik?",
+    "back": "Die Aussage hängt nur von der Semantik von $\\land$ und $\\lor$ ab.\n\nFür jede Interpretation $\\mathcal A$ haben $F,G,H$ jeweils Wahrheitswerte in $\\{0,1\\}$. Dann gilt nach den üblichen Wahrheitstabellen:\n$$\n\\mathcal A(F\\land(G\\lor H))=1\n$$\ngenau dann, wenn $\\mathcal A(F)=1$ und mindestens eines von $\\mathcal A(G),\\mathcal A(H)$ gleich $1$ ist.\n\nDas ist genau dann der Fall, wenn\n$$\n\\mathcal A((F\\land G)\\lor(F\\land H))=1.\n$$\n\nDa dies für jede Interpretation gilt, sind die Formeln logisch äquivalent."
+  },
+  {
+    "front": "[Beweissysteme & Semantik] Welche drei Aussagen über $F_1,\\dots,F_k$ und $G$ sind äquivalent?",
+    "back": "Die folgenden Aussagen sind äquivalent:\n\n1. $G$ ist logische Konsequenz von $F_1,\\dots,F_k$:\n   $$\n   F_1,\\dots,F_k \\models G.\n   $$\n\n2. Die Formel\n   $$\n   (F_1\\land\\cdots\\land F_k)\\to G\n   $$\n   ist eine Tautologie.\n\n3. Die Menge\n   $$\n   \\{F_1,\\dots,F_k,\\neg G\\}\n   $$\n   ist unerfüllbar.\n\nIntuition: $G$ folgt genau dann aus den $F_i$, wenn es keine Interpretation gibt, unter der alle $F_i$ wahr sind, aber $G$ falsch ist."
+  },
+  {
+    "front": "[Beweissysteme & Semantik] Wie beweist man die Richtung $F_1,\\dots,F_k\\models G \\Rightarrow ((F_1\\land\\cdots\\land F_k)\\to G)$ ist Tautologie?",
+    "back": "Sei $\\mathcal A$ eine beliebige Interpretation.\n\nFall 1: Mindestens eines der $F_i$ ist unter $\\mathcal A$ falsch. Dann ist\n$$\nF_1\\land\\cdots\\land F_k\n$$\nfalsch, also ist die Implikation\n$$\n(F_1\\land\\cdots\\land F_k)\\to G\n$$\nwahr.\n\nFall 2: Alle $F_i$ sind unter $\\mathcal A$ wahr. Da\n$$\nF_1,\\dots,F_k\\models G\n$$\ngilt, muss auch $G$ unter $\\mathcal A$ wahr sein. Also ist die Implikation wieder wahr.\n\nDa $\\mathcal A$ beliebig war, ist die Formel eine Tautologie."
+  },
+  {
+    "front": "[Beweissysteme & Semantik] Was ist ein Literal, und warum ist der Begriff für Normalformen wichtig?",
+    "back": "Ein **Literal** ist entweder eine Aussagenvariable oder ihre Negation:\n$$\nA \\quad\\text{oder}\\quad \\neg A.\n$$\n\nNormalformen bauen Formeln aus Literalen in einer standardisierten Struktur auf:\n\n- **Konjunktive Normalform (KNF/CNF)**: Konjunktion von Disjunktionen von Literalen.\n- **Disjunktive Normalform (DNF)**: Disjunktion von Konjunktionen von Literalen.\n\nLiterale sind also die atomaren Bausteine, aus denen Klauseln und Terme in Normalformen bestehen."
+  },
+  {
+    "front": "[Beweissysteme & Semantik] Was ist der Unterschied zwischen KNF und DNF?",
+    "back": "Eine Formel ist in **konjunktiver Normalform** (KNF/CNF), wenn sie eine Konjunktion von Klauseln ist:\n$$\n(C_1)\\land(C_2)\\land\\cdots\\land(C_m),\n$$\nwobei jede Klausel eine Disjunktion von Literalen ist, z.B.\n$$\n(A\\lor \\neg B\\lor C).\n$$\n\nEine Formel ist in **disjunktiver Normalform** (DNF), wenn sie eine Disjunktion von Konjunktionen von Literalen ist:\n$$\n(T_1)\\lor(T_2)\\lor\\cdots\\lor(T_m),\n$$\nwobei jeder Term eine Konjunktion von Literalen ist, z.B.\n$$\n(A\\land \\neg B\\land C).\n$$\n\nKurz:\n$$\n\\text{KNF}=\\land\\text{ von }\\lor,\\qquad \\text{DNF}=\\lor\\text{ von }\\land.\n$$"
+  },
+  {
+    "front": "[Beweissysteme & Semantik] Wie erhält man aus einer Wahrheitstabelle eine DNF?",
+    "back": "Für jede Belegung, unter der die Formel wahr ist, baut man einen Konjunktionsterm:\n\n- Variable $A$ kommt als $A$ vor, wenn $A=1$.\n- Variable $A$ kommt als $\\neg A$ vor, wenn $A=0$.\n\nDann verodert man alle diese Terme.\n\nBeispiel: Wenn $F(A,B)$ genau für $(A,B)=(1,0)$ und $(0,1)$ wahr ist, erhält man:\n$$\nF\\equiv (A\\land \\neg B)\\lor(\\neg A\\land B).\n$$\n\nDie DNF beschreibt also explizit alle erfüllenden Belegungen."
+  },
+  {
+    "front": "[Beweissysteme & Semantik] Wie erhält man aus einer Wahrheitstabelle eine KNF?",
+    "back": "Für jede Belegung, unter der die Formel falsch ist, baut man eine Klausel, die genau diese Belegung ausschließt:\n\n- Wenn $A=1$, nimmt man $\\neg A$ in die Klausel.\n- Wenn $A=0$, nimmt man $A$ in die Klausel.\n\nDann verundet man alle Klauseln.\n\nBeispiel: Wenn $F(A,B)$ genau für $(A,B)=(0,0)$ falsch ist, erhält man die Klausel\n$$\nA\\lor B,\n$$\ndenn diese ist nur bei $(0,0)$ falsch.\n\nDie KNF beschreibt also durch Klauseln alle verbotenen Belegungen."
+  },
+  {
+    "front": "[Beweissysteme & Semantik] Was passiert bei einer Substitution in einer Formel?",
+    "back": "Eine **Substitution** ersetzt Variablen durch Formeln.\n\nBeispiel: In\n$$\nF=A\\lor \\neg B\n$$\nersetze $A$ durch $(C\\land D)$:\n$$\nF[A:=(C\\land D)] = (C\\land D)\\lor \\neg B.\n$$\n\nSubstitutionen sind syntaktische Operationen: Man verändert die Formelstruktur, nicht direkt ihre Wahrheitstabelle.\n\nWichtig ist, konsistent zu ersetzen: Jedes freie Vorkommen der substituierten Variable wird ersetzt."
+  },
+  {
+    "front": "[Beweissysteme & Semantik] Was ist die typische Gefahr bei Substitutionen in der Prädikatenlogik?",
+    "back": "In der Prädikatenlogik kann Substitution zu **Variablenfang** führen.\n\nBeispielhaft problematisch ist es, einen Term mit Variable $x$ in einen Bereich einzusetzen, in dem bereits ein Quantor $\\forall x$ oder $\\exists x$ bindet. Dann kann eine ursprünglich freie Variable plötzlich gebunden werden.\n\nDarum muss man bei Substitutionen in der Prädikatenlogik darauf achten, nur **freie Vorkommen** zu ersetzen und gebundene Variablen gegebenenfalls vorher umzubenennen.\n\nIn der Aussagenlogik tritt dieses Problem nicht auf, weil es dort keine Quantoren und gebundenen Variablen gibt."
+  }
+]

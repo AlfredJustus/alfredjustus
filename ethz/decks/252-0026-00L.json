@@ -1,0 +1,1150 @@
+[
+  {
+    "front": "[Suchen und Sortieren] Warum ist lineare Suche auf einem unsortierten Array im Worst Case unvermeidbar?",
+    "back": "Bei einem **unsortierten** Array gibt es keine Struktur, die Elemente ausschließen lässt.\n\nWenn ein Element $a_i$ nie in einem Vergleich vorkommt, könnte gerade $a_i = b$ gelten, ohne dass der Algorithmus es bemerkt. Also muss im Worst Case jedes Array-Element berücksichtigt werden.\n\nDamit braucht vergleichsbasiertes Suchen auf unsortierten Arrays mindestens\n$$\\Omega(n)$$\nVergleiche. Die lineare Suche mit Laufzeit\n$$\\Theta(n)$$\nist daher asymptotisch optimal."
+  },
+  {
+    "front": "[Suchen und Sortieren] Wie funktioniert binäre Suche und warum ist Sortiertheit dafür entscheidend?",
+    "back": "Bei **binärer Suche** auf einem sortierten Array vergleicht man $b$ mit dem mittleren Element $a_m$.\n\n- Falls $b = a_m$: gefunden.\n- Falls $b < a_m$: nur die linke Hälfte kann $b$ enthalten.\n- Falls $b > a_m$: nur die rechte Hälfte kann $b$ enthalten.\n\nDie Sortiertheit\n$$a_1 \\le a_2 \\le \\dots \\le a_n$$\nist entscheidend, weil nur dann ein Vergleich mit der Mitte eine ganze Hälfte ausschließen kann.\n\nOhne Sortiertheit müsste man weiterhin beide Hälften durchsuchen."
+  },
+  {
+    "front": "[Suchen und Sortieren] Welche Rekurrenz beschreibt die Laufzeit der binären Suche?",
+    "back": "Im Worst Case wird genau **eine** Hälfte rekursiv weiter durchsucht. Daher gilt für $n = 2^k$:\n$$T(n) \\le T\\left(\\frac n2\\right) + d$$\nmit einer Konstanten $d$ für Vergleich und Verwaltungsaufwand.\n\nDurch wiederholtes Einsetzen erhält man\n$$T(n) = O(\\log n).$$\n\nGenauer: Nach jedem Schritt halbiert sich die Suchmenge. Nach $k$ Schritten ist\n$$\\frac n{2^k} = 1,$$\nalso\n$$k = \\log_2 n.$$"
+  },
+  {
+    "front": "[Suchen und Sortieren] Warum ist binäre Suche vergleichsbasiert optimal?",
+    "back": "Jeder vergleichsbasierte Suchalgorithmus auf einem sortierten Array kann als **Entscheidungsbaum** dargestellt werden.\n\nFür ein Array der Länge $n$ gibt es mindestens $n+1$ mögliche Antworten:\n\n- Index $1,\\dots,n$, falls $b$ gefunden wird,\n- plus „nicht gefunden“.\n\nAlso braucht der Entscheidungsbaum mindestens $n+1$ Blätter.\n\nEin Binärbaum der Tiefe $h$ hat höchstens\n$$2^h$$\nBlätter. Daher:\n$$2^h \\ge n+1$$\nund somit\n$$h \\ge \\log_2(n+1).$$\n\nAlso braucht jeder vergleichsbasierte Suchalgorithmus im Worst Case\n$$\\Omega(\\log n)$$\nVergleiche. Binäre Suche ist optimal."
+  },
+  {
+    "front": "[Suchen und Sortieren] Was ist der Unterschied zwischen vergleichsbasierter Suche und direktem Lookup?",
+    "back": "Bei **vergleichsbasierter Suche** wird nur mit Operationen wie\n$$<,\\ >,\\ =$$\ngearbeitet. Dafür gelten untere Schranken wie\n$$\\Omega(\\log n)$$\nfür sortierte Suche.\n\nEin **direkter Lookup** kann schneller sein, z. B. über ein riesiges Array nach Matrikelnummern:\n\n- Array der Länge $1\\,000\\,000$,\n- an Position $m$ steht $1$, falls Matrikelnummer $m$ vorkommt,\n- sonst $0$.\n\nDann ist die Suche in\n$$O(1)$$\nmöglich.\n\nDer Preis ist hoher Speicherverbrauch, besonders wenn der Schlüsselraum riesig und dünn besetzt ist."
+  },
+  {
+    "front": "[Suchen und Sortieren] Warum lohnt sich Sortieren für viele Suchanfragen?",
+    "back": "Sortieren kostet zunächst Zeit, macht danach aber Suchen viel schneller.\n\nOhne Sortierung:\n$$\\Theta(n)$$\npro Suche.\n\nMit Sortierung:\n$$O(\\log n)$$\npro Suche durch binäre Suche.\n\nWenn viele Suchanfragen auf denselben Daten ausgeführt werden, kann sich der Sortieraufwand **amortisieren**: Man sortiert einmal und profitiert danach bei jeder Suche."
+  },
+  {
+    "front": "[Suchen und Sortieren] Was bedeutet es formal, ein Array zu sortieren?",
+    "back": "Gegeben ist ein Array\n$$A[1..n].$$\n\nGesucht ist eine **Permutation** $A'$ von $A$, sodass für alle\n$$1 \\le i < j \\le n$$\ngilt:\n$$A'[i] \\le A'[j].$$\n\n„Permutation“ bedeutet: Die Elemente werden nur umgeordnet, nicht verändert oder gelöscht.\n\nEin Sortieralgorithmus kann entweder:\n\n- **in-place** arbeiten: kaum zusätzlicher Speicher,\n- oder ein neues Array für das Ergebnis verwenden."
+  },
+  {
+    "front": "[Suchen und Sortieren] Warum reicht es beim Prüfen von Sortiertheit, nur benachbarte Elemente zu vergleichen?",
+    "back": "Ein Array ist sortiert, wenn\n$$a_i \\le a_j \\quad \\text{für alle } i < j.$$\n\nDafür genügt es aber, nur zu prüfen:\n$$a_i \\le a_{i+1} \\quad \\text{für alle } i=1,\\dots,n-1.$$\n\nDenn aus\n$$a_1 \\le a_2,\\ a_2 \\le a_3,\\ \\dots$$\nfolgt durch Transitivität:\n$$a_i \\le a_j \\quad \\text{für alle } i < j.$$\n\nDer Algorithmus braucht daher nur\n$$n-1$$\nVergleiche, also\n$$O(n).$$"
+  },
+  {
+    "front": "[Suchen und Sortieren] Warum sortiert ein einzelner Durchlauf des Bubble-Sort-Prinzips noch nicht vollständig?",
+    "back": "Ein einzelner Durchlauf vergleicht benachbarte Elemente und vertauscht sie, falls sie falsch stehen.\n\nBeispiel:\n$$[3,7,5,1,4]$$\n\nNach einem Durchlauf:\n\n1. $7$ und $5$ werden vertauscht:\n   $$[3,5,7,1,4]$$\n2. $7$ und $1$ werden vertauscht:\n   $$[3,5,1,7,4]$$\n3. $7$ und $4$ werden vertauscht:\n   $$[3,5,1,4,7]$$\n\nDas größte Element ist nun korrekt am Ende, aber das Array ist noch nicht sortiert.\n\nDeshalb wiederholt Bubble Sort diesen Durchlauf mehrfach."
+  },
+  {
+    "front": "[Suchen und Sortieren] Welche Invariante erklärt die Korrektheit von Bubble Sort?",
+    "back": "Eine passende **Schleifeninvariante** lautet:\n\nNach $j$ äußeren Durchläufen stehen die letzten $j$ Elemente bereits an der richtigen Stelle.\n\nWarum?\n\n- In jedem Durchlauf „wandert“ das größte noch nicht fixierte Element durch benachbarte Vertauschungen nach rechts.\n- Nach dem ersten Durchlauf steht das größte Element ganz rechts.\n- Nach dem zweiten Durchlauf steht das zweitgrößte Element an der zweitletzten Position usw.\n\nNach $n-1$ Durchläufen sind die letzten $n-1$ Elemente korrekt. Dann muss auch das verbleibende erste Element korrekt sein.\n\nDamit ist das gesamte Array sortiert."
+  },
+  {
+    "front": "[Suchen und Sortieren] Wie entstehen aus Invarianten Sortieralgorithmen?",
+    "back": "Eine **Invariante** beschreibt einen Zwischenzustand, der nach jedem Schritt gelten soll.\n\nAlgorithmendesign über Invarianten funktioniert so:\n\n1. Wähle eine Aussage $I(j)$, die einen teilweise gelösten Zustand beschreibt.\n2. Stelle sicher, dass $I(0)$ oder $I(1)$ am Anfang gilt.\n3. Entwerfe einen Schritt, der aus $I(j)$ die Aussage $I(j+1)$ macht.\n4. Wähle $I(j)$ so, dass bei $j=n$ die Gesamtlösung folgt.\n\nBeispiel:  \n„Die letzten $j$ Elemente stehen bereits korrekt“ führt natürlich zu Selection Sort oder Bubble Sort-artigen Verfahren."
+  },
+  {
+    "front": "[Suchen und Sortieren] Wie leitet man Selection Sort aus der Invariante „die letzten Elemente sind korrekt“ ab?",
+    "back": "Die Invariante lautet:\n\nNach $j$ Schritten stehen die letzten $j$ Elemente an der richtigen Stelle.\n\nUm von $j$ auf $j+1$ zu kommen:\n\n1. Betrachte den noch unsortierten linken Teil.\n2. Finde dort das Maximum.\n3. Vertausche dieses Maximum mit der letzten Position des unsortierten Bereichs.\n\nDadurch wird genau ein weiteres Element fixiert.\n\nSelection Sort macht also in jedem Schritt:\n$$\\text{Maximum suchen} + \\text{an richtige Endposition tauschen}.$$"
+  },
+  {
+    "front": "[Suchen und Sortieren] Warum hat Selection Sort nur $O(n)$ Vertauschungen, aber $O(n^2)$ Vergleiche?",
+    "back": "Selection Sort führt pro äußerem Schritt höchstens eine Vertauschung aus.\n\nBei $n-1$ Schritten ergibt das:\n$$O(n)$$\nVertauschungen.\n\nDas Maximum im unsortierten Teil muss aber jedes Mal durch lineares Durchsuchen gefunden werden:\n\n$$n + (n-1) + (n-2) + \\dots + 1 = \\Theta(n^2).$$\n\nDaher:\n\n- Vergleiche: $$O(n^2)$$\n- Vertauschungen: $$O(n)$$\n\nSelection Sort verbessert also gegenüber Bubble Sort die Anzahl der Bewegungen, aber nicht die asymptotische Anzahl der Vergleiche."
+  },
+  {
+    "front": "[Suchen und Sortieren] Welche Invariante steht hinter Insertion Sort?",
+    "back": "Bei **Insertion Sort** lautet die Invariante:\n\nDie ersten $j$ Elemente sind sortiert, aber nicht unbedingt schon an ihrer endgültigen Position.\n\nUm Fortschritt zu machen:\n\n1. Nimm das nächste Element $a_{j+1}$.\n2. Finde seine richtige Position im sortierten Präfix.\n3. Verschiebe alle größeren Elemente um eine Position nach rechts.\n4. Setze $a_{j+1}$ ein.\n\nWenn $j=n$ ist, umfasst das sortierte Präfix das ganze Array. Dann ist das Array sortiert."
+  },
+  {
+    "front": "[Suchen und Sortieren] Wie läuft Insertion Sort auf dem Beispiel $[3,7,5,4,1]$?",
+    "back": "Start:\n$$[3,7,5,4,1]$$\nDas Präfix $[3]$ ist sortiert.\n\n1. $7$ einfügen: bleibt hinter $3$.\n   $$[3,7,5,4,1]$$\n2. $5$ einfügen: zwischen $3$ und $7$.\n   $$[3,5,7,4,1]$$\n3. $4$ einfügen: zwischen $3$ und $5$.\n   $$[3,4,5,7,1]$$\n4. $1$ einfügen: ganz nach vorne.\n   $$[1,3,4,5,7]$$\n\nDie Idee: Das sortierte Präfix wächst Schritt für Schritt."
+  },
+  {
+    "front": "[Suchen und Sortieren] Warum hat Insertion Sort trotz binärer Suche noch $O(n^2)$ Laufzeit?",
+    "back": "Die Einfügeposition im sortierten Präfix kann mit binärer Suche in\n$$O(\\log j)$$\ngefunden werden.\n\nÜber alle Schritte ergibt das für Vergleiche:\n$$\\sum_{j=1}^{n-1} O(\\log j) = O(\\log((n-1)!)) = O(n\\log n).$$\n\nAber nach dem Finden der Position müssen Elemente verschoben werden. Im Worst Case wird fast das ganze Präfix verschoben:\n\n$$1 + 2 + \\dots + (n-1) = \\Theta(n^2).$$\n\nDaher:\n\n- Vergleiche: $$O(n\\log n)$$\n- Bewegungen: $$O(n^2)$$"
+  },
+  {
+    "front": "[Suchen und Sortieren] Was ist die Grundidee von Merge Sort?",
+    "back": "**Merge Sort** ist ein Divide-and-Conquer-Algorithmus:\n\n1. **Divide:** Teile das Array in zwei Hälften.\n2. **Conquer:** Sortiere beide Hälften rekursiv.\n3. **Merge:** Führe die beiden sortierten Hälften zu einem sortierten Array zusammen.\n\nBeispiel:\n\n$$[9,7,3,2,1,8,4,6]$$\n\nwird rekursiv in Teilarrays zerlegt, z. B.\n\n$$[9,7,3,2] \\quad \\text{und} \\quad [1,8,4,6],$$\n\nsortiert zu\n\n$$[2,3,7,9] \\quad \\text{und} \\quad [1,4,6,8],$$\n\nund dann gemerged zu\n\n$$[1,2,3,4,6,7,8,9].$$"
+  },
+  {
+    "front": "[Suchen und Sortieren] Wie funktioniert der Merge-Schritt bei Merge Sort?",
+    "back": "Gegeben sind zwei sortierte Bereiche.\n\nMan verwendet zwei Zeiger:\n\n- einer zeigt auf das kleinste noch nicht übernommene Element links,\n- einer auf das kleinste noch nicht übernommene Element rechts.\n\nDann vergleicht man diese beiden Elemente und schreibt das kleinere ins Ergebnisarray.\n\nBeispiel:\n\nLinks:\n$$[2,3,7,9]$$\n\nRechts:\n$$[1,4,6,8]$$\n\nVergleiche zuerst $2$ und $1$, übernimm $1$.  \nDann vergleiche $2$ und $4$, übernimm $2$ usw.\n\nDer Merge-Schritt läuft linear:\n$$O(n).$$\n\nEr braucht aber zusätzlichen Speicher für das Ergebnisarray."
+  },
+  {
+    "front": "[Suchen und Sortieren] Welche Rekurrenz beschreibt Merge Sort und was folgt daraus?",
+    "back": "Merge Sort sortiert zwei Hälften rekursiv und merged danach in linearer Zeit.\n\nDie Rekurrenz lautet:\n$$T(n) = 2T\\left(\\frac n2\\right) + cn$$\nmit\n$$T(1)=O(1).$$\n\nDiese Rekurrenz löst sich zu:\n$$T(n)=O(n\\log n).$$\n\nAuch die Anzahl der Bewegungen ist\n$$O(n\\log n),$$\nweil in jeder Rekursionsebene insgesamt linear viele Elemente gemerged werden und es\n$$O(\\log n)$$\nEbenen gibt.\n\nDer Nachteil: Merge Sort benötigt typischerweise\n$$O(n)$$\nzusätzlichen Speicher."
+  },
+  {
+    "front": "[Suchen und Sortieren] Warum kann vergleichsbasiertes Sortieren nicht besser als $\\Omega(n\\log n)$ sein?",
+    "back": "Ein vergleichsbasierter Sortieralgorithmus kann als **Entscheidungsbaum** dargestellt werden.\n\nFür $n$ verschiedene Elemente gibt es\n$$n!$$\nmögliche Eingabe-Permutationen.\n\nDer Algorithmus muss diese Permutationen unterscheiden können, also braucht der Entscheidungsbaum mindestens\n$$n!$$\nBlätter.\n\nEin Binärbaum der Tiefe $h$ hat höchstens\n$$2^h$$\nBlätter. Daher:\n$$2^h \\ge n!$$\n\nAlso:\n$$h \\ge \\log_2(n!).$$\n\nMit\n$$\\log(n!) = \\Theta(n\\log n)$$\nfolgt:\n$$h = \\Omega(n\\log n).$$\n\nDamit ist Merge Sort hinsichtlich Vergleichen asymptotisch optimal."
+  },
+  {
+    "front": "[Suchen und Sortieren] Warum ist Quicksort anders als Merge Sort, obwohl beide rekursiv sind?",
+    "back": "Bei **Merge Sort** ist das Aufteilen billig:\n\n- einfach in zwei Hälften teilen,\n- beide Hälften sortieren,\n- danach teurer Merge-Schritt.\n\nBei **Quicksort** wird die Arbeit ins Aufteilen verschoben:\n\n1. Wähle ein Pivot-Element $p$.\n2. Partitioniere das Array:\n   - links alle Elemente $< p$,\n   - rechts alle Elemente $> p$.\n3. Setze $p$ an seine endgültige Position.\n4. Sortiere links und rechts rekursiv.\n5. Danach ist kein Merge mehr nötig.\n\nQuicksort vermeidet also den Merge-Schritt, zahlt aber für das Partitionieren."
+  },
+  {
+    "front": "[Suchen und Sortieren] Wie funktioniert das Partitionieren bei Quicksort in-place?",
+    "back": "Man wählt ein Pivot, z. B. das letzte Element.\n\nDann verwendet man zwei Zeiger:\n\n- ein Zeiger läuft von links nach rechts und sucht ein Element, das zu groß ist,\n- ein Zeiger läuft von rechts nach links und sucht ein Element, das zu klein ist.\n\nDiese beiden falsch platzierten Elemente werden vertauscht.\n\nWenn sich die Zeiger kreuzen, wird das Pivot an seine endgültige Position getauscht.\n\nVorteile:\n\n- Partitionieren läuft in\n  $$O(n).$$\n- Es braucht nur\n  $$O(1)$$\n  zusätzlichen Speicher.\n- Die Lokalität ist gut, weil die Zeiger regelmäßig durchs Array laufen."
+  },
+  {
+    "front": "[Suchen und Sortieren] Warum kann Quicksort im besten Fall $O(n\\log n)$ erreichen?",
+    "back": "Wenn das Pivot jedes Mal ungefähr in der Mitte landet, entstehen zwei Teilprobleme der Größe etwa\n$$\\frac n2.$$\n\nDann gilt:\n$$T(n)=2T\\left(\\frac n2\\right)+cn.$$\n\nDas ist dieselbe Rekurrenz wie bei Merge Sort, also:\n$$T(n)=O(n\\log n).$$\n\nIn diesem Fall ist Quicksort sehr attraktiv:\n\n- keine teure Merge-Phase,\n- in-place,\n- gute Lokalität,\n- praktisch sehr schnell."
+  },
+  {
+    "front": "[Suchen und Sortieren] Warum hat Quicksort mit schlechtem Pivot Worst Case $O(n^2)$?",
+    "back": "Wenn das Pivot immer das größte oder kleinste Element ist, entsteht ein Teilproblem der Größe $n-1$ und eines der Größe $0$.\n\nDann gilt:\n$$T(n)=T(n-1)+cn.$$\n\nDurch Einsetzen:\n$$T(n)=cn+c(n-1)+c(n-2)+\\dots+c.$$\n\nAlso:\n$$T(n)=\\Theta(n^2).$$\n\nDas passiert z. B., wenn man immer das letzte Element als Pivot nimmt und das Array bereits sortiert oder umgekehrt sortiert ist."
+  },
+  {
+    "front": "[Suchen und Sortieren] Warum hilft Randomisierung bei Quicksort?",
+    "back": "Wenn das Pivot deterministisch gewählt wird, können bestimmte Eingaben systematisch schlecht sein, z. B. bereits sortierte Arrays bei Wahl des letzten Elements.\n\nBei **randomisiertem Quicksort** wird das Pivot zufällig gewählt.\n\nDann ist es sehr unwahrscheinlich, immer extrem schlechte Pivots zu treffen. Die Laufzeit ist im Erwartungswert:\n$$O(n\\log n).$$\n\nDas ist keine Worst-Case-Garantie für jeden einzelnen Lauf, aber eine starke erwartete Garantie über die Zufallsentscheidungen des Algorithmus.\n\nIn der Praxis ist randomisierter Quicksort sehr schnell und wird tatsächlich verwendet."
+  },
+  {
+    "front": "[Suchen und Sortieren] Was bedeutet Lokalität bei Sortieralgorithmen und warum ist sie praktisch relevant?",
+    "back": "**Lokalität** beschreibt, wie regelmäßig ein Algorithmus auf Speicher zugreift.\n\nGute Lokalität:\n\n- Zugriff auf benachbarte Array-Elemente,\n- sequentielles Durchlaufen,\n- wenig wildes Springen im Speicher.\n\nSchlechte Lokalität:\n\n- unregelmäßige Zugriffe,\n- große Sprünge zwischen Speicherstellen.\n\nAsymptotisch ändert Lokalität oft nichts, weil sie nur konstante Faktoren betrifft. In realen Computersystemen ist sie aber wichtig, weil Speicherhierarchien und Caches sequentielle Zugriffe stark begünstigen.\n\nQuicksort hat beim Partitionieren gute Lokalität, weil die Zeiger regelmäßig durchs Array laufen."
+  },
+  {
+    "front": "[Suchen und Sortieren] Welche Idee verbindet Selection Sort mit Heap Sort?",
+    "back": "Selection Sort scheitert asymptotisch daran, dass in jedem Schritt das Maximum im unsortierten Bereich linear gesucht wird:\n\n$$O(i)$$\npro Schritt, insgesamt\n$$O(n^2).$$\n\nDie Idee hinter **Heap Sort** ist:\n\nVerwende eine Datenstruktur, die das Maximum billiger liefert.\n\nWenn man das Maximum jeweils in\n$$O(\\log i)$$\nstatt\n$$O(i)$$\nfinden und entfernen kann, ergibt sich:\n\n$$\\sum_{i=1}^n O(\\log i)=O(n\\log n).$$\n\nHeap Sort kann man daher als Verbesserung von Selection Sort verstehen: gleiche Grundidee „wiederholt Maximum auswählen“, aber mit effizienterer Organisation der noch unsortierten Elemente."
+  },
+  {
+    "front": "[Algorithmenanalyse] Was macht eine Beschreibung zu einem Algorithmus?",
+    "back": "Ein **Algorithmus** ist eine vollständige, präzise Beschreibung einer Abfolge von **elementaren Operationen** zur Lösung eines Problems.\n\nWichtig ist:\n- Die Beschreibung muss eindeutig ausführbar sein.\n- Die elementaren Operationen hängen vom Modell/Problem ab.\n- Beispiele:\n  - Schulmultiplikation: elementare Operation = Ziffernmultiplikation\n  - Pasture Break: elementare Operation = ein Schritt der Kuh\n  - Star-Suche: elementare Operation = Frage „Kennt $P_i$ die Person $P_j$?“"
+  },
+  {
+    "front": "[Algorithmenanalyse] Warum zählt man bei der Algorithmenanalyse nicht direkt Sekunden?",
+    "back": "Die echte Laufzeit in Sekunden hängt stark ab von:\n- Eingabegröße\n- Computer/Hardware\n- Programmiersprache\n- Implementierungsdetails\n- Compiler/Optimierung\n\nFür eine **universelle Analyse** abstrahiert man davon und zählt stattdessen elementare Operationen in einem Modell. So bleiben Aussagen wie „quadratisch“ oder „linear“ auch gültig, wenn Computer schneller werden.\n\nKonstante Faktoren ändern sich mit der Hardware; das Wachstum in $n$ bleibt."
+  },
+  {
+    "front": "[Algorithmenanalyse] Warum interessiert in der Vorlesung meistens der Worst Case statt der Best Case?",
+    "back": "Der **Worst Case** liefert eine Garantie:\n\nWenn ein Algorithmus im Worst Case höchstens $T(n)$ Operationen braucht, dann dauert er auf keiner Eingabe der Größe $n$ länger.\n\nDer **Best Case** kann irreführend sein, weil er nur besonders günstige Eingaben beschreibt. Ein Algorithmus kann im Best Case schnell, im Worst Case aber unbrauchbar langsam sein.\n\nBeispiel: Bei der Star-Suche kann ein induktiver Algorithmus im Best Case linear wirken, im Worst Case aber zunächst wieder quadratisch sein."
+  },
+  {
+    "front": "[Algorithmenanalyse] Wie funktioniert die Schulmethode zur Multiplikation bezüglich der Anzahl Ziffernmultiplikationen?",
+    "back": "Multipliziert man zwei $n$-stellige Zahlen mit der Schulmethode, wird jede Ziffer der ersten Zahl mit jeder Ziffer der zweiten Zahl multipliziert.\n\nAlso braucht man\n\n$$\nn \\cdot n = n^2\n$$\n\n**Ziffernmultiplikationen**.\n\nBeispiel: Bei $62 \\cdot 37$ gibt es $2 \\cdot 2 = 4$ Ziffernmultiplikationen:\n$$\n6\\cdot 3,\\quad 6\\cdot 7,\\quad 2\\cdot 3,\\quad 2\\cdot 7.\n$$"
+  },
+  {
+    "front": "[Algorithmenanalyse] Was ist die zentrale Idee von Karazuba bei zweistelligen Zahlen?",
+    "back": "Für\n\n$$\n(10a+b)(10c+d)\n$$\n\nbraucht die Schulmethode die vier Produkte\n\n$$\nac,\\ ad,\\ bc,\\ bd.\n$$\n\nKarazuba reduziert dies auf **drei** Multiplikationen:\n\n$$\nac,\\quad bd,\\quad (a-b)(d-c).\n$$\n\nDenn\n\n$$\n(a-b)(d-c)=ad-ac-bd+bc.\n$$\n\nDaraus erhält man\n\n$$\nad+bc = ac+bd+(a-b)(d-c).\n$$\n\nDamit kann man das Produkt aus nur drei Multiplikationen plus Additionen/Subtraktionen zusammensetzen."
+  },
+  {
+    "front": "[Algorithmenanalyse] Wie wird Karazuba auf $n$-stellige Zahlen verallgemeinert?",
+    "back": "Man zerlegt zwei $n$-stellige Zahlen in Hälften:\n\n$$\nx = 10^{n/2}A + B,\\qquad y = 10^{n/2}C + D.\n$$\n\nDann gilt\n\n$$\nxy = 10^n AC + 10^{n/2}(AD+BC)+BD.\n$$\n\nKarazuba berechnet den Mittelterm mit nur einer zusätzlichen Multiplikation:\n\n$$\nAD+BC = AC+BD+(A-B)(D-C).\n$$\n\nAlso reichen drei Multiplikationen halber Größe:\n\n$$\nAC,\\quad BD,\\quad (A-B)(D-C).\n$$\n\nDas ist ein Beispiel für **Divide and Conquer**."
+  },
+  {
+    "front": "[Algorithmenanalyse] Warum ist Karazuba ein Divide-and-Conquer-Algorithmus?",
+    "back": "Karazuba reduziert ein Problem der Größe $n$ auf mehrere Probleme derselben Art, aber kleinerer Größe:\n\n$$\n\\text{Multiplikation von } n\\text{-stelligen Zahlen}\n\\rightarrow\n3 \\text{ Multiplikationen von } n/2\\text{-stelligen Zahlen}.\n$$\n\nDanach wird dieselbe Methode rekursiv auf die Teilprobleme angewendet.\n\nDas Muster ist:\n\n1. **Divide:** Zahlen in Hälften zerlegen.\n2. **Conquer:** Teilprodukte rekursiv berechnen.\n3. **Combine:** Teilprodukte mit Additionen und Verschiebungen zusammensetzen."
+  },
+  {
+    "front": "[Algorithmenanalyse] Welche Rekurrenz beschreibt die Anzahl der Ziffernmultiplikationen bei Karazuba?",
+    "back": "Für $n=2^k$ sei $m(n)$ die Anzahl der Ziffernmultiplikationen.\n\nBasisfall:\n\n$$\nm(1)=m(2^0)=1.\n$$\n\nRekursiver Fall:\n\n$$\nm(2^k)=3m(2^{k-1}).\n$$\n\nDenn eine Multiplikation der Größe $2^k$ wird in drei Multiplikationen der halben Größe zerlegt.\n\nDie Lösung ist\n\n$$\nm(2^k)=3^k.\n$$\n\nDa $n=2^k$, gilt $k=\\log_2 n$, also\n\n$$\n3^k = 3^{\\log_2 n}=n^{\\log_2 3}\\approx n^{1.58}.\n$$"
+  },
+  {
+    "front": "[Algorithmenanalyse] Warum ist $3^{\\log_2 n}=n^{\\log_2 3}$?",
+    "back": "Das folgt aus der Logarithmenregel\n\n$$\na^{\\log_b n}=n^{\\log_b a}.\n$$\n\nSetzt man $a=3$ und $b=2$, erhält man:\n\n$$\n3^{\\log_2 n}=n^{\\log_2 3}.\n$$\n\nBei Karazuba bedeutet das:\n\n$$\nm(n)=n^{\\log_2 3}\\approx n^{1.58}.\n$$\n\nDas wächst asymptotisch langsamer als $n^2$."
+  },
+  {
+    "front": "[Algorithmenanalyse] Warum ist das Teleskopieren einer Rekurrenz noch kein Beweis?",
+    "back": "Beim **Teleskopieren** setzt man eine Rekurrenz wiederholt in sich selbst ein und erkennt ein Muster.\n\nBeispiel:\n\n$$\nm(2^k)=3m(2^{k-1})\n=3^2m(2^{k-2})\n=3^3m(2^{k-3})\n=\\dots\n$$\n\nDaraus vermutet man:\n\n$$\nm(2^k)=3^k.\n$$\n\nAber das ist zunächst nur Mustererkennung. Ein formaler Beweis braucht z.B. **vollständige Induktion**.\n\nTeleskopieren hilft also beim Finden einer Formel; Induktion beweist sie."
+  },
+  {
+    "front": "[Algorithmenanalyse] Wie beweist man $m(2^k)=3^k$ formal per Induktion?",
+    "back": "Zu zeigen:\n\n$$\nm(2^k)=3^k.\n$$\n\n**Induktionsanfang:** Für $k=0$:\n\n$$\nm(2^0)=m(1)=1=3^0.\n$$\n\n**Induktionsschritt:** Angenommen,\n\n$$\nm(2^k)=3^k.\n$$\n\nDann:\n\n$$\nm(2^{k+1})\n=3m(2^k)\n=3\\cdot 3^k\n=3^{k+1}.\n$$\n\nDamit gilt die Formel für alle $k\\ge 0$."
+  },
+  {
+    "front": "[Algorithmenanalyse] Was sind die drei Bestandteile eines Induktionsbeweises?",
+    "back": "Ein Induktionsbeweis für Aussagen $A(k)$ besteht aus:\n\n1. **Induktionsanfang:** Zeige $A(1)$ oder den passenden Startwert, z.B. $A(0)$.\n2. **Induktionshypothese:** Nimm an, dass $A(k)$ gilt.\n3. **Induktionsschritt:** Zeige unter Verwendung von $A(k)$, dass $A(k+1)$ gilt.\n\nIntuition: Der Anfang stößt die Kette an; der Induktionsschritt sorgt dafür, dass die Aussage für alle folgenden Zahlen weitergegeben wird."
+  },
+  {
+    "front": "[Algorithmenanalyse] Wie beweist man die Formel für die Summe der ersten Zweierpotenzen?",
+    "back": "Zu zeigen:\n\n$$\n1+2+2^2+\\dots+2^{k-1}=2^k-1.\n$$\n\n**Induktionsanfang:** Für $k=1$:\n\n$$\n1=2^1-1.\n$$\n\n**Induktionsschritt:** Angenommen,\n\n$$\n1+2+\\dots+2^{k-1}=2^k-1.\n$$\n\nDann:\n\n$$\n1+2+\\dots+2^{k-1}+2^k\n=(2^k-1)+2^k\n=2^{k+1}-1.\n$$\n\nAlso gilt die Formel für alle $k\\ge 1$."
+  },
+  {
+    "front": "[Algorithmenanalyse] Welche zwei Summenformeln sollte man für Algorithmenanalysen sofort kennen?",
+    "back": "Die Summe der ersten $n$ natürlichen Zahlen:\n\n$$\n1+2+\\dots+n=\\frac{n(n+1)}{2}.\n$$\n\nDie Summe der ersten $k$ Zweierpotenzen:\n\n$$\n1+2+2^2+\\dots+2^{k-1}=2^k-1.\n$$\n\nDiese Formeln tauchen ständig bei Laufzeitanalysen auf, z.B. bei linearem Hochzählen oder exponentiell wachsenden Suchradien."
+  },
+  {
+    "front": "[Algorithmenanalyse] Was ist die Bernoulli-Ungleichung und wo liegt der wichtige Induktionsschritt?",
+    "back": "Die **Bernoulli-Ungleichung** lautet:\n\nFür $x\\ge -1$ und $n\\in\\mathbb N$ gilt\n\n$$\n(1+x)^n \\ge 1+nx.\n$$\n\nIm Induktionsschritt:\n\n$$\n(1+x)^{n+1}=(1+x)^n(1+x).\n$$\n\nMit Induktionshypothese:\n\n$$\n(1+x)^n\\ge 1+nx.\n$$\n\nDa $x\\ge -1$, gilt $1+x\\ge 0$, also darf man die Ungleichung mit $1+x$ multiplizieren, ohne die Richtung zu ändern:\n\n$$\n(1+x)^{n+1}\n\\ge (1+nx)(1+x).\n$$\n\nDann folgt durch Ausmultiplizieren und Weglassen von $nx^2\\ge 0$ das gewünschte Resultat."
+  },
+  {
+    "front": "[Algorithmenanalyse] Warum ist die Bedingung $x\\ge -1$ bei der Bernoulli-Ungleichung im Beweis wichtig?",
+    "back": "Im Induktionsschritt multipliziert man eine Ungleichung mit\n\n$$\n1+x.\n$$\n\nDamit die Ungleichungsrichtung erhalten bleibt, braucht man\n\n$$\n1+x\\ge 0.\n$$\n\nDas ist genau äquivalent zu\n\n$$\nx\\ge -1.\n$$\n\nWäre $1+x<0$, würde sich die Ungleichung beim Multiplizieren umdrehen. Dann wäre der Induktionsschritt so nicht gültig."
+  },
+  {
+    "front": "[Algorithmenanalyse] Wie löst die kurzsichtige Kuh das Pasture-Break-Problem, wenn $k$ bekannt ist?",
+    "back": "Die Lücke ist in Distanz $k$, aber die Kuh weiß nicht, ob links oder rechts.\n\nAlgorithmus:\n1. Laufe $k$ Schritte in eine Richtung.\n2. Wenn die Lücke dort nicht ist, laufe zurück und $k$ Schritte in die andere Richtung.\n\nBest Case:\n\n$$\nk\n$$\n\nSchritte.\n\nWorst Case:\n\n$$\nk + 2k = 3k\n$$\n\nSchritte.\n\nBesser geht im Worst Case nicht, wenn nur die Richtung unbekannt ist."
+  },
+  {
+    "front": "[Algorithmenanalyse] Warum ist „immer nur in eine Richtung laufen“ kein gültiger Algorithmus für Pasture Break bei unbekanntem $k$?",
+    "back": "Wenn die Kuh nur nach links läuft, die Lücke aber rechts liegt, findet sie die Lücke nie.\n\nEin gültiger Algorithmus soll im Worst Case terminieren. Deshalb muss die Kuh beide Richtungen erkunden, typischerweise im Zickzack.\n\nDas Problem ist also nicht nur, schnell zu sein, sondern überhaupt sicher fertig zu werden."
+  },
+  {
+    "front": "[Algorithmenanalyse] Warum ist das Zickzack-Suchen mit Schritten $1,2,3,\\dots$ ineffizient?",
+    "back": "Algorithmus:\n\n$$\n1 \\text{ nach links},\\ 2 \\text{ nach rechts},\\ 3 \\text{ nach links},\\dots\n$$\n\nIm Worst Case wird die Lücke in Distanz $k$ erst nach vielen fast nutzlosen Wegen gefunden.\n\nDie Schrittzahl ist ungefähr:\n\n$$\n2(1+2+\\dots+k)+k.\n$$\n\nMit\n\n$$\n1+2+\\dots+k=\\frac{k(k+1)}{2}\n$$\n\nergibt sich:\n\n$$\nk(k+1)+k=k^2+2k.\n$$\n\nDas ist quadratisch in $k$, also viel schlechter als linear."
+  },
+  {
+    "front": "[Algorithmenanalyse] Warum verbessert Verdoppeln der Suchdistanz das Pasture-Break-Problem?",
+    "back": "Statt die Distanz nur um $1$ zu erhöhen, verdoppelt die Kuh:\n\n$$\n1,2,4,8,\\dots\n$$\n\nDadurch sieht sie in jeder Runde deutlich mehr neue Zaunstellen und vermeidet die große Redundanz des $1,2,3,\\dots$-Verfahrens.\n\nLiegt $k$ zwischen zwei Zweierpotenzen,\n\n$$\n2^{i-1}<k\\le 2^i,\n$$\n\ndann ist der Worst-Case-Aufwand höchstens\n\n$$\n2(1+2+\\dots+2^i)+k.\n$$\n\nMit\n\n$$\n1+2+\\dots+2^i=2^{i+1}-1\n$$\n\nfolgt:\n\n$$\n2(2^{i+1}-1)+k < 9k.\n$$\n\nAlso ist der Aufwand linear in $k$."
+  },
+  {
+    "front": "[Algorithmenanalyse] Was ist der Trade-off beim Pasture-Break-Algorithmus mit wachsenden Suchdistanzen?",
+    "back": "Wenn die Kuh die Suchdistanz zu langsam erhöht, läuft sie oft über bereits bekannte Zaunabschnitte. Das erzeugt Redundanz, wie beim $1,2,3,\\dots$-Verfahren.\n\nWenn sie die Suchdistanz zu aggressiv erhöht, riskiert sie, sehr weit in die falsche Richtung zu laufen.\n\nVerdoppeln ist ein guter Kompromiss: Es reduziert Redundanz stark und garantiert trotzdem einen linearen Worst Case von höchstens $9k$ Schritten."
+  },
+  {
+    "front": "[Algorithmenanalyse] Was ist ein Star in der Star-Suche?",
+    "back": "Gegeben sind Personen\n\n$$\nP_1,\\dots,P_n.\n$$\n\nEine Person $P_s$ ist ein **Star**, wenn:\n\n1. Alle anderen kennen $P_s$.\n2. $P_s$ kennt keine andere Person.\n\nFormal:\n\n$$\n\\forall i\\ne s:\\ P_i \\text{ kennt } P_s\n$$\n\nund\n\n$$\n\\forall i\\ne s:\\ P_s \\text{ kennt } P_i \\text{ nicht}.\n$$\n\nDie elementare Operation ist eine Frage:\n\n$$\n\\text{„Kennt } P_i \\text{ die Person } P_j\\text{?“}\n$$"
+  },
+  {
+    "front": "[Algorithmenanalyse] Warum kann es bei der Star-Suche höchstens einen Star geben?",
+    "back": "Angenommen, es gäbe zwei Stars $P_a$ und $P_b$.\n\nDa $P_a$ ein Star ist, darf $P_a$ niemanden kennen, also insbesondere nicht $P_b$.\n\nDa $P_b$ ein Star ist, müssen aber alle anderen $P_b$ kennen, also insbesondere $P_a$.\n\nWiderspruch.\n\nAlso gibt es entweder keinen oder genau einen Star."
+  },
+  {
+    "front": "[Algorithmenanalyse] Warum braucht der naive Star-Suche-Algorithmus $n^2-n$ Fragen?",
+    "back": "Der naive Algorithmus fragt jede Person über jede andere Person.\n\nEs gibt $n^2$ Paare $(P_i,P_j)$, aber Fragen der Form „Kennt $P_i$ sich selbst?“ braucht man nicht.\n\nDas sind $n$ unnötige Diagonalfragen.\n\nAlso:\n\n$$\nn^2-n\n$$\n\nFragen.\n\nDieser Algorithmus ist quadratisch."
+  },
+  {
+    "front": "[Algorithmenanalyse] Wie funktioniert der induktive Ansatz zur Star-Suche?",
+    "back": "Man versucht, das Problem für $n$ Personen aus einer Lösung für $n-1$ Personen zu bauen.\n\nIdee:\n1. Schicke eine Person $P_n$ heraus.\n2. Finde rekursiv den Star unter $P_1,\\dots,P_{n-1}$.\n3. Prüfe, ob dieser Star auch mit $P_n$ noch ein Star ist.\n4. Falls nicht, kann höchstens $P_n$ selbst noch Star sein.\n\nDieser Ansatz zeigt das Entwurfsprinzip: **Löse ein kleineres Problem und erweitere die Lösung.**"
+  },
+  {
+    "front": "[Algorithmenanalyse] Warum ist der einfache induktive Star-Suche-Algorithmus im Worst Case nicht besser als naiv?",
+    "back": "Beim einfachen induktiven Algorithmus kann es passieren, dass man am Ende jedes rekursiven Schritts prüfen muss, ob die herausgeschickte Person $P_n$ der Star ist.\n\nDas kostet im Worst Case etwa\n\n$$\n2(n-1)\n$$\n\nzusätzliche Fragen pro Ebene.\n\nDie Rekurrenz ist dann im Wesentlichen:\n\n$$\nF(n)=F(n-1)+2(n-1).\n$$\n\nTeleskopieren ergibt:\n\n$$\nF(n)=2(1+2+\\dots+(n-1))=n(n-1).\n$$\n\nDas ist wieder quadratisch."
+  },
+  {
+    "front": "[Algorithmenanalyse] Wie verbessert man die Star-Suche durch gezieltes Eliminieren eines Nicht-Stars?",
+    "back": "Man nimmt zwei Personen $P_i$ und $P_j$ und stellt eine Frage:\n\n$$\n\\text{„Kennt }P_i\\text{ die Person }P_j\\text{?“}\n$$\n\n- Antwort **ja**: Dann ist $P_i$ kein Star, denn ein Star kennt niemanden.\n- Antwort **nein**: Dann ist $P_j$ kein Star, denn ein Star wird von allen gekannt.\n\nMit **einer** Frage eliminiert man also garantiert eine Person, die kein Star ist.\n\nDanach löst man das Problem rekursiv für $n-1$ Personen."
+  },
+  {
+    "front": "[Algorithmenanalyse] Welche Rekurrenz ergibt sich für die verbesserte Star-Suche?",
+    "back": "Die verbesserte Star-Suche macht:\n\n1. Eine Frage, um sicher einen Nicht-Star zu eliminieren.\n2. Rekursive Lösung für $n-1$ Personen.\n3. Zwei Fragen, um den Kandidaten mit der eliminierten Person zu prüfen.\n\nAlso:\n\n$$\nF(n)=F(n-1)+3.\n$$\n\nMit Basis\n\n$$\nF(2)=2\n$$\n\nergibt sich:\n\n$$\nF(n)=3n-4.\n$$\n\nDas ist linear und damit asymptotisch viel besser als der naive Algorithmus mit $n^2-n$ Fragen."
+  },
+  {
+    "front": "[Algorithmenanalyse] Was modelliert das Unit-Cost-RAM-Modell?",
+    "back": "Das **Unit-Cost-RAM-Modell** ist ein vereinfachtes Modell eines Computers.\n\nEs besteht aus:\n- Speicherzellen fester Größe\n- einem Prozessor\n- direktem Zugriff auf jede Speicherzelle\n\n**Random Access:** Jede Speicherzelle kann direkt gelesen oder beschrieben werden.\n\n**Unit Cost:** Jede elementare Operation kostet $1$, z.B.\n- Lesen\n- Schreiben\n- Addition\n- Subtraktion\n- Vergleich\n\nIn diesem Modell ist die Laufzeit einfach die Anzahl der elementaren Operationen."
+  },
+  {
+    "front": "[Algorithmenanalyse] Warum ignoriert die asymptotische Analyse konstante Faktoren?",
+    "back": "Konstante Faktoren hängen stark von Hardware und Implementierung ab.\n\nOb eine Operation $1$ ns oder $5$ ns dauert, verändert nur einen konstanten Faktor. Aber ob ein Algorithmus\n\n$$\nn\n$$\n\noder\n\n$$\nn^2\n$$\n\nOperationen braucht, verändert das Wachstum grundlegend.\n\nDarum betrachtet die asymptotische Analyse z.B.\n\n$$\n7n+\\log n\n$$\n\nals linear, weil der dominante Wachstumsterm $n$ ist und die Konstante $7$ ignoriert wird."
+  },
+  {
+    "front": "[Algorithmenanalyse] Was bedeutet $g\\in O(f)$ formal?",
+    "back": "Für Funktionen\n\n$$\nf,g:\\mathbb N \\to \\mathbb R^+\n$$\n\nbedeutet\n\n$$\ng\\in O(f),\n$$\n\ndass es eine Konstante $C>0$ gibt, sodass für alle hinreichend großen $n$ gilt:\n\n$$\ng(n)\\le C f(n).\n$$\n\nIntuition:\n\n$g$ wächst höchstens so schnell wie $f$, bis auf einen konstanten Faktor.\n\n$O(f)$ ist also eine Menge von Funktionen, nicht eine einzelne Funktion."
+  },
+  {
+    "front": "[Algorithmenanalyse] Warum gilt $4n^2\\in O(n^2)$ und $n^2\\in O(4n^2)$?",
+    "back": "Für\n\n$$\n4n^2\\in O(n^2)\n$$\n\nwähle\n\n$$\nC=4.\n$$\n\nDann gilt:\n\n$$\n4n^2\\le 4n^2.\n$$\n\nFür\n\n$$\nn^2\\in O(4n^2)\n$$\n\nwähle\n\n$$\nC=1.\n$$\n\nDann gilt:\n\n$$\nn^2\\le 4n^2.\n$$\n\nBeide Funktionen haben also dieselbe asymptotische Ordnung. Der konstante Faktor $4$ spielt keine Rolle."
+  },
+  {
+    "front": "[Algorithmenanalyse] Warum ist der Startwert $n_0$ bei asymptotischer Notation egal?",
+    "back": "Asymptotische Notation beschreibt das Wachstum für große Eingaben.\n\nManche Funktionen sind für kleine $n$ unpassend, z.B.\n\n$$\nf(n)=n^2-3n\n$$\n\nist für $n=1,2$ negativ und daher keine sinnvolle Laufzeitfunktion.\n\nOder\n\n$$\nf(n)=\\log\\log n\n$$\n\nist für kleine $n$ problematisch.\n\nDarum betrachtet man Funktionen oft erst ab einem"
+  },
+  {
+    "front": "[Dynamische Programmierung] Was ist der typische Ablauf bei dynamischer Programmierung?",
+    "back": "1. **Teilproblem** definieren: Welche kleinere Größe soll gespeichert werden?\n2. **Rekursion** aufstellen: Wie ergibt sich ein Teilproblem aus kleineren Teilproblemen?\n3. **Basisfälle** festlegen.\n4. **Implementieren**: entweder **Top-Down** mit Memorisation oder **Bottom-Up** durch Ausfüllen einer DP-Tabelle.\n5. **Lösung auslesen** und ggf. durch Rückverfolgen rekonstruieren.\n6. **Laufzeit und Speicherbedarf** analysieren.\n\nDer kreative Schritt ist fast immer die Wahl des richtigen Teilproblems."
+  },
+  {
+    "front": "[Dynamische Programmierung] Warum ist die naive rekursive Fibonacci-Berechnung exponentiell langsam?",
+    "back": "Die Rekursion\n\n$$\nF(n)=F(n-1)+F(n-2)\n$$\n\nführt ohne Speicherung dazu, dass dieselben Werte immer wieder neu berechnet werden.\n\nBeispiel: Für $F(9)$ wird $F(7)$ sowohl über $F(8)$ als auch direkt über $F(9)$ berechnet.\n\nDie Laufzeit erfüllt ungefähr\n\n$$\nT(n) \\ge T(n-1)+T(n-2),\n$$\n\nalso wächst sie mindestens wie die Fibonacci-Zahlen:\n\n$$\nT(n)=\\Omega(1.5^n).\n$$\n\nDas Problem ist nicht die Rekursion selbst, sondern die **Mehrfachberechnung identischer Teilprobleme**."
+  },
+  {
+    "front": "[Dynamische Programmierung] Wie beseitigt Memorisation die exponentielle Laufzeit bei Fibonacci?",
+    "back": "Bei **Memorisation** speichert man jeden bereits berechneten Wert, z.B. in einem Array oder Wörterbuch.\n\nVor einem rekursiven Aufruf prüft man:\n\n- Wurde $F(n)$ schon berechnet? Dann direkt zurückgeben.\n- Sonst rekursiv berechnen und danach speichern.\n\nDann wird jedes Teilproblem $F(1),\\dots,F(n)$ höchstens einmal wirklich berechnet. Die Laufzeit sinkt von exponentiell auf\n\n$$\nO(n).\n$$\n\nDer Algorithmus bleibt **Top-Down**, benutzt aber einen Speicher für Zwischenergebnisse."
+  },
+  {
+    "front": "[Dynamische Programmierung] Was ist der Unterschied zwischen Top-Down und Bottom-Up bei DP?",
+    "back": "**Top-Down**:\n\n- startet beim Zielproblem,\n- ruft rekursiv benötigte Teilprobleme auf,\n- speichert Ergebnisse per **Memorisation**,\n- berechnet nur tatsächlich benötigte Teilprobleme.\n\n**Bottom-Up**:\n\n- startet bei den Basisfällen,\n- füllt die DP-Tabelle in einer gültigen Reihenfolge,\n- vermeidet Rekursion und damit Stack-Overflow-Risiken,\n- berechnet oft auch Teilprobleme, die am Ende nicht gebraucht werden.\n\nBeide Ansätze haben häufig dieselbe asymptotische Laufzeit; Unterschiede liegen oft in Speicher, Code-Struktur und praktischer Effizienz."
+  },
+  {
+    "front": "[Dynamische Programmierung] Warum sehen rekursive Formeln und Bottom-Up-Code oft ähnlich aus, bedeuten aber Unterschiedliches?",
+    "back": "Bei Fibonacci sehen die Zeilen ähnlich aus:\n\n$$\nF(n)=F(n-1)+F(n-2)\n$$\n\nrekursiv versus\n\n$$\nf[i]=f[i-1]+f[i-2]\n$$\n\nin einer Tabelle.\n\nDer Unterschied:\n\n- In der rekursiven Version bedeutet $F(n-1)$: **Starte einen Funktionsaufruf**.\n- In der Bottom-Up-Version bedeutet $f[i-1]$: **Lies einen bereits gespeicherten Wert**.\n\nDiese Unterscheidung ist wichtig für Laufzeit und Speicherverhalten."
+  },
+  {
+    "front": "[Dynamische Programmierung] Wie lautet das DP-Teilproblem für Maximum Subarray mit Randmaxima?",
+    "back": "Für ein Array $A[1],\\dots,A[n]$ definiert man das **Randmaximum**\n\n$$\nR_j=\\max_{1\\le i\\le j}\\sum_{k=i}^{j} A[k].\n$$\n\nAlso: $R_j$ ist die maximale Summe eines zusammenhängenden Teilarrays, das **genau bei $j$ endet**.\n\nDie Rekursion lautet\n\n$$\nR_j=\\max(A[j], A[j]+R_{j-1}).\n$$\n\nEntweder beginnt das beste Teilarray neu bei $j$, oder man verlängert das beste Teilarray, das bei $j-1$ endet."
+  },
+  {
+    "front": "[Dynamische Programmierung] Welche kleine Falle gibt es beim Auslesen der Lösung beim Maximum-Subarray-Problem?",
+    "back": "Die beste nichtleere Teilsumme ist\n\n$$\n\\max_{1\\le j\\le n} R_j.\n$$\n\nWenn aber das **leere Teilarray** erlaubt ist, muss man zusätzlich $0$ berücksichtigen:\n\n$$\nS^\\*=\\max\\left(0,\\max_{1\\le j\\le n}R_j\\right).\n$$\n\nDas ist relevant, wenn alle Arrayeinträge negativ sind: Dann ist das leere Teilarray besser als jedes nichtleere Teilarray."
+  },
+  {
+    "front": "[Dynamische Programmierung] Wie löst man das Jump Game mit dem Teilproblem $S_i$?",
+    "back": "Definiere\n\n$$\nS_i=\\text{minimale Zahl an Sprüngen, um Position } i \\text{ zu erreichen}.\n$$\n\nBasisfall:\n\n$$\nS_1=0.\n$$\n\nFür $i>1$ gilt:\n\n$$\nS_i=\\min_{\\substack{1\\le j<i\\\\ j+A[j]\\ge i}}(S_j+1).\n$$\n\nMan betrachtet alle früheren Positionen $j$, von denen aus man direkt nach $i$ springen kann.\n\nDie Laufzeit ist\n\n$$\nO(n^2),\n$$\n\nweil für jedes $i$ potenziell alle $j<i$ geprüft werden."
+  },
+  {
+    "front": "[Dynamische Programmierung] Wie beschleunigt das Teilproblem $M_k$ das Jump Game auf lineare Zeit?",
+    "back": "Definiere\n\n$$\nM_k=\\text{größter Index, der mit } k \\text{ Sprüngen erreichbar ist}.\n$$\n\nDann betrachtet man für den nächsten Sprung nur die neu erreichbaren Positionen:\n\n$$\nM_k=\\max_{M_{k-2}<j\\le M_{k-1}}(j+A[j]).\n$$\n\nStart:\n\n$$\nM_0=1,\\qquad M_1=1+A[1].\n$$\n\nMan erhöht $k$, bis\n\n$$\nM_k\\ge n.\n$$\n\nDann ist $k$ die minimale Sprungzahl."
+  },
+  {
+    "front": "[Dynamische Programmierung] Warum hat der optimierte Jump-Game-Algorithmus Laufzeit $O(n)$?",
+    "back": "Beim Berechnen von $M_k$ betrachtet man nur Positionen\n\n$$\nM_{k-2}<j\\le M_{k-1}.\n$$\n\nDiese Bereiche sind disjunkt. Daher wird jeder Index $j$ höchstens einmal in einem Maximum betrachtet.\n\nAlternativ summiert man:\n\n$$\n(M_1-M_0)+(M_2-M_1)+\\dots+(M_k-M_{k-1}),\n$$\n\neine **teleskopierende Summe**, die insgesamt $O(n)$ ist."
+  },
+  {
+    "front": "[Dynamische Programmierung] Warum kann das Jump Game im Worst Case nicht asymptotisch schneller als linear gelöst werden?",
+    "back": "Im Worst Case muss man fast alle Einträge lesen.\n\nBeispiel: Ein Array voller Einsen. Wenn ein Algorithmus eine mittlere Position nicht liest, kann dort statt einer $1$ auch eine $2$ oder größere Zahl stehen. Dadurch ändert sich die optimale Sprungzahl.\n\nAlso gibt es Inputs, bei denen jede relevante Position gelesen werden muss:\n\n$$\n\\Omega(n).\n$$\n\nDer lineare Algorithmus ist damit asymptotisch optimal."
+  },
+  {
+    "front": "[Dynamische Programmierung] Was ist der Unterschied zwischen Teilarray und Teilfolge bei LCS?",
+    "back": "Ein **Teilarray** muss zusammenhängend sein.\n\nEine **Teilfolge** muss nur die Reihenfolge erhalten; Lücken sind erlaubt.\n\nBeispiel mit den Strings `TIGER` und `ZIEGE`:\n\nEine längste gemeinsame Teilfolge ist\n\n$$\nIGE.\n$$\n\nSie kommt in beiden Strings in derselben Reihenfolge vor, aber nicht notwendigerweise zusammenhängend."
+  },
+  {
+    "front": "[Dynamische Programmierung] Warum reicht bei LCS ein Teilproblem mit nur einem Index nicht aus?",
+    "back": "Ein naiver Versuch wäre: längste gemeinsame Teilfolge von\n\n$$\nA[1..i] \\quad \\text{und} \\quad B[1..i].\n$$\n\nDas ist problematisch, weil man nicht genug Information darüber speichert, **wo** die Teilfolge endet.\n\nBeispiel `TIGE` und `ZIEG`: Eine gemeinsame Teilfolge der Länge $2$ könnte ungünstig enden und sich später nicht zu `IGE` erweitern lassen.\n\nDeshalb braucht man zwei Indizes:\n\n$$\nL_{i,j}=\\text{Länge einer LCS von } A[1..i] \\text{ und } B[1..j].\n$$"
+  },
+  {
+    "front": "[Dynamische Programmierung] Wie lautet die DP-Rekursion für die längste gemeinsame Teilfolge?",
+    "back": "Definiere\n\n$$\nL_{i,j}=\\text{Länge einer längsten gemeinsamen Teilfolge von } A[1..i] \\text{ und } B[1..j].\n$$\n\nBasisfälle:\n\n$$\nL_{0,j}=0,\\qquad L_{i,0}=0.\n$$\n\nFalls $A[i]=B[j]$:\n\n$$\nL_{i,j}=\\max(L_{i-1,j},L_{i,j-1},L_{i-1,j-1}+1).\n$$\n\nFalls $A[i]\\ne B[j]$:\n\n$$\nL_{i,j}=\\max(L_{i-1,j},L_{i,j-1}).\n$$\n\nDie gesuchte Länge ist $L_{n,m}$."
+  },
+  {
+    "front": "[Dynamische Programmierung] Welche Bedeutung haben die drei Fälle in der LCS-Rekursion?",
+    "back": "Für $L_{i,j}$ betrachtet man gemeinsame Teilfolgen von $A[1..i]$ und $B[1..j]$.\n\nSie fallen in Fälle:\n\n1. **$A[i]$ wird nicht benutzt**  \n   $\\Rightarrow L_{i-1,j}$\n\n2. **$B[j]$ wird nicht benutzt**  \n   $\\Rightarrow L_{i,j-1}$\n\n3. **Beide letzten Zeichen werden benutzt**  \n   Nur möglich, wenn $A[i]=B[j]$, dann  \n   $\\Rightarrow L_{i-1,j-1}+1$\n\nDie Fälle müssen nicht disjunkt sein. Für ein Maximum ist Mehrfachzählung unproblematisch."
+  },
+  {
+    "front": "[Dynamische Programmierung] Welche Laufzeit und welchen Speicherbedarf hat der Standard-DP-Algorithmus für LCS?",
+    "back": "Die DP-Tabelle hat Größe\n\n$$\n(n+1)(m+1).\n$$\n\nJeder Eintrag wird in konstanter Zeit berechnet. Daher:\n\n$$\n\\text{Laufzeit } O(nm).\n$$\n\nNaiver Speicherbedarf:\n\n$$\nO(nm).\n$$\n\nWenn nur die Länge gesucht ist, reicht es, jeweils die vorige Zeile zu speichern:\n\n$$\nO(m)\n$$\n\noder symmetrisch\n\n$$\nO(n).\n$$\n\nFür das Rückverfolgen einer konkreten LCS braucht man jedoch normalerweise die ganze Tabelle oder zusätzliche Informationen."
+  },
+  {
+    "front": "[Dynamische Programmierung] Wie rekonstruiert man bei LCS eine konkrete längste gemeinsame Teilfolge?",
+    "back": "Man startet bei $L_{n,m}$ und verfolgt zurück, aus welchem Nachbareintrag der Wert kam.\n\n- Kam der Wert von $L_{i-1,j}$: $A[i]$ wurde nicht benutzt.\n- Kam der Wert von $L_{i,j-1}$: $B[j]$ wurde nicht benutzt.\n- Kam der Wert von $L_{i-1,j-1}+1$ und $A[i]=B[j]$: Dieses Zeichen gehört zur LCS.\n\nBeim Beispiel `TIGER` und `ZIEGE` ergibt das eine LCS\n\n$$\nIGE.\n$$\n\nDer Rückweg ist nicht immer eindeutig, weil es mehrere optimale Teilfolgen geben kann."
+  },
+  {
+    "front": "[Dynamische Programmierung] Was misst die Editierdistanz zwischen zwei Strings?",
+    "back": "Die **Editierdistanz** ist die minimale Zahl von Operationen, um einen String $A$ in einen String $B$ umzuwandeln.\n\nErlaubte Operationen:\n\n1. Zeichen einfügen,\n2. Zeichen löschen,\n3. Zeichen durch ein anderes ersetzen.\n\nBeispiel `TIGER` zu `ZIEGE`:\n\n- `T` durch `Z` ersetzen,\n- `R` löschen,\n- ein `I` einfügen.\n\nDamit ist die Distanz höchstens $3$, und tatsächlich ist sie $3$."
+  },
+  {
+    "front": "[Dynamische Programmierung] Warum ist Editierdistanz nicht dasselbe wie LCS?",
+    "back": "LCS betrachtet nur, welche Zeichen unverändert als Teilfolge erhalten bleiben.\n\nEditierdistanz erlaubt zusätzlich **Ersetzen** von Zeichen.\n\nBeispiel `FERKEL` und `GEIFER`:\n\nEine längste gemeinsame Teilfolge hat Länge $3$, z.B. `FER`.\n\nTrotzdem ist die Editierdistanz $4$, indem man mehrere Zeichen direkt überschreibt. Die optimale Editierfolge muss also nicht die LCS erhalten.\n\nDaher kann man aus der LCS-Länge allein die Editierdistanz nicht allgemein bestimmen."
+  },
+  {
+    "front": "[Dynamische Programmierung] Wie lautet die DP-Rekursion für Editierdistanz?",
+    "back": "Definiere\n\n$$\nD_{i,j}=\\text{Editierdistanz zwischen } A[1..i] \\text{ und } B[1..j].\n$$\n\nBasisfälle:\n\n$$\nD_{i,0}=i,\\qquad D_{0,j}=j.\n$$\n\nFür $i,j>0$:\n\n$$\nD_{i,j}=\n\\min\\begin{cases}\nD_{i-1,j}+1 & \\text{lösche } A[i],\\\\\nD_{i,j-1}+1 & \\text{füge } B[j] \\text{ ein},\\\\\nD_{i-1,j-1}+c & \\text{match/ersetze},\n\\end{cases}\n$$\n\nwobei\n\n$$\nc=\n\\begin{cases}\n0, & A[i]=B[j],\\\\\n1, & A[i]\\ne B[j].\n\\end{cases}\n$$\n\nDie Laufzeit ist $O(nm)$."
+  },
+  {
+    "front": "[Dynamische Programmierung] Warum sind die Basisfälle bei Editierdistanz $D_{i,0}=i$ und $D_{0,j}=j$?",
+    "back": "Wenn der Zielstring leer ist, müssen alle $i$ Zeichen von $A[1..i]$ gelöscht werden:\n\n$$\nD_{i,0}=i.\n$$\n\nWenn der Startstring leer ist, müssen alle $j$ Zeichen von $B[1..j]$ eingefügt werden:\n\n$$\nD_{0,j}=j.\n$$\n\nDiese Basisfälle entsprechen genau den erlaubten Operationen Löschen und Einfügen."
+  },
+  {
+    "front": "[Dynamische Programmierung] Wie lautet das DP-Teilproblem für das Teilsummenproblem?",
+    "back": "Gegeben positive ganze Zahlen $A[1],\\dots,A[n]$ und Zielwert $B$.\n\nDefiniere\n\n$$\nT_{i,s}=\n\\begin{cases}\n1, & s \\text{ ist Teilsumme von } A[1..i],\\\\\n0, & \\text{sonst}.\n\\end{cases}\n$$\n\nRekursion:\n\n$$\nT_{i,s}=T_{i-1,s}\\lor T_{i-1,s-A[i]}.\n$$\n\nDer zweite Term gilt nur, wenn $s-A[i]\\ge 0$; sonst zählt er als falsch.\n\nBasisfälle:\n\n$$\nT_{i,0}=1,\\qquad T_{0,s}=0 \\text{ für } s>0.\n$$\n\nDie Antwort ist $T_{n,B}$."
+  },
+  {
+    "front": "[Dynamische Programmierung] Wie rekonstruiert man beim Teilsummenproblem eine passende Teilmenge?",
+    "back": "Man startet bei einem Eintrag $T_{n,B}=1$ und verfolgt zurück:\n\n- Wenn $T_{i,s}$ von $T_{i-1,s}$ kommt, wurde $A[i]$ nicht benutzt.\n- Wenn $T_{i,s}$ von $T_{i-1,s-A[i]}$ kommt, wurde $A[i]$ benutzt und man geht zu $(i-1,s-A[i])$.\n\nBeispiel:\n\n$$\nA=(5,1,3,10,3,1),\\quad B=7.\n$$\n\nEine rekonstruierte Lösung ist\n\n$$\n3+3+1=7.\n$$"
+  },
+  {
+    "front": "[Dynamische Programmierung] Warum ist der Teilsummen-DP-Algorithmus nur pseudopolynomiell?",
+    "back": "Die DP-Tabelle hat Größe\n\n$$\n(n+1)(B+1),\n$$\n\nalso Laufzeit\n\n$$\nO(nB).\n$$\n\nDas sieht polynomiell aus, aber $B$ ist ein Zahlenwert im Input, nicht die Länge seiner Darstellung.\n\nWenn\n\n$$\nB=2^n,\n$$\n\ndann braucht $B$ nur $O(n)$ Bits, aber die Laufzeit ist\n\n$$\nO(n2^n).\n$$\n\nDer Algorithmus ist daher **pseudopolynomiell**, aber nicht polynomiell in der Bitlänge des Inputs."
+  },
+  {
+    "front": "[Dynamische Programmierung] Wie lautet das Standard-DP-Teilproblem für das Rucksackproblem?",
+    "back": "Gegeben Items mit Gewicht $w_i$, Profit $p_i$ und Gewichtslimit $W$.\n\nDefiniere\n\n$$\nP_{i,w}=\\text{maximaler Profit mit Items }1..i\\text{ und Gewichtslimit }w.\n$$\n\nRekursion:\n\n$$\nP_{i,w}=\n\\max\\left(\nP_{i-1,w},\n\\; P_{i-1,w-w_i}+p_i\n\\right).\n$$\n\nDer zweite Term ist nur erlaubt, wenn\n\n$$\nw_i\\le w.\n$$\n\nSonst kann Item $i$ nicht genommen werden.\n\nDie Antwort ist\n\n$$\nP_{n,W}.\n$$\n\nDie Laufzeit ist\n\n$$\nO(nW),\n$$\n\nalso pseudopolynomiell."
+  },
+  {
+    "front": "[Dynamische Programmierung] Wie kann man beim Rucksackproblem Gewicht und Profit im Teilproblem vertauschen?",
+    "back": "Alternative Definition:\n\n$$\nG_{i,p}=\\text{minimales Gewicht, um Profit mindestens } p\n\\text{ mit Items }1..i\\text{ zu erreichen}.\n$$\n\nRekursion:\n\n$$\nG_{i,p}=\n\\min\\left(\nG_{i-1,p},\n\\; G_{i-1,p-p_i}+w_i\n\\right).\n$$\n\nInterpretation:\n\n- Item $i$ nicht nehmen: Profit $p$ muss ohne Item $i$ erreicht werden.\n- Item $i$ nehmen: Man zahlt Gewicht $w_i$ und muss nur noch Profit $p-p_i$ erreichen.\n\nDie Laufzeit hängt dann von der Profitschranke ab, z.B.\n\n$$\nO(nP),\n$$\n\nwobei $P$ eine obere Schranke auf den Gesamtprofit ist."
+  },
+  {
+    "front": "[Dynamische Programmierung] Warum funktionieren einfache Greedy-Heuristiken beim Rucksackproblem nicht zuverlässig?",
+    "back": "Naheliegende Heuristiken sind:\n\n- nimm zuerst das wertvollste Item,\n- nimm zuerst das leichteste Item,\n- nimm zuerst das beste Verhältnis $p_i/w_i$.\n\nFür das 0/1-Rucksackproblem sind diese Strategien nicht immer optimal.\n\nGrund: Ein einzelnes lokal gutes Item kann verhindern, dass mehrere gemeinsam bessere Items hineinpassen. Das Problem erfordert eine globale Auswahl unter der Gewichtsbeschränkung.\n\nDeshalb verwendet man DP oder andere Optimierungsverfahren statt einfacher Greedy-Regeln."
+  },
+  {
+    "front": "[Dynamische Programmierung] Was bedeutet $P\\ne NP$ im Kontext von Teilsummen und Rucksack?",
+    "back": "$P$ ist die Klasse der Probleme, die in polynomieller Zeit lösbar sind.\n\n$NP$ enthält Probleme, bei denen man eine gegebene Lösung in polynomieller Zeit überprüfen kann.\n\nFür Teilsummen: Gibt jemand eine Teilmenge an, kann man schnell prüfen, ob ihre Summe $B$ ist.\n\nFür Rucksack als Entscheidungsproblem: Gibt jemand Items an, kann man schnell prüfen, ob Gewichtslimit und Mindestprofit erfüllt sind.\n\nTeilsumme und Rucksack sind zentrale NP-schwere bzw. NP-vollständige Probleme. Ein polynomieller Algorithmus dafür würde stark darauf hindeuten bzw. implizieren:\n\n$$\nP=NP.\n$$\n\nMan vermutet jedoch stark:\n\n$$\nP\\ne NP.\n$$"
+  },
+  {
+    "front": "[Dynamische Programmierung] Wann ist Top-Down-DP mit Wörterbuch statt Array besonders nützlich?",
+    "back": "Wenn viele Tabellenzustände nie gebraucht werden, kann **Top-Down mit Memorisation** sparsamer sein.\n\nDann speichert man nur tatsächlich berechnete Zustände, z.B. in einem **Wörterbuch** mit Operationen:\n\n- `search`: Wurde dieser Zustand schon berechnet?\n- `insert`: Speichere neuen Zustand.\n\nBei Bottom-Up mit Array wird oft die ganze Tabelle initialisiert und gefüllt, auch wenn manche Einträge für die konkrete Lösung irrelevant sind.\n\nDas ist besonders relevant bei großen oder dünn besuchten Zustandsräumen."
+  },
+  {
+    "front": "[Dynamische Programmierung] Wie lautet die klassische DP-Rekursion für die längste aufsteigende Teilfolge?",
+    "back": "Gegeben ein Array $A[1],\\dots,A[n]$.\n\nDefiniere\n\n$$\nL_i=\\text{Länge einer längsten aufsteigenden Teilfolge, die bei } i \\text{ endet}.\n$$\n\nDann gilt:\n\n$$\nL_i=1+\\max_{\\substack{j<i\\\\ A[j]<A[i]}} L_j.\n$$\n\nFalls es kein solches $j$ gibt:\n\n$$\nL_i=1.\n$$\n\nDie Gesamtlösung ist\n\n$$\n\\max_{1\\le i\\le n} L_i.\n$$\n\nDie Laufzeit der direkten DP ist\n\n$$\nO(n^2),\n$$\n\nweil für jedes $i$ alle früheren $j<i$ geprüft werden."
+  },
+  {
+    "front": "[Dynamische Programmierung] Wie rekonstruiert man bei der längsten aufsteigenden Teilfolge eine konkrete Folge?",
+    "back": "Zusätzlich zu $L_i$ speichert man einen **Vorgängerindex**\n\n$$\npred[i],\n$$\n\nalso ein $j<i$ mit\n\n$$\nA[j]<A[i]\n$$\n\nund maximalem $L_j$.\n\nDann:\n\n1. Finde ein $i^\\*$ mit maximalem $L_{i^\\*}$.\n2. Folge den Vorgängern  \n   $$i^\\*, pred[i^\\*], pred[pred[i^\\*]],\\dots$$\n3. Gib die Elemente in umgekehrter Reihenfolge aus.\n\nSo erhält man nicht nur die Länge, sondern eine konkrete längste aufsteigende Teilfolge."
+  },
+  {
+    "front": "[Dynamische Programmierung] Warum ist die Wahl des Teilproblems bei DP oft wichtiger als die eigentliche Rekursion?",
+    "back": "Sobald ein gutes Teilproblem gefunden ist, folgt die Rekursion häufig aus einer Fallunterscheidung:\n\n- benutze das letzte Element oder nicht,\n- lösche/einfüge/ersetze,\n- springe von welcher vorherigen Position,\n- endet die Teilfolge an dieser Stelle?\n\nEin schlechtes Teilproblem speichert dagegen zu wenig Information. Dann lässt sich keine korrekte oder effiziente Rekursion formulieren.\n\nBeispiel: Bei LCS reicht ein einzelner Index nicht, weil man wissen muss, wie weit man in **beiden** Strings ist. Daher braucht man $L_{i,j}$ statt nur $L_i$."
+  },
+  {
+    "front": "[Suchbäume] Warum ist ein Array für `Get(i)` sehr schnell, aber für Einfügen in der Mitte langsam?",
+    "back": "Ein Array liegt als **zusammenhängender Speicherblock** vor. Deshalb kann die Adresse des $i$-ten Elements direkt berechnet werden:\n\n$$\\text{Adresse}(i)=\\text{Startadresse}+i\\cdot \\text{Zellgröße}.$$\n\nAlso gilt:\n\n- `Get(i)`: $O(1)$\n- `InsertAfter` in der Mitte: $O(n)$, weil alle rechten Elemente um eine Position verschoben werden müssen\n- `Delete` in der Mitte: $O(n)$, weil alle rechten Elemente nach links verschoben werden müssen\n\nDer Vorteil des Arrays ist also **direkter Zugriff**, der Nachteil ist **geringe Flexibilität bei Strukturänderungen**."
+  },
+  {
+    "front": "[Suchbäume] Warum zerstört „einfach eine Lücke markieren“ beim Löschen aus einem Array den Vorteil von Arrays?",
+    "back": "Wenn man beim Löschen nur eine Markierung wie `null` oder „gelöscht“ einträgt, bleiben Lücken im Array.\n\nDann steht das logisch $10$-te Element nicht mehr zwingend an physischer Position $10$. Dadurch ist `Get(10)` nicht mehr einfach eine Adressberechnung in $O(1)$, sondern müsste Lücken mitzählen.\n\nMan spart also kurzfristig das Verschieben, verliert aber den zentralen Vorteil des Arrays: **konstanten Zugriff auf das $i$-te Element**."
+  },
+  {
+    "front": "[Suchbäume] Welche Operationen sind bei einer einfach verketteten Liste schnell, und welche bleiben langsam?",
+    "back": "Bei einer **einfach verketteten Liste** speichert jeder Knoten einen Wert und einen Zeiger auf den nächsten Knoten.\n\nTypische Laufzeiten:\n\n- `Get(i)`: $O(n)$, weil man vom Anfang aus laufen muss\n- `Insert` am Ende: $O(n)$, falls kein Zeiger auf das Ende gespeichert wird\n- `InsertAfter(o)`: $O(1)$, falls ein direkter Zeiger auf $o$ gegeben ist\n- `Delete(o)`: im Allgemeinen $O(n)$, weil man den Vorgänger von $o$ finden muss\n\nDie Liste ist flexibel beim Einfügen nach bekanntem Knoten, aber schlecht beim wahlfreien Zugriff."
+  },
+  {
+    "front": "[Suchbäume] Warum macht eine doppelt verkettete Liste `Delete(o)` effizienter als eine einfach verkettete Liste?",
+    "back": "Bei einer **doppelt verketteten Liste** speichert jeder Knoten Zeiger auf:\n\n- den Nachfolger\n- den Vorgänger\n\nWenn ein direkter Zeiger auf den zu löschenden Knoten $o$ gegeben ist, kennt man dadurch auch den Vorgänger. Man kann also die Nachbarschaft lokal reparieren:\n\n$$\\text{prev}(o).\\text{next} := \\text{next}(o), \\qquad \\text{next}(o).\\text{prev} := \\text{prev}(o).$$\n\nDamit dauert `Delete(o)` nur $O(1)$.\n\nOhne Vorgängerzeiger müsste man vom Listenanfang aus suchen: $O(n)$."
+  },
+  {
+    "front": "[Suchbäume] Warum funktioniert binäre Suche auf einer verketteten Liste schlecht?",
+    "back": "Binäre Suche braucht schnellen Zugriff auf das mittlere Element.\n\nIn einem Array ist `Get(mitte)` in $O(1)$ möglich. In einer verketteten Liste muss man aber zum mittleren Element laufen, was $O(n)$ dauern kann.\n\nDamit verliert binäre Suche ihren Vorteil. Obwohl die Liste sortiert ist, ist die Datenstruktur ungeeignet, weil sie keinen schnellen Direktzugriff erlaubt."
+  },
+  {
+    "front": "[Suchbäume] Was ist der abstrakte Datentyp Wörterbuch, und wie unterscheidet er sich von einer Liste?",
+    "back": "Ein **Wörterbuch** speichert eine Kollektion eindeutiger **Schlüssel**.\n\nTypische Operationen:\n\n- `Search(x)`: prüft, ob Schlüssel $x$ enthalten ist\n- `Insert(x)`: fügt $x$ ein, falls noch nicht vorhanden\n- `Delete(x)`: löscht $x$, falls vorhanden\n\nUnterschied zur Liste:\n\n- In Listen ist die **Reihenfolge** wesentlich.\n- In Wörterbüchern ist die **Eindeutigkeit der Schlüssel** wesentlich.\n- In Listen können Werte mehrfach vorkommen; im Wörterbuch nicht.\n\nBeispiel: Matrikelnummern eignen sich als Schlüssel, weil jede Person eindeutig identifiziert wird."
+  },
+  {
+    "front": "[Suchbäume] Warum ist ein sortiertes Array für Wörterbücher nur teilweise geeignet?",
+    "back": "Ein sortiertes Array erlaubt effizientes Suchen:\n\n$$\\text{Search}(x) = O(\\log n)$$\n\ndurch binäre Suche.\n\nAber Updates sind teuer:\n\n- `Insert(x)`: $O(n)$, weil Platz geschaffen und Elemente verschoben werden müssen\n- `Delete(x)`: $O(n)$, weil nach dem Löschen Elemente nach links verschoben werden müssen\n\nEin sortiertes Array ist gut für statische Wörterbücher, aber schlecht, wenn häufig eingefügt oder gelöscht wird."
+  },
+  {
+    "front": "[Suchbäume] Warum ist ein Heap keine gute Datenstruktur für ein Wörterbuch mit beliebiger Suche?",
+    "back": "Ein **Heap** garantiert nur die Heap-Bedingung:\n\n$$\\text{Schlüssel eines Knotens} \\ge \\text{Schlüssel seiner Kinder}$$\n\nbei einem Max-Heap.\n\nDadurch findet man das Maximum sehr schnell. Für einen beliebigen Schlüssel, z.B. $5$, sagt die Heap-Bedingung aber fast nichts darüber, ob $5$ im linken oder rechten Teilbaum liegt.\n\nMan müsste im Worst Case viele oder alle Knoten durchsuchen:\n\n$$\\text{Search}(x) = O(n).$$\n\nHeaps sind für `FindMax`/`DeleteMax` geeignet, aber nicht für Wörterbuchsuche."
+  },
+  {
+    "front": "[Suchbäume] Was ist die Suchbaumbedingung bei einem binären Suchbaum?",
+    "back": "Ein **binärer Suchbaum** erfüllt für jeden Knoten mit Schlüssel $x$:\n\n- alle Schlüssel im linken Teilbaum sind kleiner als $x$\n- alle Schlüssel im rechten Teilbaum sind größer als $x$\n\nFormal:\n\n$$\n\\forall y \\in T_\\text{links}: y < x,\n\\qquad\n\\forall z \\in T_\\text{rechts}: z > x.\n$$\n\nDiese Invariante erlaubt es, bei der Suche nach jedem Vergleich genau einen Teilbaum auszuschließen."
+  },
+  {
+    "front": "[Suchbäume] Warum dauern `Search` und `Insert` in einem binären Suchbaum $O(h)$?",
+    "back": "Bei `Search(x)` vergleicht man $x$ mit dem aktuellen Knoten:\n\n- falls $x$ kleiner ist: gehe nach links\n- falls $x$ größer ist: gehe nach rechts\n- falls gleich: gefunden\n\nPro Ebene passiert nur $O(1)$ Arbeit. Man steigt höchstens bis zu einem Blatt ab.\n\nAlso gilt:\n\n$$\nT_\\text{Search}=O(h),\n$$\n\nwobei $h$ die Höhe des Baums ist.\n\n`Insert(x)` führt zunächst dieselbe Suche aus. Wenn die Suche an einer leeren Kindposition endet, wird dort ein neuer Knoten eingefügt. Daher ebenfalls:\n\n$$\nT_\\text{Insert}=O(h).\n$$"
+  },
+  {
+    "front": "[Suchbäume] Was läuft schief, wenn man die Schlüssel $2,3,8,12,13$ in dieser Reihenfolge naiv in einen binären Suchbaum einfügt?",
+    "back": "Der Baum degeneriert zu einer Liste:\n\n$$\n2 \\to 3 \\to 8 \\to 12 \\to 13\n$$\n\nAlle neuen Schlüssel sind größer als die bisherigen und werden jeweils als rechtes Kind des letzten Knotens eingefügt.\n\nDie Höhe ist dann:\n\n$$\nh = n-1.\n$$\n\nDamit werden Suchbaumoperationen im Worst Case linear:\n\n$$\nO(h)=O(n).\n$$\n\nDas zeigt: Die Suchbaumbedingung allein garantiert noch keine effizienten Operationen. Man braucht zusätzlich **Balancierung**."
+  },
+  {
+    "front": "[Suchbäume] Warum kann man für Suchbäume nicht einfach immer einen vollständigen Binärbaum erzwingen?",
+    "back": "Ein vollständiger Binärbaum ist zu **starr**.\n\nBeispiel mit Schlüsseln:\n\n$$2,5,8,10,12,15.$$\n\nBei einer festen vollständigen Struktur ist durch die Suchbaumbedingung praktisch festgelegt, welcher Schlüssel an welcher Position steht. Die Wurzel muss z.B. der viertgrößte Schlüssel sein, also $10$.\n\nFügt man nun $3$ ein, hat man sieben Schlüssel:\n\n$$2,3,5,8,10,12,15.$$\n\nJetzt muss die Wurzel der Median bzw. passende vierte Schlüssel sein, also $8$.\n\nDadurch ändern sich viele Eltern-Kind-Beziehungen und damit viele Zeiger. Ein einzelnes Insert kann also $O(n)$ Umbauten erzwingen."
+  },
+  {
+    "front": "[Suchbäume] Was ist die zentrale Idee hinter balancierten 2-3-Bäumen?",
+    "back": "Ein **2-3-Baum** erlaubt mehr Flexibilität als ein Binärbaum:\n\n- Jeder innere Knoten hat entweder $2$ oder $3$ Kinder.\n- Alle Blätter liegen in derselben Tiefe.\n- Dadurch bleibt der Baum perfekt balanciert, ohne eine einzige starre Form zu erzwingen.\n\nDie zusätzliche Flexibilität verhindert, dass kleine Änderungen sofort den ganzen Baum umbauen müssen.\n\nDas Ziel ist:\n\n$$\nh = O(\\log n),\n$$\n\nund damit Operationen in logarithmischer Zeit."
+  },
+  {
+    "front": "[Suchbäume] Was bedeutet „externe Variante“ eines 2-3-Baums?",
+    "back": "In der **externen Variante** stehen die eigentlichen Schlüssel nur in den Blättern.\n\nInnere Knoten speichern keine Datenobjekte, sondern nur **Separatoren**, die beim Suchen den richtigen Teilbaum bestimmen.\n\nVorteil:\n\n- Löschen und Ändern von Schlüsseln ist einfacher.\n- Separatoren müssen nicht selbst Schlüssel sein.\n- Sie sind nur Verwaltungsinformation.\n\nBeispiel: Ein innerer Knoten mit drei Kindern kann Separatoren $s_1,s_2$ speichern:\n\n- linker Teilbaum: Schlüssel $\\le s_1$\n- mittlerer Teilbaum: Schlüssel $>s_1$ und $\\le s_2$\n- rechter Teilbaum: Schlüssel $>s_2$"
+  },
+  {
+    "front": "[Suchbäume] Warum reichen bei einem 2-Kind-Knoten ein Separator und bei einem 3-Kind-Knoten zwei Separatoren?",
+    "back": "Ein Separator trennt zwei benachbarte Bereiche.\n\nBei $2$ Kindern gibt es nur eine Grenze:\n\n$$\nT_1 \\mid T_2\n$$\n\nalso reicht ein Separator $s_1$.\n\nBei $3$ Kindern gibt es zwei Grenzen:\n\n$$\nT_1 \\mid T_2 \\mid T_3\n$$\n\nalso braucht man zwei Separatoren $s_1,s_2$.\n\nMit der Konvention „bei Gleichheit nach links“ gilt z.B.:\n\n- $T_1$: Schlüssel $\\le s_1$\n- $T_2$: Schlüssel $>s_1$ und $\\le s_2$\n- $T_3$: Schlüssel $>s_2$"
+  },
+  {
+    "front": "[Suchbäume] Warum hat ein 2-3-Baum mit $n$ Schlüsseln Höhe $O(\\log n)$?",
+    "back": "Alle Schlüssel stehen in den Blättern, also gibt es $n$ Blätter.\n\nJeder innere Knoten hat mindestens $2$ Kinder. Daher verdoppelt sich die Anzahl der Knoten pro Ebene mindestens.\n\nBei Tiefe $h$ gibt es also mindestens\n\n$$\n2^h\n$$\n\nBlätter.\n\nDa es insgesamt $n$ Blätter gibt:\n\n$$\n2^h \\le n.\n$$\n\nDurch Logarithmieren folgt:\n\n$$\nh \\le \\log_2 n.\n$$\n\nAlso ist die Höhe logarithmisch:\n\n$$\nh = O(\\log n).\n$$"
+  },
+  {
+    "front": "[Suchbäume] Wie läuft `Search(x)` in einem externen 2-3-Baum ab?",
+    "back": "Man startet an der Wurzel und nutzt die Separatoren, um den passenden Teilbaum zu wählen.\n\nBei einem Knoten mit Separatoren $s_1,s_2$:\n\n- falls $x \\le s_1$: gehe zum linken Kind\n- falls $s_1 < x \\le s_2$: gehe zum mittleren Kind\n- falls $x > s_2$: gehe zum rechten Kind\n\nBei einem Knoten mit nur einem Separator $s_1$:\n\n- falls $x \\le s_1$: links\n- sonst: rechts\n\nPro Ebene wird nur konstant viel verglichen. Deshalb:\n\n$$\nT_\\text{Search}=O(h)=O(\\log n).\n$$"
+  },
+  {
+    "front": "[Suchbäume] Wie funktioniert `Insert(x)` in einem externen 2-3-Baum, solange kein Knoten zu viele Kinder bekommt?",
+    "back": "Zuerst sucht man die Blattposition, an der $x$ stehen müsste.\n\nDann:\n\n1. Füge $x$ als neues Blatt neben dem gefundenen Blatt ein.\n2. Füge beim Elternknoten einen passenden Separator hinzu.\n3. Falls der Elternknoten nun $2$ oder $3$ Kinder hat, ist alles gültig.\n\nBeispiel: Wenn ein Elternknoten vorher nur $2$ Kinder hatte, kann er nach dem Einfügen einfach $3$ Kinder haben. Das ist in einem 2-3-Baum erlaubt.\n\nDie Kosten bis hierhin sind durch die Suche dominiert:\n\n$$\nO(\\log n).\n$$"
+  },
+  {
+    "front": "[Suchbäume] Was passiert beim Insert, wenn ein Knoten im 2-3-Baum vier Kinder bekommt?",
+    "back": "Ein Knoten mit $4$ Kindern verletzt die 2-3-Baum-Bedingung.\n\nSeien die vier Kinder:\n\n$$\nu_1,u_2,u_3,u_4\n$$\n\nund die drei Separatoren:\n\n$$\ns_1,s_2,s_3.\n$$\n\nDann wird der Knoten **gespalten**:\n\n- neuer linker Knoten: Kinder $u_1,u_2$, Separator $s_1$\n- neuer rechter Knoten: Kinder $u_3,u_4$, Separator $s_3$\n- Separator $s_2$ wird zum Elternknoten hochgeschoben\n\nDadurch ist der lokale Knoten repariert, aber der Elternknoten hat ein zusätzliches Kind bekommen. Das Problem kann also eine Ebene nach oben wandern."
+  },
+  {
+    "front": "[Suchbäume] Warum bleibt ein 2-3-Baum nach einem Insert balanciert, obwohl Knoten gespalten werden?",
+    "back": "Beim Spalten werden keine Blätter auf eine andere Tiefe verschoben. Man ersetzt nur lokal einen übervollen Knoten durch zwei gültige Knoten auf derselben Ebene.\n\nFalls die Wurzel gespalten wird, entsteht eine neue Wurzel darüber. Dann erhöht sich die Höhe des gesamten Baums um genau $1$.\n\nAlle Blätter werden dadurch gemeinsam eine Ebene tiefer relativ zur neuen Wurzel. Daher bleiben alle Blätter in derselben Tiefe.\n\nDie Balanciertheit wird also erhalten."
+  },
+  {
+    "front": "[Suchbäume] Wie funktioniert `Delete(x)` in einem externen 2-3-Baum im einfachen Fall?",
+    "back": "Zuerst sucht man das Blatt mit Schlüssel $x$.\n\nFalls $x$ nicht existiert, kann eine Fehlermeldung zurückgegeben werden.\n\nFalls $x$ existiert:\n\n1. Lösche das Blatt.\n2. Lösche einen passenden Separator im Elternknoten.\n3. Falls der Elternknoten weiterhin mindestens $2$ Kinder hat, ist der Baum gültig.\n\nProblematisch wird es nur, wenn der Elternknoten danach nur noch ein Kind hat. Dann verletzt er die 2-3-Baum-Bedingung."
+  },
+  {
+    "front": "[Suchbäume] Was macht man beim Löschen, wenn ein Knoten nur noch ein Kind hat und ein Nachbar drei Kinder besitzt?",
+    "back": "Dann kann man ein Kind vom Nachbarn übernehmen. Diese Operation heißt oft **Redistribution** oder in der Vorlesung anschaulich „Adoption“.\n\nSituation:\n\n- Knoten $v$ hat nur noch $1$ Kind.\n- Benachbarter Knoten $u$ hat $3$ Kinder.\n\nDann verschiebt man ein Randkind von $u$ zu $v$.\n\nDanach haben beide Knoten jeweils $2$ Kinder und sind wieder gültige 2-3-Knoten.\n\nDie Separatoren im Elternknoten und in den betroffenen Knoten müssen entsprechend angepasst werden, aber das ist lokale Arbeit in $O(1)$."
+  },
+  {
+    "front": "[Suchbäume] Was macht man beim Löschen, wenn ein Knoten nur noch ein Kind hat und der Nachbar nur zwei Kinder besitzt?",
+    "back": "Dann kann man nicht einfach ein Kind ausleihen, weil der Nachbar sonst selbst nur noch ein Kind hätte.\n\nStattdessen werden die beiden Knoten **verschmolzen**:\n\n- Knoten $v$ mit $1$ Kind\n- Nachbar $u$ mit $2$ Kindern\n\nwerden zu einem Knoten mit $3$ Kindern kombiniert.\n\nDieser neue Knoten ist gültig.\n\nAber: Der Elternknoten verliert dadurch ein Kind. Falls er dadurch selbst nur noch ein Kind hat, wandert das Problem eine Ebene nach oben und wird dort genauso behandelt."
+  },
+  {
+    "front": "[Suchbäume] Warum enden Insert- und Delete-Reparaturen in einem 2-3-Baum nach $O(\\log n)$ Schritten?",
+    "back": "Sowohl bei `Insert` als auch bei `Delete` wird ein lokales Problem pro Reparaturschritt um höchstens eine Ebene nach oben verschoben.\n\n- Insert: Ein Knoten hat $4$ Kinder und wird gespalten.\n- Delete: Ein Knoten hat nur $1$ Kind und wird durch Umverteilung oder Verschmelzung repariert.\n\nPro Ebene kostet die Reparatur nur $O(1)$.\n\nDa ein 2-3-Baum Höhe\n\n$$\nh=O(\\log n)\n$$\n\nhat, dauern beide Operationen:\n\n$$\nO(\\log n).\n$$"
+  },
+  {
+    "front": "[Suchbäume] Warum kann die Wurzel bei `Delete` in einem 2-3-Baum verschwinden?",
+    "back": "Wenn die Wurzel nach einer Verschmelzung nur noch ein einziges Kind hat, erfüllt sie keine sinnvolle Suchfunktion mehr.\n\nEine Wurzel mit nur einem Kind entscheidet nicht zwischen Teilbäumen. Man kann sie daher löschen und ihr einziges Kind zur neuen Wurzel machen.\n\nDadurch sinkt die Höhe des Baums um $1$, aber alle Blätter bleiben weiterhin in derselben Tiefe.\n\nDie 2-3-Baum-Eigenschaften bleiben erhalten."
+  },
+  {
+    "front": "[Suchbäume] Welche Laufzeiten erreichen externe 2-3-Bäume für Wörterbücher?",
+    "back": "Für ein Wörterbuch mit $n$ Schlüsseln gelten:\n\n$$\n\\text{Search} = O(\\log n)\n$$\n\n$$\n\\text{Insert} = O(\\log n)\n$$\n\n$$\n\\text{Delete} = O(\\log n)\n$$\n\nGrund:\n\n- Die Höhe ist $O(\\log n)$.\n- Jede Operation folgt einem Suchpfad.\n- Reparaturen nach Insert/Delete wandern höchstens entlang dieses Pfads nach oben.\n- Pro Ebene fällt nur konstante Arbeit an.\n\n2-3-Bäume liefern damit einen guten Kompromiss: keine Operation ist konstant, aber alle drei bleiben garantiert logarithmisch."
+  },
+  {
+    "front": "[Suchbäume] Warum sind Suchbäume trotz Hashmaps weiterhin nützlich?",
+    "back": "Hashmaps können Wörterbuchoperationen wie `Search`, `Insert` und `Delete` oft in erwarteter Zeit\n\n$$\nO(1)\n$$\n\nausführen, benötigen dafür aber Randomisierung bzw. Hashing und unterstützen primär nur exakte Schlüsselzugriffe.\n\nSuchbäume speichern Schlüssel geordnet. Dadurch können sie zusätzlich effizient geordnete Operationen unterstützen, z.B.:\n\n- Minimum finden\n- Maximum finden\n- Vorgänger/Nachfolger suchen\n- Bereichsanfragen\n- sortierte Traversierung\n\nEin 2-3-Baum ist daher besonders nützlich, wenn nicht nur Existenzabfragen, sondern auch Ordnungseigenschaften wichtig sind."
+  },
+  {
+    "front": "[Suchbäume] Wie kann man die Idee von 2-3-Bäumen nutzen, um Listenoperationen wie `Get(i)` effizient zu machen?",
+    "back": "Für Listen speichert man in inneren Knoten statt Schlüssel-Separatoren Größeninformationen:\n\n- Anzahl der Blätter im linken Teilbaum\n- Anzahl der Blätter im mittleren Teilbaum\n- Anzahl der Blätter im rechten Teilbaum\n\nDann kann man `Get(i)` wie eine Suche ausführen.\n\nBeispiel: Wenn der linke Teilbaum $8$ Blätter hat und man das $10$-te Element sucht, liegt es nicht links, sondern im nächsten Teilbaum. Dort sucht man nach dem\n\n$$\n10-8=2\n$$\n\n-ten Element.\n\nSo wird Zugriff nach Rang möglich in:\n\n$$\nO(\\log n).\n$$"
+  },
+  {
+    "front": "[Kürzeste Wege] Wie modelliert man „Route mit möglichst wenigen Kreuzungen“ als Graphproblem?",
+    "back": "Man wählt:\n\n- **Knoten**: Kreuzungen sowie ggf. Start- und Zielort.\n- **Gerichtete Kanten**: kreuzungsfreie Straßenabschnitte zwischen Knoten; Richtung modelliert z. B. Einbahnstraßen.\n- **Ziel**: einen Weg vom Startknoten $s$ zum Zielknoten $t$ mit möglichst wenigen Kanten finden.\n\nDie Anzahl der Kanten entspricht dann der Anzahl der durchfahrenen Straßenabschnitte bzw. Kreuzungswechsel."
+  },
+  {
+    "front": "[Kürzeste Wege] Warum ist ein kürzester Weg in einem ungewichteten Graphen immer ein Pfad?",
+    "back": "Ein **Weg** darf Knoten wiederholen, ein **Pfad** nicht.\n\nWenn ein kürzester Weg einen Knoten wiederholt, enthält der Weg zwischen den beiden Besuchen dieses Knotens einen Zyklus. Diesen Zyklus kann man **abkürzen**, ohne Start und Ziel zu ändern.\n\nDadurch erhält man einen Weg mit weniger Kanten. Also konnte der ursprüngliche Weg nicht kürzest sein."
+  },
+  {
+    "front": "[Kürzeste Wege] Wie ist die ungewichtete Distanz $d(u,v)$ in einem gerichteten Graphen definiert?",
+    "back": "Die **Distanz** $d(u,v)$ ist die Länge eines kürzesten Weges von $u$ nach $v$, wobei die Länge die Anzahl der verwendeten Kanten ist.\n\nFalls kein Weg von $u$ nach $v$ existiert, setzt man typischerweise\n\n$$\nd(u,v)=\\infty.\n$$\n\nFür einen Startknoten $s$ betrachtet man oft alle Distanzen\n\n$$\nd(s,v) \\quad \\text{für alle Knoten } v.\n$$"
+  },
+  {
+    "front": "[Kürzeste Wege] Was sind Level-Mengen bei der Breitensuche?",
+    "back": "Für einen Startknoten $s$ ist das **Level** $S_k$ definiert als\n\n$$\nS_k=\\{v \\mid d(s,v)=k\\}.\n$$\n\nAlso enthält $S_k$ genau die Knoten, die in ungewichteter Distanz $k$ von $s$ erreichbar sind.\n\nBeispiele:\n\n- $S_0=\\{s\\}$.\n- $S_1$ sind die Nachfolger von $s$.\n- $S_2$ sind neue Nachfolger von Knoten aus $S_1$, die noch nicht in $S_0\\cup S_1$ liegen."
+  },
+  {
+    "front": "[Kürzeste Wege] Welche Level können durch eine Kante verbunden werden?",
+    "back": "Sei $(u,v)$ eine gerichtete Kante mit\n\n$$\nu\\in S_k,\\qquad v\\in S_{k'}.\n$$\n\nDann gilt immer\n\n$$\nk'\\le k+1.\n$$\n\nBegründung: Es gibt einen Weg der Länge $k$ von $s$ nach $u$. Durch die Kante $(u,v)$ erhält man einen Weg der Länge $k+1$ von $s$ nach $v$. Also kann die kürzeste Distanz zu $v$ höchstens $k+1$ sein.\n\nKanten innerhalb desselben Levels oder zurück zu kleineren Levels sind möglich."
+  },
+  {
+    "front": "[Kürzeste Wege] Wie berechnet man $S_k$, wenn $S_0,\\dots,S_{k-1}$ schon bekannt sind?",
+    "back": "Ein Knoten $v$ liegt genau dann in $S_k$, wenn:\n\n1. $v$ ist Nachfolger eines Knotens aus $S_{k-1}$, also es gibt eine Kante $(u,v)$ mit $u\\in S_{k-1}$.\n2. $v$ wurde vorher noch nicht erreicht:\n\n$$\nv\\notin S_0\\cup S_1\\cup\\dots\\cup S_{k-1}.\n$$\n\nDie zweite Bedingung ist entscheidend: Sonst würde man Knoten erneut aufnehmen, obwohl sie bereits eine kleinere Distanz haben."
+  },
+  {
+    "front": "[Kürzeste Wege] Warum verwendet Breitensuche eine Queue?",
+    "back": "Die **Queue** speichert Knoten nach dem Prinzip **First In, First Out (FIFO)**.\n\nDadurch werden Knoten in der Reihenfolge ihrer Entdeckung abgearbeitet:\n\n- Zuerst $S_0$,\n- dann alle Knoten aus $S_1$,\n- dann alle Knoten aus $S_2$,\n- usw.\n\nGenau diese Reihenfolge garantiert, dass beim ersten Betreten eines Knotens seine Distanz bereits korrekt ist."
+  },
+  {
+    "front": "[Kürzeste Wege] Was passiert bei BFS, wenn man nicht prüft, ob ein Knoten schon entdeckt wurde?",
+    "back": "Dann kann derselbe Knoten mehrfach in die Queue eingefügt werden.\n\nIn Graphen mit Zyklen kann das sogar zu einer **Endlosschleife** führen: Ein Zyklus erzeugt immer wieder dieselben Nachfolger, die erneut eingefügt und abgearbeitet werden.\n\nDeshalb markiert BFS Knoten beim Einfügen in die Queue, z. B. durch eine gesetzte **Enter-Zahl** oder ein visited-Flag."
+  },
+  {
+    "front": "[Kürzeste Wege] Wie setzt BFS die Distanzen korrekt?",
+    "back": "Beim Start setzt man\n\n$$\nd(s)=0.\n$$\n\nWenn BFS eine Kante $(u,v)$ betrachtet und $v$ noch nicht entdeckt wurde, dann setzt man\n\n$$\nd(v)=d(u)+1\n$$\n\nund fügt $v$ in die Queue ein.\n\nDas ist korrekt, weil BFS alle Knoten mit Distanz $k$ verarbeitet, bevor Knoten mit Distanz $k+1$ verarbeitet werden."
+  },
+  {
+    "front": "[Kürzeste Wege] Was ist ein Shortest-Path-Tree bei BFS?",
+    "back": "Ein **Shortest-Path-Tree** entsteht, wenn man für jeden neu entdeckten Knoten $v$ die Kante speichert, über die $v$ erstmals erreicht wurde.\n\nDiese Vorgängerkanten bilden einen gerichteten Baum von $s$ aus. Für jeden erreichbaren Knoten $v$ beschreibt der Baum einen kürzesten Weg von $s$ nach $v$.\n\nWichtig: Der Baum enthält nur einen Teil der Kanten des Graphen."
+  },
+  {
+    "front": "[Kürzeste Wege] Warum läuft BFS in linearer Zeit?",
+    "back": "Mit Adjazenzlisten und einer Queue gilt:\n\n- Jeder Knoten wird höchstens einmal in die Queue eingefügt.\n- Jeder Knoten wird höchstens einmal aus der Queue entfernt.\n- Jede ausgehende Kante wird höchstens einmal betrachtet.\n\nDamit ist die Laufzeit\n\n$$\nO(n+m),\n$$\n\nwobei $n$ die Anzahl der Knoten und $m$ die Anzahl der Kanten ist.\n\nNaive Tests wie „liegt $v$ schon in einem der bisherigen Level?“ können dagegen bis zu $O(mn)$ kosten."
+  },
+  {
+    "front": "[Kürzeste Wege] Wie unterscheiden sich kürzeste Wege in ungewichteten und gewichteten Graphen?",
+    "back": "Im **ungewichteten** Graphen zählt nur die Anzahl der Kanten:\n\n$$\n\\text{Länge}(W)=\\#\\text{Kanten in }W.\n$$\n\nIm **gewichteten** Graphen hat jede Kante $e$ Kosten $c(e)\\in\\mathbb{R}$, und die Kosten eines Weges\n\n$$\nW=(v_0,v_1,\\dots,v_\\ell)\n$$\n\nsind\n\n$$\nc(W)=\\sum_{i=0}^{\\ell-1} c(v_i,v_{i+1}).\n$$\n\nEin günstigster Weg minimiert also die Summe der Kantenkosten, nicht die Anzahl der Kanten."
+  },
+  {
+    "front": "[Kürzeste Wege] Wann sind negative Kantenkosten sinnvoll?",
+    "back": "Negative Kantenkosten können reale Situationen modellieren, in denen das Durchlaufen einer Kante einen **Gewinn** oder eine **Ressourcenrückgewinnung** bedeutet.\n\nBeispiele aus der Vorlesung:\n\n- Geldkosten: Eine Straße bringt Einnahmen, etwa durch ausgelieferte Pakete.\n- Elektroauto: Bergabfahren kann Energie zurückgewinnen und die Batterie laden.\n- Abweichungen von erwarteter Zeit: Eine Kante kann schneller als erwartet sein und daher negative „Mehrkosten“ haben.\n\nNegative Kanten sind also nicht automatisch unsinnig, erschweren aber die Algorithmen."
+  },
+  {
+    "front": "[Kürzeste Wege] Warum zerstören negative Zyklen die Existenz günstigster Wege?",
+    "back": "Ein **negativer Zyklus** ist ein gerichteter Zyklus $C$ mit\n\n$$\nc(C)<0.\n$$\n\nWenn ein solcher Zyklus von $s$ erreichbar ist und man danach noch zum Ziel kommt, kann man ihn beliebig oft durchlaufen. Nach jedem Durchlauf sinken die Gesamtkosten weiter.\n\nEs gibt dann keine minimalen Kosten, sondern nur eine Folge immer günstigerer Wege. Die Distanz wird in diesem Fall als\n\n$$\n-\\infty\n$$\n\ninterpretiert."
+  },
+  {
+    "front": "[Kürzeste Wege] Warum kann man ohne negative Zyklen günstigste Wege als Pfade wählen?",
+    "back": "Wenn ein günstigster Weg einen Knoten wiederholt, enthält er einen Zyklus.\n\nOhne negative Zyklen hat jeder Zyklus Kosten\n\n$$\n\\ge 0.\n$$\n\nMan kann den Zyklus entfernen:\n\n- Bei positiven Zykluskosten wird der Weg günstiger.\n- Bei Zykluskosten $0$ bleiben die Kosten gleich.\n\nAlso existiert immer ein günstigster Weg ohne wiederholte Knoten, also ein günstigster **Pfad**."
+  },
+  {
+    "front": "[Kürzeste Wege] Was besagt die Dreiecksungleichung für günstigste Wege?",
+    "back": "Für alle Knoten $u,w,v$ gilt:\n\n$$\nd(u,v)\\le d(u,w)+d(w,v).\n$$\n\nBegründung: Nimmt man einen günstigsten Weg von $u$ nach $w$ und danach einen günstigsten Weg von $w$ nach $v$, erhält man einen konkreten Weg von $u$ nach $v$ mit Kosten\n\n$$\nd(u,w)+d(w,v).\n$$\n\nDa $d(u,v)$ die minimalen Kosten aller Wege von $u$ nach $v$ sind, kann $d(u,v)$ höchstens so groß sein."
+  },
+  {
+    "front": "[Kürzeste Wege] Welche optimale Teilstruktur haben günstigste Wege?",
+    "back": "Sei\n\n$$\n(v_0,v_1,\\dots,v_\\ell)\n$$\n\nein günstigster Weg von $v_0$ nach $v_\\ell$.\n\nDann ist auch\n\n$$\n(v_0,v_1,\\dots,v_{\\ell-1})\n$$\n\nein günstigster Weg von $v_0$ nach $v_{\\ell-1}$.\n\nSonst könnte man einen günstigeren Weg nach $v_{\\ell-1}$ nehmen und danach dieselbe letzte Kante nach $v_\\ell$ anhängen. Das ergäbe einen günstigeren Weg nach $v_\\ell$, ein Widerspruch."
+  },
+  {
+    "front": "[Kürzeste Wege] Welche Rekurrenz beschreibt günstigste Wege von einem Startknoten $s$?",
+    "back": "Für jeden Knoten $v\\ne s$ gilt:\n\n$$\nd(s,v)=\\min_{(u,v)\\in E}\\bigl(d(s,u)+c(u,v)\\bigr).\n$$\n\nMan betrachtet also alle Vorgänger $u$ von $v$ und fragt: Wie teuer ist ein günstigster Weg nach $u$ plus die letzte Kante $(u,v)$?\n\nDiese Rekurrenz ist die Grundlage sowohl für Dijkstra als auch für Bellman-Ford."
+  },
+  {
+    "front": "[Kürzeste Wege] Warum reicht dynamische Programmierung über eine topologische Reihenfolge nur in azyklischen Graphen?",
+    "back": "Für die Rekurrenz\n\n$$\nd(s,v)=\\min_{(u,v)\\in E}(d(s,u)+c(u,v))\n$$\n\nmüssten die Werte $d(s,u)$ aller Vorgänger $u$ schon bekannt sein.\n\nDas funktioniert direkt, wenn der gerichtete Graph azyklisch ist: Dann gibt es eine **topologische Reihenfolge**, in der alle Kanten von früher nach später zeigen.\n\nBei gerichteten Zyklen existiert im Allgemeinen keine solche Reihenfolge. Dann hängen Distanzwerte zyklisch voneinander ab."
+  },
+  {
+    "front": "[Kürzeste Wege] Warum funktioniert Dijkstras Idee nur bei nichtnegativen Kantenkosten?",
+    "back": "Dijkstra verarbeitet Knoten in aufsteigender Distanz. Das ist nur sicher, wenn\n\n$$\nc(e)\\ge 0\n$$\n\nfür alle Kanten $e$ gilt.\n\nDann kann ein Weg über einen noch weiter entfernten Knoten nicht plötzlich billiger werden, weil spätere Kanten keine negativen Kosten haben.\n\nBei negativen Kanten kann ein Knoten mit zunächst großer Distanz später durch eine negative Kante zu einem anderen Knoten führen und dessen Distanz verbessern. Dann wäre Dijkstras Festlegen eines Knotens zu früh."
+  },
+  {
+    "front": "[Kürzeste Wege] Was ist die zentrale Auswahlregel bei Dijkstra?",
+    "back": "Man hält eine Menge $S$ von Knoten, deren Distanzen schon endgültig bekannt sind.\n\nFür jeden Knoten $v\\notin S$ verwaltet man eine obere Schranke\n\n$$\nD(v)=\\min_{(u,v)\\in E,\\ u\\in S}\\bigl(d(s,u)+c(u,v)\\bigr).\n$$\n\nDijkstra wählt dann den Knoten\n\n$$\nv^*=\\arg\\min_{v\\notin S} D(v)\n$$\n\nund fügt ihn zu $S$ hinzu.\n\nBei nichtnegativen Kanten gilt dann tatsächlich:\n\n$$\nD(v^*)=d(s,v^*).\n$$"
+  },
+  {
+    "front": "[Kürzeste Wege] Warum ist der kleinste Dijkstra-Schrankenwert bereits eine echte Distanz?",
+    "back": "Sei $v^*\\notin S$ der Knoten mit minimalem Schrankenwert $D(v^*)$.\n\nBetrachte irgendeinen Weg von $s$ nach $v^*$. Da $s\\in S$ und $v^*\\notin S$, verlässt der Weg irgendwann erstmals $S$ über eine Kante $(u,v)$ mit $u\\in S$, $v\\notin S$.\n\nBis dorthin kostet der Weg mindestens\n\n$$\nd(s,u)+c(u,v)\\ge D(v^*).\n$$\n\nDer restliche Weg hat wegen nichtnegativer Kantenkosten Kosten $\\ge 0$. Also kann kein Weg nach $v^*$ billiger sein als $D(v^*)$."
+  },
+  {
+    "front": "[Kürzeste Wege] Wie aktualisiert Dijkstra die Schranken nach dem Hinzufügen von $v^*$?",
+    "back": "Nachdem $v^*$ endgültig zu $S$ hinzugefügt wurde, betrachtet man alle ausgehenden Kanten $(v^*,v)$.\n\nFür jeden Nachfolger $v$ aktualisiert man:\n\n$$\nD(v)\\leftarrow \\min\\bigl(D(v),\\ d(s,v^*)+c(v^*,v)\\bigr).\n$$\n\nDas heißt: Man prüft, ob der neu endgültige Knoten $v^*$ einen günstigeren Weg zu $v$ liefert."
+  },
+  {
+    "front": "[Kürzeste Wege] Was bedeutet $S_{\\le \\ell}$ bei Bellman-Ford?",
+    "back": "Für einen Startknoten $s$ ist\n\n$$\nS_{\\le \\ell}\n$$\n\ndie Menge aller Knoten $v$, für die es einen günstigsten Weg von $s$ nach $v$ mit höchstens $\\ell$ Kanten gibt:\n\n$$\nS_{\\le \\ell}=\\{v\\mid \\text{es gibt einen günstigsten Weg von }s\\text{ nach }v\\text{ mit höchstens }\\ell\\text{ Kanten}\\}.\n$$\n\nDabei gilt:\n\n$$\nS_{\\le 0}=\\{s\\}.\n$$\n\nFalls es keine negativen Zyklen gibt und alle Knoten erreichbar sind, gilt außerdem:\n\n$$\nS_{\\le n-1}=V,\n$$\n\nweil ein günstigster Weg als Pfad gewählt werden kann und ein Pfad höchstens $n-1$ Kanten hat."
+  },
+  {
+    "front": "[Kürzeste Wege] Was ist eine $\\ell$-genaue Schranke bei Bellman-Ford?",
+    "back": "Eine Schranke $D(v)$ heißt **$\\ell$-genau**, wenn:\n\n1. Für alle Knoten $v$ ist $D(v)$ eine obere Schranke:\n\n$$\nD(v)\\ge d(s,v).\n$$\n\n2. Für alle Knoten $v\\in S_{\\le \\ell}$ ist sie exakt:\n\n$$\nD(v)=d(s,v).\n$$\n\nBellman-Ford startet mit $0$-genauen Schranken und verbessert sie iterativ zu $1$-genauen, $2$-genauen usw. Schranken."
+  },
+  {
+    "front": "[Kürzeste Wege] Wie initialisiert Bellman-Ford seine Schranken?",
+    "back": "Bellman-Ford setzt zu Beginn:\n\n$$\nD(s)=0\n$$\n\nund für alle anderen Knoten\n\n$$\nD(v)=\\infty.\n$$\n\nDas sind **$0$-genaue Schranken**, denn der einzige Knoten mit einem günstigsten Weg aus höchstens $0$ Kanten ist $s$ selbst."
+  },
+  {
+    "front": "[Kürzeste Wege] Was macht ein Relaxationsschritt in Bellman-Ford?",
+    "back": "Für eine Kante $(u,v)$ prüft man, ob der Weg über $u$ eine bessere Schranke für $v$ liefert:\n\n$$\nD(v)\\leftarrow \\min\\bigl(D(v),\\ D(u)+c(u,v)\\bigr).\n$$\n\nDiese Operation heißt **Relaxation**.\n\nEine vollständige Bellman-Ford-Runde relaxiert alle Kanten bzw. äquivalent alle Vorgängerbeziehungen."
+  },
+  {
+    "front": "[Kürzeste Wege] Warum liefert Bellman-Ford nach $n-1$ Runden korrekte Distanzen?",
+    "back": "Nach jeder vollständigen Relaxationsrunde werden die Schranken um eine Kante genauer:\n\n- Nach $0$ Runden: $0$-genau.\n- Nach $1$ Runde: $1$-genau.\n- Nach $\\ell$ Runden: $\\ell$-genau.\n\nOhne negative Zyklen existiert für jeden erreichbaren Knoten ein günstigster Pfad. Jeder Pfad in einem Graphen mit $n$ Knoten hat höchstens $n-1$ Kanten.\n\nAlso sind nach $n-1$ Runden alle Schranken exakt:\n\n$$\nD(v)=d(s,v)\\quad \\text{für alle erreichbaren }v.\n$$"
+  },
+  {
+    "front": "[Kürzeste Wege] Warum kann die Reihenfolge der Kanten bei Bellman-Ford die praktische Anzahl der Runden beeinflussen?",
+    "back": "Innerhalb einer Runde können verbesserte Schranken sofort weiterverwendet werden, je nach Implementierung und Reihenfolge der Kanten.\n\nWenn die Kanten entlang eines günstigsten Pfades in „guter“ Reihenfolge relaxiert werden, kann sich eine Verbesserung in derselben Runde weit fortpflanzen.\n\nIn ungünstiger Reihenfolge wandert die Verbesserung nur eine Kante pro Runde. Deshalb braucht Bellman-Ford im schlimmsten Fall wirklich\n\n$$\nn-1\n$$\n\nRunden, auch wenn er in Beispielen oft früher stabil wird."
+  },
+  {
+    "front": "[Kürzeste Wege] Wann kann Bellman-Ford früher abbrechen?",
+    "back": "Wenn in einer vollständigen Relaxationsrunde kein Wert $D(v)$ mehr verbessert wird, kann man abbrechen.\n\nDann wird auch in allen folgenden identischen Runden nichts mehr passieren, weil die Eingabewerte für die Relaxationen gleich bleiben.\n\nIn diesem Fall sind die aktuellen Schranken bereits stabil und entsprechen den Distanzen, sofern kein erreichbarer negativer Zyklus relevant ist."
+  },
+  {
+    "front": "[Kürzeste Wege] Wie erkennt Bellman-Ford einen erreichbaren negativen Zyklus?",
+    "back": "Nach den $n-1$ normalen Relaxationsrunden führt man eine weitere Runde aus.\n\nFalls noch eine Kante $(u,v)$ existiert mit\n\n$$\nD(u)+c(u,v)<D(v),\n$$\n\ndann gibt es einen von $s$ erreichbaren negativen Zyklus, der die Distanzen weiter verbessern kann.\n\nGrundidee: Ohne negative Zyklen reicht ein günstigster Pfad mit höchstens $n-1$ Kanten. Eine Verbesserung nach $n-1$ Runden bedeutet, dass ein besserer Weg mindestens $n$ Kanten verwendet und daher einen Zyklus enthält. Damit dieser Weg besser ist, muss ein negativer Zyklus beteiligt sein."
+  },
+  {
+    "front": "[Graphgrundlagen] Warum ist das Königsberger Brückenproblem ein Graphproblem?",
+    "back": "Die Stadtteile werden als **Knoten** modelliert, die Brücken als **Kanten**.\n\nDie Frage\n\n> „Gibt es einen Spaziergang, der jede Brücke genau einmal überquert?“\n\nwird damit zur Frage:\n\n> Gibt es einen **Eulerweg**, also einen Weg im Graphen, der jede Kante genau einmal verwendet?\n\nUnwichtige geometrische Details wie Uferverlauf, Winkel oder Brückenlängen werden abstrahiert; entscheidend ist nur, **welche Stadtteile durch welche Brücken verbunden sind**."
+  },
+  {
+    "front": "[Graphgrundlagen] Was ist ein Eulerweg und was ist ein Eulerzyklus?",
+    "back": "Ein **Eulerweg** ist ein Weg in einem Graphen, der **jede Kante genau einmal** enthält.\n\nEin **Eulerzyklus** ist ein Eulerweg, der zusätzlich geschlossen ist, also bei demselben Knoten startet und endet.\n\nFormal: Ein Eulerzyklus ist ein **Zyklus**, der jede Kante genau einmal enthält.\n\nDer Unterschied:\n\n- Eulerweg: Start- und Endknoten dürfen verschieden sein.\n- Eulerzyklus: Startknoten $=$ Endknoten."
+  },
+  {
+    "front": "[Graphgrundlagen] Warum kann ein Graph mit Eulerweg höchstens zwei Knoten ungeraden Grades haben?",
+    "back": "Betrachte einen Eulerweg und einen Knoten $v$.\n\nFür jeden inneren Knoten gilt:\n\n- Jedes Mal, wenn der Weg nach $v$ **hineingeht**, muss er später auch wieder **hinausgehen**.\n- Also ist\n  $$\n  \\#\\text{hinein} = \\#\\text{hinaus}.\n  $$\n- Damit ist\n  $$\n  \\deg(v)=\\#\\text{hinein}+\\#\\text{hinaus}\n  $$\n  gerade.\n\nNur Start- und Endknoten können eine unausgeglichene Hinein-/Hinaus-Zählung haben. Deshalb können höchstens diese zwei Knoten ungeraden Grad haben."
+  },
+  {
+    "front": "[Graphgrundlagen] Warum hat der Königsberger Brückengraph keinen Eulerweg?",
+    "back": "Im Königsberger Graphen haben die vier Stadtteile Knotengrade\n\n$$3, 3, 3, 5.$$\n\nAlle vier Knoten haben also **ungeraden Grad**.\n\nEin Graph mit Eulerweg darf aber höchstens zwei Knoten ungeraden Grades haben. Da diese notwendige Bedingung verletzt ist, existiert kein Eulerweg.\n\nDas löst das ursprüngliche Brückenrätsel: Ein Spaziergang, der jede Brücke genau einmal überquert, ist unmöglich."
+  },
+  {
+    "front": "[Graphgrundlagen] Wie entscheidet man beim „Haus vom Nikolaus“, wo man starten und enden muss?",
+    "back": "Das Haus-vom-Nikolaus-Bild wird als Graph mit 8 Kanten modelliert. Die beiden unteren Knoten haben ungeraden Grad $3$, die anderen Knoten geraden Grad.\n\nEin Eulerweg existiert genau dann, wenn es $0$ oder $2$ Knoten ungeraden Grades gibt.\n\nBei genau zwei ungeraden Knoten müssen diese der **Start- und Endknoten** sein. Deshalb muss man beim Haus vom Nikolaus an einem unteren Knoten starten und am anderen unteren Knoten enden."
+  },
+  {
+    "front": "[Graphgrundlagen] Was sagt das Handschlaglemma und warum gilt es?",
+    "back": "Das **Handschlaglemma** besagt:\n\n$$\n\\sum_{v \\in V} \\deg(v) = 2|E|.\n$$\n\nBegründung:\n\nJede Kante hat genau zwei Endknoten. Wenn man über alle Knotengrade summiert, wird jede Kante also genau zweimal gezählt: einmal an jedem Endknoten.\n\nEine wichtige Folgerung: Die Anzahl der Knoten mit ungeradem Grad ist immer gerade. Es kann also keinen Graphen mit genau einem oder genau fünf Knoten ungeraden Grades geben."
+  },
+  {
+    "front": "[Graphgrundlagen] Was ist der Unterschied zwischen Weg, Pfad und Zyklus?",
+    "back": "Ein **Weg** ist eine Folge benachbarter Knoten\n\n$$\nv_0, v_1, \\dots, v_\\ell,\n$$\n\nwobei Knoten und Kanten mehrfach vorkommen dürfen. Die Länge ist $\\ell$, also die Anzahl der Kanten.\n\nEin **Pfad** ist ein Weg ohne wiederholte Knoten.\n\nEin **Zyklus** ist ein geschlossener Weg, also\n\n$$\nv_0 = v_\\ell,\n$$\n\ntypischerweise mit Länge $\\ell \\ge 2$."
+  },
+  {
+    "front": "[Graphgrundlagen] Was bedeutet Erreichbarkeit und wie entstehen Zusammenhangskomponenten?",
+    "back": "Ein Knoten $u$ **erreicht** einen Knoten $v$, wenn es einen Weg von $u$ nach $v$ gibt.\n\nDiese Relation ist im ungerichteten Graphen eine **Äquivalenzrelation**:\n\n- reflexiv: Weg der Länge $0$ von $u$ nach $u$\n- symmetrisch: Wege können umgedreht werden\n- transitiv: Wege können aneinandergehängt werden\n\nDie Äquivalenzklassen heißen **Zusammenhangskomponenten**.\n\nEin Graph ist **zusammenhängend**, wenn es genau eine Zusammenhangskomponente gibt, also jeder Knoten jeden anderen erreicht."
+  },
+  {
+    "front": "[Graphgrundlagen] Wann existiert in einem zusammenhängenden Graphen ein Eulerzyklus?",
+    "back": "In einem zusammenhängenden Graphen existiert ein **Eulerzyklus** genau dann, wenn alle Knoten geraden Grad haben:\n\n$$\n\\forall v \\in V:\\ \\deg(v) \\text{ ist gerade}.\n$$\n\nDie Richtung „Eulerzyklus $\\Rightarrow$ alle Grade gerade“ folgt aus dem Hinein-/Hinaus-Argument.\n\nDie andere Richtung ist konstruktiv: Man kann den Graphen in Zyklen zerlegen und diese Zyklen anschließend zu einem Eulerzyklus verschmelzen."
+  },
+  {
+    "front": "[Graphgrundlagen] Wie reduziert man das Finden eines Eulerwegs auf das Finden eines Eulerzyklus?",
+    "back": "Hat ein Graph genau zwei Knoten ungeraden Grades, seien sie $s$ und $t$.\n\nDann fügt man eine zusätzliche Kante $\\{s,t\\}$ ein. Im neuen Graphen sind alle Knotengrade gerade, also kann man dort einen Eulerzyklus suchen.\n\nEntfernt man aus diesem Eulerzyklus die künstlich eingefügte Kante, bleibt ein Eulerweg im ursprünglichen Graphen übrig.\n\nBei $0$ ungeraden Knoten ist ein Eulerweg bereits ein Eulerzyklus. Bei mehr als $2$ ungeraden Knoten existiert kein Eulerweg."
+  },
+  {
+    "front": "[Graphgrundlagen] Wie funktioniert das Verschmelzen zweier Zyklen beim Eulerzyklus-Algorithmus?",
+    "back": "Wenn zwei Zyklen einen gemeinsamen Knoten $v$ haben, kann man sie **splicen**:\n\nBeispiel:\n\n$$\nz_1 = A B C A,\\qquad z_2 = B D E F B.\n$$\n\nDa beide Zyklen den Knoten $B$ enthalten, ersetzt man das $B$ in $z_1$ durch den gesamten Zyklus $z_2$:\n\n$$\nA\\, B D E F B\\, C A.\n$$\n\nDer neue Zyklus enthält alle Kanten aus $z_1$ und $z_2$ genau einmal. Wiederholt man das, lassen sich mehrere kantendisjunkte Zyklen zu einem Eulerzyklus verbinden."
+  },
+  {
+    "front": "[Graphgrundlagen] Welche Invariante garantiert, dass die Walk-Prozedur beim Euleralgorithmus wieder einen Zyklus findet?",
+    "back": "Die zentrale Invariante lautet:\n\n> Für jeden Knoten ist die Anzahl der **unmarkierten** inzidenten Kanten gerade.\n\nAm Anfang gilt sie, wenn alle Knotengrade gerade sind und keine Kante markiert ist.\n\nDie Walk-Prozedur markiert einen Weg, bis sie an einem Knoten endet, an dem keine unmarkierte inzidente Kante mehr übrig ist. Wegen der Invariante war die Anzahl der vorher unmarkierten Kanten an diesem Endknoten gerade. Also liegen dort gerade viele Kanten des gefundenen Weges an.\n\nDamit ist der gefundene Weg ein Zyklus. Da ein Zyklus an jedem Knoten gerade viele Kanten verwendet, bleibt die Invariante nach dem Markieren erhalten."
+  },
+  {
+    "front": "[Graphgrundlagen] Warum ist ein linearer Eulerzyklus-Algorithmus bemerkenswert im Vergleich zum Hamiltonpfadproblem?",
+    "back": "Ein Eulerweg verwendet **jede Kante genau einmal**. Ein Hamiltonpfad verwendet **jeden Knoten genau einmal**.\n\nNaiv könnte man Eulerwege durch alle Kantenreihenfolgen testen:\n\n$$\nm!\n$$\n\nDas ist exponentiell schlecht. Trotzdem gibt es für Eulerwege und Eulerzyklen einen Algorithmus in\n\n$$\nO(n+m).\n$$\n\nBeim Hamiltonpfadproblem ist die Situation anders: Naiv testet man alle Knotenreihenfolgen,\n\n$$\nn!,\n$$\n\nund ein Polynomialzeitalgorithmus ist unter der Vermutung $P \\ne NP$ unmöglich. Das Hamiltonpfadproblem ist NP-schwer."
+  },
+  {
+    "front": "[Graphgrundlagen] Was ist ein gerichteter Graph und wie unterscheiden sich Eingangs- und Ausgangsgrad?",
+    "back": "Ein **gerichteter Graph** ist ein Paar\n\n$$\nG=(V,E),\n$$\n\nwobei die Kanten geordnete Paare sind:\n\n$$\n(u,v) \\in E.\n$$\n\nDas bedeutet: Es gibt eine Kante von $u$ nach $v$.\n\nBegriffe:\n\n- $v$ ist **Nachfolger** von $u$.\n- $u$ ist **Vorgänger** von $v$.\n- Der **Eingangsgrad** $\\deg_{\\text{in}}(v)$ ist die Anzahl eingehender Kanten.\n- Der **Ausgangsgrad** $\\deg_{\\text{out}}(v)$ ist die Anzahl ausgehender Kanten.\n\nEine **Quelle** hat $\\deg_{\\text{in}}(v)=0$, eine **Senke** hat $\\deg_{\\text{out}}(v)=0$."
+  },
+  {
+    "front": "[Graphgrundlagen] Was ist eine topologische Reihenfolge?",
+    "back": "Eine **topologische Reihenfolge** eines gerichteten Graphen ist eine Reihenfolge der Knoten, sodass jede gerichtete Kante von links nach rechts zeigt.\n\nFormal: Für jede Kante\n\n$$\n(u,v)\\in E\n$$\n\nmuss $u$ in der Reihenfolge vor $v$ stehen.\n\nInterpretation: Wenn Kanten Abhängigkeiten darstellen, dann müssen alle Voraussetzungen vor der abhängigen Aufgabe kommen.\n\nBeispiel Kleidung:\n\n- Socken vor Schuhen\n- Unterhose vor Hose\n- Hemd vor Jacke\n\nEine gültige Reihenfolge erfüllt alle diese Abhängigkeiten."
+  },
+  {
+    "front": "[Graphgrundlagen] Warum kann ein gerichteter Zyklus keine topologische Reihenfolge haben?",
+    "back": "In einem gerichteten Zyklus, etwa\n\n$$\nA \\to B \\to C \\to A,\n$$\n\nmüsste gelten:\n\n$$\nA < B,\\quad B < C,\\quad C < A.\n$$\n\nZusammen ergibt das den Widerspruch\n\n$$\nA < A.\n$$\n\nAnschaulich: Jeder Knoten im Zyklus hat einen Vorgänger. Es gibt also keinen Knoten, der als erster in der topologischen Reihenfolge stehen könnte.\n\nDeshalb ist ein gerichteter Zyklus ein Hindernis für topologisches Sortieren."
+  },
+  {
+    "front": "[Graphgrundlagen] Wann existiert eine topologische Reihenfolge?",
+    "back": "Ein gerichteter Graph besitzt genau dann eine topologische Reihenfolge, wenn er **azyklisch** ist, also keinen gerichteten Zyklus enthält.\n\nSolche Graphen heißen **DAGs**:\n\n$$\n\\text{directed acyclic graphs}.\n$$\n\nDie eine Richtung ist einfach: Ein gerichteter Zyklus widerspricht jeder linearen Reihenfolge.\n\nDie andere Richtung ist konstruktiv: In einem azyklischen gerichteten Graphen kann man sukzessive Quellen auswählen und entfernen oder äquivalent eine Tiefensuche verwenden, um eine topologische Ordnung zu erzeugen."
+  },
+  {
+    "front": "[Graphgrundlagen] Warum reicht es nicht, nur eine Quelle und eine Senke zu haben, um topologisch sortieren zu können?",
+    "back": "Eine Quelle und eine Senke sind notwendig, aber nicht hinreichend.\n\nMan kann einen gerichteten Zyklus\n\n$$\nA \\to B \\to C \\to A\n$$\n\nnehmen und zusätzlich eine Quelle $q$ sowie eine Senke $s$ hinzufügen, etwa mit Kanten von $q$ in den Zyklus und vom Zyklus nach $s$.\n\nDann gibt es zwar eine Quelle und eine Senke, aber der Zyklus bleibt bestehen. Nach dem Entfernen der Quelle steht man wieder vor dem Zyklus, in dem kein Knoten als nächster kommen kann.\n\nEntscheidend ist also nicht nur die Existenz einzelner Quellen/Senken, sondern die Abwesenheit gerichteter Zyklen."
+  },
+  {
+    "front": "[Graphgrundlagen] Wie kann man topologisches Sortieren als Planungsproblem verstehen?",
+    "back": "Knoten sind **Aufgaben**, gerichtete Kanten sind **Abhängigkeiten**.\n\nEine Kante\n\n$$\nu \\to v\n$$\n\nbedeutet: Aufgabe $u$ muss vor Aufgabe $v$ erledigt werden.\n\nEine topologische Reihenfolge ist dann eine gültige Ausführungsreihenfolge aller Aufgaben.\n\nBeispiele:\n\n- Kleidung anziehen: Socken vor Schuhen, Hemd vor Jacke.\n- Arithmetische Ausdrücke: Zwischenergebnisse müssen berechnet sein, bevor sie verwendet werden.\n- Fibonacci-Berechnung: $F_i$ hängt von $F_{i-1}$ und $F_{i-2}$ ab."
+  },
+  {
+    "front": "[Graphgrundlagen] Was ist der Unterschied zwischen Adjazenzmatrix und Adjazenzliste?",
+    "back": "Bei einer **Adjazenzmatrix** speichert man eine Matrix\n\n$$\nA \\in \\{0,1\\}^{n \\times n},\n$$\n\nwobei\n\n$$\nA[u,v]=1\n$$\n\ngenau dann gilt, wenn die Kante $(u,v)$ existiert.\n\nBei einer **Adjazenzliste** speichert man für jeden Knoten $u$ eine Liste aller Nachfolger von $u$.\n\nVergleich:\n\n- Adjazenzmatrix: schneller Kantentest, aber Speicherbedarf $O(n^2)$.\n- Adjazenzliste: kompakter bei dünnen Graphen, Speicherbedarf $O(n+m)$.\n\nFür viele Graphalgorithmen ist die Adjazenzliste die natürliche Darstellung."
+  },
+  {
+    "front": "[Graphgrundlagen] Wie schnell kann man testen, ob eine Kante $(u,v)$ existiert?",
+    "back": "Mit einer **Adjazenzmatrix** geht der Test in\n\n$$\nO(1),\n$$\n\nweil man direkt den Eintrag $A[u,v]$ liest.\n\nMit einer **Adjazenzliste** muss man die Nachfolgerliste von $u$ durchsuchen. Die Laufzeit ist\n\n$$\nO(1+\\deg_{\\text{out}}(u)).\n$$\n\nIm schlimmsten Fall ist das $O(n)$, wenn $u$ sehr viele Nachfolger hat.\n\nDafür benötigt die Adjazenzliste meist viel weniger Speicher, wenn $m \\ll n^2$."
+  },
+  {
+    "front": "[Graphgrundlagen] Was ist die Grundidee der Tiefensuche?",
+    "back": "Die **Tiefensuche** arbeitet rekursiv:\n\n1. Starte bei einem Knoten $u$.\n2. Markiere $u$ als besucht.\n3. Für jeden noch unbesuchten Nachfolger $v$ von $u$: führe rekursiv Tiefensuche ab $v$ aus.\n4. Wenn alle Nachfolger verarbeitet sind, ist $u$ abgeschlossen.\n\nSie geht also immer möglichst tief entlang eines Pfades, bevor sie zurückkehrt.\n\nBei Adjazenzlisten läuft Tiefensuche in\n\n$$\nO(n+m),\n$$\n\nweil jeder Knoten einmal besucht und jede Kante konstant oft betrachtet wird."
+  },
+  {
+    "front": "[Graphgrundlagen] Wie liefert Tiefensuche eine topologische Reihenfolge in einem DAG?",
+    "back": "In einem gerichteten azyklischen Graphen führt man Tiefensuche aus und notiert die Knoten beim **Abschluss** ihres rekursiven Aufrufs.\n\nSortiert man die Knoten nach absteigender Abschlusszeit, erhält man eine topologische Reihenfolge.\n\nIntuition:\n\nWenn es eine Kante\n\n$$\nu \\to v\n$$\n\ngibt, dann wird $v$ entweder während der Suche ab $u$ verarbeitet oder war schon vorher abgeschlossen. In beiden Fällen endet $v$ vor $u$ oder steht entsprechend nach $u$ in der umgedrehten Abschlussreihenfolge.\n\nDaher steht $u$ vor $v$."
+  },
+  {
+    "front": "[Graphgrundlagen] Wie erkennt Tiefensuche einen gerichteten Zyklus?",
+    "back": "Man unterscheidet typischerweise drei Zustände:\n\n- **unbesucht**\n- **aktiv**: der rekursive Aufruf läuft gerade\n- **abgeschlossen**\n\nWenn während der Tiefensuche eine Kante zu einem **aktiven** Knoten gefunden wird, dann gibt es einen gerichteten Zyklus. Diese Kante führt nämlich zurück zu einem Knoten auf dem aktuellen Rekursionspfad.\n\nEine solche Kante heißt Rückkante.\n\nIn einem DAG kann keine Rückkante auftreten. Deshalb kann Tiefensuche zugleich testen, ob topologisches Sortieren möglich ist."
+  },
+  {
+    "front": "[Selbstanpassende Datenstrukturen] Was unterscheidet selbstanpassende Datenstrukturen von Datenstrukturen wie Union-Find?",
+    "back": "Bei **selbstanpassenden Datenstrukturen** ändern sich nicht die gespeicherten Daten, sondern nur ihre interne Organisation, um zukünftige Operationen schneller zu machen.\n\nBeispiel: Eine Liste enthält weiterhin dieselben $l$ Elemente, aber ihre Reihenfolge wird nach Suchanfragen verändert.\n\nBei **Union-Find** ändern sich dagegen die dargestellten Mengen selbst: Komponenten werden vereinigt. Die interne Struktur dient dort der effizienten Darstellung eines sich ändernden Problems."
+  },
+  {
+    "front": "[Selbstanpassende Datenstrukturen] Warum betrachtet man bei selbstanpassenden Datenstrukturen oft totale Kosten statt Einzelkosten?",
+    "back": "Eine einzelne Operation kann teuer sein, obwohl die Strategie langfristig gut ist.\n\nBei linearer Suche in einer Liste kann eine Anfrage Kosten bis zu $l$ haben. Entscheidend ist daher die Summe über eine Anfragefolge\n$$\nq_1, q_2, \\dots, q_n.\n$$\n\nMan analysiert also:\n$$\n\\text{Gesamtkosten} = \\sum_{t=1}^n \\text{Kosten von Anfrage } q_t.\n$$\n\nDas erlaubt Aussagen wie: Eine Heuristik ist über viele Anfragen höchstens doppelt so teuer wie eine optimale statische Liste."
+  },
+  {
+    "front": "[Selbstanpassende Datenstrukturen] Wie werden die Kosten einer Anfrage bei linearer Suche in einer verketteten Liste definiert?",
+    "back": "Die Kosten einer Anfrage nach Element $x$ sind die **Position von $x$ in der aktuellen Liste**.\n\nSteht $x$ an Position $k$, dann muss man die ersten $k$ Listenelemente testen:\n$$\n\\text{Kosten}(x) = k.\n$$\n\nBeispiele:\n\n- $x$ an erster Stelle: Kosten $1$\n- $x$ an zweiter Stelle: Kosten $2$\n- $x$ an letzter Stelle einer Liste der Länge $l$: Kosten $l$\n\nDie einzige erlaubte Operation ist Gleichheitstest, nicht Größenvergleich."
+  },
+  {
+    "front": "[Selbstanpassende Datenstrukturen] Warum kann man für dieses Suchproblem nicht einfach einen Suchbaum verwenden?",
+    "back": "Ein klassischer **Suchbaum** setzt voraus, dass man Elemente vergleichen kann, z.B.\n$$\nx < y.\n$$\n\nIn der betrachteten Situation darf man aber nur testen:\n$$\nx = y \\quad \\text{oder} \\quad x \\ne y.\n$$\n\nDeshalb kann man die Elemente nicht sinnvoll sortiert in einem Suchbaum organisieren. Die naheliegende Datenstruktur ist eine Liste, die man linear durchsucht."
+  },
+  {
+    "front": "[Selbstanpassende Datenstrukturen] Welche statische Reihenfolge minimiert die Gesamtkosten einer bekannten Anfragefolge?",
+    "back": "Wenn die gesamte Anfragefolge bekannt ist, ordnet man die Elemente **absteigend nach ihrer Anfragehäufigkeit**.\n\nSei\n$$\nf_i = \\text{Anzahl der Anfragen nach Element } i.\n$$\n\nBenennen wir die Elemente so, dass gilt:\n$$\nf_1 \\ge f_2 \\ge \\dots \\ge f_l,\n$$\ndann ist die optimale statische Liste:\n$$\n1,2,\\dots,l.\n$$\n\nDas häufigste Element kommt also an Position $1$, das zweithäufigste an Position $2$ usw."
+  },
+  {
+    "front": "[Selbstanpassende Datenstrukturen] Was sind die optimalen statischen Gesamtkosten bei bekannten Häufigkeiten?",
+    "back": "Wenn die Elemente nach absteigender Häufigkeit sortiert sind, dann steht Element $i$ an Position $i$.\n\nJede Anfrage nach Element $i$ kostet daher $i$, und es gibt $f_i$ solche Anfragen.\n\nDie optimalen statischen Gesamtkosten sind:\n$$\n\\operatorname{OPT}\n=\n\\sum_{i=1}^l i f_i.\n$$\n\nDiese Formel gruppiert die Kosten **nach Elementen**, nicht nach Zeitpunkten der Anfragen."
+  },
+  {
+    "front": "[Selbstanpassende Datenstrukturen] Warum ist die optimale statische Reihenfolge praktisch oft nicht direkt verwendbar?",
+    "back": "Sie setzt voraus, dass man die Anfragehäufigkeiten\n$$\nf_1,\\dots,f_l\n$$\nkennt.\n\nDas bedeutet: Man müsste die Zukunft kennen oder zumindest sehr gute Vorhersagen haben. Historische Daten können irreführend sein, wenn sich Zugriffsmuster ändern.\n\nDas Problem ist also **keine Hellsicht**: Die optimale statische Liste ist nur dann berechenbar, wenn die zukünftige Anfragefolge oder ihre Häufigkeiten bekannt sind."
+  },
+  {
+    "front": "[Selbstanpassende Datenstrukturen] Was ist die Move-to-Front-Heuristik?",
+    "back": "**Move-to-Front** bedeutet:\n\nNach jeder erfolgreichen Suche wird das angefragte Element an den Anfang der Liste verschoben.\n\nWenn also eine Anfrage nach $x$ bearbeitet wurde, wird $x$ danach auf Position $1$ gesetzt. Die relative Reihenfolge der übrigen Elemente bleibt entsprechend erhalten.\n\nDie Idee: Elemente, die kürzlich gesucht wurden, könnten bald wieder gesucht werden und sollen dann billig erreichbar sein."
+  },
+  {
+    "front": "[Selbstanpassende Datenstrukturen] Warum klingt Move-to-Front zunächst zu simpel, funktioniert aber trotzdem gut?",
+    "back": "Move-to-Front nutzt keine Zähler, keine bekannten Häufigkeiten und keine Vorhersage. Es reagiert nur auf die aktuelle Anfrage.\n\nTrotzdem gilt für eine Anfragefolge:\n$$\n\\text{Kosten}_{\\mathrm{MTF}}\n\\le\nl^2 + 2 \\sum_{i=1}^l i f_i.\n$$\n\nAlso ist Move-to-Front bis auf den additiven Term $l^2$ höchstens doppelt so teuer wie die optimale statische Liste, die die Häufigkeiten im Voraus kennt."
+  },
+  {
+    "front": "[Selbstanpassende Datenstrukturen] Wann ist der additive Term $l^2$ in der Move-to-Front-Schranke vernachlässigbar?",
+    "back": "Die Schranke lautet:\n$$\n\\text{Kosten}_{\\mathrm{MTF}}\n\\le\nl^2 + 2\\operatorname{OPT}.\n$$\n\nDa jede Anfrage mindestens Kosten $1$ verursacht, gilt:\n$$\n\\operatorname{OPT} \\ge n.\n$$\n\nWenn also die Anzahl der Anfragen viel größer als $l^2$ ist,\n$$\nn \\gg l^2,\n$$\ndann ist $l^2$ im Vergleich zu den Gesamtkosten klein.\n\nFür lange Anfragefolgen ist Move-to-Front daher im Wesentlichen ein $2$-Approximationsverfahren gegenüber der optimalen statischen Liste."
+  },
+  {
+    "front": "[Selbstanpassende Datenstrukturen] Was zählt die Größe $c_{ij}$ in der Analyse von Move-to-Front?",
+    "back": "$c_{ij}$ zählt, wie oft Element $i$ durchlaufen wird, wenn nach Element $j$ gesucht wird.\n\nAlso: Für alle Anfragen nach $j$ zählt man, bei wie vielen dieser Suchvorgänge $i$ vor oder bei $j$ in der aktuellen Liste liegt und deshalb angeschaut wird.\n\nInsbesondere gilt:\n$$\nc_{jj} = f_j,\n$$\ndenn bei jeder Suche nach $j$ wird $j$ selbst angeschaut.\n\nDie totalen Move-to-Front-Kosten sind:\n$$\n\\sum_{i=1}^l \\sum_{j=1}^l c_{ij}.\n$$"
+  },
+  {
+    "front": "[Selbstanpassende Datenstrukturen] Warum gilt immer $c_{ij} \\le f_j$?",
+    "back": "Es gibt genau $f_j$ Anfragen nach Element $j$.\n\nBei jeder einzelnen Suche nach $j$ kann Element $i$ höchstens einmal durchlaufen werden, weil die Liste keine Duplikate enthält.\n\nDaher:\n$$\nc_{ij} \\le f_j.\n$$\n\nDiese Schranke ist einfach, aber noch nicht stark genug für die spätere Analyse."
+  },
+  {
+    "front": "[Selbstanpassende Datenstrukturen] Warum gilt bei Move-to-Front die stärkere Schranke $c_{ij} \\le f_i + 1$?",
+    "back": "Betrachte mehrere Suchanfragen nach $j$, bei denen $i$ vor $j$ liegt und daher gezählt wird.\n\nNach einer Suche nach $j$ wird $j$ durch Move-to-Front an den Listenanfang gestellt. Damit $i$ bei einer späteren Suche nach $j$ wieder vor $j$ liegen kann, muss $i$ zwischendurch selbst angefragt worden sein, denn nur dann wird $i$ vor $j$ bewegt.\n\nDie erste Zählung von $i$ bei einer Suche nach $j$ ist „frei“. Für jede weitere Zählung braucht man mindestens eine Anfrage nach $i$ dazwischen.\n\nAlso:\n$$\nc_{ij} \\le f_i + 1.\n$$"
+  },
+  {
+    "front": "[Selbstanpassende Datenstrukturen] Welche zentrale Abschätzung für $c_{ij}$ kombiniert die beiden einfachen Schranken?",
+    "back": "Aus\n$$\nc_{ij} \\le f_j\n$$\nund\n$$\nc_{ij} \\le f_i + 1\n$$\nfolgt:\n$$\nc_{ij}\n\\le\n\\min(f_i+1, f_j).\n$$\n\nDiese Ungleichung ist der Schlüssel zur Analyse von Move-to-Front, weil sie die Kosten einer Suche nach $j$ auch durch die Häufigkeit von $i$ kontrolliert."
+  },
+  {
+    "front": "[Selbstanpassende Datenstrukturen] Wie erhält man aus den $c_{ij}$ die Schranke für Move-to-Front?",
+    "back": "Die Gesamtkosten sind:\n$$\n\\sum_{i,j} c_{ij}.\n$$\n\nMit\n$$\nc_{ij} \\le \\min(f_i+1,f_j)\n$$\nfolgt:\n$$\n\\sum_{i,j} c_{ij}\n\\le\nl^2 + \\sum_{i,j} \\min(f_i,f_j).\n$$\n\nDer Term $l^2$ entsteht, weil das $+1$ in $f_i+1$ über höchstens $l^2$ Paare $(i,j)$ aufsummiert wird."
+  },
+  {
+    "front": "[Selbstanpassende Datenstrukturen] Warum wird aus $\\sum_{i,j}\\min(f_i,f_j)$ höchstens $2\\sum_j j f_j$?",
+    "back": "Die Häufigkeiten seien absteigend sortiert:\n$$\nf_1 \\ge f_2 \\ge \\dots \\ge f_l.\n$$\n\nWegen Symmetrie:\n$$\n\\sum_{i,j}\\min(f_i,f_j)\n\\le\n2 \\sum_{i \\le j} \\min(f_i,f_j).\n$$\n\nFür $i \\le j$ gilt wegen der Sortierung:\n$$\nf_i \\ge f_j,\n$$\nalso\n$$\n\\min(f_i,f_j)=f_j.\n$$\n\nDaher:\n$$\n2 \\sum_{i \\le j} f_j\n=\n2 \\sum_{j=1}^l j f_j.\n$$\n\nDas ist genau das Doppelte der optimalen statischen Kosten."
+  },
+  {
+    "front": "[Selbstanpassende Datenstrukturen] Was ist die finale Konkurrenzgarantie von Move-to-Front gegenüber der optimalen statischen Liste?",
+    "back": "Für eine Liste der Länge $l$ und Anfragehäufigkeiten\n$$\nf_1 \\ge f_2 \\ge \\dots \\ge f_l\n$$\ngilt:\n$$\n\\text{Kosten}_{\\mathrm{MTF}}\n\\le\nl^2\n+\n2 \\sum_{i=1}^l i f_i.\n$$\n\nDa\n$$\n\\operatorname{OPT}\n=\n\\sum_{i=1}^l i f_i,\n$$\nist dies:\n$$\n\\text{Kosten}_{\\mathrm{MTF}}\n\\le\nl^2 + 2\\operatorname{OPT}.\n$$\n\nMove-to-Front ist also bis auf einen additiven Anfangseffekt höchstens doppelt so teuer wie die beste statische Reihenfolge mit Zukunftswissen."
+  },
+  {
+    "front": "[Minimale Spannbäume] Was ist ein minimaler Spannbaum und welche Rolle spielen verschiedene Kantengewichte?",
+    "back": "Ein **minimaler Spannbaum** (**MST**) eines zusammenhängenden, ungerichteten, gewichteten Graphen $G=(V,E)$ ist ein Spannbaum $T\\subseteq E$ mit minimalem Gesamtgewicht\n\n$$\nw(T)=\\sum_{e\\in T} w(e).\n$$\n\nEin Spannbaum enthält genau $n-1$ Kanten und verbindet alle $n=|V|$ Knoten kreisfrei.\n\nDie Annahme **alle Kantengewichte sind verschieden** ist wichtig, weil dann der MST eindeutig ist. Dadurch kann man sinnvoll von **sicheren Kanten** sprechen: Kanten, die in jedem MST vorkommen."
+  },
+  {
+    "front": "[Minimale Spannbäume] Warum gibt es bei gleichen Kantengewichten nicht unbedingt sichere Kanten?",
+    "back": "Betrachte einen Kreis, bei dem alle Kanten Gewicht $1$ haben. Jeder Spannbaum entsteht, indem man **eine beliebige Kante** des Kreises entfernt.\n\nAlso kommt keine einzelne Kante in **allen** minimalen Spannbäumen vor. Deshalb ist unter gleichen Gewichten der Begriff „sicher“ im Sinn von „in jedem MST enthalten“ problematisch.\n\nMit verschiedenen Kantengewichten ist der MST eindeutig, und sichere Kanten sind genau die Kanten dieses eindeutigen MST."
+  },
+  {
+    "front": "[Minimale Spannbäume] Was besagt das Schnittprinzip für minimale Spannbäume?",
+    "back": "Sei $S\\subset V$ eine echte, nichtleere Knotenmenge. Betrachte alle Kanten, die den Schnitt verlassen:\n\n$$\n\\delta(S)=\\{\\{u,v\\}\\in E \\mid u\\in S,\\ v\\notin S\\}.\n$$\n\nIst $e$ die Kante mit minimalem Gewicht in $\\delta(S)$, dann ist $e$ **sicher**, d.h. sie gehört zu jedem MST, sofern alle Kantengewichte verschieden sind.\n\nIntuition: Die billigste Möglichkeit, $S$ mit $V\\setminus S$ zu verbinden, darf in einem MST nicht fehlen."
+  },
+  {
+    "front": "[Minimale Spannbäume] Wie funktioniert der Austauschbeweis für das Schnittprinzip?",
+    "back": "Sei $e=\\{u,v\\}$ die leichteste Kante im Schnitt $\\delta(S)$ mit $u\\in S$, $v\\notin S$.\n\nNimm einen Spannbaum $T$, der $e$ nicht enthält. In $T$ gibt es einen eindeutigen Pfad von $u$ nach $v$. Dieser Pfad muss den Schnitt $\\delta(S)$ mindestens einmal verlassen; sei $f$ eine solche Schnittkante auf diesem Pfad.\n\nDa $e$ die leichteste Schnittkante ist und alle Gewichte verschieden sind,\n\n$$\nw(e)<w(f).\n$$\n\nErsetzt man $f$ durch $e$, erhält man wieder einen Spannbaum, aber mit kleinerem Gewicht. Also kann $T$ kein MST sein. Daher muss jeder MST $e$ enthalten."
+  },
+  {
+    "front": "[Minimale Spannbäume] Was ist der typische Fehler im Beweis des Schnittprinzips?",
+    "back": "Der Fehler ist, eine beliebige Schnittkante $f\\in T\\cap \\delta(S)$ zu entfernen.\n\nDas reicht nicht: Entfernt man eine falsche Schnittkante und fügt $e$ hinzu, kann ein Graph entstehen, der entweder\n\n- einen Kreis enthält, oder\n- nicht mehr zusammenhängend ist.\n\nKorrekt ist: Man muss $f$ auf dem eindeutigen Pfad von $u$ nach $v$ in $T$ wählen. Dann liegt $f$ auf dem Kreis, der durch Hinzufügen von $e$ entsteht, und der Austausch erhält die Spannbaum-Eigenschaft."
+  },
+  {
+    "front": "[Minimale Spannbäume] Wie nutzt Borůvkas Algorithmus das Schnittprinzip?",
+    "back": "Borůvkas Algorithmus verwaltet eine Menge $F$ sicherer Kanten, die immer einen **Wald** bildet.\n\nIn jeder Iteration:\n\n1. Berechne die Zusammenhangskomponenten $S_1,\\dots,S_k$ von $(V,F)$.\n2. Für jede Komponente $S_i$ wähle die leichteste Kante, die $S_i$ verlässt.\n3. Füge alle diese Kanten zu $F$ hinzu.\n\nNach dem Schnittprinzip ist jede gewählte Kante sicher. Sobald $F$ zusammenhängend ist, ist $F$ ein MST."
+  },
+  {
+    "front": "[Minimale Spannbäume] Warum halbiert Borůvkas Algorithmus in jeder Iteration mindestens die Anzahl der Komponenten?",
+    "back": "Seien aktuell $k$ Zusammenhangskomponenten vorhanden. Jede Komponente wählt eine ausgehende Kante.\n\nEine gewählte Kante kann höchstens von zwei Komponenten gewählt werden, nämlich von ihren beiden Endkomponenten. Daher gibt es unter den $k$ gewählten Kanten mindestens\n\n$$\n\\frac{k}{2}\n$$\n\nverschiedene Kanten.\n\nDa $F$ immer kreisfrei bleibt, reduziert jede neu hinzugefügte verschiedene Kante die Anzahl der Komponenten um $1$. Also bleiben nach der Iteration höchstens\n\n$$\nk-\\frac{k}{2}=\\frac{k}{2}\n$$\n\nKomponenten übrig."
+  },
+  {
+    "front": "[Minimale Spannbäume] Welche Laufzeit hat Borůvkas Algorithmus und warum?",
+    "back": "Pro Iteration kann man in\n\n$$\nO(n+m)\n$$\n\nZeit\n\n- die Zusammenhangskomponenten von $F$ berechnen,\n- alle Kanten einmal durchlaufen,\n- für jede Komponente die leichteste ausgehende Kante bestimmen.\n\nDa sich die Anzahl der Komponenten pro Iteration mindestens halbiert, gibt es höchstens\n\n$$\n\\lceil \\log_2 n\\rceil\n$$\n\nIterationen.\n\nDamit ist die Gesamtlaufzeit\n\n$$\nO((n+m)\\log n).\n$$"
+  },
+  {
+    "front": "[Minimale Spannbäume] Was ist die Grundidee von Prims Algorithmus?",
+    "back": "Prims Algorithmus wächst einen MST von einem Startknoten $s$ aus.\n\nEr verwaltet:\n\n- eine Knotenmenge $S$, die bereits erreicht ist,\n- eine Kantenmenge $F$ sicherer Kanten.\n\nSolange $S\\neq V$ gilt:\n\n1. Wähle die leichteste Kante $\\{u,v\\}$ mit $u\\in S$ und $v\\notin S$.\n2. Füge diese Kante zu $F$ hinzu.\n3. Füge $v$ zu $S$ hinzu.\n\nDie Korrektheit folgt direkt aus dem Schnittprinzip für den Schnitt $(S,V\\setminus S)$."
+  },
+  {
+    "front": "[Minimale Spannbäume] Was ist der Unterschied zwischen Borůvka und Prim?",
+    "back": "**Borůvka** wächst alle Komponenten gleichzeitig:\n\n- Jede Zusammenhangskomponente von $F$ wählt ihre billigste ausgehende Kante.\n- Die Anzahl der Komponenten sinkt stark, mindestens um Faktor $2$.\n\n**Prim** wächst nur eine Komponente:\n\n- Die Komponente, die den Startknoten enthält, wird schrittweise erweitert.\n- Pro Iteration kommt genau ein neuer Knoten hinzu.\n\nBeide Algorithmen verwenden dasselbe Prinzip: Die leichteste Kante über einen geeigneten Schnitt ist sicher."
+  },
+  {
+    "front": "[Minimale Spannbäume] Was speichern die Werte $d[v]$ in der Priority-Queue-Implementierung von Prim?",
+    "back": "Für jeden Knoten $v\\notin S$ speichert\n\n$$\nd[v]=\\min\\{w(u,v)\\mid u\\in S,\\ \\{u,v\\}\\in E\\}.\n$$\n\nAlso ist $d[v]$ das Gewicht der billigsten bekannten Kante von $S$ nach $v$.\n\nDie Priority Queue enthält genau die Knoten außerhalb von $S$ und verwendet $d[v]$ als Schlüssel. Der nächste Knoten wird mit `Extract-Min` gewählt.\n\nFür den Startknoten setzt man initial\n\n$$\nd[s]=0,\n$$\n\nfür alle anderen Knoten\n\n$$\nd[v]=\\infty.\n$$"
+  },
+  {
+    "front": "[Minimale Spannbäume] Warum liefert `Extract-Min` bei Prim den richtigen nächsten Knoten?",
+    "back": "Nach der Invariante gilt für jeden Knoten $v\\notin S$:\n\n$$\nd[v]=\\min\\{w(u,v)\\mid u\\in S,\\ \\{u,v\\}\\in E\\}.\n$$\n\n`Extract-Min` wählt also den Knoten $v^\\*$ außerhalb von $S$ mit minimalem $d[v^\\*]$.\n\nDie zugehörige Kante ist damit die leichteste Kante über den Schnitt $(S,V\\setminus S)$. Nach dem Schnittprinzip ist diese Kante sicher und darf dem MST hinzugefügt werden."
+  },
+  {
+    "front": "[Minimale Spannbäume] Warum braucht Prim eine `Decrease-Key`-Operation?",
+    "back": "Wenn ein neuer Knoten $u$ zu $S$ hinzugefügt wird, können Kanten $\\{u,v\\}$ zu noch nicht besuchten Knoten $v\\notin S$ bessere Verbindungen liefern.\n\nDann aktualisiert man\n\n$$\nd[v]\\leftarrow \\min(d[v],w(u,v)).\n$$\n\nFalls sich $d[v]$ verkleinert, muss auch der Schlüssel von $v$ in der Priority Queue verkleinert werden. Genau dafür braucht man **Decrease-Key**.\n\nIn einem Min-Heap wird der Knoten danach nach oben getauscht, bis die Heap-Eigenschaft wieder gilt."
+  },
+  {
+    "front": "[Minimale Spannbäume] Welche Operationen eines Min-Heaps braucht Prim und was kosten sie?",
+    "back": "Prim verwendet eine **Priority Queue**, typischerweise als **Min-Heap**.\n\nWichtige Operationen:\n\n- `Extract-Min`: entfernt den Knoten mit kleinstem Schlüssel.\n- `Decrease-Key`: verkleinert den Schlüssel eines Knotens.\n\nBei einem binären Min-Heap kosten beide Operationen\n\n$$\nO(\\log n),\n$$\n\nweil der Heap ein fast vollständiger Binärbaum mit Tiefe $O(\\log n)$ ist.\n\n`Extract-Min` lässt das letzte Element an die Wurzel wandern und versickern.  \n`Decrease-Key` lässt ein Element nach oben steigen."
+  },
+  {
+    "front": "[Minimale Spannbäume] Welche Laufzeit hat Prim mit Min-Heap?",
+    "back": "Initialisierung kostet\n\n$$\nO(n).\n$$\n\n`Extract-Min` wird genau einmal pro Knoten ausgeführt:\n\n$$\nn\\cdot O(\\log n).\n$$\n\nJede Kante wird höchstens einmal relevant betrachtet, und pro betrachteter Kante kann ein `Decrease-Key` auftreten:\n\n$$\nm\\cdot O(\\log n).\n$$\n\nDamit ergibt sich\n\n$$\nO((n+m)\\log n).\n$$\n\nOhne Priority Queue wäre eine direkte Implementierung deutlich schlechter, nämlich typischerweise\n\n$$\nO(nm),\n$$\n\nwenn man in jeder Iteration alle Kanten durchsucht."
+  },
+  {
+    "front": "[Minimale Spannbäume] Worin unterscheiden sich Prim und Dijkstra trotz ähnlicher Implementierung?",
+    "back": "Beide Algorithmen verwenden eine Menge $S$, Schrankenwerte $d[v]$ und eine Priority Queue.\n\nDer Unterschied liegt in der Update-Formel:\n\nBei **Prim**:\n\n$$\nd[v]\\leftarrow \\min(d[v],w(u,v)).\n$$\n\nHier zählt nur die billigste Kante von $S$ nach $v$.\n\nBei **Dijkstra**:\n\n$$\nd[v]\\leftarrow \\min(d[v],d[u]+w(u,v)).\n$$\n\nHier zählt die Länge eines gesamten Pfades vom Startknoten nach $v$.\n\nPrim berechnet einen MST, Dijkstra kürzeste Wege. Die resultierenden Kanten sind im Allgemeinen verschieden."
+  },
+  {
+    "front": "[Minimale Spannbäume] Wie funktioniert Kruskals Algorithmus?",
+    "back": "Kruskal baut einen MST, indem er Kanten nach Gewicht sortiert betrachtet.\n\nAlgorithmus:\n\n1. Sortiere alle Kanten aufsteigend nach Gewicht.\n2. Starte mit $F=\\emptyset$.\n3. Für jede Kante $e=\\{u,v\\}$ in dieser Reihenfolge:\n   - Falls $u$ und $v$ in verschiedenen Komponenten von $(V,F)$ liegen, füge $e$ zu $F$ hinzu.\n   - Sonst verwerfe $e$.\n\nAm Ende ist $F$ ein MST.\n\nIntuition: Kruskal nimmt die billigste Kante, die keinen Kreis erzeugt."
+  },
+  {
+    "front": "[Minimale Spannbäume] Warum darf Kruskal eine Kante verwerfen, wenn ihre Endpunkte schon verbunden sind?",
+    "back": "Wenn $u$ und $v$ in $(V,F)$ bereits verbunden sind, dann würde das Hinzufügen von $\\{u,v\\}$ einen Kreis erzeugen.\n\nDa Kruskal die Kanten aufsteigend betrachtet, besteht der bereits vorhandene Pfad von $u$ nach $v$ nur aus Kanten mit kleinerem Gewicht.\n\nDann kann $\\{u,v\\}$ nicht die leichteste Kante über einen passenden Schnitt sein und ist nicht nötig für einen MST. Sie wird verworfen, um die Kreisfreiheit von $F$ zu erhalten."
+  },
+  {
+    "front": "[Minimale Spannbäume] Wie kann man testen, ob eine Kante $\\{u,v\\}$ im Kruskal-Sinn sicher ist?",
+    "back": "Betrachte den Teilgraphen, der nur Kanten mit kleinerem Gewicht als $w(u,v)$ enthält.\n\nDie Kante $\\{u,v\\}$ ist sicher genau dann, wenn $u$ und $v$ in diesem Teilgraphen in verschiedenen Zusammenhangskomponenten liegen.\n\nÄquivalent: Es gibt keinen Pfad von $u$ nach $v$, der nur Kanten mit kleinerem Gewicht verwendet.\n\nKruskal hält diese Information inkrementell in $F$ fest: Beim Betrachten der aktuellen Kante haben die Komponenten von $F$ genau die Komponenten der bereits betrachteten leichteren Kanten."
+  },
+  {
+    "front": "[Minimale Spannbäume] Welche Invariante hält Kruskal während des Durchlaufs aufrecht?",
+    "back": "Wenn Kruskal gerade eine Kante $e$ betrachtet, dann entsprechen die Zusammenhangskomponenten von $(V,F)$ den Zusammenhangskomponenten des Graphen aus allen Kanten mit Gewicht kleiner als $w(e)$.\n\nDeshalb genügt der Test:\n\n$$\nu \\text{ und } v \\text{ liegen in verschiedenen Komponenten von } F.\n$$\n\nFalls ja, fügt Kruskal $\\{u,v\\}$ hinzu. Falls nein, würde die Kante keinen neuen Zusammenhang schaffen und nur einen Kreis erzeugen."
+  },
+  {
+    "front": "[Minimale Spannbäume] Warum ist eine naive Implementierung von Kruskal langsam?",
+    "back": "Sortieren der Kanten kostet\n\n$$\nO(m\\log m).\n$$\n\nWenn man aber für jede Kante neu die Zusammenhangskomponenten von $(V,F)$ per DFS/BFS berechnet, kostet ein Test etwa\n\n$$\nO(n),\n$$\n\nweil $F$ höchstens $n-1$ Kanten enthält.\n\nFür $m$ Kanten ergibt das\n\n$$\nO(mn)\n$$\n\nzusätzliche Zeit.\n\nDeshalb braucht Kruskal eine effiziente Datenstruktur zur Verwaltung dynamischer Zusammenhangskomponenten: **Union-Find**."
+  },
+  {
+    "front": "[Minimale Spannbäume] Welche Operationen unterstützt Union-Find für Kruskal?",
+    "back": "Union-Find verwaltet die Zusammenhangskomponenten der aktuell gewählten Kantenmenge $F$.\n\nOperationen:\n\n- `Make`: initialisiert jede Komponente als einzelnen Knoten.\n- `Same(u,v)`: testet, ob $u$ und $v$ in derselben Komponente liegen.\n- `Union(u,v)`: vereinigt die Komponenten von $u$ und $v$, entsprechend dem Hinzufügen der Kante $\\{u,v\\}$.\n\nFür Kruskal gilt:\n\n- `Same(u,v)` entscheidet, ob eine Kante genommen wird.\n- `Union(u,v)` wird ausgeführt, wenn die Kante genommen wird."
+  },
+  {
+    "front": "[Minimale Spannbäume] Wie funktioniert die einfache Union-Find-Repräsentation mit Repräsentanten?",
+    "back": "Man speichert ein Array\n\n$$\n\\operatorname{rep}[v],\n$$\n\nwobei $\\operatorname{rep}[v]$ der eindeutige Repräsentant der Komponente von $v$ ist.\n\nDann gilt:\n\n$$\n\\operatorname{Same}(u,v)\n\\iff\n\\operatorname{rep}[u]=\\operatorname{rep}[v].\n$$\n\n`Same` kostet damit nur\n\n$$\nO(1).\n$$\n\n`Make` setzt anfangs\n\n$$\n\\operatorname{rep}[v]=v\n$$\n\nfür alle Knoten $v$, also Kosten $O(n)$.\n\nDas Problem ist `Union`: Man muss Repräsentanten vieler Knoten ändern."
+  },
+  {
+    "front": "[Minimale Spannbäume] Warum ist die naive `Union`-Operation mit Repräsentanten teuer?",
+    "back": "Bei `Union(u,v)` kann man alle Knoten $x$ durchlaufen und für alle mit\n\n$$\n\\operatorname{rep}[x]=\\operatorname{rep}[u]\n$$\n\nden Repräsentanten auf $\\operatorname{rep}[v]$ setzen.\n\nDas kostet im Worst Case\n\n$$\nO(n),\n$$\n\nweil man alle Knoten prüfen muss.\n\nVerwendet man das in Kruskal, erhält man wieder eine schlechte Laufzeit, im Extremfall etwa\n\n$$\nO(mn).\n$$"
+  },
+  {
+    "front": "[Minimale Spannbäume] Wie verbessern Komponentenlisten die Union-Find-Implementierung?",
+    "back": "Zusätzlich zum Repräsentantenarray speichert man für jede Komponente eine Liste ihrer Knoten.\n\nDann muss `Union(u,v)` nicht alle Knoten durchsuchen, sondern nur die Knoten einer der beiden Komponenten.\n\nWenn man die Komponente von $u$ in die von $v$ einhängt, kostet das\n\n$$\nO(|C(u)|),\n$$\n\nweil genau diese Repräsentanten aktualisiert werden müssen.\n\nDas ist besser als immer $O(n)$, aber im Worst Case kann eine einzelne Union trotzdem linear teuer sein."
+  },
+  {
+    "front": "[Minimale Spannbäume] Warum ist „immer die kleinere Komponente umhängen“ entscheidend?",
+    "back": "Bei `Union(u,v)` hängt man die kleinere Komponente an die größere an. Dann kostet die Operation\n\n$$\nO(\\min(|C(u)|,|C(v)|)).\n$$\n\nEine einzelne Operation kann zwar weiterhin\n\n$$\n\\Theta(n)\n$$\n\nkosten, etwa wenn zwei Komponenten der Größe $n/2$ vereinigt werden.\n\nAber über alle Union-Operationen hinweg ist diese Regel viel besser: Ein Knoten wird nur dann umgehängt, wenn seine Komponente höchstens so groß ist wie die andere. Danach hat seine neue Komponente mindestens doppelte Größe."
+  },
+  {
+    "front": "[Minimale Spannbäume] Warum kostet Union-by-Size insgesamt nur $O(n\\log n)$ Repräsentantenänderungen?",
+    "back": "Betrachte einen festen Knoten $u$.\n\nDer Repräsentant von $u$ ändert sich nur, wenn $u$ in der kleineren Komponente liegt. Danach verdoppelt sich die Größe seiner Komponente mindestens.\n\nNach $k$ Änderungen enthält die Komponente von $u$ also mindestens\n\n$$\n2^k\n$$\n\nKnoten.\n\nDa es insgesamt nur $n$ Knoten gibt,\n\n$$\n2^k\\le n\n$$\n\nund damit\n\n$$\nk\\le \\log_2 n.\n$$\n\nJeder Knoten wird also höchstens $O(\\log n)$-mal umgehängt. Für alle Knoten zusammen ergibt das\n\n$$\nO(n\\log n).\n$$"
+  },
+  {
+    "front": "[Minimale Spannbäume] Welche Laufzeit hat Kruskal mit Union-Find und Union-by-Size?",
+    "back": "Sortieren der $m$ Kanten kostet\n\n$$\nO(m\\log m).\n$$\n\nDa in einem einfachen Graphen\n\n$$\nm\\le n^2\n$$\n\ngilt,\n\n$$\n\\log m=O(\\log n).\n$$\n\nDie `Same`-Tests kosten insgesamt\n\n$$\nO(m),\n$$\n\nund die erfolgreichen `Union`-Operationen verursachen mit Union-by-Size insgesamt\n\n$$\nO(n\\log n).\n$$\n\nDamit erhält man insgesamt\n\n$$\nO(m\\log m+n\\log n)=O((m+n)\\log n).\n$$\n\nFür zusammenhängende Graphen mit $m\\ge n-1$ schreibt man oft auch\n\n$$\nO(m\\log n).\n$$"
+  },
+  {
+    "front": "[Alle kürzesten Wege] Wann lohnt sich ein spezieller Algorithmus für „alle kürzesten Wege“ statt $n$-mal Single-Source?",
+    "back": "Wenn man Distanzen für **alle Paare** $(s,t)$ braucht, kann man jeden Single-Source-Algorithmus $n$-mal starten:\n\n- ungewichtete Graphen: $n$-mal BFS $\\Rightarrow O(n(m+n))$\n- nichtnegative Gewichte: $n$-mal Dijkstra $\\Rightarrow O(nm\\log n)$\n- negative Gewichte ohne negative Zyklen: $n$-mal Bellman-Ford $\\Rightarrow O(n^2m)$\n\nDer letzte Fall ist bei dichten Graphen sehr teuer: Für $m=\\Theta(n^2)$ ergibt sich $O(n^4)$. Floyd-Warshall verbessert das auf $O(n^3)$, Johnson auf ungefähr die Laufzeit von $n$-mal Dijkstra trotz negativer Kanten."
+  },
+  {
+    "front": "[Alle kürzesten Wege] Welches Teilproblem verwendet Floyd-Warshall?",
+    "back": "Floyd-Warshall nummeriert die Knoten als $1,\\dots,n$ und definiert\n\n$$\nD^i_{uv}\n$$\n\nals die Länge eines kürzesten Weges von $u$ nach $v$, dessen **Zwischenknoten** nur aus der Menge\n\n$$\n\\{1,\\dots,i\\}\n$$\n\nkommen dürfen.\n\nStart- und Zielknoten $u,v$ sind nicht eingeschränkt. Die Einschränkung betrifft nur innere Knoten des Weges."
+  },
+  {
+    "front": "[Alle kürzesten Wege] Warum ist die Floyd-Warshall-Rekursion eine Fallunterscheidung danach, ob Knoten $i$ benutzt wird?",
+    "back": "Für $D^i_{uv}$ betrachtet man kürzeste $u$-$v$-Wege, deren Zwischenknoten in $\\{1,\\dots,i\\}$ liegen.\n\nEs gibt zwei relevante Fälle, falls keine negativen Zyklen existieren:\n\n1. **Knoten $i$ wird nicht benutzt.**  \n   Dann ist der beste Wert bereits\n   $$\n   D^{i-1}_{uv}.\n   $$\n\n2. **Knoten $i$ wird genau einmal benutzt.**  \n   Dann zerfällt der Weg in einen Teilweg $u\\to i$ und einen Teilweg $i\\to v$:\n   $$\n   D^{i-1}_{ui}+D^{i-1}_{iv}.\n   $$\n\nMehrfaches Benutzen von $i$ würde einen Zyklus enthalten und lohnt sich ohne negative Zyklen nicht."
+  },
+  {
+    "front": "[Alle kürzesten Wege] Wie lautet die Floyd-Warshall-Rekursion?",
+    "back": "Die Rekursion ist\n\n$$\nD^i_{uv}\n=\n\\min\\left(\nD^{i-1}_{uv},\nD^{i-1}_{ui}+D^{i-1}_{iv}\n\\right).\n$$\n\nInterpretation:\n\n- erster Term: kürzester Weg von $u$ nach $v$ ohne Zwischenknoten $i$\n- zweiter Term: kürzester Weg von $u$ nach $v$, der über $i$ läuft\n\nAm Ende enthält $D^n_{uv}$ die Distanz von $u$ nach $v$, sofern keine negativen Zyklen vorhanden sind."
+  },
+  {
+    "front": "[Alle kürzesten Wege] Wie wird Floyd-Warshall initialisiert?",
+    "back": "Für $i=0$ sind keine Zwischenknoten erlaubt.\n\nDaher gilt:\n\n$$\nD^0_{uu}=0\n$$\n\nfür alle Knoten $u$, weil Stehenbleiben erlaubt ist.\n\nFür $u\\neq v$ gilt:\n\n$$\nD^0_{uv}\n=\n\\begin{cases}\nc(u,v), & \\text{falls } (u,v)\\in E,\\\\\n\\infty, & \\text{sonst.}\n\\end{cases}\n$$\n\nOhne Zwischenknoten kann man also nur eine direkte Kante benutzen."
+  },
+  {
+    "front": "[Alle kürzesten Wege] Welche Laufzeit und welchen Speicherbedarf hat Floyd-Warshall?",
+    "back": "Floyd-Warshall berechnet für alle\n\n$$\ni,u,v\\in \\{1,\\dots,n\\}\n$$\n\neinen Wert durch ein Minimum zweier Zahlen. Das kostet konstante Zeit pro Tripel.\n\nDamit ist die Laufzeit\n\n$$\nO(n^3).\n$$\n\nNaiv braucht man Speicher\n\n$$\nO(n^3),\n$$\n\naber da $D^i$ nur von $D^{i-1}$ abhängt, kann man auf\n\n$$\nO(n^2)\n$$\n\nSpeicher reduzieren. Das ist asymptotisch optimal für die Distanzmatrix, denn die Ausgabe selbst hat Größe $\\Theta(n^2)$."
+  },
+  {
+    "front": "[Alle kürzesten Wege] Wie rekonstruiert man bei Floyd-Warshall einen kürzesten Weg statt nur seine Länge?",
+    "back": "Man verfolgt zurück, welcher Term das Minimum erzeugt hat:\n\n$$\nD^i_{uv}\n=\n\\min\\left(\nD^{i-1}_{uv},\nD^{i-1}_{ui}+D^{i-1}_{iv}\n\\right).\n$$\n\n- Falls das Minimum aus $D^{i-1}_{uv}$ kommt, wird Knoten $i$ nicht benutzt. Man rekonstruiert weiter mit $(u,v,i-1)$.\n- Falls es aus $D^{i-1}_{ui}+D^{i-1}_{iv}$ kommt, läuft der Weg über $i$. Man rekonstruiert rekursiv die Wege $u\\to i$ und $i\\to v$.\n\nMit gespeicherten Entscheidungen ist das ein Standard-Rückverfolgen aus dynamischer Programmierung."
+  },
+  {
+    "front": "[Alle kürzesten Wege] Warum darf Floyd-Warshall Wege mit mehrfach vorkommendem Knoten $i$ ignorieren, wenn es keine negativen Zyklen gibt?",
+    "back": "Wenn ein Weg den Knoten $i$ mehrfach besucht, enthält der Abschnitt von einem Besuch von $i$ bis zum nächsten Besuch von $i$ einen Zyklus.\n\nOhne negative Zyklen hat dieser Zyklus Gewicht $\\ge 0$. Dann kann man ihn entfernen, ohne den Weg teurer zu machen.\n\nAlso gibt es immer einen mindestens ebenso guten Weg, in dem $i$ höchstens einmal vorkommt. Deshalb reichen die beiden Fälle der Rekursion:\n\n$$\nD^{i-1}_{uv}\n\\quad\\text{oder}\\quad\nD^{i-1}_{ui}+D^{i-1}_{iv}.\n$$"
+  },
+  {
+    "front": "[Alle kürzesten Wege] Wie erkennt Floyd-Warshall negative Zyklen?",
+    "back": "Nach dem Algorithmus prüft man die Diagonale der Distanzmatrix.\n\nEs gilt:\n\n$$\n\\text{Es gibt einen negativen Zyklus}\n\\iff\n\\exists v\\in V:\\ D^n_{vv}<0.\n$$\n\nFalls für irgendeinen Knoten $v$ gilt\n\n$$\nD^n_{vv}<0,\n$$\n\nhat der Algorithmus einen geschlossenen Weg von $v$ nach $v$ mit negativem Gewicht gefunden. Dann ist das kürzeste-Wege-Problem nicht wohldefiniert, weil man den negativen Zyklus beliebig oft durchlaufen kann."
+  },
+  {
+    "front": "[Alle kürzesten Wege] Warum reicht es bei Floyd-Warshall nicht, nur einen bestimmten Diagonaleintrag zu prüfen?",
+    "back": "Ein negativer Zyklus wird nicht notwendigerweise bei jedem Knoten sichtbar.\n\nJe nach Nummerierung der Knoten kann es passieren, dass für einen bestimmten Knoten $v$ trotzdem\n\n$$\nD^n_{vv}=0\n$$\n\nbleibt, weil der Algorithmus für diesen Knoten nur das Stehenbleiben als beste Option findet.\n\nTrotzdem garantiert der Satz:\n\n$$\n\\exists\\text{ negativer Zyklus}\n\\iff\n\\exists v:\\ D^n_{vv}<0.\n$$\n\nMan muss also **alle** Diagonaleinträge prüfen, nicht nur einen."
+  },
+  {
+    "front": "[Alle kürzesten Wege] Warum impliziert $D^n_{vv}<0$ die Existenz eines negativen Zyklus?",
+    "back": "$D^n_{vv}<0$ bedeutet: Es gibt einen geschlossenen Weg von $v$ zurück nach $v$ mit negativem Gesamtgewicht.\n\nEin geschlossener Weg kann in Zyklen zerlegt werden. Wenn alle enthaltenen Zyklen Gewicht $\\ge 0$ hätten, könnte der gesamte geschlossene Weg nicht negativ sein.\n\nAlso muss mindestens einer dieser Zyklen negatives Gewicht haben."
+  },
+  {
+    "front": "[Alle kürzesten Wege] Warum erkennt Floyd-Warshall irgendeinen negativen Zyklus, falls einer existiert?",
+    "back": "Sei $C$ ein negativer Kreis, und sei $j$ der Knoten auf $C$ mit maximalem Index. Wähle einen anderen Knoten $i$ auf $C$.\n\nDer Kreis zerfällt in zwei Pfade:\n\n$$\ni\\to j\n\\quad\\text{und}\\quad\nj\\to i.\n$$\n\nAlle Zwischenknoten dieser Pfade haben Index höchstens $j-1$. Daher berücksichtigt Floyd-Warshall beide Pfade in\n\n$$\nD^{j-1}_{ij}\n\\quad\\text{und}\\quad\nD^{j-1}_{ji}.\n$$\n\nDann gilt\n\n$$\nD^j_{ii}\n\\le\nD^{j-1}_{ij}+D^{j-1}_{ji}\n\\le\nc(C)\n<0.\n$$\n\nSpätere Iterationen können Werte nur kleiner machen, also ist auch $D^n_{ii}<0$."
+  },
+  {
+    "front": "[Alle kürzesten Wege] Warum funktioniert es nicht, alle Kantengewichte durch Addition derselben Konstante nichtnegativ zu machen?",
+    "back": "Weil Wege mit mehr Kanten stärker verteuert werden als Wege mit weniger Kanten. Dadurch kann sich die Reihenfolge der Wege ändern.\n\nBeispiel:\n\n- $s\\to v$ mit Gewicht $-2$\n- $v\\to t$ mit Gewicht $1$\n- $s\\to t$ mit Gewicht $0$\n\nIm Original ist der Weg über $v$ billiger:\n\n$$\n-2+1=-1<0.\n$$\n\nAddiert man zu jeder Kante $2$, erhält man:\n\n- über $v$: $( -2+2)+(1+2)=0+3=3$\n- direkt: $0+2=2$\n\nJetzt ist plötzlich die direkte Kante billiger. Die kürzesten Wege wurden also nicht erhalten."
+  },
+  {
+    "front": "[Alle kürzesten Wege] Welche Eigenschaft muss eine Umgewichtung für Johnsons Algorithmus erhalten?",
+    "back": "Für jedes feste Paar $(s,t)$ müssen sich alle $s$-$t$-Wege um denselben additiven Wert ändern.\n\nWenn für jeden $s$-$t$-Weg $W$ gilt\n\n$$\n\\hat c(W)=c(W)+K_{s,t},\n$$\n\nwobei $K_{s,t}$ unabhängig vom konkreten Weg $W$ ist, dann bleibt der kürzeste $s$-$t$-Weg derselbe.\n\nDie absolute Distanz ändert sich, aber die Ordnung der Kandidatenwege bleibt erhalten."
+  },
+  {
+    "front": "[Alle kürzesten Wege] Wie definiert Johnsons Algorithmus die umgewichteten Kantengewichte?",
+    "back": "Man wählt zu jedem Knoten $v$ eine Zahl $h(v)$, genannt **Höhe** oder **Potential**, und setzt für jede Kante $(u,v)$:\n\n$$\n\\hat c(u,v)=c(u,v)+h(u)-h(v).\n$$\n\nDas Ziel ist, $h$ so zu wählen, dass\n\n$$\n\\hat c(u,v)\\ge 0\n$$\n\nfür alle Kanten $(u,v)$ gilt. Dann kann man auf den umgewichteten Kanten Dijkstra anwenden."
+  },
+  {
+    "front": "[Alle kürzesten Wege] Warum erhalten Johnsons Potentiale die kürzesten Wege?",
+    "back": "Für einen Weg\n\n$$\nW=(v_0,v_1,\\dots,v_k)\n$$\n\nmit $v_0=s$ und $v_k=t$ gilt:\n\n$$\n\\hat c(W)\n=\n\\sum_{r=0}^{k-1}\n\\left(c(v_r,v_{r+1})+h(v_r)-h(v_{r+1})\\right).\n$$\n\nDie Höhen kürzen sich teleskopisch weg:\n\n$$\n\\hat c(W)=c(W)+h(s)-h(t).\n$$\n\nDer Zusatzterm hängt nur von $s$ und $t$ ab, nicht vom konkreten Weg. Also ist ein Weg genau dann kürzest bezüglich $c$, wenn er kürzest bezüglich $\\hat c$ ist."
+  },
+  {
+    "front": "[Alle kürzesten Wege] Wie findet Johnsons Algorithmus geeignete Höhen $h(v)$?",
+    "back": "Man erweitert den Graphen um einen neuen Knoten $z$ und fügt für jeden Knoten $v$ eine Kante\n\n$$\n(z,v)\n$$\n\nmit Gewicht $0$ hinzu.\n\nDann definiert man\n\n$$\nh(v)=\\operatorname{dist}(z,v).\n$$\n\nDiese Distanzen berechnet man mit **Bellman-Ford**, weil die ursprünglichen Kanten negativ sein dürfen.\n\nDa $z$ alle Knoten erreicht, ist jeder negative Zyklus erreichbar. Bellman-Ford erkennt also auch, ob das Problem wegen negativer Zyklen nicht wohldefiniert ist."
+  },
+  {
+    "front": "[Alle kürzesten Wege] Warum macht Johnsons Wahl $h(v)=\\operatorname{dist}(z,v)$ alle neuen Kantengewichte nichtnegativ?",
+    "back": "Für jede Kante $(u,v)$ gilt wegen der Kürzeste-Wege-Eigenschaft:\n\n$$\nh(v)\\le h(u)+c(u,v).\n$$\n\nDenn ein möglicher Weg von $z$ nach $v$ ist: zuerst kürzest von $z$ nach $u$, dann die Kante $(u,v)$.\n\nUmstellen ergibt:\n\n$$\nc(u,v)+h(u)-h(v)\\ge 0.\n$$\n\nAlso gilt für die umgewichtete Kante\n\n$$\n\\hat c(u,v)\\ge 0.\n$$\n\nDamit darf Dijkstra verwendet werden."
+  },
+  {
+    "front": "[Alle kürzesten Wege] Wie rechnet man Johnsons Dijkstra-Distanzen zurück in ursprüngliche Distanzen?",
+    "back": "Dijkstra auf den umgewichteten Kanten liefert\n\n$$\n\\hat d(s,t).\n$$\n\nAus der Teleskopformel gilt für jeden kürzesten Weg:\n\n$$\n\\hat d(s,t)=d(s,t)+h(s)-h(t).\n$$\n\nAlso ist die ursprüngliche Distanz\n\n$$\nd(s,t)=\\hat d(s,t)-h(s)+h(t).\n$$\n\nDie Wege selbst bleiben dieselben; nur die numerischen Distanzen müssen zurückgerechnet werden."
+  },
+  {
+    "front": "[Alle kürzesten Wege] Welche Schritte hat Johnsons Algorithmus?",
+    "back": "Johnsons Algorithmus für alle kürzesten Wege mit möglicherweise negativen Kanten:\n\n1. Füge neuen Knoten $z$ ein und Kanten $(z,v)$ mit Gewicht $0$ für alle $v$.\n2. Berechne mit Bellman-Ford die Werte\n   $$\n   h(v)=\\operatorname{dist}(z,v).\n   $$\n   Falls Bellman-Ford einen negativen Zyklus findet: abbrechen.\n3. Setze\n   $$\n   \\hat c(u,v)=c(u,v)+h(u)-h(v).\n   $$\n4. Starte für jeden Knoten $s$ einmal Dijkstra mit Gewichten $\\hat c$.\n5. Rechne die Distanzen zurück:\n   $$\n   d(s,t)=\\hat d(s,t)-h(s)+h(t).\n   $$"
+  },
+  {
+    "front": "[Alle kürzesten Wege] Welche Laufzeit hat Johnsons Algorithmus?",
+    "back": "Das Hinzufügen von $z$ und den $n$ neuen Kanten kostet\n\n$$\nO(n).\n$$\n\nBellman-Ford vom neuen Knoten $z$ kostet\n\n$$\nO(nm).\n$$\n\nDie Umgewichtung aller Kanten kostet\n\n$$\nO(m).\n$$\n\nDann startet man $n$-mal Dijkstra. Mit der in der Vorlesung verwendeten Laufzeit ergibt das insgesamt ungefähr\n\n$$\nO(nm\\log n).\n$$\n\nDer Bellman-Ford-Schritt dominiert nicht gegenüber den $n$ Dijkstra-Läufen. Johnson ist besonders gut für dünne Graphen, z.B. $m=O(n)$."
+  },
+  {
+    "front": "[Alle kürzesten Wege] Wann ist Floyd-Warshall besser als Johnson, und wann umgekehrt?",
+    "back": "Für **dichte Graphen** mit\n\n$$\nm=\\Theta(n^2)\n$$\n\nhat Floyd-Warshall Laufzeit\n\n$$\nO(n^3),\n$$\n\nwährend Johnson etwa\n\n$$\nO(n^3\\log n)\n$$\n\nbraucht. Dann ist Floyd-Warshall asymptotisch besser und praktisch oft auch wegen kleiner Konstanten attraktiv.\n\nFür **dünne Graphen** mit\n\n$$\nm=O(n)\n$$\n\nhat Johnson etwa\n\n$$\nO(n^2\\log n),\n$$\n\nalso deutlich besser als\n\n$$\nO(n^3).\n$$\n\nDie Wahl hängt daher stark von der Kantenzahl ab."
+  },
+  {
+    "front": "[Alle kürzesten Wege] Warum kann Johnson trotz negativer Kanten Dijkstra verwenden?",
+    "back": "Dijkstra darf nicht direkt auf dem ursprünglichen Graphen laufen, weil negative Kanten seine Korrektheit zerstören können.\n\nJohnson ersetzt die Kantengewichte durch\n\n$$\n\\hat c(u,v)=c(u,v)+h(u)-h(v),\n$$\n\nsodass zwei Dinge gleichzeitig gelten:\n\n1. Alle neuen Kantengewichte sind nichtnegativ:\n   $$\n   \\hat c(u,v)\\ge 0.\n   $$\n\n2. Für jedes Paar $(s,t)$ bleiben die kürzesten Wege erhalten, weil jeder $s$-$t$-Weg nur um\n   $$\n   h(s)-h(t)\n   $$\n   verschoben wird.\n\nDamit ist Dijkstra auf dem umgewichteten Graphen korrekt und liefert nach Rückrechnung die ursprünglichen Distanzen."
+  },
+  {
+    "front": "[Matrizen und Graphen] Welche rekursive Struktur haben $i j$-Wege mit genau $k$ Kanten?",
+    "back": "Jeder $i j$-Weg mit genau $k$ Kanten lässt sich nach seinem **vorletzten Knoten** $s$ zerlegen:\n\n- zuerst ein Weg von $i$ nach $s$ mit genau $k-1$ Kanten,\n- dann die letzte Kante von $s$ nach $j$.\n\nDiese Zerlegung ist der Grund, warum Probleme über Wege fester Länge gut mit **dynamischer Programmierung** und **Matrixmultiplikation** behandelbar sind."
+  },
+  {
+    "front": "[Matrizen und Graphen] Wie berechnet man rekursiv, ob es einen $i j$-Weg mit genau $k$ Kanten gibt?",
+    "back": "Sei $l_{ij}^{(k)}$ die Aussage: „Es gibt einen Weg von $i$ nach $j$ mit genau $k$ Kanten.“\n\nDann gilt:\n$$\nl_{ij}^{(k)}\n=\n\\bigvee_{s=1}^n\n\\left(\nl_{is}^{(k-1)} \\wedge l_{sj}^{(1)}\n\\right).\n$$\n\nInterpretation: Es reicht, einen vorletzten Knoten $s$ zu finden, sodass man in $k-1$ Schritten von $i$ nach $s$ kommt und zusätzlich die Kante $s \\to j$ existiert."
+  },
+  {
+    "front": "[Matrizen und Graphen] Wie berechnet man rekursiv minimale Kosten eines $i j$-Wegs mit genau $k$ Kanten?",
+    "back": "Sei $m_{ij}^{(k)}$ die minimalen Kosten eines Wegs von $i$ nach $j$ mit genau $k$ Kanten.\n\nDann gilt:\n$$\nm_{ij}^{(k)}\n=\n\\min_{s=1}^n\n\\left(\nm_{is}^{(k-1)} + m_{sj}^{(1)}\n\\right).\n$$\n\nDabei ist $m_{sj}^{(1)}$ das Gewicht der Kante $s \\to j$, falls sie existiert; sonst typischerweise $\\infty$.\n\nDas ist dieselbe Zerlegung nach dem vorletzten Knoten wie beim Existenzproblem, aber mit den Operatoren **Minimum** und **Plus**."
+  },
+  {
+    "front": "[Matrizen und Graphen] Wie zählt man rekursiv die Anzahl der $i j$-Wege mit genau $k$ Kanten?",
+    "back": "Sei $n_{ij}^{(k)}$ die Anzahl der Wege von $i$ nach $j$ mit genau $k$ Kanten.\n\nDann gilt:\n$$\nn_{ij}^{(k)}\n=\n\\sum_{s=1}^n\nn_{is}^{(k-1)} \\cdot n_{sj}^{(1)}.\n$$\n\nDabei ist\n$$\nn_{sj}^{(1)}\n=\n\\begin{cases}\n1, & \\text{falls } s \\to j \\text{ eine Kante ist},\\\\\n0, & \\text{sonst}.\n\\end{cases}\n$$\n\nFür jeden möglichen vorletzten Knoten $s$ zählt man alle Wege nach $s$ und vervollständigt sie nur dann, wenn die letzte Kante $s \\to j$ existiert."
+  },
+  {
+    "front": "[Matrizen und Graphen] Warum ist die Zählrekursion für Wege genau die Formel der Matrixmultiplikation?",
+    "back": "Die Matrixmultiplikation ist definiert durch\n$$\n(BC)_{ij}\n=\n\\sum_{s=1}^n B_{is} C_{sj}.\n$$\n\nDie Zählrekursion lautet:\n$$\nn_{ij}^{(k)}\n=\n\\sum_{s=1}^n\nn_{is}^{(k-1)} n_{sj}^{(1)}.\n$$\n\nDas ist genau ein Matrixprodukt:\n$$\nN^{(k)} = N^{(k-1)} N^{(1)}.\n$$\n\nDa $N^{(1)}$ die Adjazenzmatrix $A_G$ ist, folgt iterativ:\n$$\nN^{(k)} = A_G^k.\n$$"
+  },
+  {
+    "front": "[Matrizen und Graphen] Was sagt der Satz über Potenzen der Adjazenzmatrix aus?",
+    "back": "Für einen Graphen $G$ mit Adjazenzmatrix $A_G$ gilt:\n\n$$\n(A_G^k)_{ij}\n=\n\\text{Anzahl der Wege von } i \\text{ nach } j \\text{ mit genau } k \\text{ Kanten}.\n$$\n\nWichtig: Der Exponent $k$ bedeutet hier wirklich das $k$-fache Matrixprodukt:\n$$\nA_G^k = \\underbrace{A_G \\cdot A_G \\cdots A_G}_{k \\text{ Faktoren}}.\n$$\n\nDer Beweis ist eine Induktion über $k$ und benutzt genau die Matrixmultiplikationsformel."
+  },
+  {
+    "front": "[Matrizen und Graphen] Was ist der Unterschied zwischen Adjazenzmatrix und Inzidenzmatrix?",
+    "back": "Die **Adjazenzmatrix** eines Graphen mit $n$ Knoten ist eine $n \\times n$-Matrix:\n$$\n(A_G)_{ij}\n=\n\\begin{cases}\n1, & \\text{falls } i \\to j \\text{ eine Kante ist},\\\\\n0, & \\text{sonst}.\n\\end{cases}\n$$\n\nDie **Inzidenzmatrix** hat dagegen typischerweise Knoten als Zeilen und Kanten als Spalten. Ein Eintrag beschreibt, ob ein Knoten Endpunkt einer Kante ist.\n\nFür Matrixpotenzen und Wege fester Länge verwendet man die **Adjazenzmatrix**, nicht die Inzidenzmatrix."
+  },
+  {
+    "front": "[Matrizen und Graphen] Wie zählt man gerichtete Dreiecke mit der Adjazenzmatrix?",
+    "back": "Für einen gerichteten Graphen ohne Schleifen ist\n$$\n(A_G^3)_{ii}\n$$\ndie Anzahl der geschlossenen Wege der Länge $3$, die bei $i$ starten und enden.\n\nEin gerichtetes Dreieck wird dabei einmal von jedem seiner drei Knoten aus gezählt. Daher ist die Anzahl gerichteter Dreiecke:\n$$\n\\frac{1}{3} \\sum_{i=1}^n (A_G^3)_{ii}.\n$$\n\nMit der Spur geschrieben:\n$$\n\\#\\text{gerichtete Dreiecke}\n=\n\\frac{1}{3}\\operatorname{tr}(A_G^3).\n$$"
+  },
+  {
+    "front": "[Matrizen und Graphen] Warum teilt man bei gerichteten Dreiecken durch $3$ und nicht durch $6$?",
+    "back": "Ein gerichtetes Dreieck kann in genau drei Weisen als geschlossener Weg der Länge $3$ gezählt werden: Man kann bei jedem der drei Knoten starten.\n\nDie Richtung ist aber fest vorgegeben. Man kann also nicht zusätzlich in umgekehrter Richtung laufen, außer die entsprechenden Gegenkanten existieren ebenfalls.\n\nDarum gilt für gerichtete Dreiecke:\n$$\n\\#\\text{Dreiecke}\n=\n\\frac{1}{3}\\operatorname{tr}(A_G^3).\n$$\n\nBei ungerichteten Dreiecken tritt oft ein Faktor $6$ auf, weil dort beide Umlaufrichtungen gezählt werden. Das ist hier nicht die Situation."
+  },
+  {
+    "front": "[Matrizen und Graphen] Warum braucht man bei Vierecken mehr Vorsicht als bei Dreiecken?",
+    "back": "Bei Wegen der Länge $4$ können Knoten mehrfach auftreten, ohne dass zwingend ein echtes einfaches Viereck entsteht.\n\nBeispielhaft kann ein geschlossener Weg der Länge $4$ auch durch Hin- und Zurücklaufen entlang Kanten entstehen, statt vier verschiedene Knoten zu besuchen.\n\nDaher zählt\n$$\n\\operatorname{tr}(A_G^4)\n$$\nnicht direkt die Anzahl gerichteter Vierecke. Man muss zusätzliche Korrekturen für degenerierte geschlossene Wege vornehmen."
+  },
+  {
+    "front": "[Matrizen und Graphen] Wie kann man Erreichbarkeit in gerichteten Graphen mit Matrixpotenzen bestimmen?",
+    "back": "Man fügt zuerst zu jedem Knoten eine **Schleife** $i \\to i$ hinzu.\n\nDann berechnet man\n$$\nA_G^{n-1}.\n$$\n\nFür Knoten $u,v$ gilt dann:\n$$\nv \\text{ ist von } u \\text{ erreichbar}\n\\iff\n(A_G^{n-1})_{uv} > 0.\n$$\n\nDie Schleifen erlauben es, nach Ankunft bei $v$ zu „warten“, bis die Weglänge genau $n-1$ beträgt."
+  },
+  {
+    "front": "[Matrizen und Graphen] Warum reichen für Erreichbarkeit nach dem Hinzufügen von Schleifen Wege der Länge genau $n-1$?",
+    "back": "Wenn $v$ von $u$ erreichbar ist, gibt es einen Weg von $u$ nach $v$. Dieser kann zu einem einfachen Pfad verkürzt werden und hat daher höchstens $n-1$ Kanten.\n\nNach dem Hinzufügen von Schleifen kann man am Zielknoten $v$ beliebig oft auf der Schleife $v \\to v$ bleiben.\n\nAlso lässt sich jeder erreichbare Knoten durch einen Weg der Länge genau $n-1$ erreichen.\n\nUmgekehrt ist jeder Weg der Länge $n-1$ natürlich ein Beweis für Erreichbarkeit."
+  },
+  {
+    "front": "[Matrizen und Graphen] Warum ist Erreichbarkeit in ungerichteten Graphen einfacher als in gerichteten Graphen?",
+    "back": "In ungerichteten Graphen ist Erreichbarkeit **symmetrisch**:\n\n$$\nu \\text{ erreicht } v\n\\iff\nv \\text{ erreicht } u.\n$$\n\nDaher genügt es, die **Zusammenhangskomponenten** zu bestimmen. Innerhalb einer Komponente sind alle Knoten gegenseitig erreichbar, zwischen verschiedenen Komponenten nicht.\n\nIn gerichteten Graphen kann dagegen gelten:\n$$\nu \\leadsto v,\n\\quad \\text{aber nicht} \\quad\nv \\leadsto u.\n$$\n\nDeshalb ist die Erreichbarkeitsrelation dort komplexer."
+  },
+  {
+    "front": "[Matrizen und Graphen] Wie funktioniert iteriertes Quadrieren zur Berechnung von $A^k$?",
+    "back": "Man nutzt rekursiv:\n\nFalls $k$ gerade ist:\n$$\nA^k = A^{k/2} A^{k/2}.\n$$\n\nFalls $k$ ungerade ist:\n$$\nA^k = A^{(k-1)/2} A^{(k-1)/2} A.\n$$\n\nWichtig: $A^{k/2}$ bzw. $A^{(k-1)/2}$ wird nur **einmal** rekursiv berechnet und dann wiederverwendet.\n\nSo halbiert man den Exponenten in jedem Schritt und braucht nur\n$$\nO(\\log k)\n$$\nMatrixmultiplikationen."
+  },
+  {
+    "front": "[Matrizen und Graphen] Welche Laufzeit erhält man für Erreichbarkeit mit Matrixpotenzen und iteriertem Quadrieren?",
+    "back": "Für Erreichbarkeit berechnet man nach Hinzufügen aller Schleifen:\n$$\nA_G^{n-1}.\n$$\n\nIteriertes Quadrieren benötigt dafür\n$$\nO(\\log n)\n$$\nMatrixmultiplikationen.\n\nWenn eine Matrixmultiplikation Zeit $M(n)$ kostet, erhält man insgesamt:\n$$\nO(M(n)\\log n).\n$$\n\nMit naiver Matrixmultiplikation ist\n$$\nM(n)=O(n^3),\n$$\nalso:\n$$\nO(n^3 \\log n).\n$$\n\nMit schnelleren Matrixmultiplikationsalgorithmen verbessert sich entsprechend auch diese Schranke."
+  },
+  {
+    "front": "[Matrizen und Graphen] Warum kostet naive Matrixmultiplikation $O(n^3)$?",
+    "back": "Für zwei $n \\times n$-Matrizen $A,B$ berechnet man\n$$\nC_{ij}\n=\n\\sum_{k=1}^n A_{ik}B_{kj}.\n$$\n\nEin einzelner Eintrag $C_{ij}$ kostet $O(n)$ Zeit, weil über $k=1,\\dots,n$ summiert wird.\n\nEs gibt $n^2$ Einträge.\n\nAlso beträgt die Gesamtlaufzeit:\n$$\nO(n^2 \\cdot n)=O(n^3).\n$$"
+  },
+  {
+    "front": "[Matrizen und Graphen] Was ist die Grundidee von Strassens Matrixmultiplikationsalgorithmus?",
+    "back": "Strassen zerlegt zwei $n \\times n$-Matrizen in jeweils vier Teilmatrizen der Größe\n$$\n\\frac n2 \\times \\frac n2.\n$$\n\nNaiv benötigt diese Blockmultiplikation $8$ rekursive Matrixmultiplikationen.\n\nStrassen zeigte, dass $7$ rekursive Multiplikationen genügen, wenn man zusätzliche Additionen verwendet.\n\nDie Laufzeit erfüllt dadurch:\n$$\nT(n)=7T(n/2)+O(n^2).\n$$\n\nMit dem Master-Theorem folgt:\n$$\nT(n)=O(n^{\\log_2 7}) \\approx O(n^{2.81}).\n$$\n\nDas ist asymptotisch besser als $O(n^3)$."
+  },
+  {
+    "front": "[Matrizen und Graphen] Warum sind noch schnellere Matrixmultiplikationsalgorithmen theoretisch wichtig, aber oft praktisch schwierig?",
+    "back": "Viele Graphprobleme lassen sich auf Matrixmultiplikation zurückführen, z.B. Erreichbarkeit oder Varianten kürzester Wege.\n\nWenn Matrixmultiplikation schneller wird, verbessern sich daher viele Algorithmen automatisch.\n\nAllerdings haben die theoretisch schnellsten Algorithmen oft enorme Konstanten und sind deshalb praktisch unbrauchbar. Solche Verfahren nennt man manchmal **galaktische Algorithmen**: Sie würden sich erst bei unrealistisch großen Eingaben lohnen.\n\nStrassen ist im Gegensatz dazu nicht nur theoretisch: Für ausreichend große Matrizen kann er praktisch relevant sein, auch wenn man auf numerische Stabilität achten muss."
+  },
+  {
+    "front": "[Matrizen und Graphen] Welche algebraische Struktur steckt hinter den drei Wegproblemen?",
+    "back": "Die drei Rekursionen unterscheiden sich nur durch die verwendeten Operatoren:\n\n1. **Zählen von Wegen**\n   $$\n   \\sum_s n_{is}^{(k-1)} \\cdot n_{sj}^{(1)}\n   $$\n   verwendet gewöhnliches $+$ und $\\cdot$.\n\n2. **Existenz von Wegen**\n   $$\n   \\bigvee_s \\left(l_{is}^{(k-1)} \\wedge l_{sj}^{(1)}\\right)\n   $$\n   verwendet $\\vee$ und $\\wedge$.\n\n3. **Minimale Kosten**\n   $$\n   \\min_s \\left(m_{is}^{(k-1)} + m_{sj}^{(1)}\\right)\n   $$\n   verwendet $\\min$ und $+$.\n\nAlle drei passen in das Schema einer Matrixmultiplikation über einem passenden **Halbring**."
+  },
+  {
+    "front": "[Matrizen und Graphen] Was ist der boolesche Halbring für Erreichbarkeitsfragen?",
+    "back": "Für Existenzfragen benutzt man die Werte\n$$\n\\{\\text{false}, \\text{true}\\}\n$$\nmit den Operationen:\n\n- „Addition“:\n  $$\n  a \\oplus b = a \\vee b\n  $$\n- „Multiplikation“:\n  $$\n  a \\otimes b = a \\wedge b\n  $$\n\nDann lautet Matrixmultiplikation:\n$$\n(C)_{ij}\n=\n\\bigvee_{s=1}^n\n(A_{is} \\wedge B_{sj}).\n$$\n\nDas berechnet, ob es irgendeinen Zwischenknoten $s$ gibt, über den ein entsprechender Weg existiert."
+  },
+  {
+    "front": "[Matrizen und Graphen] Was ist der Min-Plus-Halbring für kürzeste Wege fester Kantenzahl?",
+    "back": "Für minimale Kosten verwendet man die Operationen:\n\n- „Addition“:\n  $$\n  a \\oplus b = \\min(a,b)\n  $$\n- „Multiplikation“:\n  $$\n  a \\otimes b = a+b.\n  $$\n\nDann wird Matrixmultiplikation zu:\n$$\n(C)_{ij}\n=\n\\min_{s=1}^n\n(A_{is}+B_{sj}).\n$$\n\nDas entspricht genau der Rekursion für minimale Kosten eines Wegs, der über einen Zwischenknoten $s$ zerlegt wird.\n\nDer Unterschied zu einem Ring: Für $\\min$ gibt es im Allgemeinen keine additiven Inversen. Daher ist es nur ein **Halbring**, kein Ring."
+  },
+  {
+    "front": "[Matrizen und Graphen] Warum funktioniert iteriertes Quadrieren auch über Halbringen?",
+    "back": "Iteriertes Quadrieren braucht für die Korrektheit im Wesentlichen nur, dass Matrixmultiplikation **assoziativ** ist:\n\n$$\n(XY)Z = X(YZ).\n$$\n\nDiese Eigenschaft gilt nicht nur für Matrizen über reellen Zahlen, sondern auch für Matrizen über geeigneten Halbringen, z.B.\n\n- boolescher Halbring $(\\vee,\\wedge)$,\n- Min-Plus-Halbring $(\\min,+)$,\n- gewöhnlicher Zähl-Halbring $(+,\\cdot)$.\n\nDarum kann man Potenzen wie\n$$\nA^k\n$$\nauch für diese Varianten per iteriertem Quadrieren berechnen."
+  },
+  {
+    "front": "[Matrizen und Graphen] Warum lässt sich Strassen nicht direkt auf Min-Plus- oder boolesche Matrixmultiplikation übertragen?",
+    "back": "Strassens Algorithmus verwendet nicht nur Addition und Multiplikation, sondern auch **Subtraktion** bzw. additive Inverse.\n\nIn Halbringen wie\n\n- $(\\min,+)$,\n- $(\\vee,\\wedge)$\n\ngibt es aber im Allgemeinen keine additiven Inversen.\n\nBeispielsweise gibt es zu $\\min$ keine Operation, die wie ein negatives Element funktioniert.\n\nDaher kann man Strassen nicht ohne Weiteres auf solche Halbring-Matrixmultiplikationen übertragen, während iteriertes Quadrieren weiterhin funktioniert."
+  },
+  {
+    "front": "[Auswahlalgorithmen] Warum ist der Median oft aussagekräftiger als der Durchschnitt?",
+    "back": "Der **Median** ist ein „typisches“ Element: Er liegt so, dass gleich viele Elemente kleiner und größer sind.\n\nBeispiel:\n$$7,\\ 12,\\ 1000,\\ 8,\\ 11$$\nSortiert:\n$$7,\\ 8,\\ 11,\\ 12,\\ 1000$$\nDer Median ist $11$.\n\nDer Durchschnitt ist dagegen\n$$\\frac{7+12+1000+8+11}{5}=207{,}6,$$\nalso stark durch den Ausreißer $1000$ verzerrt."
+  },
+  {
+    "front": "[Auswahlalgorithmen] Was ist das Auswahlproblem und warum verallgemeinert es die Medianberechnung?",
+    "back": "Beim **Auswahlproblem** ist gegeben:\n\n- ein Array $A$ der Länge $n$,\n- ein Index $i \\in \\{1,\\dots,n\\}$.\n\nGesucht ist das **$i$-t kleinste Element** von $A$.\n\nDer Median ist ein Spezialfall davon: Für ungerades $n$ ist der Median das Element mit Index\n$$i=\\frac{n+1}{2}.$$\n\nDie Verallgemeinerung ist wichtig, weil rekursive Aufrufe beim Medianproblem nicht unbedingt wieder nach dem Median eines Teilarrays suchen, sondern nach einem Element mit einem verschobenen Rang."
+  },
+  {
+    "front": "[Auswahlalgorithmen] Warum reicht „sortieren und mittleres Element nehmen“ nicht für einen linearen Medianalgorithmus?",
+    "back": "Sortieren liefert den Median korrekt, aber kostet im Vergleichsmodell typischerweise\n$$O(n \\log n).$$\n\nFür einen linearen Medianalgorithmus wollen wir aber\n$$O(n).$$\n\nSortieren berechnet viel mehr Information als nötig: Es bestimmt die komplette Reihenfolge aller Elemente, obwohl für den Median nur die Position eines einzigen Elements relevant ist."
+  },
+  {
+    "front": "[Auswahlalgorithmen] Wie funktioniert Quick Select nach dem Partitionieren um ein Pivot $p$?",
+    "back": "Nach dem Partitionieren steht $p$ an seiner endgültigen sortierten Position $k$:\n\n- alle Elemente links von $p$ sind kleiner,\n- alle Elemente rechts von $p$ sind größer.\n\nDann gilt:\n\n- Falls $i=k$: Gib $p$ zurück.\n- Falls $i<k$: Suche rekursiv links nach dem $i$-t kleinsten Element.\n- Falls $i>k$: Suche rekursiv rechts nach dem $(i-k)$-t kleinsten Element.\n\nDer Index muss rechts angepasst werden, weil bereits $k$ kleinere bzw. gleich platzierte Elemente vor dem rechten Teil liegen."
+  },
+  {
+    "front": "[Auswahlalgorithmen] Warum muss Quick Select rechts nach dem $(i-k)$-t kleinsten Element suchen und nicht nach dem $i$-t kleinsten?",
+    "back": "Wenn das Pivot $p$ Rang $k$ hat, dann liegen $k$ Elemente vor dem rechten Teil: die $k-1$ kleineren Elemente plus $p$ selbst.\n\nSucht man im gesamten Array das $i$-t kleinste Element mit $i>k$, dann ist es im rechten Teil nur noch das\n$$(i-k)\\text{-t kleinste Element}.$$\n\nBeispiel: Wenn $k=4$ und man sucht $i=7$, dann sucht man rechts das\n$$7-4=3$$\nkleinste Element."
+  },
+  {
+    "front": "[Auswahlalgorithmen] Worin unterscheidet sich Quick Select strukturell von Quicksort?",
+    "back": "Beide verwenden dieselbe **Partitionierungsroutine**.\n\nDer entscheidende Unterschied:\n\n- **Quicksort** muss nach dem Partitionieren beide Teilarrays rekursiv sortieren.\n- **Quick Select** sucht nur in einem Teilarray weiter: links oder rechts.\n\nDeshalb hat Quick Select einen Rekursionsbaum ohne echte Verzweigung entlang der Suche, während Quicksort beide Seiten weiterbearbeitet."
+  },
+  {
+    "front": "[Auswahlalgorithmen] Was ist der Worst Case von Quick Select bei schlechter Pivotwahl?",
+    "back": "Wenn das Pivot immer ganz am Rand landet, bleibt nach jeder Partitionierung ein Teilproblem der Größe $n-1$ übrig.\n\nDann gilt:\n$$T(n)=T(n-1)+cn.$$\n\nDaraus folgt:\n$$T(n)=\\Theta(n^2).$$\n\nDer Worst Case ist also wie bei schlechtem Quicksort quadratisch."
+  },
+  {
+    "front": "[Auswahlalgorithmen] Warum führt ein konstant guter Pivot bei Quick Select zu linearer Laufzeit?",
+    "back": "Ein Pivot ist **konstant gut**, wenn es garantiert einen konstanten Anteil $\\varepsilon n$ der Elemente abschneidet.\n\nDann bleibt höchstens\n$$(1-\\varepsilon)n$$\nübrig. Mit $q=1-\\varepsilon<1$ ergibt sich:\n$$T(n)\\le cn+cqn+cq^2n+\\dots$$\n\nAlso:\n$$T(n)\\le cn(1+q+q^2+\\dots)=cn\\cdot \\frac{1}{1-q}=O(n).$$\n\nDer Grund ist, dass die geometrische Reihe nur einen konstanten Faktor ergibt."
+  },
+  {
+    "front": "[Auswahlalgorithmen] Warum wäre der exakte Median als Pivot für Quicksort ideal?",
+    "back": "Wenn Quicksort immer den Median als Pivot verwendet, entstehen zwei Teilprobleme der Größe höchstens etwa $n/2$.\n\nDann gilt:\n$$T(n)\\le 2T\\left(\\frac n2\\right)+O(n).$$\n\nNach dem Master-Theorem folgt:\n$$T(n)=O(n\\log n).$$\n\nWenn man den Median zusätzlich in $O(n)$ Zeit findet, bleibt die Rekurrenz asymptotisch unverändert, weil Partitionieren und Medianfinden zusammen immer noch $O(n)$ pro Ebene kosten."
+  },
+  {
+    "front": "[Auswahlalgorithmen] Warum verwendet man den linearen Medianalgorithmus trotzdem normalerweise nicht praktisch für Quicksort?",
+    "back": "Der Median-der-Mediane-Algorithmus hat zwar asymptotisch lineare Laufzeit, aber relativ große konstante Faktoren und eine komplizierte Struktur.\n\nFür praktisches Quicksort verwendet man meist einfachere Pivotstrategien, z. B. Randomisierung oder kleine Heuristiken.\n\nDer Algorithmus ist vor allem theoretisch wichtig: Er zeigt, dass Auswahl deterministisch in Worst-Case-Zeit\n$$O(n)$$\nlösbar ist."
+  },
+  {
+    "front": "[Auswahlalgorithmen] Was ist die Grundidee des Median-der-Mediane-Algorithmus?",
+    "back": "Der Algorithmus wählt ein garantiert gutes Pivot:\n\n1. Teile das Array gedanklich in Gruppen der Größe $5$.\n2. Bestimme den Median jeder Fünfergruppe.\n3. Schreibe diese Mediane in ein neues Array $A'$.\n4. Wähle rekursiv den Median von $A'$ als Pivot $p$.\n5. Partitioniere das ursprüngliche Array um $p$.\n6. Fahre wie bei Quick Select nur auf der relevanten Seite fort.\n\nDas Pivot ist also der **Median der Gruppenmediane**."
+  },
+  {
+    "front": "[Auswahlalgorithmen] Warum kostet das Bestimmen aller Mediane der Fünfergruppen nur $O(n)$?",
+    "back": "Jede Gruppe hat konstante Größe $5$.\n\nDen Median einer Fünfergruppe kann man daher in konstanter Zeit bestimmen, etwa durch Sortieren dieser fünf Elemente.\n\nEs gibt ungefähr\n$$\\frac n5$$\nGruppen.\n\nAlso ist die Gesamtzeit:\n$$\\frac n5 \\cdot O(1)=O(n).$$"
+  },
+  {
+    "front": "[Auswahlalgorithmen] Warum ist der Median der Mediane ein gutes Pivot?",
+    "back": "Es gibt etwa\n$$\\frac n5$$\nGruppenmediane. Der Median dieser Mediane liegt so, dass ungefähr die Hälfte der Gruppenmediane kleiner ist.\n\nAlso gibt es ungefähr\n$$\\frac n{10}$$\nGruppenmediane kleiner als $p$.\n\nJeder solche Gruppenmedian stammt aus einer Fünfergruppe und hat dort noch zwei kleinere Elemente. Jede dieser Gruppen liefert also $3$ Elemente kleiner als $p$.\n\nDamit sind mindestens ungefähr\n$$3\\cdot \\frac n{10}=\\frac{3n}{10}$$\nElemente kleiner als $p$.\n\nSymmetrisch sind auch mindestens ungefähr\n$$\\frac{3n}{10}$$\nElemente größer als $p$."
+  },
+  {
+    "front": "[Auswahlalgorithmen] Welche maximale Größe hat der rekursive Suchbereich nach Median-der-Mediane-Pivotwahl?",
+    "back": "Da mindestens\n$$\\frac{3n}{10}$$\nElemente kleiner und mindestens\n$$\\frac{3n}{10}$$\nElemente größer als das Pivot sind, wird beim rekursiven Weitergehen mindestens ein solcher Randbereich verworfen.\n\nÜbrig bleiben höchstens:\n$$n-\\frac{3n}{10}=\\frac{7n}{10}.$$\n\nDer zweite Quick-Select-Aufruf arbeitet also auf höchstens\n$$\\frac{7n}{10}$$\nElementen.\n\nRundungsfehler bei nicht durch $5$ teilbarem $n$ ändern nur konstante Terme und nicht die asymptotische Laufzeit."
+  },
+  {
+    "front": "[Auswahlalgorithmen] Welche Rekurrenz beschreibt die Laufzeit von Quick Select mit Median der Mediane?",
+    "back": "Es gibt zwei rekursive Kostenquellen:\n\n1. Median der Mediane finden auf dem Array $A'$ der Größe ungefähr $n/5$:\n   $$T\\left(\\frac n5\\right).$$\n\n2. Nach dem Partitionieren weiter suchen in einem Teilproblem der Größe höchstens $7n/10$:\n   $$T\\left(\\frac{7n}{10}\\right).$$\n\nZusätzlich kosten Gruppenmediane und Partitionieren zusammen linear viel Zeit:\n$$cn.$$\n\nAlso:\n$$T(n)\\le T\\left(\\frac n5\\right)+T\\left(\\frac{7n}{10}\\right)+cn.$$"
+  },
+  {
+    "front": "[Auswahlalgorithmen] Warum folgt aus $T(n)\\le T(n/5)+T(7n/10)+cn$ lineare Laufzeit?",
+    "back": "Man beweist per Induktion:\n$$T(n)\\le 10cn.$$\n\nInduktionsschritt:\n$$T(n)\\le T\\left(\\frac n5\\right)+T\\left(\\frac{7n}{10}\\right)+cn.$$\n\nMit Induktionsannahme:\n$$T(n)\\le 10c\\frac n5+10c\\frac{7n}{10}+cn.$$\n\nDas ergibt:\n$$T(n)\\le 2cn+7cn+cn=10cn.$$\n\nAlso gilt:\n$$T(n)=O(n).$$\n\nEntscheidend ist:\n$$\\frac15+\\frac{7}{10}=\\frac{9}{10}<1.$$"
+  },
+  {
+    "front": "[Auswahlalgorithmen] Warum funktioniert das Master-Theorem hier nicht direkt?",
+    "back": "Das Master-Theorem passt typischerweise auf Rekurrenzen der Form\n$$T(n)=aT\\left(\\frac nb\\right)+f(n),$$\nalso auf mehrere gleich große rekursive Teilprobleme.\n\nHier haben wir aber zwei verschieden große Teilprobleme:\n$$T(n)\\le T\\left(\\frac n5\\right)+T\\left(\\frac{7n}{10}\\right)+cn.$$\n\nDie Teilproblemgrößen sind asymmetrisch. Deshalb verwendet man stattdessen eine direkte vollständige Induktion oder eine Rekursionsbaum-Argumentation."
+  },
+  {
+    "front": "[Auswahlalgorithmen] Warum reichen Dreiergruppen für Median der Mediane nicht für lineare Laufzeit?",
+    "back": "Bei Dreiergruppen hätte $A'$ Größe\n$$\\frac n3.$$\n\nDer Median der Mediane garantiert nur, dass ungefähr\n$$\\frac n3$$\nElemente abgeschnitten werden. Das größte verbleibende Teilproblem hat also Größe\n$$\\frac{2n}{3}.$$\n\nDie Rekurrenz wäre:\n$$T(n)\\le T\\left(\\frac n3\\right)+T\\left(\\frac{2n}{3}\\right)+cn.$$\n\nHier ist\n$$\\frac13+\\frac23=1.$$\n\nDie Arbeit pro Rekursionsebene bleibt damit ungefähr gleich, was zu\n$$\\Theta(n\\log n)$$\nstatt $O(n)$ führt."
+  },
+  {
+    "front": "[Auswahlalgorithmen] Warum ist die Gruppengröße $5$ beim Median-der-Mediane-Algorithmus der entscheidende Trick?",
+    "back": "Bei Gruppengröße $5$ bekommt man zwei gute Eigenschaften gleichzeitig:\n\n1. Die Gruppen sind konstant groß, also kosten ihre Mediane insgesamt nur $O(n)$.\n2. Der Median der Mediane schneidet mindestens ungefähr $3n/10$ Elemente ab.\n\nDadurch entsteht die Rekurrenz:\n$$T(n)\\le T\\left(\\frac n5\\right)+T\\left(\\frac{7n}{10}\\right)+cn,$$\nund die Summe der rekursiven Größen ist\n$$\\frac15+\\frac{7}{10}=\\frac{9}{10}<1.$$\n\nGenau diese strikte Schranke unter $1$ ermöglicht die lineare Laufzeit."
+  },
+  {
+    "front": "[Auswahlalgorithmen] Welche Rolle spielt die geometrische Reihe in der Analyse guter Pivot-Elemente?",
+    "back": "Wenn in jedem Schritt ein konstanter Anteil entfernt wird, sinken die Problemgrößen geometrisch:\n$$n,\\ qn,\\ q^2n,\\ q^3n,\\dots$$\nmit $q<1$.\n\nDie gesamte Partitionierungsarbeit ist dann:\n$$cn+cqn+cq^2n+\\dots=cn(1+q+q^2+\\dots).$$\n\nDa\n$$1+q+q^2+\\dots=\\frac{1}{1-q},$$\nist die Summe nur ein konstanter Faktor mal $n$.\n\nDeshalb reicht ein konstant guter Pivot für lineare Quick-Select-Laufzeit."
+  },
+  {
+    "front": "[Auswahlalgorithmen] Was ist der wichtigste Korrektheitsgrund von Quick Select?",
+    "back": "Nach dem Partitionieren ist das Pivot $p$ an genau der Position, an der es auch im vollständig sortierten Array stehen würde.\n\nWenn sein Rang $k$ ist:\n\n- Für $i=k$ ist $p$ die gesuchte Antwort.\n- Für $i<k$ kann die Antwort nur links liegen.\n- Für $i>k$ kann die Antwort nur rechts liegen.\n\nDamit verwirft Quick Select nie den Bereich, der das gesuchte Element enthalten kann."
+  }
+]
