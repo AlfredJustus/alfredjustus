@@ -1138,5 +1138,65 @@
   {
     "front": "[2026-04-28] Warum ist die Annahme „alle Elemente sind paarweise verschieden“ für die Analyse hilfreich?",
     "back": "Mit paarweise verschiedenen Elementen hat jedes Element einen **eindeutigen Rang**. Dadurch gilt sauber:\n\n- Das Pivot landet nach Partition an genau einer Rangposition.\n- Jede Pivot-Endposition ist gleich wahrscheinlich.\n- Die Teilprobleme haben klar definierte Größen $i$ und $n-i-1$.\n\nBei **Duplikaten** wird das technischer:\n- Elemente können gleich dem Pivot sein.\n- Die Aufteilung in „links kleiner, rechts größer“ ist nicht mehr eindeutig genug.\n- Die Rang- und Wahrscheinlichkeitsargumente müssen angepasst werden.\n\nDie Annahme ist also kein Selbstzweck, sondern vereinfacht die Analyse erheblich.  \nDer Algorithmus selbst kann oft auch mit Duplikaten umgehen, aber die Herleitung der Rekursion wird weniger elegant."
+  },
+  {
+    "front": "[2026-04-30] Warum hat Quick Select erwartete lineare Laufzeit, obwohl der Pivot zufällig sein kann?",
+    "back": "Die Analyse betrachtet nicht den schlimmsten einzelnen Lauf, sondern den **Erwartungswert** über die zufälligen Pivot-Wahlen.\n\nEntscheidend ist: Mit Wahrscheinlichkeit mindestens $1/2$ liegt das Pivot in der mittleren Hälfte der Ordnung. Dann schrumpft das relevante Teilarray auf höchstens\n$$\\frac{3}{4}m_i.$$\n\nGruppiert man rekursive Aufrufe nach **Größenklassen**, dann verbringt Quick Select in jeder Klasse im Erwartungswert nur konstant viele Aufrufe. Die Gesamtkosten sind daher durch eine geometrische Reihe beschränkt:\n$$n+\\frac{3}{4}n+\\left(\\frac{3}{4}\\right)^2n+\\dots = O(n).$$\n\nSo erhält man insgesamt\n$$\\mathbb{E}[T]=O(n),$$\nin der Vorlesung sogar mit der konkreten Schranke\n$$\\mathbb{E}[T]\\le 8n.$$"
+  },
+  {
+    "front": "[2026-04-30] Was bedeutet die Größenreduktion $\\Pr[m_{i+1}\\le (3/4)m_i]\\ge 1/2$ bei Quick Select konkret?",
+    "back": "Sie bedeutet: In einem rekursiven Aufruf mit Teilarraygröße $m_i$ ist die Wahrscheinlichkeit mindestens $1/2$, dass der nächste rekursive Aufruf nur noch auf einem Teilarray der Größe höchstens\n$$\\frac{3}{4}m_i$$\narbeitet.\n\nDer Grund: Liegt das Pivot unter den mittleren $m_i/2$ Elementen, dann sind sowohl der linke als auch der rechte Teil höchstens $3m_i/4$ groß. Da Quick Select nur in **einem** Teil rekursiert, ist auch das nächste relevante Teilarray höchstens so groß.\n\nDiese Aussage ist der Kern der Erwartungswertanalyse: Man braucht keine sichere Schrumpfung in jedem Schritt, sondern nur eine konstante Erfolgswahrscheinlichkeit."
+  },
+  {
+    "front": "[2026-04-30] Warum folgt aus einer Erfolgswahrscheinlichkeit von mindestens $1/2$, dass $\\mathbb{E}[N_j]\\le 2$ gilt?",
+    "back": "$N_j$ zählt, wie oft Quick Select in der $j$-ten **Größenklasse** aufgerufen wird, bevor es in eine kleinere Klasse wechselt.\n\nEin Wechsel passiert, sobald eine ausreichende Größenreduktion eintritt. Diese hat pro Versuch Wahrscheinlichkeit mindestens\n$$p\\ge \\frac{1}{2}.$$\n\nDie Anzahl der Versuche bis zum ersten Erfolg ist wie bei einer **geometrischen Verteilung**. Für diese gilt\n$$\\mathbb{E}[N_j]\\le \\frac{1}{p}\\le 2.$$\n\nIntuitiv: Wenn jeder Aufruf mit Wahrscheinlichkeit mindestens $1/2$ die aktuelle Größenklasse verlässt, wartet man im Mittel höchstens zwei Aufrufe, bis das passiert."
+  },
+  {
+    "front": "[2026-04-30] Wie erhält man aus den Größenklassen die Schranke $\\mathbb{E}[T]\\le 8n$?",
+    "back": "Man verwendet\n$$\\mathbb{E}[T]\\le \\sum_{j\\ge 1}\\mathbb{E}[N_j]\\left(\\frac{3}{4}\\right)^{j-1}n.$$\n\nMit\n$$\\mathbb{E}[N_j]\\le 2$$\nfolgt\n$$\\mathbb{E}[T]\\le 2n\\sum_{j\\ge 1}\\left(\\frac{3}{4}\\right)^{j-1}.$$\n\nDie geometrische Reihe ergibt\n$$\\sum_{j\\ge 1}\\left(\\frac{3}{4}\\right)^{j-1}=\\frac{1}{1-3/4}=4.$$\n\nAlso:\n$$\\mathbb{E}[T]\\le 2n\\cdot 4 = 8n.$$\n\nDie lineare Laufzeit entsteht also aus „konstant viele Aufrufe pro Größenklasse“ plus „geometrisch fallende Klassengrößen“."
+  },
+  {
+    "front": "[2026-04-30] Wann ist Hashing beim Duplikate-Finden nützlicher als direktes Sortieren der Originalobjekte?",
+    "back": "**Hashing** ist besonders nützlich, wenn die Originalobjekte teuer zu vergleichen oder zu kopieren sind, etwa große Dateien oder lange Datensätze.\n\nDann sortiert man nicht direkt die Objekte $S_i$, sondern Paare\n$$(h(S_i), i).$$\n\nDie Sortierung bleibt zwar\n$$O(n\\log n),$$\naber die meisten Vergleiche betreffen nur **Zahlen** statt großer Objekte. Teure Originalvergleiche braucht man erst innerhalb von Blöcken mit gleichem Hashwert.\n\nDer Gewinn liegt also nicht darin, die asymptotische Sortierzeit zu beseitigen, sondern darin, die Zahl teurer Objektvergleiche stark zu reduzieren."
+  },
+  {
+    "front": "[2026-04-30] Warum beweist ein gleicher Hashwert noch kein Duplikat?",
+    "back": "Für eine **Hash-Funktion** gilt sicher nur die Richtung\n$$S_i=S_j \\;\\Rightarrow\\; h(S_i)=h(S_j).$$\n\nDie Umkehrung ist im Allgemeinen falsch:\n$$h(S_i)=h(S_j) \\;\\not\\Rightarrow\\; S_i=S_j.$$\n\nDer Grund sind **Kollisionen**: Verschiedene Datensätze können denselben Hashwert haben. Gleiche Hashwerte liefern also nur **Kandidaten** für Duplikate.\n\nDeshalb muss man nach dem Finden gleicher Hashwerte die Originaldaten noch vergleichen. Hashing ersetzt also nicht die Korrektheitsprüfung, sondern reduziert nur, wie oft man sie durchführen muss."
+  },
+  {
+    "front": "[2026-04-30] Was ist in dieser Vorlesung genau eine Kollision, und was nicht?",
+    "back": "Eine **Kollision** ist ein Paar verschiedener Datensätze\n$$S_i\\ne S_j$$\nmit gleichem Hashwert:\n$$h(S_i)=h(S_j).$$\n\nWichtig ist die Bedingung „verschieden“. Wenn\n$$S_i=S_j,$$\ndann ist gleicher Hashwert gerade das erwartete Verhalten der Funktion und **keine** Kollision.\n\nDer typische Denkfehler ist also: „Gleicher Hashwert = Kollision“. Das stimmt nur, wenn die zugrunde liegenden Objekte tatsächlich verschieden sind."
+  },
+  {
+    "front": "[2026-04-30] Wie groß ist die erwartete Zahl der Kollisionen bei idealisiertem Hashing?",
+    "back": "Für jedes Paar $i<j$ betrachtet man eine **Indikatorvariable** $K_{ij}$, die $1$ ist, falls $S_i\\ne S_j$ und\n$$h(S_i)=h(S_j).$$\n\nUnter der idealisierten Annahme gilt für jedes feste verschiedene Paar:\n$$\\Pr[h(S_i)=h(S_j)] = \\frac{1}{m}.$$\n\nDaher ist\n$$\\mathbb{E}[\\#\\text{Kollisionen}] \\le \\binom{n}{2}\\frac{1}{m}.$$\n\nDie Formel zeigt direkt den Trade-off: Ein größerer Hashbereich $m$ senkt die erwartete Zahl falscher Kandidaten."
+  },
+  {
+    "front": "[2026-04-30] Warum ist die Wahl $m=n^2$ für den Hashbereich besonders praktisch?",
+    "back": "Setzt man in\n$$\\mathbb{E}[\\#\\text{Kollisionen}] \\le \\binom{n}{2}\\frac{1}{m}$$\nden Wert\n$$m=n^2$$\nein, erhält man\n$$\\mathbb{E}[\\#\\text{Kollisionen}] \\le \\frac{\\binom{n}{2}}{n^2}\n= \\frac{n(n-1)}{2n^2}\n= \\frac{n-1}{2n}\n< 1.$$\n\nDamit ist die erwartete Zahl der **falschen Kandidaten** kleiner als $1$. Das ist stark, weil nach dem Sortieren der Hashwerte im Erwartungswert nur konstant viele zusätzliche Originalvergleiche wegen Kollisionen nötig sind."
+  },
+  {
+    "front": "[2026-04-30] Berechne die Kollisionsschranke für $n=1000$ und $m=n^2$",
+    "back": "Mit\n$$m=n^2=1000^2=1{,}000{,}000$$\nund\n$$\\mathbb{E}[\\#\\text{Kollisionen}] \\le \\binom{n}{2}\\frac{1}{m}$$\nfolgt\n$$\\mathbb{E}[\\#\\text{Kollisionen}] \\le \\frac{1000\\cdot 999}{2\\cdot 1{,}000{,}000}.$$\n\nDas ist\n$$\\frac{999000}{2000000}=0{,}4995.$$\n\nAlso ist die erwartete Zahl der Kollisionen kleiner als $0{,}5$ und damit insbesondere kleiner als $1$."
+  },
+  {
+    "front": "[2026-04-30] Wie findet man mit Hashwerten Duplikate, ohne alle Originalobjekte direkt zu sortieren?",
+    "back": "Man bildet für jedes Objekt $S_i$ das Paar\n$$(h(S_i), i).$$\n\nDann:\n1. **Sortiere** diese Paare nach dem Hashwert.\n2. Gleiche Hashwerte liegen danach in zusammenhängenden **Blöcken**.\n3. Vergleiche die Originalobjekte nur noch innerhalb derselben Blöcke.\n\nWarum funktioniert das? Wenn\n$$S_i=S_j,$$\ndann gilt sicher\n$$h(S_i)=h(S_j),$$\nalso landen echte Duplikate im selben Block. Gleichzeitig vermeidet man, dass die Sortierung ständig teure Originalobjekte vergleichen muss."
+  },
+  {
+    "front": "[2026-04-30] Warum existiert im Array-Problem sicher ein Duplikat?",
+    "back": "Gegeben ist ein Array $A$ der Länge $n$, dessen Einträge alle in\n$$\\{1,\\dots,n-1\\}$$\nliegen.\n\nEs gibt also $n$ Positionen, aber nur $n-1$ mögliche Werte. Nach dem **Schubfachprinzip** müssen daher zwei verschiedene Indizes\n$$i\\ne j$$\ndenselben Wert haben:\n$$A_i=A_j.$$\n\nGenau ein solches Paar soll gefunden werden. Die Existenz des Duplikats ist also keine zusätzliche Annahme, sondern folgt direkt aus der Wertebeschränkung."
+  },
+  {
+    "front": "[2026-04-30] Warum entsteht aus dem Array $A$ ein Zyklus, wenn man bei $n$ startet und immer $A_i$ folgt?",
+    "back": "Man definiert die Folge\n$$x_0=n,\\qquad x_t=A_{x_{t-1}}.$$\n\nDas entspricht einem gerichteten Graphen mit Knoten $1,\\dots,n$ und Kante\n$$i\\to A_i.$$\n\nJeder Knoten hat genau **eine ausgehende Kante**, weil jeder Arrayeintrag genau einen Wert liefert. Da alle Werte in $\\{1,\\dots,n-1\\}$ liegen, hat der Knoten $n$ keine eingehende Kante.\n\nFolgt man von $n$ aus immer der eindeutigen ausgehenden Kante, besucht man unendlich viele Folgenglieder, aber nur endlich viele Knoten. Also muss irgendwann ein bereits besuchter Knoten erneut auftreten: Es entsteht ein **Zyklus**."
+  },
+  {
+    "front": "[2026-04-30] Was findet der erste Teil des Hase-Igel-Algorithmus, und was gerade nicht?",
+    "back": "Im ersten Teil laufen zwei Zeiger auf der Folge\n$$x_0=n,\\qquad x_t=A_{x_{t-1}}$$\nmit unterschiedlicher Geschwindigkeit: der **Igel** einen Schritt, der **Hase** zwei Schritte.\n\nDadurch findet man einen Zeitpunkt $t\\le n$ mit\n$$x_t=x_{2t}.$$\n\nDas bedeutet: Beide Zeiger treffen sich an einem Punkt auf dem **Zyklus**. Dieser Treffpunkt beweist, dass ein Zyklus erreicht wurde.\n\nWichtig: Dieser erste Treffpunkt ist **nicht automatisch das gesuchte Duplikat**. Er liegt nur irgendwo auf dem Kreis. Um den Zykluseingang und damit die relevanten Vorgängerindizes zu finden, braucht man den zweiten Teil des Algorithmus."
+  },
+  {
+    "front": "[2026-04-30] Warum liefert der zweite Teil des Hase-Igel-Algorithmus genau den Zykluseingang?",
+    "back": "Nach dem ersten Teil trifft man sich bei einem Punkt auf dem Zyklus, und daraus folgt, dass der Treffzeitpunkt ein Vielfaches der Zykluslänge $\\ell$ ist.\n\nSei $k$ die Länge des Pfads vom Start $n$ bis zum Zykluseingang $x_k$. Dann setzt man einen Zeiger zurück auf $n$ und lässt beide Zeiger **gleich schnell** laufen.\n\n- Der zurückgesetzte Zeiger erreicht nach $k$ Schritten den Eingang $x_k$.\n- Der andere startet auf dem Zyklus; weil die Differenz ein Vielfaches von $\\ell$ ist, steht auch er nach $k$ Schritten bei $x_k$.\n\nDamit treffen sie sich genau am **Zykluseingang**."
   }
 ]

@@ -898,5 +898,65 @@
   {
     "front": "[2026-04-24] In a 1D systolic convolution array with stationary weights, what does each PE do?",
     "back": "Each PE stores a local **weight** $W$ and performs a **MAC** while forwarding data:\n\n$$\nX_{\\text{out}} \\leftarrow X_{\\text{in}}\n$$\n\n$$\nY_{\\text{out}} \\leftarrow Y_{\\text{in}} + W \\cdot X_{\\text{in}}\n$$\n\nSo each PE:\n- passes the input sample $X$ to the next PE,\n- receives a partial sum $Y$,\n- adds its own contribution $W \\cdot X$,\n- forwards the updated partial sum.\n\nThe key idea is that the weights stay local while the input stream and partial sums move through the array in a carefully timed way. This lets the convolution be computed as a rhythmic flow of data rather than as a sequence of general-purpose instructions."
+  },
+  {
+    "front": "[2026-04-30] Why does SIMD reduce instruction fetch/decode overhead compared with scalar execution?",
+    "back": "**SIMD** uses one instruction to describe the same operation on many data elements. Instead of fetching and decoding many scalar instructions like\n$$a_i \\leftarrow b_i + c_i \\quad \\text{for many } i,$$\nthe processor fetches and decodes one vector-style add and applies it element-wise.\n\nThis **amortizes** instruction overhead across many operations. It works well when:\n- the same operation is applied repeatedly,\n- data elements are independent,\n- access patterns are regular.\n\nIt works poorly when control flow or memory access is irregular, because then one instruction cannot cleanly describe many useful operations."
+  },
+  {
+    "front": "[2026-04-30] In Flynn’s taxonomy, how do SISD, SIMD, MISD, and MIMD differ?",
+    "back": "Flynn’s taxonomy classifies machines by the number of **instruction streams** and **data streams**:\n\n- **SISD**: one instruction stream, one data stream\n- **SIMD**: one instruction stream, multiple data elements\n- **MISD**: multiple instructions, one data stream\n- **MIMD**: multiple instructions, multiple data streams\n\nTypical examples:\n- **SISD**: ordinary scalar core\n- **SIMD**: vector processor, packed SIMD unit\n- **MISD**: rare in practice; closest examples are some systolic/streaming styles\n- **MIMD**: multicore and multithreaded systems\n\nThe key distinction is whether parallelism comes from sharing one instruction across many data items or from running different instruction streams independently."
+  },
+  {
+    "front": "[2026-04-30] When is a computation a good fit for SIMD, and when is it not?",
+    "back": "A computation fits **SIMD** well when it has **data-level parallelism**: the same operation can be applied independently to many elements.\n\nGood fits:\n- element-wise array addition\n- dot products\n- matrix multiplication\n\nPoor fits:\n- pointer chasing\n- irregular sparse traversals\n- code with unpredictable branches or irregular memory access\n\nThe reason is that SIMD assumes **regular, predictable work**. If different elements need very different control flow or unrelated addresses, the single-instruction model becomes inefficient and vector units are underused."
+  },
+  {
+    "front": "[2026-04-30] What is the key architectural difference between an array processor and a vector processor?",
+    "back": "An **array processor** exploits SIMD in **space**: many processing elements perform the same operation on different data at the same time.\n\nA **vector processor** exploits SIMD in **time**: one vector instruction flows through **pipelined functional units** over successive cycles.\n\nSo:\n- **Array processor**: parallelism from many replicated execution elements\n- **Vector processor**: parallelism from deep pipelines with many vector elements in flight\n\nBoth can have many operations active simultaneously, but for different reasons. In an array processor, many units do the same stage at once; in a vector processor, different elements occupy different pipeline stages."
+  },
+  {
+    "front": "[2026-04-30] Why can vector processors tolerate deeper pipelines better than scalar processors?",
+    "back": "Deep scalar pipelines suffer from:\n- **data dependences**, which cause stalls\n- **branch mispredictions**, which cause flushes\n\nVector processors avoid much of this because elements of one vector operation are usually independent, and there is no ordinary per-element branch inside the vector instruction.\n\nAlso, the hardware often knows the **stride**, so future addresses can be generated early. This helps hide memory latency.\n\nSo deeper pipelines are practical because vector execution has:\n- more regular control flow,\n- more predictable memory access,\n- less dependence-related disruption than general scalar code."
+  },
+  {
+    "front": "[2026-04-30] What do the vector length, vector stride, and vector mask control registers do?",
+    "back": "These **vector control registers** let one instruction describe many scalar operations compactly:\n\n- **Vector length**: how many elements of the vector operation are active\n- **Vector stride**: distance in memory between consecutive accessed elements\n- **Vector mask**: which elements are allowed to execute or write back\n\nThey are essential because real vector hardware has a maximum vector size, may need non-unit-stride access, and often must support conditional execution without scalar branches.\n\nTogether, they make vector instructions flexible enough for loops, strided arrays, and conditionals."
+  },
+  {
+    "front": "[2026-04-30] How do you compute the address sequence for a vector memory operation with stride?",
+    "back": "The rule is:\n$$\\text{next address} = \\text{previous address} + \\text{stride}.$$\n\nIf the base address is $A_0$, then the accessed sequence is:\n$$A_0,\\; A_0 + s,\\; A_0 + 2s,\\; A_0 + 3s,\\; \\dots$$\nwhere $s$ is the **stride**.\n\nSo:\n- stride $1$ means consecutive memory locations,\n- larger stride means regularly spaced accesses,\n- irregular access cannot be expressed by a simple stride and may require **gather/scatter** instead.\n\nThis simple rule is why vector processors work best with regular memory patterns."
+  },
+  {
+    "front": "[2026-04-30] Why are memory banks used in vector processors instead of just adding more memory ports?",
+    "back": "**Memory ports** allow truly simultaneous accesses to the same memory structure, but they are expensive and hard to scale.\n\n**Memory banking** splits memory into independent banks so accesses can be overlapped across time. This is cheaper and more scalable.\n\nThe tradeoff is that banking only helps if requests are distributed well across banks. If too many accesses hit the same bank too soon, **bank conflicts** occur and the vector pipeline stalls.\n\nSo banking is not equivalent to ports:\n- **Ports** give direct simultaneous access capability\n- **Banks** give high throughput only for favorable access patterns"
+  },
+  {
+    "front": "[2026-04-30] What causes a bank conflict, and why can it stall a vector pipeline?",
+    "back": "A **bank conflict** happens when multiple vector memory accesses need the same memory bank before that bank is ready again.\n\nBecause vector pipelines need a steady stream of operands, such conflicts reduce effective bandwidth. The pipeline then cannot sustain one element per cycle and must wait.\n\nThis is especially harmful because vector performance often depends more on **feeding the pipeline** than on arithmetic throughput. Even if the functional units are fast, poor bank distribution can make memory the bottleneck.\n\nSo the core issue is not just latency, but the inability to maintain continuous throughput."
+  },
+  {
+    "front": "[2026-04-30] What banking rule helps sustain one element per cycle for stride-1 access?",
+    "back": "For stride $1$, to sustain roughly **one element per cycle**, the number of memory banks should be at least the **bank latency**.\n\nIdea:\n- if one bank takes $L$ cycles before it can serve the next request,\n- then at least $L$ banks are needed so consecutive accesses can rotate through different banks without waiting.\n\nSo the rule is:\n$$\\#\\text{banks} \\ge \\text{bank latency}$$\nfor stride-$1$ streaming access.\n\nThis is a throughput rule: enough banks are needed to cover the reuse delay of each bank."
+  },
+  {
+    "front": "[2026-04-30] Why should stride and bank count be relatively prime in interleaved memory?",
+    "back": "If **stride** and **number of banks** share a common factor, accesses repeat over only a subset of banks. That increases the chance of repeated hits to the same bank and causes conflicts.\n\nIf they are **relatively prime**, the access pattern cycles through all banks before repeating, which distributes requests more evenly.\n\nSo the practical rule is:\n$$\\gcd(\\text{stride}, \\#\\text{banks}) = 1.$$\n\nThis is not sufficient by itself; you still need enough banks to cover bank latency. But it is an important condition for avoiding pathological conflict patterns."
+  },
+  {
+    "front": "[2026-04-30] Why does matrix multiplication make stride handling harder than simple vector addition?",
+    "back": "In **row-major** layout, reading a row is usually stride $1$, but reading a column requires jumping by the row width.\n\nSo in matrix multiplication:\n- accessing a row of $A$ may be friendly to vector memory,\n- accessing a column of $B$ may have a large stride.\n\nThat means one operand may map nicely across banks while the other may create conflicts. Unlike simple vector addition, where both inputs are often contiguous, matrix multiplication stresses the memory system with mixed access patterns.\n\nThis is why data layout and bank interaction matter much more for matrix operations."
+  },
+  {
+    "front": "[2026-04-30] How does strip mining handle loops longer than the hardware vector length?",
+    "back": "**Strip mining** breaks a long loop into chunks no larger than the hardware vector length.\n\nRecipe:\n1. process as many full-length vectors as possible,\n2. process one final shorter vector for the remainder.\n\nExample with 527 elements and maximum vector length 64:\n$$527 = 8 \\cdot 64 + 15.$$\n\nSo the execution uses:\n- **8 full vector iterations** of length $64$,\n- **1 final iteration** of length $15$.\n\nThis lets fixed-size vector hardware execute arbitrarily long loops."
+  },
+  {
+    "front": "[2026-04-30] What is chaining in a vector processor, and why does it help?",
+    "back": "**Chaining** is vector-style forwarding: as soon as one element is produced by one vector functional unit, it can be consumed by the next unit immediately.\n\nWithout chaining, a dependent vector operation must wait until the **entire vector register** is ready.\n\nWith chaining:\n- element $0$ from one unit can feed element $0$ of the next,\n- then element $1$, and so on,\n- so dependent vector operations overlap in time.\n\nThis reduces latency and improves throughput, much like scalar pipeline forwarding, but at the granularity of vector elements."
+  },
+  {
+    "front": "[2026-04-30] In the lecture performance example, what does the cycle count comparison show about chaining and memory improvements?",
+    "back": "For the specific 50-iteration averaging loop, the lecture gave:\n\n- scalar: $2004$ cycles\n- scalar with memory overlap: $1504$\n- vector without chaining: $285$\n- vector with chaining: $82$\n- vector with more ports: $79$\n\nThis shows two main things:\n\n1. **Vectorization** gives a dramatic speedup over scalar execution.\n2. **Chaining** provides a major additional gain by overlapping dependent vector operations.\n\nThe small improvement from $82$ to $79$ also shows that after major bottlenecks are removed, adding more memory capability may help only a little for that workload."
   }
 ]
