@@ -1138,5 +1138,65 @@
   {
     "front": "[2026-04-28] Warum ist `notifyAll()` bei Producer–Consumer oft sicherer als `notify()`?",
     "back": "`notify()` weckt nur **einen beliebigen** wartenden Thread. Wenn sowohl Producer als auch Consumer warten, kann der „falsche“ Typ geweckt werden, der seine Bedingung sofort wieder als falsch erkennt und erneut schlafen geht.\n\n`notifyAll()` weckt alle Wartenden. Danach prüft jeder Thread seine Bedingung erneut mit `while`, und nur die Threads mit tatsächlich erfüllter Bedingung laufen weiter.\n\nDas ist oft robuster, besonders wenn mehrere **Wartbedingungen** auf demselben Monitor zusammenliegen. Der Preis ist mehr Aufweckarbeit, aber die Logik ist sicherer."
+  },
+  {
+    "front": "[2026-05-04] Warum ersetzt eine Condition-Variable den gemeinsamen Zustand nicht?",
+    "back": "Eine **Condition-Variable** speichert nicht selbst, ob eine Bedingung wahr ist. Sie ist nur ein Mechanismus, um Threads schlafen zu legen und später aufzuwecken.\n\nDer eigentliche Zustand liegt in gemeinsam geschützten Variablen wie `isFull`, `isEmpty`, `m`, `n`, `readers` oder `writerActive`. Diese Variablen müssen durch **denselben Lock** geschützt sein wie die Condition-Variable.\n\nOhne diesen geschützten Zustand wüsste ein aufwachender Thread nicht, ob er wirklich weiterlaufen darf."
+  },
+  {
+    "front": "[2026-05-04] Warum muss `wait()` bzw. `await()` immer in einer Schleife stehen und nicht in einem `if`?",
+    "back": "Weil ein Aufwachen nur bedeutet: **„Prüfe die Bedingung erneut“**, nicht: **„Die Bedingung ist jetzt sicher wahr“**.\n\nZwei Gründe:\n- Der Zustand kann sich zwischen `signal()` und dem tatsächlichen Weiterlaufen schon wieder geändert haben.\n- In Java sind **spurious wakeups** möglich, also Rückkehr aus `wait()` ohne passenden Grund.\n\nDarum ist das korrekte Muster:\n$$\n\\texttt{while (!predicate) wait();}\n$$\nund nicht\n$$\n\\texttt{if (!predicate) wait();}\n$$"
+  },
+  {
+    "front": "[2026-05-04] Welche Invariante charakterisiert einen Leseschreiberlock?",
+    "back": "Die zentrale **Leseschreiber-Invariante** ist:\n$$\nwriters \\cdot readers = 0\n$$\n\nDas bedeutet:\n- Entweder sind **ein oder mehrere Leser** aktiv,\n- oder **genau ein Schreiber** ist aktiv,\n- oder der Lock ist frei.\n\nNie erlaubt sind:\n- Leser und Schreiber gleichzeitig\n- mehrere Schreiber gleichzeitig\n\nDiese Invariante drückt die gesamte Sicherheitsidee des Leseschreiberlocks kompakt aus."
+  },
+  {
+    "front": "[2026-05-04] Warum ist ein Schreiblock stärker als ein Leselock?",
+    "back": "Ein **Schreiblock** schließt alle anderen Zugriffe aus und ist daher stark genug, um sowohl Lese- als auch Schreibphasen zu schützen.\n\nEin **Leselock** erlaubt dagegen parallele Leser. Deshalb schützt er nur Operationen, die den Zustand nicht verändern.\n\nFolge:\n- Eine reine Leseoperation kann mit Schreiblock geschützt werden, auch wenn das unnötig restriktiv ist.\n- Eine Schreiboperation darf **nicht** nur mit Leselock geschützt werden, weil dann mehrere Threads gleichzeitig „lesen“ dürften, obwohl tatsächlich geschrieben wird."
+  },
+  {
+    "front": "[2026-05-04] Warum kann ein naiver Leseschreiberlock Schreiber verhungern lassen?",
+    "back": "Beim naiven Lock dürfen neue Leser eintreten, solange **kein Schreiber aktiv** ist. Wartende Schreiber zählen dabei nicht.\n\nIn einem leselastigen System kann dadurch fast immer mindestens ein Leser aktiv sein. Dann wartet ein Schreiber auf\n$$\nreaders = 0\n$$\naber dieser Zustand tritt praktisch nie ein, weil ständig neue Leser nachkommen.\n\nDas ist **Writer-Starvation**: Der Algorithmus ist sicher, aber nicht fair."
+  },
+  {
+    "front": "[2026-05-04] Wie verhindert strikte Schreiberpriorität Writer-Starvation?",
+    "back": "Bei **strikter Schreiberpriorität** gilt: Sobald mindestens ein Schreiber wartet, dürfen **keine neuen Leser** mehr eintreten.\n\nDadurch kann die aktuelle Lesergruppe auslaufen, ohne dass ständig neue Leser nachrücken. Danach bekommt ein wartender Schreiber den Lock.\n\nSo wird verhindert, dass ein Schreiber unbegrenzt auf\n$$\nreaders = 0\n$$\nwarten muss.\n\nDer Preis: Die Benachteiligung kann nun auf die Leser verschoben werden."
+  },
+  {
+    "front": "[2026-05-04] Warum kann strikte Schreiberpriorität Leser benachteiligen?",
+    "back": "Wenn immer wieder Schreiber ankommen, bleiben neue Leser blockiert, obwohl mehrere Leser sich eigentlich gut parallel ausführen ließen.\n\nDann entsteht das Spiegelbild des ursprünglichen Problems:\n- Writer-Starvation ist behoben,\n- aber **Leser** können lange oder sogar praktisch unbegrenzt warten.\n\nStrikte Schreiberpriorität ist also keine vollständige Fairnesslösung, sondern nur eine gezielte Bevorzugung der Schreiber."
+  },
+  {
+    "front": "[2026-05-04] Was ist die Idee einer faireren Leseschreiberlock-Variante mit Lesergruppen?",
+    "back": "Eine fairere Variante zählt **wartende Leser** und **wartende Schreiber** und behandelt Leser oft als **Gruppe**.\n\nTypische Idee:\n- Wenn ein Schreiber fertig ist, dürfen genau die Leser eintreten, die **bereits gewartet haben**.\n- Später ankommende Leser dürfen nicht einfach diese Gruppe vergrößern.\n- Danach kommt wieder ein wartender Schreiber oder die nächste wartende Lesergruppe.\n\nDas entspricht einer **FIFO-artigen Fairness zwischen Lesergruppen und Schreibern** und verhindert, dass eine Seite die andere dauerhaft verdrängt."
+  },
+  {
+    "front": "[2026-05-04] Warum sind beim Sleeping-Barber-Pattern zusätzliche Zähler wie `m` und `n` hier nicht sofort gefährlich?",
+    "back": "Zusätzliche gemeinsame Variablen machen Nebenläufigkeit oft komplizierter. Hier aber werden **`m`**, **`n`** und der Pufferzustand vollständig innerhalb einer **gelockten Region** verändert.\n\nDadurch gibt es keine konkurrierenden Updates auf diese Variablen außerhalb des Locks. Man muss also nicht über Race Conditions auf `m` und `n` nachdenken.\n\nDie Zähler erhöhen hier die Ausdruckskraft, ohne sofort neue Unsicherheiten einzuführen. Erst bei feingranularen oder lockfreien Verfahren wird das deutlich heikler."
+  },
+  {
+    "front": "[2026-05-04] Was bedeuten negative Werte von `m` oder `n` im Sleeping-Barber-Pattern?",
+    "back": "Die Zähler sind **logische Bestandszähler**, keine bloßen physischen Mengen.\n\n- `m` zählt freie Slots inklusive wartender Producer-Situation.\n- `n` zählt vorhandene Elemente inklusive wartender Consumer-Situation.\n\nEin negativer Wert bedeutet, dass auf der jeweiligen Seite Threads **warten**:\n- `n < 0`: Es warten mehr Consumer, als Elemente vorhanden sind.\n- `m < 0`: Es warten mehr Producer, als freie Plätze vorhanden sind.\n\nNegative Werte kodieren also Wartesituationen direkt im Zähler."
+  },
+  {
+    "front": "[2026-05-04] Wann soll bei `enqueue` oder `dequeue` signalisiert werden?",
+    "back": "Nicht nach jeder Operation blind, sondern **nur dann, wenn tatsächlich ein Gegenpart wartet**.\n\nTypisch:\n- Bei `enqueue`: Nach dem Einfügen wird `n++` gemacht; signalisiert wird nur, wenn dadurch ein wartender Consumer geweckt werden muss.\n- Bei `dequeue`: Nach dem Entfernen wird `m++` gemacht; signalisiert wird nur, wenn dadurch ein wartender Producer geweckt werden muss.\n\nDas vermeidet unnötige Wakeups und ist genau die Optimierung des **Sleeping-Barber-Patterns**."
+  },
+  {
+    "front": "[2026-05-04] Warum ist ein einzelnes `notify()` bei Leseschreiberlocks subtil oder gefährlich?",
+    "back": "Bei gemischten wartenden **Lesern** und **Schreibern** kann ein einzelnes `notify()` den **falschen Thread-Typ** wecken.\n\nBeispiel:\n- Eigentlich sollte ein Schreiber laufen,\n- geweckt wird aber ein Leser,\n- der Leser stellt fest, dass er doch nicht darf, und schläft wieder.\n\nDas ist nicht nur ineffizient, sondern kann Fairness- oder Fortschrittsprobleme verschärfen. Deshalb sind **explizite Condition-Variablen** für Leser und Schreiber oft sauberer als ein einziges unspezifisches Wecksignal."
+  },
+  {
+    "front": "[2026-05-04] Was ist der Unterschied zwischen coarse-grained und fine-grained Locking?",
+    "back": "**Coarse-grained Locking** schützt eine ganze Datenstruktur mit einem einzigen Lock:\n- einfach zu verstehen\n- leichter korrekt zu machen\n- aber wenig Parallelität\n\n**Fine-grained Locking** verteilt mehrere Locks auf kleinere Teile, etwa einzelne Listenknoten:\n- mehr Parallelität möglich\n- aber deutlich kompliziertere Korrektheit\n- Lock-Reihenfolge, Pointer-Änderungen und Validierung werden subtil\n\nDer Trade-off ist also:\n$$\n\\text{Einfachheit} \\leftrightarrow \\text{Parallelität}\n$$"
+  },
+  {
+    "front": "[2026-05-04] Warum ist fine-grained Locking nicht automatisch schneller?",
+    "back": "Mehr Parallelität bedeutet nicht automatisch bessere Laufzeit.\n\nMögliche Kosten:\n- viele zusätzliche Lock- und Unlock-Operationen\n- mehr Cache- und Scheduling-Overhead\n- kompliziertere Warteketten\n- langsame Threads können andere lokal ausbremsen\n\nGerade bei kurzen kritischen Abschnitten kann der Verwaltungsaufwand den Parallelitätsgewinn auffressen. Fine-grained Locking lohnt sich nur, wenn die zusätzliche Parallelität die Mehrkosten tatsächlich überkompensiert."
+  },
+  {
+    "front": "[2026-05-04] Wie funktioniert Hand-over-hand Locking beim Traversieren einer Liste?",
+    "back": "Beim **Hand-over-hand Locking** hält ein Thread immer den aktuellen und den nächsten Knoten gelockt, bevor er weitergeht.\n\nSchema:\n1. aktuellen Knoten locken\n2. nächsten Knoten locken\n3. hinteren Lock freigeben\n4. einen Schritt weitergehen\n\nSo bleibt die lokale Struktur beim Traversieren konsistent. Das Verfahren ist korrekt, aber teuer:\n- viele Lock-Operationen\n- langsame Threads können nicht einfach überholt werden\n\nEs ist daher oft eher eine robuste als eine besonders schnelle Lösung."
   }
 ]
