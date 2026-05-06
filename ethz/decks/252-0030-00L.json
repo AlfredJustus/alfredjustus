@@ -1198,5 +1198,65 @@
   {
     "front": "[2026-04-30] Warum liefert der zweite Teil des Hase-Igel-Algorithmus genau den Zykluseingang?",
     "back": "Nach dem ersten Teil trifft man sich bei einem Punkt auf dem Zyklus, und daraus folgt, dass der Treffzeitpunkt ein Vielfaches der Zykluslänge $\\ell$ ist.\n\nSei $k$ die Länge des Pfads vom Start $n$ bis zum Zykluseingang $x_k$. Dann setzt man einen Zeiger zurück auf $n$ und lässt beide Zeiger **gleich schnell** laufen.\n\n- Der zurückgesetzte Zeiger erreicht nach $k$ Schritten den Eingang $x_k$.\n- Der andere startet auf dem Zyklus; weil die Differenz ein Vielfaches von $\\ell$ ist, steht auch er nach $k$ Schritten bei $x_k$.\n\nDamit treffen sie sich genau am **Zykluseingang**."
+  },
+  {
+    "front": "[2026-05-05] Warum ist das Long-Path-Problem im Allgemeinen schwer, obwohl „kurze“ Pfade oft noch handhabbar sind?",
+    "back": "Das **Long-Path-Problem** fragt, ob ein Graph einen **einfachen Pfad** der Länge $B$ enthält, also einen Pfad mit $B$ Kanten ohne Knotenwiederholung.\n\nEs ist im Allgemeinen schwer, weil sehr lange gesuchte Pfade nahe am **Hamiltonkreisproblem** liegen: Dort muss praktisch die ganze Knotenmenge besucht werden. Die Vorlesung zeigt das durch eine Reduktion von Hamiltonkreis auf Long Path.\n\nDer wichtige Unterschied ist daher nicht das Problem selbst, sondern der **Parameter** $B$ bzw. $k=B+1$:\n- für kleines $k$ kann man mit **Color Coding** effizient suchen,\n- für großes $k$ bleibt die Laufzeit exponentiell in $k$,\n- bei $k=\\Theta(n)$ verschwindet der Vorteil praktisch."
+  },
+  {
+    "front": "[2026-05-05] Warum hat ein Pfad der Länge $B$ genau $B+1$ Knoten, und warum ist das für Color Coding wichtig?",
+    "back": "Die **Länge** eines Pfades ist die Anzahl seiner **Kanten**, nicht seiner Knoten. Daher hat ein Pfad der Länge $B$ genau\n$$B+1$$\nKnoten.\n\nFür **Color Coding** ist das entscheidend, weil man für einen gesuchten Pfad der Länge $B$ mit\n$$k=B+1$$\nFarben arbeitet. Ein bunter Pfad soll nämlich auf seinen $k$ Knoten lauter verschiedene Farben tragen.\n\nEin typischer Fehler ist daher:\n- Pfadlänge $B$ mit $B$ Farben zu suchen.\n\nRichtig ist:\n- **Pfadlänge $B$** $\\Rightarrow$ **$B+1$ Knoten** $\\Rightarrow$ **$k=B+1$ Farben**."
+  },
+  {
+    "front": "[2026-05-05] Wie funktioniert die Reduktion von Hamiltonkreis auf Long Path auf hoher Ebene?",
+    "back": "Man wählt in $G$ einen Knoten $v^\\*$ und **schneidet** den Hamiltonkreis dort auf. Dazu konstruiert man einen neuen Graphen $G'$.\n\nDie Idee:\n- Ein **Hamiltonkreis** in $G$ besucht alle Knoten und kommt zu $v^\\*$ zurück.\n- Entfernt man $v^\\*$ geeignet und ersetzt seine Anschlüsse durch neue Blattknoten, wird aus dem Kreis ein **langer Pfad** in $G'$.\n- Umgekehrt lässt sich aus einem passenden langen Pfad in $G'$ wieder ein Hamiltonkreis in $G$ rekonstruieren.\n\nFormal gilt:\n$$\nG \\text{ hat einen Hamiltonkreis } \\Longleftrightarrow G' \\text{ hat einen Pfad der Länge } n.\n$$\n\nDamit zeigt man: Wäre Long Path leicht, dann wäre auch Hamiltonkreis leicht."
+  },
+  {
+    "front": "[2026-05-05] Wie wird der Graph $G'$ in der Reduktion konkret konstruiert?",
+    "back": "Wähle einen beliebigen Knoten $v^\\*\\in V(G)$.\n\nDann:\n1. **Entferne** $v^\\*$ aus $G$.\n2. Für jeden Nachbarn $w_i$ von $v^\\*$ füge einen neuen Knoten $\\widehat{w_i}$ hinzu.\n3. Ersetze die alte Kante $\\{v^\\*,w_i\\}$ durch die neue Kante\n   $$\\{\\widehat{w_i}, w_i\\}.$$\n4. Alle übrigen Knoten und Kanten bleiben unverändert.\n\nDie neuen Knoten $\\widehat{w_i}$ sind **Blattknoten** mit Grad $1$.\n\nIm schlechtesten Fall hat $v^\\*$ Grad $n-1$. Dann entfernt man einen Knoten und fügt höchstens $n-1$ neue hinzu, also hat $G'$ höchstens\n$$\n2n-2\n$$\nKnoten."
+  },
+  {
+    "front": "[2026-05-05] Warum reicht es in der Reduktion nicht, nur $v^\\*$ zu löschen, ohne neue Dachknoten einzufügen?",
+    "back": "Ohne die neuen **Dachknoten** $\\widehat{w_i}$ würde man nur einen Knoten entfernen, aber nicht erzwingen, dass ein gesuchter langer Pfad genau die richtige Form hat.\n\nDie Dachknoten sind wichtig, weil sie:\n- **Grad $1$** haben,\n- daher nur als **Endpunkte** eines langen Pfades auftreten können,\n- die zwei „offenen Enden“ des aufgeschnittenen Hamiltonkreises markieren.\n\nOhne diese Blattknoten könnte ein langer Pfad in $G-v^\\*$ irgendwo starten und enden, ohne einer aufgeschnittenen Hamiltonstruktur zu entsprechen. Dann wäre die Rückrichtung der Reduktion falsch oder zumindest nicht erzwungen.\n\nDie Dachknoten kodieren also genau die beiden Stellen, an denen der Hamiltonkreis früher an $v^\\*$ angeschlossen war."
+  },
+  {
+    "front": "[2026-05-05] Warum müssen bei einem Pfad der Länge $n$ in $G'$ die inneren Knoten genau die alten Knoten aus $V\\setminus\\{v^\\*\\}$ sein?",
+    "back": "Ein Pfad der Länge $n$ hat\n$$\nn+1\n$$\nKnoten. Seine **inneren Knoten** sind alle Knoten außer den beiden Endpunkten, also genau\n$$\nn-1\n$$\nStück.\n\nJeder innere Knoten eines Pfades muss im Pfad zwei benutzte Kanten haben, also kann er nicht Grad $1$ haben. Die neu eingefügten Dachknoten $\\widehat{w_i}$ haben aber alle **Grad $1$**.\n\nDaher können Dachknoten nur **Endpunkte** sein, nie innere Knoten. Es bleiben für die $n-1$ inneren Positionen genau die alten Knoten aus\n$$\nV\\setminus\\{v^\\*\\}.\n$$\n\nDas erzwingt die gewünschte Struktur: Der lange Pfad benutzt alle alten Knoten genau einmal und endet an zwei Dachknoten, die in $G$ wieder durch $v^\\*$ „zusammengeschlossen“ werden können."
+  },
+  {
+    "front": "[2026-05-05] Wie erhält man aus einem Hamiltonkreis in $G$ einen Pfad der Länge $n$ in $G'$?",
+    "back": "Sei $G$ ein Graph mit $n$ Knoten und Hamiltonkreis. Im Hamiltonkreis hat $v^\\*$ genau zwei Nachbarn, sagen wir $w_a$ und $w_b$.\n\nNach der Konstruktion von $G'$:\n- wird $v^\\*$ entfernt,\n- die Kanten $\\{v^\\*,w_a\\}$ und $\\{v^\\*,w_b\\}$ werden durch\n  $$\\{\\widehat{w_a},w_a\\},\\quad \\{\\widehat{w_b},w_b\\}$$\n  ersetzt.\n\nWenn man den Hamiltonkreis an $v^\\*$ aufschneidet, erhält man einen Pfad, der:\n- bei $\\widehat{w_a}$ startet,\n- dann alle übrigen $n-1$ alten Knoten genau einmal durchläuft,\n- bei $\\widehat{w_b}$ endet.\n\nDieser Pfad hat $n+1$ Knoten und damit Länge\n$$\nn.\n$$"
+  },
+  {
+    "front": "[2026-05-05] Wie rekonstruiert man aus einem Pfad der Länge $n$ in $G'$ einen Hamiltonkreis in $G$?",
+    "back": "Ein Pfad der Länge $n$ in $G'$ hat $n+1$ Knoten. Wie gezeigt, müssen seine inneren $n-1$ Knoten genau die alten Knoten aus\n$$\nV\\setminus\\{v^\\*\\}\n$$\nsein, und die beiden Endpunkte sind Dachknoten $\\widehat{w_a}$ und $\\widehat{w_b}$.\n\nErsetze nun die beiden Endpunkte wieder durch den ursprünglichen Knoten $v^\\*$:\n- $\\widehat{w_a}$ steht für die Verbindung von $v^\\*$ zu $w_a$,\n- $\\widehat{w_b}$ steht für die Verbindung von $v^\\*$ zu $w_b$.\n\nDann erhält man einen Zyklus, der:\n- alle alten Knoten genau einmal enthält,\n- zusätzlich $v^\\*$ einfügt,\n- also alle $n$ Knoten von $G$ genau einmal besucht.\n\nDas ist ein **Hamiltonkreis** in $G$."
+  },
+  {
+    "front": "[2026-05-05] Was bedeutet beim Color Coding ein „bunter Pfad“, und warum ist das keine gewöhnliche Graphfärbung?",
+    "back": "Ein Pfad ist **bunt**, wenn auf ihm **keine Farbe doppelt vorkommt**.\n\nFormal gibt es eine Abbildung\n$$\n\\gamma: V \\to \\{1,\\dots,k\\},\n$$\ndie jedem Knoten eine Farbe zuordnet. Gesucht ist dann ein Pfad, dessen Knoten paarweise verschiedene Farben tragen.\n\nWichtig: Das ist **keine klassische gültige Graphfärbung**. Insbesondere dürfen benachbarte Knoten im Graphen durchaus dieselbe Farbe haben. Relevant ist nur:\n- auf dem **gesuchten Pfad** darf keine Farbe doppelt vorkommen.\n\nColor Coding benutzt Farben also nicht, um den ganzen Graphen strukturell zu färben, sondern als Hilfsmittel, um einfache Pfade über Farbverschiedenheit zu erkennen."
+  },
+  {
+    "front": "[2026-05-05] Warum ist ein bunter Pfad algorithmisch leichter zu finden als ein beliebiger einfacher Pfad?",
+    "back": "Bei einem beliebigen einfachen Pfad muss man global verhindern, dass ein Knoten zweimal vorkommt. Das ist schwer, weil man sich im Prinzip merken müsste, welche Knoten schon benutzt wurden.\n\nBei einem **bunten Pfad** genügt es, die bereits verwendeten **Farben** zu speichern:\n- kommt eine Farbe erneut vor, ist der Pfad nicht bunt,\n- verschiedene Farben garantieren bei fester Färbung eine einfache lokale Bedingung.\n\nDeshalb speichert das dynamische Programm nicht ganze Pfade und auch nicht Knotenfolgen, sondern nur **Farb-Mengen**. Diese Zustände sind viel kompakter:\n- statt vieler möglicher Teilpfade betrachtet man nur Teilmengen von $\\{1,\\dots,k\\}$,\n- insgesamt höchstens $2^k$ verschiedene Farb-Mengen.\n\nGenau daraus entsteht die Laufzeit mit dem Faktor $2^k$."
+  },
+  {
+    "front": "[2026-05-05] Was speichert $P_i(v)$ genau, und was speichert es ausdrücklich nicht?",
+    "back": "$P_i(v)$ enthält alle Farb-Mengen $S$ mit\n$$\n|S|=i+1,\n$$\nfür die es einen **in $v$ endenden bunten Pfad** gibt, dessen Knoten genau die Farben aus $S$ tragen.\n\nWichtig ist:\n- $P_i(v)$ speichert **Farb-Mengen**,\n- nicht die Menge der benutzten **Knoten**,\n- nicht die **Reihenfolge** des Pfades,\n- nicht den Pfad selbst.\n\nDie Bedeutung von $i$ ist:\n- Ein Pfad mit $i$ Kanten hat $i+1$ Knoten,\n- daher hat die gespeicherte Farb-Menge Größe $i+1$.\n\nDiese Kompression funktioniert gerade deshalb, weil für bunte Pfade die Farbmenge als Zustandsinformation ausreicht."
+  },
+  {
+    "front": "[2026-05-05] Warum ist die Initialisierung $P_0(v)=\\{\\{\\gamma(v)\\}\\}$ korrekt?",
+    "back": "Ein Pfad der Länge\n$$\n0\n$$\nbesteht nur aus dem einzelnen Knoten $v$.\n\nDieser triviale Pfad:\n- endet in $v$,\n- ist automatisch **bunt**,\n- verwendet genau die eine Farbe $\\gamma(v)$.\n\nDaher ist die einzige passende Farb-Menge\n$$\n\\{\\gamma(v)\\},\n$$\nund somit\n$$\nP_0(v)=\\{\\{\\gamma(v)\\}\\}.\n$$\n\nMehr darf nicht enthalten sein, weil ein Pfad der Länge $0$ keine weiteren Knoten und damit keine weiteren Farben haben kann."
+  },
+  {
+    "front": "[2026-05-05] Wie lautet die DP-Rekursion für $P_i(v)$, und warum ist die Bedingung $\\gamma(v)\\notin R$ nötig?",
+    "back": "Für $i\\ge 1$ gilt:\n$$\nP_i(v)=\\bigcup_{x\\in N(v)}\\{R\\cup\\{\\gamma(v)\\}: R\\in P_{i-1}(x),\\ \\gamma(v)\\notin R\\}.\n$$\n\nIdee:\n- Nimm einen bunten Pfad der Länge $i-1$, der in einem Nachbarn $x$ von $v$ endet.\n- Hänge $v$ an diesen Pfad an.\n- Dann entsteht ein Pfad der Länge $i$, der in $v$ endet.\n\nDie Bedingung\n$$\n\\gamma(v)\\notin R\n$$\nist entscheidend, weil der neue Pfad sonst die Farbe von $v$ doppelt enthalten würde und damit **nicht bunt** wäre.\n\nDie Rekursion kontrolliert also Buntheit allein über Farb-Mengen."
+  },
+  {
+    "front": "[2026-05-05] Wie testet man nach dem DP, ob ein bunter Pfad mit $k$ Knoten existiert?",
+    "back": "Ein Pfad mit $k$ Knoten hat Länge\n$$\nk-1.\n$$\n\nDeshalb sucht man nach Zuständen in\n$$\nP_{k-1}(v).\n$$\nWenn es irgendeinen Knoten $v$ gibt, für den diese Menge nicht leer ist, dann existiert ein in $v$ endender bunter Pfad mit $k$ Knoten.\n\nFormal:\n$$\n\\bigcup_{v\\in V} P_{k-1}(v)\\ne\\emptyset.\n$$\n\nDann gibt es einen bunten Pfad der Länge $k-1$.\n\nIst die Vereinigung leer, wurde unter der aktuellen Färbung kein solcher bunter Pfad gefunden."
+  },
+  {
+    "front": "[2026-05-05] Berechne für $k=4$ die Wahrscheinlichkeit, dass ein fester Pfad mit $4$ Knoten bunt ist.",
+    "back": "Für einen festen Pfad mit $k$ Knoten unter zufälliger unabhängiger $k$-Färbung gilt:\n$$\n\\Pr[\\text{Pfad ist bunt}] = \\frac{k!}{k^k}.\n$$\n\nFür $k=4$ also:\n$$\n\\Pr[\\text{bunt}] = \\frac{4!}{4^4}=\\frac{24}{256}=\\frac{3}{32}.\n$$\n\nInterpretation:\n- Es gibt insgesamt $4^4$ mögliche Farbzuweisungen auf den 4 Knoten.\n- Bunt sind genau die Zuweisungen, in denen jede der 4 Farben genau einmal vorkommt.\n- Davon gibt es $4!$.\n\nAlso ist die Wahrscheinlichkeit\n$$\n\\frac{3}{32}\\approx 0.09375.\n$$"
   }
 ]

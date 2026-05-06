@@ -1198,5 +1198,65 @@
   {
     "front": "[2026-05-04] Wie funktioniert Hand-over-hand Locking beim Traversieren einer Liste?",
     "back": "Beim **Hand-over-hand Locking** hält ein Thread immer den aktuellen und den nächsten Knoten gelockt, bevor er weitergeht.\n\nSchema:\n1. aktuellen Knoten locken\n2. nächsten Knoten locken\n3. hinteren Lock freigeben\n4. einen Schritt weitergehen\n\nSo bleibt die lokale Struktur beim Traversieren konsistent. Das Verfahren ist korrekt, aber teuer:\n- viele Lock-Operationen\n- langsame Threads können nicht einfach überholt werden\n\nEs ist daher oft eher eine robuste als eine besonders schnelle Lösung."
+  },
+  {
+    "front": "[2026-05-05] Warum trennt die lazy Liste logisches Löschen von physischem Entfernen?",
+    "back": "Die Trennung verhindert, dass konkurrierende `remove`-Operationen eine Löschung „verlieren“.\n\n**Logisches Löschen** bedeutet: Das **Markbit** wird gesetzt. Ab diesem Moment gilt der Knoten semantisch als nicht mehr enthalten.\n\n**Physisches Entfernen** bedeutet: Der Pointer wird später so umgehängt, dass der Knoten strukturell aus der Liste verschwindet.\n\nDer Vorteil ist, dass die Bedeutung der Operation schon durch einen klaren atomaren Schritt feststeht, auch wenn die Struktur noch nicht sofort bereinigt ist. Spätere Traversierungen dürfen markierte Knoten dann aufräumen."
+  },
+  {
+    "front": "[2026-05-05] Was ist bei `remove` in der lazy Liste der Linearisierungspunkt, und warum gerade dort?",
+    "back": "Der **Linearisierungspunkt** ist das **Setzen des Markbits**.\n\nWarum nicht erst das Umhängen des Pointers? Weil der Knoten ab dem Markieren bereits als gelöscht gelten soll, selbst wenn er noch in der Liste erreichbar ist. So gibt es einen eindeutigen Moment, ab dem andere Operationen den Schlüssel als nicht mehr enthalten betrachten müssen.\n\nDas anschließende Pointer-Update ist nur noch **physische Bereinigung**, nicht die semantische Löschung selbst."
+  },
+  {
+    "front": "[2026-05-05] Warum kann `contains` in der lazy Liste ohne Lock arbeiten?",
+    "back": "`contains` braucht keinen Lock, weil der semantische Zustand eines Knotens durch das **Markbit** entschieden wird.\n\nDie Regel ist:\n- Schlüssel gefunden\n- Knoten **nicht markiert**\n\n$\\Rightarrow$ Element ist enthalten.\n\nIst der Knoten markiert, dann gilt er bereits als gelöscht, auch wenn er noch physisch in der Liste hängt. Deshalb muss `contains` nicht selbst strukturell eingreifen oder exklusiven Zugriff erzwingen; es liest nur den Schlüssel und den Markierungszustand."
+  },
+  {
+    "front": "[2026-05-05] Wann ist ein lokaler Abschnitt der lazy Liste nach der Validierung sicher benutzbar?",
+    "back": "Ein Abschnitt mit **Vorgänger** `pred` und **aktuellem Knoten** `curr` ist gültig, wenn:\n\n- `pred` ist **nicht markiert**\n- `curr` ist **nicht markiert**\n- `pred.next == curr`\n\nDann ist der lokale Listenabschnitt strukturell intakt und kann für die geplante Operation verwendet werden. Diese Prüfung ist wichtig, weil zwischen Traversierung und Update andere Threads die Liste verändert haben könnten."
+  },
+  {
+    "front": "[2026-05-05] Was geht schief, wenn man in der lazy Liste beim Löschen zuerst den Pointer umhängt und erst danach markiert?",
+    "back": "Dann fehlt der klare semantische Löschzeitpunkt, und konkurrierende Updates können inkonsistente Situationen erzeugen.\n\nDie korrekte Reihenfolge ist:\n1. **Markbit setzen**\n2. Pointer umhängen\n\nWird zuerst physisch entfernt, kann ein anderer Thread auf Basis eines veralteten lokalen Zustands arbeiten und die Löschung falsch interpretieren oder sogar einen bereits gelöschten Knoten wieder sichtbar machen. Das Markieren zuerst verhindert genau dieses Problem, weil der Knoten ab dann eindeutig als gelöscht gilt."
+  },
+  {
+    "front": "[2026-05-05] Warum sind markierte Knoten trotz Erreichbarkeit nicht mehr Teil der Menge?",
+    "back": "Weil in der lazy Liste die **Semantik** nicht an der bloßen Erreichbarkeit hängt, sondern am **Markbit**.\n\nEin markierter Knoten kann noch über `next`-Pointer erreichbar sein, aber er zählt logisch bereits als entfernt. Das ist der Kern der lazy Synchronisation: Struktur und Bedeutung werden bewusst getrennt.\n\nDeshalb ist die Aussage falsch:\n„Erreichbar in der Liste“ $\\Rightarrow$ „im Set enthalten“.\n\nRichtig ist:\n„Schlüssel gefunden und **nicht markiert**“ $\\Rightarrow$ „im Set enthalten“."
+  },
+  {
+    "front": "[2026-05-05] Warum reduziert eine Skip List die Suchzeit im Erwartungsfall auf $O(\\log n)$?",
+    "back": "Eine **Skip List** hat mehrere Ebenen, wobei höhere Ebenen immer dünner besetzt sind. Dadurch kann die Suche viele Elemente überspringen, statt auf Level 0 linear durchzulaufen.\n\nTypisch gilt:\n$$P(\\text{Höhe}=n)=0{,}5^n.$$\n\nAlso:\n- alle Knoten auf Level 0,\n- etwa die Hälfte zusätzlich auf Level 1,\n- etwa ein Viertel auf Level 2,\n- usw.\n\nSo entsteht im Erwartungsfall eine baumähnliche Struktur ohne explizites Rebalancing. Die Suche bewegt sich erst schnell über hohe Ebenen und steigt dann nach unten ab, was zu erwarteten $O(\\log n)$ Schritten führt."
+  },
+  {
+    "front": "[2026-05-05] Warum braucht eine Skip List kein globales Rebalancing wie ein balancierter Baum?",
+    "back": "Weil ihre Struktur **probabilistisch** durch zufällige Höhenwahl entsteht.\n\nBeim Einfügen wird die Höhe eines Knotens zufällig gewählt, typischerweise mit\n$$P(\\text{Höhe}=n)=0{,}5^n.$$\n\nDadurch verteilen sich hohe Knoten automatisch selten und niedrige häufig. Diese zufällige Verteilung genügt, damit die Struktur im Erwartungsfall effizient bleibt. Anders als bei AVL- oder Rot-Schwarz-Bäumen muss also kein globales oder rotationsbasiertes Rebalancing durchgeführt werden.\n\nDer Preis ist: Die Garantien sind typischerweise **im Erwartungsfall**, nicht deterministisch für jeden einzelnen Lauf."
+  },
+  {
+    "front": "[2026-05-05] Mikrobeispiel: Suche in einer Skip List nach Schlüssel $6$, wenn auf Level 0 die Nachbarn $5$ und $7$ sind",
+    "back": "Am Ende der Suche gilt auf Level 0:\n\n- **Vorgänger** ist der Knoten mit Schlüssel $5$\n- **Nachfolger** ist der Knoten mit Schlüssel $7$\n\nDenn in einer sortierten Skip List sucht man den Einfüge- oder Fundort so, dass\n$$5 < 6 < 7.$$\n\nFalls der Schlüssel $6$ nicht existiert, endet die Suche genau zwischen diesen beiden Knoten. Diese Information ist wichtig, weil Einfügen und Entfernen typischerweise mit den gefundenen Vorgängern und Nachfolgern pro Level arbeiten."
+  },
+  {
+    "front": "[2026-05-05] Warum ist ein Lock eine pessimistische Synchronisationsstrategie?",
+    "back": "Ein **Lock** nimmt immer an, dass Konflikte problematisch werden könnten, und erzwingt deshalb exklusiven Zugriff auf die kritische Sektion.\n\nDas ist **pessimistisch**, weil auch dann blockiert wird, wenn tatsächlich kein schädlicher Konflikt eingetreten wäre. Andere Threads müssen warten, obwohl ihre Arbeit vielleicht mit feinerer Synchronisation oder atomaren Operationen möglich gewesen wäre.\n\nLocks sind oft einfach und praktisch, aber sie behandeln den schlimmsten Konfliktfall als Standardfall."
+  },
+  {
+    "front": "[2026-05-05] Was ist der praktische Unterschied zwischen Spin Locks und wartenden Locks?",
+    "back": "Beide sind **Locks**, aber sie warten unterschiedlich:\n\n- **Spin Locks** lassen wartende Threads aktiv prüfen, ob der Lock frei wird. Das kostet CPU-Zyklen.\n- **Wartende/Scheduler-Locks** blockieren den Thread und legen ihn schlafen. Das spart CPU, braucht aber Betriebssystemunterstützung und verursacht Aufwachlatenz.\n\nSpin Locks sind eher sinnvoll bei sehr kurzen Wartezeiten. Wartende Locks sind besser, wenn die kritische Sektion länger dauern kann."
+  },
+  {
+    "front": "[2026-05-05] Warum ist die Blocking-Semantik von Locks ein Sicherheitsproblem?",
+    "back": "Weil der Fortschritt anderer Threads davon abhängt, dass der Lock-Inhaber korrekt und rechtzeitig weiterläuft.\n\nWenn ein Thread in der kritischen Sektion:\n- stark verzögert wird,\n- abstürzt,\n- oder falsch priorisiert wird,\n\ndann können andere Threads blockieren, obwohl sie selbst korrekt arbeiten. Genau diese Abhängigkeit vermeidet man mit **lockfreien** Verfahren: Dort darf das Stehenbleiben eines Threads nicht den globalen Fortschritt aller anderen verhindern."
+  },
+  {
+    "front": "[2026-05-05] Was ist der Unterschied zwischen lock-frei und wait-frei?",
+    "back": "**Lock-frei** bedeutet: Es macht immer **mindestens ein Thread** Fortschritt.\n\n**Wait-frei** bedeutet: **Jeder einzelne Thread** macht Fortschritt, unabhängig davon, was die anderen tun.\n\nDaraus folgt:\n$$\\text{wait-frei} \\Rightarrow \\text{lock-frei}$$\n\naber nicht umgekehrt.\n\nEin lockfreier Algorithmus kann also global vorankommen, während ein bestimmter Thread immer wieder scheitert und verhungert. Wait-Freiheit schließt diese Form von **Starvation** aus."
+  },
+  {
+    "front": "[2026-05-05] Warum ist die Aussage „lock-frei garantiert, dass jede Operation irgendwann endet“ falsch?",
+    "back": "Weil **Lock-Freiheit** nur globalen Fortschritt garantiert, nicht individuellen.\n\nKonkret heißt das: In jeder unendlichen Ausführung schaffen es immer wieder Threads, ihre Operationen abzuschließen. Aber ein einzelner Thread kann trotzdem durch Pech oder starke Konkurrenz immer wieder verlieren und nie erfolgreich sein.\n\nDas ist **Starvation**. Deshalb gilt:\n$$\\text{lock-frei} \\nRightarrow \\text{starvation-frei}.$$\n\nDie stärkere Eigenschaft, die individuelle Terminierung garantiert, ist **Wait-Freiheit**."
+  },
+  {
+    "front": "[2026-05-05] Wie funktioniert das Standardmuster einer CAS-Schleife?",
+    "back": "Eine **CAS-Schleife** arbeitet typischerweise so:\n\n1. aktuellen Zustand lesen\n2. neuen Zustand lokal berechnen\n3. **Compare-and-Swap (CAS)** versuchen\n4. bei Fehlschlag von vorn beginnen\n\nCAS prüft atomar, ob eine Speicherstelle noch den erwarteten alten Wert enthält, und ersetzt ihn nur dann durch den neuen Wert. In Java liefert CAS typischerweise `true` bei Erfolg und `false` bei Misserfolg.\n\nDieses Muster ist zentral für lockfreie Counter, Stacks und Listenupdates."
   }
 ]
