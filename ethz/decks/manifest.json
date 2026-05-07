@@ -1,5 +1,5 @@
 {
-  "generated": "2026-05-06T13:18:13.261Z",
+  "generated": "2026-05-07T13:22:01.175Z",
   "model": "gpt-5.4",
   "cardsPerLectureTarget": 15,
   "format": "markdown->parser->json",
@@ -36,9 +36,9 @@
       "name": "Analysis I",
       "file": "401-0212-16L.json",
       "apkg": null,
-      "cards": 270,
+      "cards": 285,
       "semester": "spring-2026",
-      "lectures": 18
+      "lectures": 19
     },
     {
       "id": "252-0026-00L",

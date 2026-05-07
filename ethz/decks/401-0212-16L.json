@@ -1078,5 +1078,65 @@
   {
     "front": "[2026-04-29] Warum wählt man bei der Konvergenzbetrachtung Zahlen $r<s<\\rho$?",
     "back": "Für ein festes $x$ mit $|x|<\\rho$ wählt man zuerst $r>|x|$ und dann $s$ mit\n$$\nr<s<\\rho.\n$$\n\nDer Zweck ist, einen Faktor der Form\n$$\n\\left(\\frac{r}{s}\\right)^n\n$$\nzu erhalten. Weil\n$$\n\\frac{r}{s}<1,\n$$\ngeht dieser Faktor gegen $0$.\n\nGenau das liefert eine **gleichmäßige Kontrolle** auf kleineren Bereichen innerhalb des Konvergenzintervalls. Man arbeitet also bewusst nicht direkt am Rand $|x|=\\rho$, weil dort diese saubere Abschätzung im Allgemeinen nicht mehr verfügbar ist."
+  },
+  {
+    "front": "[2026-05-06] Warum ist eine Differentialgleichung für Modellierung geeignet, aber noch nicht automatisch ein gutes Modell?",
+    "back": "Eine **Differentialgleichung** beschreibt nicht nur einen Zustand, sondern auch dessen momentane Änderung. Das macht sie geeignet für Prozesse wie Wachstum, Zerfall oder Stofftransport.\n\nEin gutes **Modell** ist sie aber erst nach einer Plausibilitätsprüfung. Man muss kontrollieren, ob die Vorhersagen sinnvoll sind, z. B.:\n- Mengen dürfen nicht negativ werden,\n- endliche Ausgangsstoffe dürfen nicht unbeschränkt viel Produkt erzeugen,\n- ein Abbauprozess sollte enden können.\n\nEine Gleichung ist also zunächst nur ein mathematischer Kandidat für ein Modell."
+  },
+  {
+    "front": "[2026-05-06] Was bedeutet es genau, dass bei einer Differentialgleichung die Unbekannte eine Funktion ist?",
+    "back": "Bei einer **Differentialgleichung** ist die gesuchte Größe keine Zahl, sondern eine **Funktion** wie $y(x)$ oder $M(t)$. In der Gleichung treten außerdem Ableitungen dieser Funktion auf, etwa $y'$ oder $y^{(n)}$.\n\nDadurch beschreibt die Gleichung Beziehungen zwischen einer Größe und ihren Änderungsraten. Ein Beispiel ist\n$$M_D'(t)=-kM_D(t),$$\nwo nicht ein einzelner Wert gesucht ist, sondern die ganze zeitabhängige Funktion $M_D(t)$."
+  },
+  {
+    "front": "[2026-05-06] Warum führt proportionaler Abbau auf die Gleichung $M_D'(t)=-kM_D(t)$?",
+    "back": "**Proportionaler Abbau** bedeutet: Je mehr von einer Substanz vorhanden ist, desto größer ist ihre momentane Abnahme.\n\n„Proportional“ heißt mathematisch:\n$$M_D'(t)\\propto -M_D(t).$$\nMit einer positiven Proportionalitätskonstante $k>0$ wird daraus\n$$M_D'(t)=-kM_D(t).$$\n\nDas negative Vorzeichen ist entscheidend: Es beschreibt, dass die Menge abnimmt statt zunimmt."
+  },
+  {
+    "front": "[2026-05-06] Warum ist das Alkoholmodell ein gekoppeltes System und keine einzelne Differentialgleichung?",
+    "back": "Im Alkoholmodell gibt es zwei unbekannte Funktionen:\n- **$M_D(t)$** für die Alkoholmenge im Magen-Darm-Trakt,\n- **$M_B(t)$** für die Menge im Blut bzw. in der Leberverarbeitung.\n\nDie Gleichungen lauten:\n$$M_D'(t)=-kM_D(t),$$\n$$M_B'(t)=kM_D(t)-a.$$\n\nEs ist ein **gekoppeltes System**, weil die Gleichung für $M_B$ die andere unbekannte Funktion $M_D$ enthält. Die Entwicklung von $M_B$ hängt also nicht nur von $M_B$ selbst, sondern auch von der ersten Komponente ab."
+  },
+  {
+    "front": "[2026-05-06] Was ist an $M_B'(t)=kM_D(t)-a$ physikalisch heikel?",
+    "back": "Der Term $-a$ beschreibt einen **konstanten Abbau pro Zeiteinheit**. Mathematisch ist das einfach, physikalisch aber nur sinnvoll, solange überhaupt noch Alkohol vorhanden ist.\n\nSonst würde das Modell weiter abbauen und schließlich negative Mengen vorhersagen. Deshalb darf man die Gleichung nicht blind für alle Zeiten interpretieren. Das Modell muss spätestens dann angepasst oder gestoppt werden, wenn nichts mehr abzubauen ist."
+  },
+  {
+    "front": "[2026-05-06] Woran erkennt man, ob eine Differentialgleichung linear ist?",
+    "back": "Eine Differentialgleichung ist **linear**, wenn die unbekannte Funktion und ihre Ableitungen nur in **erster Potenz** auftreten und sich nicht gegenseitig als Koeffizienten multiplizieren.\n\nDie allgemeine Form ist\n$$a_n(x)y^{(n)}+\\cdots+a_1(x)y'+a_0(x)y=s(x).$$\n\nErlaubt sind also Koeffizienten $a_i(x)$, die von der unabhängigen Variablen abhängen. Nicht erlaubt sind z. B.:\n- $y^2$,\n- $yy'$,\n- Koeffizienten, die von $y$ abhängen."
+  },
+  {
+    "front": "[2026-05-06] Warum ist $u'(t)+u(t)^2=0$ erster Ordnung, aber nicht linear?",
+    "back": "Die **Ordnung** zählt nur die höchste vorkommende Ableitung. Hier kommt nur $u'(t)$ vor, also ist die Gleichung **erster Ordnung**.\n\nSie ist aber **nicht linear**, weil die unbekannte Funktion als\n$$u(t)^2$$\nauftritt. Linearität verlangt, dass $u$ und seine Ableitungen nur in erster Potenz vorkommen.\n\nDer typische Fehler ist, aus dem Quadrat auf „zweite Ordnung“ zu schließen. Potenzen beeinflussen die Ordnung nicht."
+  },
+  {
+    "front": "[2026-05-06] Bestimme Ordnung und Linearität von $u^{(5)}(t)-u(t)=\\ln(t)$.",
+    "back": "Die Gleichung ist\n$$u^{(5)}(t)-u(t)=\\ln(t).$$\n\n- **Ordnung:** Die höchste Ableitung ist $u^{(5)}$, also **5. Ordnung**.\n- **Linearität:** Die Terme $u^{(5)}(t)$ und $u(t)$ treten beide nur linear auf, also ist die Gleichung **linear**.\n- **Inhomogenität:** Die rechte Seite ist\n$$\\ln(t)\\neq 0,$$\nalso ist die Gleichung **inhomogen**.\n\nDamit ist sie eine **lineare inhomogene Differentialgleichung 5. Ordnung**."
+  },
+  {
+    "front": "[2026-05-06] Was unterscheidet homogen von inhomogen, und warum hat das nichts mit Linearität zu tun?",
+    "back": "Die Unterscheidung betrifft nur die **Störfunktion** $s(x)$ in\n$$a_n(x)y^{(n)}+\\cdots+a_0(x)y=s(x).$$\n\n- **homogen**: $s(x)=0$,\n- **inhomogen**: $s(x)\\neq 0$.\n\nDas ist unabhängig von der Frage, ob die Gleichung **linear** ist. Eine Gleichung kann also:\n- linear und homogen,\n- linear und inhomogen,\n- nichtlinear und homogen\nsein.\n\nDer häufige Denkfehler ist: „inhomogen“ bedeute automatisch „nichtlinear“. Das ist falsch."
+  },
+  {
+    "front": "[2026-05-06] Warum gilt das Superpositionsprinzip nur für lineare homogene Differentialgleichungen?",
+    "back": "Seien $y_1,y_2$ Lösungen einer **linearen homogenen** Gleichung. Wegen der Linearität gilt für den Differentialoperator $L$:\n$$L(c_1y_1+c_2y_2)=c_1L(y_1)+c_2L(y_2).$$\n\nDa die Gleichung homogen ist, ist\n$$L(y_1)=0,\\qquad L(y_2)=0,$$\nalso auch\n$$L(c_1y_1+c_2y_2)=0.$$\n\nBei einer inhomogenen Gleichung wäre stattdessen typischerweise\n$$L(y_1)=s,\\qquad L(y_2)=s,$$\nund dann ergibt sich\n$$L(c_1y_1+c_2y_2)=(c_1+c_2)s,$$\nalso im Allgemeinen nicht wieder dieselbe Gleichung."
+  },
+  {
+    "front": "[2026-05-06] Was sind Fundamentallösungen, und wie entsteht daraus die allgemeine Lösung?",
+    "back": "Für eine **lineare homogene Differentialgleichung** $n$-ter Ordnung gibt es $n$ passende **Fundamentallösungen** $y_1,\\dots,y_n$, aus denen sich alle Lösungen zusammensetzen.\n\nDie **allgemeine Lösung** hat dann die Form\n$$y=c_1y_1+\\cdots+c_ny_n,$$\nwobei $c_1,\\dots,c_n$ freie Konstanten sind.\n\nDie Idee ist: Die Fundamentallösungen bilden die Grundbausteine, und durch **Superposition** erhält man jede weitere Lösung."
+  },
+  {
+    "front": "[2026-05-06] Warum funktioniert der eulersche Ansatz $y(x)=e^{\\lambda x}$ bei konstanten Koeffizienten so gut?",
+    "back": "Für\n$$y(x)=e^{\\lambda x}$$\ngilt bei jeder Ableitung:\n$$y'(x)=\\lambda e^{\\lambda x},\\quad y''(x)=\\lambda^2 e^{\\lambda x},\\quad \\dots$$\n\nJede Ableitung erzeugt also nur einen zusätzlichen Faktor $\\lambda$. Bei einer linearen homogenen Differentialgleichung mit **konstanten Koeffizienten** kann man deshalb nach dem Einsetzen den gemeinsamen Faktor $e^{\\lambda x}$ ausklammern und kürzen.\n\nSo wird die Differentialgleichung auf eine algebraische Gleichung in $\\lambda$ reduziert: die **charakteristische Gleichung**."
+  },
+  {
+    "front": "[2026-05-06] Was liefert eine einfache reelle Nullstelle der charakteristischen Gleichung?",
+    "back": "Hat die **charakteristische Gleichung** eine einfache reelle Nullstelle $\\lambda$, dann gehört dazu die Fundamentallösung\n$$y(x)=e^{\\lambda x}.$$\n\nDer Grund ist direkt der eulersche Ansatz: Nullstellen der charakteristischen Gleichung sind genau die Werte von $\\lambda$, für die $e^{\\lambda x}$ die Differentialgleichung löst."
+  },
+  {
+    "front": "[2026-05-06] Warum entstehen bei komplexen Nullstellen reelle Lösungen mit Sinus und Cosinus?",
+    "back": "Treten bei reellen Koeffizienten komplexe Nullstellen auf, dann paarweise als\n$$a\\pm ib.$$\n\nDer eulersche Ansatz liefert dann\n$$e^{(a+ib)x}=e^{ax}e^{ibx}.$$\nMit Euler gilt\n$$e^{ibx}=\\cos(bx)+i\\sin(bx).$$\n\nDaraus erhält man als reelle Fundamentallösungen\n$$e^{ax}\\cos(bx)\\quad \\text{und}\\quad e^{ax}\\sin(bx).$$\n\nMan verwendet also nicht die komplexen Exponentialfunktionen einzeln, sondern ihren Real- und Imaginärteil."
+  },
+  {
+    "front": "[2026-05-06] Welche Fundamentallösungen gehören zu einer Nullstelle $\\lambda$ mit Multiplizität $s$?",
+    "back": "Hat die charakteristische Gleichung die Nullstelle $\\lambda$ mit **Multiplizität** $s$, dann erhält man $s$ Fundamentallösungen:\n$$e^{\\lambda x},\\ xe^{\\lambda x},\\ x^2e^{\\lambda x},\\ \\dots,\\ x^{s-1}e^{\\lambda x}.$$\n\nAllgemein also\n$$x^k e^{\\lambda x}\\qquad \\text{für } k=0,\\dots,s-1.$$\n\nDie Vielfachheit der Nullstelle bestimmt damit direkt, wie viele linear unabhängige Lösungen zu diesem Exponenten gehören."
   }
 ]
