@@ -1258,5 +1258,65 @@
   {
     "front": "[2026-05-05] Berechne für $k=4$ die Wahrscheinlichkeit, dass ein fester Pfad mit $4$ Knoten bunt ist.",
     "back": "Für einen festen Pfad mit $k$ Knoten unter zufälliger unabhängiger $k$-Färbung gilt:\n$$\n\\Pr[\\text{Pfad ist bunt}] = \\frac{k!}{k^k}.\n$$\n\nFür $k=4$ also:\n$$\n\\Pr[\\text{bunt}] = \\frac{4!}{4^4}=\\frac{24}{256}=\\frac{3}{32}.\n$$\n\nInterpretation:\n- Es gibt insgesamt $4^4$ mögliche Farbzuweisungen auf den 4 Knoten.\n- Bunt sind genau die Zuweisungen, in denen jede der 4 Farben genau einmal vorkommt.\n- Davon gibt es $4!$.\n\nAlso ist die Wahrscheinlichkeit\n$$\n\\frac{3}{32}\\approx 0.09375.\n$$"
+  },
+  {
+    "front": "[2026-05-07] Warum ist die Quelle $s$ in einem Netzwerk nicht unbedingt eine graphentheoretische Quelle?",
+    "back": "**Quelle** im Max-Flow-Sinn bedeutet nur: Der Flusswert wird relativ zu $s$ gemessen, und an $s$ gilt keine Flusserhaltung wie an Zwischenknoten. Es ist **nicht** gefordert, dass $s$ keine eingehenden Kanten hat.\n\nEbenso darf die **Senke** $t$ ausgehende Kanten haben. Entscheidend sind nur:\n- gerichteter Graph ohne Schleifen,\n- ausgezeichnete Knoten $s$ und $t$,\n- Kapazitäten $c(e)\\ge 0$ auf allen Kanten.\n\nDas ist ein häufiger Denkfehler, weil „Quelle“ und „Senke“ hier modellierende Rollen sind, nicht rein graphentheoretische Gradeigenschaften."
+  },
+  {
+    "front": "[2026-05-07] Wann ist eine Belegung $f$ auf den Kanten ein zulässiger Fluss?",
+    "back": "Eine Belegung $f$ ist genau dann ein **zulässiger Fluss**, wenn zwei Bedingungen erfüllt sind:\n\n1. **Kapazitätsbedingung** auf jeder Kante $e$:\n$$\n0 \\le f(e) \\le c(e)\n$$\n\n2. **Flusserhaltung** an jedem Knoten $v\\neq s,t$:\n$$\n\\sum_{(u,v)\\in E} f(u,v)=\\sum_{(v,w)\\in E} f(v,w)\n$$\n\nDie erste Bedingung verhindert negative Flüsse und Überschreiten von Kapazitäten.  \nDie zweite sagt, dass an Zwischenknoten nichts erzeugt oder vernichtet wird.\n\nOhne beide Bedingungen beschreibt $f$ keinen gültigen Transport von $s$ nach $t$."
+  },
+  {
+    "front": "[2026-05-07] Wie berechnet man den Wert eines Flusses, wenn in die Quelle auch Fluss hineingehen kann?",
+    "back": "Der **Flusswert** ist der **Nettofluss aus der Quelle**:\n$$\n|f|=\\sum_{(s,u)\\in E} f(s,u)-\\sum_{(u,s)\\in E} f(u,s)\n$$\n\nMan darf also nicht einfach nur alle ausgehenden Kanten von $s$ addieren, wenn $s$ eingehende Kanten haben kann.\n\nDie Subtraktion ist wichtig:\n- ausgehender Fluss aus $s$ zählt positiv,\n- eingehender Fluss nach $s$ zählt negativ.\n\nSo misst $|f|$ genau, wie viel Menge netto von der Quelle ins Netzwerk geschickt wird."
+  },
+  {
+    "front": "[2026-05-07] Warum ist der Nettozufluss in die Senke gleich dem Flusswert $|f|$?",
+    "back": "Das **Senken-Lemma** lautet:\n$$\n|f|=\\sum_{(u,t)\\in E} f(u,t)-\\sum_{(t,u)\\in E} f(t,u)\n$$\n\nDer Grund ist die **Flusserhaltung** an allen Knoten außer $s$ und $t$. Summiert man über alle Knoten die Differenz „eingehend minus ausgehend“, dann heben sich an allen Zwischenknoten die Beiträge weg:\n$$\n\\text{eingehend}=\\text{ausgehend}\n$$\n\nÜbrig bleiben nur die Randterme bei Quelle und Senke. Daher ist das, was netto aus $s$ herausgeht, genau das, was netto in $t$ ankommt.\n\nDas ist die formale Begründung dafür, dass unterwegs keine Menge verloren geht oder entsteht."
+  },
+  {
+    "front": "[2026-05-07] Warum zählen bei der Kapazität eines $s$-$t$-Schnitts nur Kanten von $S$ nach $T$?",
+    "back": "Für einen **$s$-$t$-Schnitt** $(S,T)$ mit $s\\in S$ und $t\\in T$ ist die Kapazität\n$$\nc(S,T)=\\sum_{u\\in S,\\ v\\in T,\\ (u,v)\\in E} c(u,v)\n$$\n\nNur Kanten von $S$ nach $T$ begrenzen, wie viel Fluss von der Quellseite zur Senkenseite gelangen kann. Kanten von $T$ nach $S$ helfen nicht dabei, zusätzlichen Fluss nach $t$ zu transportieren; sie entsprechen eher möglichem Rückfluss.\n\nDarum würden Kanten von $T$ nach $S$ die Engpasskapazität verfälschen, wenn man sie mitzählen würde."
+  },
+  {
+    "front": "[2026-05-07] Warum gilt für jeden Fluss $f$ und jeden $s$-$t$-Schnitt $(S,T)$ die Ungleichung $|f|\\le c(S,T)$?",
+    "back": "Jeder Fluss von $s$ nach $t$ muss die Grenze zwischen $S$ und $T$ überqueren. Netto kann dabei höchstens so viel von $S$ nach $T$ gelangen, wie die Kanten von $S$ nach $T$ an Kapazität besitzen.\n\nFormal ist die **Fluss-Schnitt-Ungleichung**:\n$$\n|f|\\le c(S,T)\n$$\n\nDie Kanten von $T$ nach $S$ werden nicht zur Schnittkapazität gezählt, weil sie keinen zusätzlichen Nettofluss nach $t$ ermöglichen.\n\nDiese Ungleichung ist zentral: Findet man einen Fluss $f$ und einen Schnitt $(S,T)$ mit\n$$\n|f|=c(S,T),\n$$\ndann kann kein größerer Fluss existieren."
+  },
+  {
+    "front": "[2026-05-07] Warum beweist ein Schnitt mit Kapazität $|f|$, dass $f$ maximal ist?",
+    "back": "Aus der **Fluss-Schnitt-Ungleichung** gilt für jeden Fluss $g$:\n$$\n|g|\\le c(S,T)\n$$\n\nHat man nun einen konkreten Fluss $f$ und einen Schnitt $(S,T)$ mit\n$$\n|f|=c(S,T),\n$$\ndann folgt für jeden anderen Fluss $g$:\n$$\n|g|\\le c(S,T)=|f|\n$$\n\nAlso kann kein Fluss einen größeren Wert als $f$ haben. Genau das bedeutet, dass $f$ ein **maximaler Fluss** ist.\n\nDie Strategie „Fluss finden + gleichwertigen Schnitt finden“ ist deshalb ein Standard-Maximalitätsbeweis."
+  },
+  {
+    "front": "[2026-05-07] Welche Restkanten entstehen bei einer Kante mit $c(u,v)=7$ und $f(u,v)=5$?",
+    "back": "Zu einer Originalkante $(u,v)$ entstehen im **Restnetzwerk**:\n\n- eine **Vorwärtskante** $(u,v)$ mit Restkapazität\n$$\n7-5=2\n$$\n- eine **Rückwärtskante** $(v,u)$ mit Restkapazität\n$$\n5\n$$\n\nInterpretation:\n- Über $(u,v)$ kann man den Fluss noch um $2$ erhöhen.\n- Über $(v,u)$ kann man den bisherigen Fluss um bis zu $5$ wieder zurücknehmen.\n\nDas Restnetzwerk beschreibt also nicht nur freie Kapazität nach vorne, sondern auch die Möglichkeit, frühere Entscheidungen zu korrigieren."
+  },
+  {
+    "front": "[2026-05-07] Warum ist eine Rückwärtskante im Restnetzwerk sinnvoll und kein Widerspruch zum Originalgraphen?",
+    "back": "Eine **Rückwärtskante** $(v,u)$ im Restnetzwerk bedeutet nicht, dass im Originalgraphen plötzlich eine neue Kante existiert. Sie bedeutet nur: Auf der Originalkante $(u,v)$ fließt bereits etwas, und diesen Fluss darf man wieder verringern.\n\nHat $(u,v)$ aktuell Fluss $f(u,v)$, dann hat die Rückwärtskante Restkapazität\n$$\nf(u,v)\n$$\n\nDas ist wichtig, weil man sonst an schlechten frühen Entscheidungen festhängen könnte. Rückwärtsschritte erlauben, Fluss umzuleiten und dadurch neue, bessere Kombinationen von Wegen zu nutzen."
+  },
+  {
+    "front": "[2026-05-07] Warum muss ein augmentierender Pfad nicht als gerichteter Pfad im Originalgraphen existieren?",
+    "back": "Ein **augmentierender Pfad** ist ein gerichteter $s$-$t$-Pfad im **Restnetzwerk**, nicht im Originalgraphen.\n\nEr kann enthalten:\n- **Vorwärtskanten**, auf denen man Fluss erhöht,\n- **Rückwärtskanten**, auf denen man bestehenden Fluss verringert.\n\nDarum kann der Pfad im Originalgraphen scheinbar „gegen die Richtung“ laufen. Das ist kein Fehler: Eine rückwärts benutzte Restkante steht nur für das Zurücknehmen von bereits gesetztem Fluss.\n\nWer augmentierende Pfade mit Originalpfaden verwechselt, übersieht genau den Mechanismus, der Ford-Fulkerson flexibel macht."
+  },
+  {
+    "front": "[2026-05-07] Wie verbessert man einen Fluss entlang eines augmentierenden Pfads?",
+    "back": "Sei $P$ ein augmentierender Pfad im Restnetzwerk. Dann bestimmt man zuerst seine **Restkapazität** als Minimum aller Restkapazitäten auf $P$:\n$$\n\\Delta=\\min_{e\\in P} c_f(e)\n$$\n\nDann aktualisiert man den Fluss:\n- auf **Vorwärtskanten** von $P$ erhöht man um $\\Delta$,\n- auf **Rückwärtskanten** von $P$ verringert man um $\\Delta$.\n\nDadurch bleibt der neue Fluss zulässig, und sein Wert steigt um genau $\\Delta$.\n\nDie Wahl des Minimums ist nötig, damit keine Restkapazität negativ wird und keine Originalkapazität verletzt wird."
+  },
+  {
+    "front": "[2026-05-07] Warum folgt aus „kein $s$-$t$-Pfad im Restnetzwerk“ direkt ein $s$-$t$-Schnitt?",
+    "back": "Wenn es im Restnetzwerk keinen gerichteten Pfad von $s$ nach $t$ gibt, definiert man\n$$\nS=\\{\\text{von } s \\text{ erreichbare Knoten im Restnetzwerk}\\},\\qquad T=V\\setminus S\n$$\n\nDann gilt:\n- $s\\in S$,\n- $t\\notin S$, also $t\\in T$.\n\nDamit ist $(S,T)$ ein **$s$-$t$-Schnitt**.\n\nDiese Konstruktion ist stark, weil sie den fehlenden augmentierenden Pfad direkt in ein strukturelles Hindernis übersetzt: Die von $s$ aus erreichbaren Knoten bilden genau die Quellseite eines Engpasses."
+  },
+  {
+    "front": "[2026-05-07] Was folgt für Originalkanten zwischen $S$ und $T$, wenn $S$ die von $s$ erreichbaren Knoten im Restnetzwerk sind?",
+    "back": "Sei $S$ die Menge der von $s$ erreichbaren Knoten im Restnetzwerk und $T=V\\setminus S$.\n\nDann gilt:\n\n- Für jede Originalkante $(u,v)$ mit $u\\in S$, $v\\in T$ muss\n$$\nf(u,v)=c(u,v)\n$$\ngelten, also volle Auslastung. Sonst gäbe es im Restnetzwerk eine Vorwärtskante von $S$ nach $T$.\n\n- Für jede Originalkante $(v,u)$ mit $v\\in T$, $u\\in S$ muss\n$$\nf(v,u)=0\n$$\ngelten. Sonst gäbe es im Restnetzwerk eine Rückwärtskante von $S$ nach $T$.\n\nGenau daraus folgt später\n$$\n|f|=c(S,T).\n$$"
+  },
+  {
+    "front": "[2026-05-07] Warum ist ein Fluss maximal genau dann, wenn es keinen augmentierenden Pfad mehr gibt?",
+    "back": "Das **Maximalitätskriterium** lautet:\n$$\nf \\text{ ist maximal } \\iff \\text{ es gibt keinen gerichteten } s\\text{-}t\\text{-Pfad im Restnetzwerk.}\n$$\n\nDie Richtungen sind:\n\n- Gibt es einen augmentierenden Pfad, kann man den Fluss entlang dieses Pfads noch erhöhen. Also ist $f$ nicht maximal.\n- Gibt es keinen solchen Pfad, konstruiert man den Schnitt $(S,T)$ aus den von $s$ erreichbaren Knoten. Dann folgt\n$$\n|f|=c(S,T),\n$$\nalso ist $f$ maximal.\n\nDamit verbindet das Restnetzwerk algorithmische Suchbarkeit mit einem mathematischen Optimalitätsbeweis."
+  },
+  {
+    "front": "[2026-05-07] Warum bleibt Ford-Fulkerson bei ganzzahligen Kapazitäten ganzzahlig?",
+    "back": "Ford-Fulkerson startet mit dem **Nullfluss**, also einem ganzzahligen Fluss. Bei ganzzahligen Kapazitäten sind auch alle Restkapazitäten ganzzahlig. Daher ist die augmentierende Menge\n$$\n\\Delta=\\min_{e\\in P} c_f(e)\n$$\nebenfalls ganzzahlig.\n\nWenn man entlang des Pfads auf Kanten um eine ganze Zahl erhöht oder verringert, bleiben alle Flusswerte ganzzahlig.\n\nDiese **Integritätseigenschaft** ist wichtig, weil dann jede erfolgreiche Augmentierung den Flusswert um mindestens\n$$\n1\n$$\nerhöht."
   }
 ]

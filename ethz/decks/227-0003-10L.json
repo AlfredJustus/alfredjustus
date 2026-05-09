@@ -958,5 +958,125 @@
   {
     "front": "[2026-04-30] In the lecture performance example, what does the cycle count comparison show about chaining and memory improvements?",
     "back": "For the specific 50-iteration averaging loop, the lecture gave:\n\n- scalar: $2004$ cycles\n- scalar with memory overlap: $1504$\n- vector without chaining: $285$\n- vector with chaining: $82$\n- vector with more ports: $79$\n\nThis shows two main things:\n\n1. **Vectorization** gives a dramatic speedup over scalar execution.\n2. **Chaining** provides a major additional gain by overlapping dependent vector operations.\n\nThe small improvement from $82$ to $79$ also shows that after major bottlenecks are removed, adding more memory capability may help only a little for that workload."
+  },
+  {
+    "front": "[2026-05-07] Why is SIMT easier to program than explicit SIMD, even though the hardware is still SIMD-like?",
+    "back": "**SIMT** keeps the programmer’s view **scalar and thread-based**: each thread executes ordinary scalar instructions and uses its thread ID to choose data.  \nThe hardware then groups same-PC threads into **warps** and runs them like a SIMD operation.\n\nThis is easier than explicit SIMD because software does **not** need to:\n- write vector instructions directly,\n- manage vector widths explicitly,\n- manually pack multiple data elements into one instruction.\n\nSo the programming model is **SPMD**, while the execution model is **SIMD-like SIMT**."
+  },
+  {
+    "front": "[2026-05-07] What is the key difference between a programming model and an execution model on a GPU?",
+    "back": "The **programming model** describes how software expresses work; the **execution model** describes how hardware actually runs it.\n\nFor GPUs:\n- Programming model: many **scalar threads** running the same program (**SPMD**)\n- Execution model: hardware groups threads into **warps** and executes them in **lockstep** (**SIMT**)\n\nThe important point is that these do **not** have to match. GPUs are useful because they expose an easy thread model while internally exploiting SIMD efficiency."
+  },
+  {
+    "front": "[2026-05-07] When does a workload map well to SIMD or SIMT hardware?",
+    "back": "A workload maps well when it performs the **same operation on many independent data elements**.\n\nTypical good cases:\n- pixels in graphics,\n- array operations,\n- dense matrix computations.\n\nIt maps poorly when there are strong **cross-iteration dependencies** or highly irregular control flow, because then threads cannot stay aligned on the same instruction stream."
+  },
+  {
+    "front": "[2026-05-07] In SPMD GPU code, how does one thread usually choose which data element to process?",
+    "back": "In **SPMD**, each scalar thread usually handles **one data element** or **one loop iteration**.\n\nThe mapping is typically:\n$$\\text{data index} = \\text{thread ID}$$\n\nSo all threads run the same code, but each thread accesses different array positions based on its own ID."
+  },
+  {
+    "front": "[2026-05-07] What is a warp, and why is it not the same as a block?",
+    "back": "A **warp** is a **hardware-formed group of threads** that are at the **same program counter** and can execute one instruction stream together.\n\nA **block** is a **programmer-visible construct** used to organize threads in code.\n\nSo:\n- **Block**: specified by the programmer\n- **Warp**: formed by hardware during execution\n\nThis distinction matters because performance issues like divergence happen at the **warp** level, not at the block level."
+  },
+  {
+    "front": "[2026-05-07] Why can’t the hardware always group any same-PC threads into one warp?",
+    "back": "Having the same program counter is necessary, but not always sufficient. The hardware must also satisfy implementation constraints such as **register-file partitioning** and lane assignment restrictions.\n\nSo warp formation is constrained by both:\n- **control-flow compatibility**,\n- **hardware resource layout**.\n\nThis is why “same instruction” does not automatically mean “freely mergeable into one warp.”"
+  },
+  {
+    "front": "[2026-05-07] What exactly causes branch divergence inside a warp?",
+    "back": "**Branch divergence** occurs when threads in the same warp evaluate a branch differently and therefore need to follow different control-flow paths.\n\nBecause a warp has **one instruction stream at a time**, the GPU cannot execute both paths simultaneously for that warp. Instead, it executes one path with one **active mask**, then the other path with another active mask.\n\nThe result is correct, but some lanes are idle during each path."
+  },
+  {
+    "front": "[2026-05-07] What does the active mask represent during SIMT execution?",
+    "back": "The **active mask** is a bit vector indicating which threads in a warp should participate in the current instruction.\n\nIf a thread’s bit is off:\n- it still conceptually passes through the warp’s execution step,\n- but its result is ignored.\n\nSo the active mask preserves correctness under divergence, while also revealing lost utilization from inactive lanes."
+  },
+  {
+    "front": "[2026-05-07] Given an 8-lane warp where only threads 0, 2, 3, and 7 are active, what is the SIMD utilization?",
+    "back": "Use\n$$\\text{SIMD utilization} = \\frac{\\text{active useful lanes}}{\\text{total SIMD lanes}}$$\n\nHere:\n- active useful lanes $= 4$\n- total lanes $= 8$\n\nSo:\n$$\\text{SIMD utilization} = \\frac{4}{8} = 0.5 = 50\\%$$\n\nHalf of the warp’s execution capacity is doing useful work; the other half is wasted on inactive lanes."
+  },
+  {
+    "front": "[2026-05-07] Why does branch divergence hurt performance even though each thread is logically independent?",
+    "back": "Threads are independent in the **programming model**, but once grouped into a **warp**, they share one instruction stream.\n\nIf some threads take path A and others take path B, the GPU must execute:\n1. path A with only A-threads active,\n2. path B with only B-threads active.\n\nSo divergence does **not** break correctness, but it lowers\n$$\\text{SIMD utilization}$$\nbecause many lanes are inactive during each partial-path execution."
+  },
+  {
+    "front": "[2026-05-07] Why can memory still bottleneck a massively parallel GPU?",
+    "back": "A GPU has many execution lanes, so it needs a very high rate of delivered data values per cycle. If memory cannot keep up, compute lanes stall.\n\nThe key issue is:\n- more parallel compute creates more **bandwidth demand**,\n- irregular or cache-missing accesses increase **latency** and can reduce effective throughput.\n\nSo massive parallelism does not remove the memory bottleneck; it often makes memory demand even harder to satisfy."
+  },
+  {
+    "front": "[2026-05-07] How do memory banks help GPU throughput, and what goes wrong with bank conflicts?",
+    "back": "**Memory banking** allows multiple accesses to proceed in parallel if they go to different banks.\n\nThis improves throughput because several requests can be served concurrently. But if many accesses target the **same bank**, they conflict and may be **serialized**.\n\nSo banking helps only when accesses are distributed well; irregular access patterns can destroy the intended parallel bandwidth."
+  },
+  {
+    "front": "[2026-05-07] How does fine-grained multithreading hide memory latency on a GPU?",
+    "back": "When one warp stalls on a long-latency memory access, the scheduler can remove it from the ready set and issue a **different ready warp**.\n\nThis hides latency by overlapping:\n- memory waiting for one warp,\n- useful execution from another warp.\n\nThis works well only if:\n- there are enough independent warps available,\n- not all of them are stalled at the same time."
+  },
+  {
+    "front": "[2026-05-07] Why don’t “more warps” always solve GPU memory stalls?",
+    "back": "More warps help only if they are actually **ready to run**. If many warps hit similar long-latency loads around the same time, they can all stall together.\n\nThen scheduling has little to switch to, so latency hiding fails.\n\nSo occupancy alone is not enough; what matters is the number of **ready, non-stalled warps** and whether their memory behavior is sufficiently diverse."
+  },
+  {
+    "front": "[2026-05-07] Why can the order in which warps are issued affect performance?",
+    "back": "If the scheduler issues warps in a way that makes many of them reach the same expensive memory operation together, they may all stall together.\n\nThat reduces the pool of ready warps and weakens latency hiding. A different issue order can spread out long-latency events and keep more warps runnable.\n\nSo scheduling matters not just for fairness, but for how well the GPU overlaps memory stalls with useful work."
+  },
+  {
+    "front": "[2026-05-08] Why can memory remain the bottleneck even if a chip already devotes a lot of area to memory?",
+    "back": "Because the bottleneck is not just **storing bits**, but **moving data** to where computation happens.\n\nEven with lots of on-chip memory, systems still pay for:\n- long wires and communication,\n- sensing and interface circuitry,\n- off-chip transfers to DRAM or storage.\n\nComputation has become relatively cheap, so the remaining expensive part is often data movement. As a result, adding more compute units can make the memory bottleneck look worse, because the faster compute waits even more often for data."
+  },
+  {
+    "front": "[2026-05-08] Why does a memory hierarchy exist instead of using one single “best” memory?",
+    "back": "Because an **ideal memory** would need all of these at once:\n- zero latency,\n- infinite capacity,\n- infinite bandwidth,\n- zero energy,\n- zero cost.\n\nReal memory technologies cannot achieve these simultaneously. Larger memories are typically slower, cheaper per bit, and more energy-hungry to access. A **memory hierarchy** resolves this by placing small, fast, expensive memories near the processor and larger, slower, cheaper memories farther away."
+  },
+  {
+    "front": "[2026-05-08] What trade-off distinguishes registers/SRAM from DRAM and storage technologies?",
+    "back": "The key trade-off is **speed and cost per bit** versus **density and persistence**.\n\n- **Registers / flip-flops / SRAM**: very fast, but expensive in area.\n- **DRAM**: denser and cheaper, but slower and requires refresh.\n- **Storage** such as SSDs, disks, or tape: much slower, but **non-volatile**.\n\nSo fast technologies are used close to computation, while dense and cheap technologies are used for larger-capacity levels."
+  },
+  {
+    "front": "[2026-05-08] Why is DRAM cheaper per bit than SRAM, and what does it cost you architecturally?",
+    "back": "**DRAM** is cheaper per bit because it stores each bit with roughly a **capacitor plus an access transistor**, while **SRAM** uses a larger cell such as cross-coupled inverters plus access transistors.\n\nThe architectural cost is that DRAM is:\n- slower,\n- **destructive to read**,\n- dependent on sensing and restoration,\n- in need of periodic **refresh** because charge leaks.\n\nSo DRAM gains density and cost efficiency by making access more complex and less robust."
+  },
+  {
+    "front": "[2026-05-08] In a memory array, what do “depth,” “width,” and “capacity” mean?",
+    "back": "For a **memory array**:\n- **depth** = number of rows,\n- **width** = number of bits per row,\n- **capacity** = total stored bits.\n\nThe formula is:\n$$\\text{capacity} = \\text{depth} \\times \\text{width}.$$\n\nThis reflects the 2D organization of rows and columns. The array is compact because many cells share selection and data lines instead of each bit having its own dedicated external connection."
+  },
+  {
+    "front": "[2026-05-08] How does a memory array access a row without giving every bit its own wire?",
+    "back": "A memory array uses **row and column sharing**.\n\nAn address is decoded so that:\n- one **word line** selects a row,\n- the selected cells connect to shared **bit lines**,\n- sensing/output logic reads the values from those bit lines.\n\nThis is much more area-efficient than wiring each bit independently. The downside is that access naturally happens in structured groups, such as rows or row fragments, rather than as fully independent single-bit accesses."
+  },
+  {
+    "front": "[2026-05-08] Why does banking improve memory performance compared with one monolithic array?",
+    "back": "**Banking** splits one large memory into multiple smaller, independently accessible arrays.\n\nThis helps because:\n- smaller arrays can be faster,\n- different banks can serve different requests in parallel,\n- consecutive accesses can overlap better.\n\nA single huge array would be slower and would serialize too much activity. Banking increases throughput, but only if accesses are distributed well across banks."
+  },
+  {
+    "front": "[2026-05-08] What goes wrong when address interleaving maps many accesses to the same bank?",
+    "back": "You get **bank conflicts**.\n\nEven if the memory has multiple banks, requests that map to the same bank must compete for that bank’s internal resources. This reduces parallelism and can make the system behave more like a single-bank memory.\n\nSo the benefit of **interleaving** depends strongly on address mapping: good mapping spreads accesses across banks, while bad mapping concentrates them and wastes available parallelism."
+  },
+  {
+    "front": "[2026-05-08] What is the difference between a DRAM bank and a DRAM rank?",
+    "back": "A **bank** is an internal independently accessible memory array inside DRAM.\n\nA **rank** is a group of DRAM chips that respond to the same command together, with each chip contributing part of the data word.\n\nSo:\n- **bank** = internal parallelism within DRAM,\n- **rank** = multiple chips combined to form a wider interface.\n\nConfusing them is a common mistake: banks are about internal organization, while ranks are about how chips cooperate on the external interface."
+  },
+  {
+    "front": "[2026-05-08] Why is the DRAM row buffer both required circuitry and also a cache-like structure?",
+    "back": "It is required because DRAM cells store tiny charges that cannot directly drive large external circuits. When a row is **activated**, the data is sensed and amplified into the **row buffer**, and the charge is restored.\n\nOnce that row is in the row buffer, the same structure behaves like a **cache** for the open row:\n- accesses to that row are fast,\n- repeated column reads/writes avoid reopening the array.\n\nSo the row buffer is both a sensing/restoration mechanism and a cache for the currently open row."
+  },
+  {
+    "front": "[2026-05-08] What sequence of commands is needed for a DRAM row hit versus a row conflict?",
+    "back": "For a **row hit**, the desired row is already open in the row buffer, so the controller only needs a **column read/write command**.\n\nFor a **row conflict**, a different row is currently open in the same bank, so the controller must do:\n$$\\text{precharge} \\rightarrow \\text{activate new row} \\rightarrow \\text{column command}.$$\n\nThis is why DRAM access latency is not uniform: row hits are much faster than row conflicts."
+  },
+  {
+    "front": "[2026-05-08] Why is the statement “a row-buffer conflict is faster than a row-buffer hit” false?",
+    "back": "It is false because a **row hit** reuses the already open row buffer, while a **row conflict** must first close the old row and open a new one.\n\nSo:\n- **row hit**: column command only,\n- **row conflict**: precharge + activate + column command.\n\nA conflict adds extra steps and therefore extra latency. The open row is only helpful if the next access targets that same row."
+  },
+  {
+    "front": "[2026-05-08] A $64$-byte cache block is transferred over a $64$-bit DRAM interface. How many I/O cycles are needed?",
+    "back": "A $64$-bit interface transfers:\n$$64 \\text{ bits} = 8 \\text{ bytes}$$\nper I/O cycle.\n\nFor a $64$-byte block:\n$$\\frac{64 \\text{ bytes}}{8 \\text{ bytes/cycle}} = 8 \\text{ cycles}.$$\n\nSo the transfer needs:\n$$8 \\text{ I/O cycles}.$$"
+  },
+  {
+    "front": "[2026-05-08] Why do DRAM systems use ranks and shared buses instead of giving every chip a very wide private interface?",
+    "back": "Because **pins and off-chip wires are expensive** in area, package complexity, cost, and energy.\n\nInstead, several chips are grouped into a **rank**:\n- they share command and address signals,\n- each chip provides part of the data word,\n- together they form a wider transfer.\n\nThis is cheaper than giving each chip many private wide interfaces. The trade-off is that the shared buses create scheduling constraints and limit how much data can move simultaneously."
+  },
+  {
+    "front": "[2026-05-08] Why does higher memory density make robustness harder, and how does Row Hammer illustrate this?",
+    "back": "Higher density usually means cells are **smaller**, **closer together**, and in DRAM often store **less charge**. That makes them more vulnerable to leakage and electrical interference.\n\n**Row Hammer** shows this concretely: repeatedly activating one DRAM row can disturb nearby rows enough to cause **bit flips**. This violates the architectural expectation that a load or access should not modify unrelated memory.\n\nSo increasing density improves capacity and cost, but can make reliability and isolation harder to maintain."
   }
 ]
