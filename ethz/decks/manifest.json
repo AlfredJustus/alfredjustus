@@ -1,5 +1,5 @@
 {
-  "generated": "2026-05-11T14:04:06.199Z",
+  "generated": "2026-05-12T13:24:27.060Z",
   "model": "gpt-5.4",
   "cardsPerLectureTarget": 15,
   "format": "markdown->parser->json",
@@ -18,9 +18,9 @@
       "name": "Parallele Programmierung",
       "file": "252-0029-00L.json",
       "apkg": null,
-      "cards": 315,
+      "cards": 330,
       "semester": "spring-2026",
-      "lectures": 21
+      "lectures": 22
     },
     {
       "id": "252-0030-00L",
@@ -36,9 +36,9 @@
       "name": "Analysis I",
       "file": "401-0212-16L.json",
       "apkg": null,
-      "cards": 285,
+      "cards": 300,
       "semester": "spring-2026",
-      "lectures": 19
+      "lectures": 20
     },
     {
       "id": "252-0026-00L",

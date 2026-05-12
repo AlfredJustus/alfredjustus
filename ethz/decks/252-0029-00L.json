@@ -1258,5 +1258,65 @@
   {
     "front": "[2026-05-05] Wie funktioniert das Standardmuster einer CAS-Schleife?",
     "back": "Eine **CAS-Schleife** arbeitet typischerweise so:\n\n1. aktuellen Zustand lesen\n2. neuen Zustand lokal berechnen\n3. **Compare-and-Swap (CAS)** versuchen\n4. bei Fehlschlag von vorn beginnen\n\nCAS prüft atomar, ob eine Speicherstelle noch den erwarteten alten Wert enthält, und ersetzt ihn nur dann durch den neuen Wert. In Java liefert CAS typischerweise `true` bei Erfolg und `false` bei Misserfolg.\n\nDieses Muster ist zentral für lockfreie Counter, Stacks und Listenupdates."
+  },
+  {
+    "front": "[2026-05-11] Warum ist **lockfrei** schwächer als **wartefrei**, aber in der Vorlesung trotzdem das Ziel?",
+    "back": "**Lockfrei** garantiert nur **Systemfortschritt**: Solange noch irgendein Thread aktiv ist, macht das System insgesamt Fortschritt. Einzelne Threads dürfen beliebig oft scheitern oder verdrängt werden.\n\n**Wartefrei** ist stärker: **Jeder** Thread beendet seine Operation nach einer beschränkten Anzahl eigener Schritte.\n\nFür die Vorlesung sind lockfreie Algorithmen attraktiv, weil sie:\n- keine blockierenden Locks brauchen,\n- robust gegen ausfallende Threads sind,\n- deutlich einfacher als wartefreie Varianten sind.\n\nDer Preis ist: Ein einzelner Thread kann verhungern, obwohl das Gesamtsystem weiterarbeitet."
+  },
+  {
+    "front": "[2026-05-11] Warum wäre „auf den aufräumenden Thread warten“ in einem lockfreien Algorithmus ein Fehler?",
+    "back": "Weil das wieder eine **implizite Blockierung** einführt. Wenn ein Thread nach einer halben Operation ausfällt und andere genau auf ihn warten müssten, hängt der Fortschritt doch wieder von einem einzelnen Thread ab.\n\nEin lockfreier Algorithmus muss stattdessen unvollendete Arbeit so darstellen, dass **andere Threads sie erkennen und abschließen können**:\n- markierte, aber noch verkettete Listenknoten,\n- ein hinterherhängender `tail` in der Queue.\n\nSo bleibt Fortschritt möglich, auch wenn der ursprüngliche Thread verschwindet."
+  },
+  {
+    "front": "[2026-05-11] Warum ist eine **AtomicMarkableReference** mehr als nur ein Pointer mit Extra-Bit?",
+    "back": "Sie speichert **Referenz und Markierungsbit atomar gemeinsam**. Das ist entscheidend, weil ein CAS dann **beides gleichzeitig** prüfen und aktualisieren kann:\n- zeigt der Pointer noch auf denselben Knoten?\n- hat das Markierungsbit noch den erwarteten Wert?\n\nDamit werden zwei logisch zusammengehörige Zustände als **ein atomarer Zustand** behandelt. In der lockfreien Liste markiert man so den `next`-Pointer eines Knotens als „logisch gelöscht“, ohne ein separates Feld zu brauchen, das mit dem Pointer inkonsistent werden könnte."
+  },
+  {
+    "front": "[2026-05-11] Warum gehört das Markierungsbit im lockfreien Set zum `next`-Pointer des Knotens und nicht zu einem separaten Feld?",
+    "back": "Weil Löschen und Verkettung direkt zusammenhängen. Das Markierungsbit sagt nicht allgemein „dieser Knoten ist gelöscht“, sondern konkret: **der Übergang zu seinem Nachfolger ist als gelöscht markiert**.\n\nDer Vorteil:\n- Pointer und Löschstatus werden **atomar zusammen** geprüft,\n- CAS kann nicht einen alten Pointer mit neuem Löschstatus verwechseln,\n- Traversierungen sehen konsistent, ob ein Knoten noch gültig ist.\n\nEin separates `deleted`-Feld würde zusätzliche Synchronisation erfordern und könnte zu inkonsistenten Zwischenzuständen führen."
+  },
+  {
+    "front": "[2026-05-11] Warum wird im lockfreien listenbasierten Set **logisches Löschen** vor **physischem Entfernen** durchgeführt?",
+    "back": "Weil Entfernen eigentlich zwei verschiedene Ziele hat:\n1. Das Element soll **nicht mehr als Mitglied des Sets gelten**.\n2. Der Knoten soll **aus der Verkettung verschwinden**.\n\nDurch das Markieren des `next`-Pointers ist Ziel 1 sofort erreicht: Der Knoten gilt ab dann als gelöscht. Das physische Ausketten per CAS am Vorgänger ist nur noch **Cleanup**.\n\nSo hängt die Korrektheit nicht daran, dass derselbe Thread beide Schritte erfolgreich beendet. Selbst wenn das Ausketten fehlschlägt oder der Thread ausfällt, bleibt das Set semantisch korrekt."
+  },
+  {
+    "front": "[2026-05-11] Warum reicht im lockfreien Set ein **logisch gelöschter** Knoten schon für die Korrektheit von `remove`?",
+    "back": "Weil die Set-Semantik nur verlangt, dass das Element **nicht mehr als enthalten** gilt. Genau das leistet das Markieren.\n\nEin markierter Knoten:\n- darf von `find` nicht mehr als gültiges Element behandelt werden,\n- darf von späteren Traversierungen übersprungen werden,\n- kann später von beliebigen Threads physisch entfernt werden.\n\nDas physische Entfernen verbessert also die Struktur, ist aber nicht mehr nötig, um die **Bedeutung** des Sets korrekt zu machen."
+  },
+  {
+    "front": "[2026-05-11] Was darf `find` im lockfreien Set mit einem markierten, aber noch verketteten Knoten tun?",
+    "back": "`find` darf ihn nicht nur **ignorieren**, sondern auch **aufräumen**. Es kann versuchen, den Vorgänger per CAS direkt auf den Nachfolger des markierten Knotens umzuhängen.\n\nDas ist das **Helper-Prinzip**:\n- markierter Knoten entdeckt,\n- markierten Knoten semantisch als gelöscht behandeln,\n- optional denselben Cleanup-CAS ausführen, den der ursprüngliche `remove` versucht hätte.\n\nFalls der CAS wegen Konkurrenz fehlschlägt, startet man neu oder versucht es später erneut."
+  },
+  {
+    "front": "[2026-05-11] Wann darf `remove` im lockfreien Set Erfolg melden?",
+    "back": "Nur der Thread, der das **Markieren** des Knotens erfolgreich per CAS durchführt, darf das Entfernen als erfolgreich melden.\n\nBegründung:\n- Das Markieren ist der Moment, in dem der Knoten **logisch gelöscht** wird.\n- Wer diesen CAS verliert, hat den Knoten nicht gelöscht; vielleicht war er schon gelöscht oder die Struktur hat sich geändert.\n\nDas spätere physische Ausketten entscheidet **nicht** über den Erfolg von `remove`, sondern ist nur noch Strukturpflege."
+  },
+  {
+    "front": "[2026-05-11] Was prüft `add` im lockfreien Set beim Einhängen eines neuen Knotens?",
+    "back": "`add` hängt den neuen Knoten zwischen Vorgänger und aktuellen Knoten ein, aber nur wenn der Vorgänger **noch unverändert** ist.\n\nDafür prüft der CAS typischerweise:\n- der `next`-Pointer des Vorgängers zeigt noch auf den erwarteten aktuellen Knoten,\n- der Markierungszustand ist noch wie erwartet.\n\nSo wird verhindert, dass man in eine inzwischen veränderte oder logisch gelöschte Stelle einfügt. Wenn der CAS fehlschlägt, muss die Position neu gesucht werden."
+  },
+  {
+    "front": "[2026-05-11] Warum vereinfacht ein **Sentinel-Knoten** eine lockfreie unbounded FIFO-Queue so stark?",
+    "back": "Ohne Sentinel sind die Fälle „leer“ und „letztes Element entfernt“ heikel, weil dann mehrere Pointer gleichzeitig konsistent geändert werden müssten.\n\nMit **Sentinel** gilt:\n- Es gibt immer mindestens einen strukturellen Knoten.\n- `head` und `tail` zeigen nie auf `null`.\n- Leer bedeutet: Hinter dem Sentinel gibt es **keinen Nutzknoten**.\n\nDadurch verschwinden viele Spezialfälle, und `enqueue` und `dequeue` können meist an verschiedenen Enden arbeiten, ohne ständig den kompletten Leerzustand gesondert behandeln zu müssen."
+  },
+  {
+    "front": "[2026-05-11] Wie sieht der Initialzustand einer lockfreien FIFO-Queue mit Sentinel aus?",
+    "back": "Zu Beginn zeigen **`head` und `tail` auf denselben Dummy-Knoten**:\n$$head = tail = \\text{sentinel}.$$\n\nDieser Knoten trägt **keinen Nutzwert**. Die Queue ist leer, wenn:\n$$head.next = null.$$\n\nWichtig ist: „leer“ heißt hier **nicht**, dass `head` oder `tail` `null` sind, sondern nur, dass hinter dem Sentinel kein echtes Element folgt."
+  },
+  {
+    "front": "[2026-05-11] Warum setzt `enqueue` zuerst `last.next` und zieht erst danach `tail` nach?",
+    "back": "Der entscheidende Schritt ist das **sichtbare Einhängen** des neuen Knotens in die Liste:\n$$last.next \\leftarrow new.$$\n\nErst dadurch gehört das Element strukturell zur Queue. Das Nachziehen von\n$$tail \\leftarrow new$$\nist danach nur noch eine **Optimierung/Reparatur**, damit `tail` wieder auf das Ende zeigt.\n\nWürde man zuerst `tail` verschieben, könnte `tail` auf einen Knoten zeigen, der noch gar nicht korrekt verkettet ist. Deshalb ist die Reihenfolge:\n1. neuen Knoten an `last.next` anhängen,\n2. `tail` nachziehen."
+  },
+  {
+    "front": "[2026-05-11] Warum ist ein hinterherhängender `tail` in der lockfreien Queue kein Fehler?",
+    "back": "Weil `tail` nur ein **Hilfspointer** auf das Ende sein soll, aber kurzfristig veraltet sein darf. Nach einem erfolgreichen `enqueue` kann es passieren, dass:\n- der neue Knoten schon über `last.next` erreichbar ist,\n- `tail` aber noch auf dem alten letzten Knoten steht.\n\nDas ist ein erwarteter Zwischenzustand. Andere Threads dürfen helfen und `tail` nach vorne setzen. Die Queue bleibt trotzdem korrekt, weil die eigentliche Reihenfolge der Elemente durch die **`next`-Verkettung** bestimmt wird, nicht durch die absolute Aktualität von `tail`."
+  },
+  {
+    "front": "[2026-05-11] Wie funktioniert `dequeue` in der lockfreien Queue mit Sentinel?",
+    "back": "`dequeue` arbeitet am Anfang der Liste, aber der eigentliche Nutzwert steht in\n$$head.next.$$\n\nAblauf:\n1. `first = head`, `next = first.next` lesen.\n2. Falls `next = null`, ist die Queue leer.\n3. Den Nutzwert aus `next` lesen.\n4. Per CAS setzen:\n$$head \\leftarrow next.$$\n\nDanach wird der frühere erste Nutzknoten zum neuen Dummy-Bereich der Struktur. Man entfernt also nicht „den Head-Knoten mit Wert“, sondern schiebt den Sentinel nach vorne."
+  },
+  {
+    "front": "[2026-05-11] Was ist das **ABA-Problem**, und warum ist ein erfolgreicher CAS dafür kein Gegenbeweis?",
+    "back": "Beim **ABA-Problem** liest ein Thread zuerst den Wert `A`. Danach ändern andere Threads den Wert zu `B` und später wieder zu `A`. Ein späterer CAS auf `A` kann dann erfolgreich sein, obwohl sich zwischenzeitlich sehr wohl etwas Relevantes geändert hat.\n\nCAS garantiert nur:\n**Der aktuelle Bitwert entspricht dem erwarteten Wert.**\n\nCAS garantiert **nicht**:\n**Seit dem letzten Lesen ist nichts passiert.**\n\nDas Problem liegt also nicht im CAS selbst, sondern in der falschen Interpretation seines Erfolgs."
   }
 ]

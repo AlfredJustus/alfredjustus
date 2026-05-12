@@ -1138,5 +1138,65 @@
   {
     "front": "[2026-05-06] Welche Fundamentallösungen gehören zu einer Nullstelle $\\lambda$ mit Multiplizität $s$?",
     "back": "Hat die charakteristische Gleichung die Nullstelle $\\lambda$ mit **Multiplizität** $s$, dann erhält man $s$ Fundamentallösungen:\n$$e^{\\lambda x},\\ xe^{\\lambda x},\\ x^2e^{\\lambda x},\\ \\dots,\\ x^{s-1}e^{\\lambda x}.$$\n\nAllgemein also\n$$x^k e^{\\lambda x}\\qquad \\text{für } k=0,\\dots,s-1.$$\n\nDie Vielfachheit der Nullstelle bestimmt damit direkt, wie viele linear unabhängige Lösungen zu diesem Exponenten gehören."
+  },
+  {
+    "front": "[2026-05-11] Warum liefert eine Differentialgleichung zweiter Ordnung ohne Zusatzbedingungen im Allgemeinen keine eindeutige Lösung?",
+    "back": "Eine **Differentialgleichung zweiter Ordnung** hat in der allgemeinen Lösung typischerweise **zwei freie Konstanten**. Diese stehen für echte Freiheitsgrade des Systems, nicht für Rechenfehler.\n\nErst **zwei unabhängige Zusatzbedingungen** bestimmen diese Konstanten eindeutig, etwa:\n- zwei Anfangswerte,\n- oder zwei Randwerte.\n\nOhne solche Bedingungen bleibt nur eine **Lösungsfamilie** statt einer einzelnen Lösung."
+  },
+  {
+    "front": "[2026-05-11] Worin unterscheidet sich ein Anfangswertproblem von einem Randwertproblem?",
+    "back": "Beim **Anfangswertproblem** werden alle Zusatzbedingungen an **einem einzigen Argumentwert** vorgegeben, typischerweise bei $t_0$, z. B. Anfangsort und Anfangsgeschwindigkeit.\n\nBeim **Randwertproblem** liegen die Bedingungen an **verschiedenen Argumentwerten**, z. B.\n$$\nu(0)=0,\\quad u(l)=0.\n$$\n\nBeide wählen aus der allgemeinen Lösung genau diejenige aus, die die Bedingungen erfüllt; der Unterschied liegt nur darin, **wo** die Zusatzinformationen gegeben sind."
+  },
+  {
+    "front": "[2026-05-11] Wie löst man $y''+4y=0$ mit dem eulerschen Ansatz?",
+    "back": "Man setzt eine Lösung der Form\n$$\ny(x)=e^{\\lambda x}\n$$\nan. Dann folgt aus der Differentialgleichung\n$$\n\\lambda^2 e^{\\lambda x}+4e^{\\lambda x}=0.\n$$\nDa $e^{\\lambda x}\\neq 0$, erhält man die **charakteristische Gleichung**\n$$\n\\lambda^2+4=0.\n$$\n\nIhre Nullstellen sind\n$$\n\\lambda=\\pm 2i.\n$$\n\nBei komplex konjugierten Nullstellen entstehen reelle Lösungen mit **Sinus** und **Kosinus**:\n$$\ny(x)=A\\sin(2x)+B\\cos(2x).\n$$"
+  },
+  {
+    "front": "[2026-05-11] Warum führen die Nullstellen $\\lambda=\\pm 2i$ auf Sinus und Kosinus statt auf komplexe Exponentialfunktionen?",
+    "back": "Die Nullstellen $\\lambda=\\pm 2i$ liefern zunächst komplexe Lösungen\n$$\ne^{2ix},\\quad e^{-2ix}.\n$$\nFür reellwertige Lösungen schreibt man diese äquivalent in der Form\n$$\nA\\sin(2x)+B\\cos(2x).\n$$\n\nDer Grund ist: Bei **komplex konjugierten Nullstellen** lassen sich Real- und Imaginärteil zu einer reellen Basis von Lösungen kombinieren. Deshalb ist\n$$\ny(x)=A\\sin(2x)+B\\cos(2x)\n$$\ndie passende allgemeine reelle Lösung."
+  },
+  {
+    "front": "[2026-05-11] Bestimme die Lösung von $y''+4y=0$ mit $y(0)=1$ und $y(\\pi/4)=2$.",
+    "back": "Die allgemeine Lösung ist\n$$\ny(x)=A\\sin(2x)+B\\cos(2x).\n$$\n\nAus\n$$\ny(0)=A\\sin 0+B\\cos 0=B=1\n$$\nfolgt\n$$\nB=1.\n$$\n\nWeiter:\n$$\ny\\left(\\frac{\\pi}{4}\\right)=A\\sin\\left(\\frac{\\pi}{2}\\right)+B\\cos\\left(\\frac{\\pi}{2}\\right)=A=2.\n$$\nAlso\n$$\nA=2.\n$$\n\nDamit ist die gesuchte Lösung\n$$\ny(x)=2\\sin(2x)+\\cos(2x).\n$$"
+  },
+  {
+    "front": "[2026-05-11] Was ist eine Stammfunktion von $f$ auf einem Intervall $I$?",
+    "back": "Eine **Stammfunktion** von $f$ auf einem Intervall $I$ ist eine differenzierbare Funktion $F$, so dass\n$$\nF'(x)=f(x)\\quad \\text{für alle }x\\in I.\n$$\n\nDie **unbestimmte Integration** sucht alle solchen Funktionen. Sie ist die Umkehrung des Ableitens, aber nicht eindeutig, weil beim Ableiten additive Konstanten verschwinden.\n\nDeshalb beschreibt\n$$\n\\int f(x)\\,dx\n$$\neine **Familie von Funktionen**, nicht eine einzelne Funktion."
+  },
+  {
+    "front": "[2026-05-11] Warum ist bei unbestimmter Integration die Integrationskonstante additiv und nicht multiplikativ?",
+    "back": "Wenn $F'(x)=f(x)$ gilt, dann hat auch\n$$\n(F(x)+C)'=f(x)\n$$\ndieselbe Ableitung, weil die Ableitung einer Konstanten $0$ ist.\n\nDarum lautet die allgemeine Stammfunktion\n$$\nF(x)+C.\n$$\n\nEin Ausdruck wie\n$$\nC\\,F(x)\n$$\nist im Allgemeinen falsch, denn dann wäre\n$$\n(CF(x))'=C f(x),\n$$\nalso meist nicht mehr gleich $f(x)$.\n\nBeispiel:\n$$\n\\int e^x\\,dx=e^x+C,\n$$\nnicht $Ce^x$."
+  },
+  {
+    "front": "[2026-05-11] Warum ist $\\int e^x\\,dx=Ce^x$ falsch als allgemeine Stammfunktion?",
+    "back": "Die Ableitung von\n$$\nCe^x\n$$\nist\n$$\nCe^x.\n$$\nDamit gilt\n$$\n(Ce^x)'=e^x\n$$\nnur für $C=1$.\n\nDie gesuchte Familie aller Stammfunktionen muss aber **jede** Funktion mit Ableitung $e^x$ enthalten. Das ist genau\n$$\ne^x+C,\n$$\ndenn\n$$\n(e^x+C)'=e^x.\n$$\n\nDer Fehler ist, die **additive Integrationskonstante** mit einem **Vorfaktor** zu verwechseln."
+  },
+  {
+    "front": "[2026-05-11] Wann darf man die Potenzregel $\\int x^n\\,dx=\\frac{x^{n+1}}{n+1}+C$ nicht verwenden?",
+    "back": "Die **Potenzregel**\n$$\n\\int x^n\\,dx=\\frac{x^{n+1}}{n+1}+C\n$$\ngilt nur für\n$$\nn\\neq -1.\n$$\n\nFür $n=-1$ würde man durch $0$ teilen, denn dann stünde\n$$\n\\frac{x^0}{0}.\n$$\n\nDer Sonderfall ist\n$$\n\\int \\frac1x\\,dx=\\ln|x|+C.\n$$\n\nDieser Fall braucht also eine eigene Formel und ist genau die wichtige Ausnahme zur Potenzregel."
+  },
+  {
+    "front": "[2026-05-11] Warum ist $\\ln|x|$ die richtige Stammfunktion von $\\frac1x$?",
+    "back": "Die Funktion $\\frac1x$ ist sowohl auf positiven als auch auf negativen Intervallen definiert, nur nicht bei $x=0$.\n\nMit\n$$\n\\ln|x|\n$$\nerhält man auf jedem Intervall, das $0$ nicht enthält,\n$$\n\\frac{d}{dx}\\ln|x|=\\frac1x.\n$$\n\nOhne Betrag wäre $\\ln x$ nur für $x>0$ als reelle Funktion definiert. Deshalb wäre\n$$\n\\ln x+C\n$$\nals allgemeine Stammfunktion zu eng.\n\nWichtig ist aber: Eine Stammfunktion wird immer auf einem **Intervall ohne Null** betrachtet."
+  },
+  {
+    "front": "[2026-05-11] Wie nutzt man die Linearität der unbestimmten Integration?",
+    "back": "Für konstante $a,b$ gilt die **Linearität**\n$$\n\\int (af(x)+bg(x))\\,dx\n=\na\\int f(x)\\,dx+b\\int g(x)\\,dx.\n$$\n\nDamit kann man komplizierte Integranden in einfachere Teile zerlegen.\n\nBeispiel:\n$$\n\\int (3x^2-2\\cos x)\\,dx\n=\n3\\int x^2\\,dx-2\\int \\cos x\\,dx\n$$\nund damit\n$$\n=3\\cdot \\frac{x^3}{3}-2\\sin x+C\n=\nx^3-2\\sin x+C.\n$$\n\nDie Regel gilt nur, wenn $a,b$ **Konstanten** sind."
+  },
+  {
+    "front": "[2026-05-11] Warum entsteht partielle Integration aus der Produktregel?",
+    "back": "Die **Produktregel** lautet\n$$\n(fg)'=f'g+fg'.\n$$\nIntegriert man beide Seiten, erhält man\n$$\n\\int f'(x)g(x)\\,dx=f(x)g(x)-\\int f(x)g'(x)\\,dx.\n$$\n\nPartielle Integration ist also die Produktregel **rückwärts gelesen**.\n\nSie ist nützlich, wenn ein Faktor leicht zu **integrieren** und der andere leicht zu **differenzieren** ist. Ziel ist, das neue Integral einfacher zu machen als das ursprüngliche."
+  },
+  {
+    "front": "[2026-05-11] Warum entsteht Substitution aus der Kettenregel?",
+    "back": "Die **Kettenregel** sagt:\n$$\n\\frac{d}{dx}f(g(x))=f'(g(x))g'(x).\n$$\n\nLiest man das rückwärts, erhält man die Substitutionsregel:\n$$\n\\int f'(g(x))g'(x)\\,dx=f(g(x))+C.\n$$\n\nSubstitution funktioniert also dann gut, wenn man im Integranden das Muster\n$$\n\\text{äußere Ableitung bei innerem Ausdruck} \\times \\text{innere Ableitung}\n$$\nerkennt.\n\nDann ersetzt man den inneren Ausdruck durch eine neue Variable und vereinfacht so das Integral."
+  },
+  {
+    "front": "[2026-05-11] Was geht bei einer Substitution schief, wenn man $dx$ nicht umschreibt?",
+    "back": "Bei einer **Substitution** wird nicht nur ein Teil des Integranden ersetzt, sondern die **gesamte Integrationsvariable**.\n\nSetzt man etwa\n$$\nw=\\sqrt{x-2},\n$$\ndann folgt\n$$\nx=w^2+2\n$$\nund außerdem muss auch\n$$\ndx\n$$\nin die neue Variable umgeschrieben werden:\n$$\ndx=2w\\,dw.\n$$\n\nLässt man diesen Schritt weg, mischt man zwei verschiedene Variablen in einem Integral. Das ist kein korrekt transformiertes Integral und führt leicht zu falschen Ergebnissen."
+  },
+  {
+    "front": "[2026-05-11] Wie schreibt man bei der Substitution $w=\\sqrt{x-2}$ sowohl $x$ als auch $dx$ in $w$ um?",
+    "back": "Aus\n$$\nw=\\sqrt{x-2}\n$$\nfolgt durch Quadrieren\n$$\nx=w^2+2.\n$$\n\nAußerdem gilt\n$$\n\\frac{dw}{dx}=\\frac12(x-2)^{-1/2}=\\frac{1}{2w}.\n$$\nDaraus erhält man\n$$\ndx=2w\\,dw.\n$$\n\nFür eine vollständige Substitution müssen also beide Ersetzungen gemacht werden:\n$$\nx=w^2+2,\\qquad dx=2w\\,dw.\n$$\n\nErst dann ist das Integral vollständig in der neuen Variablen formuliert."
   }
 ]
