@@ -1318,5 +1318,65 @@
   {
     "front": "[2026-05-07] Warum bleibt Ford-Fulkerson bei ganzzahligen Kapazitäten ganzzahlig?",
     "back": "Ford-Fulkerson startet mit dem **Nullfluss**, also einem ganzzahligen Fluss. Bei ganzzahligen Kapazitäten sind auch alle Restkapazitäten ganzzahlig. Daher ist die augmentierende Menge\n$$\n\\Delta=\\min_{e\\in P} c_f(e)\n$$\nebenfalls ganzzahlig.\n\nWenn man entlang des Pfads auf Kanten um eine ganze Zahl erhöht oder verringert, bleiben alle Flusswerte ganzzahlig.\n\nDiese **Integritätseigenschaft** ist wichtig, weil dann jede erfolgreiche Augmentierung den Flusswert um mindestens\n$$\n1\n$$\nerhöht."
+  },
+  {
+    "front": "[2026-05-12] Warum ist die Kapazität eines $s$-$t$-Schnitts immer eine obere Schranke für jeden Flusswert?",
+    "back": "Für jeden **Fluss** $f$ und jeden **$s$-$t$-Schnitt** $(S,T)$ gilt\n$$|f| \\le c(S,T).$$\n\nGrund: Wegen **Flusserhaltung** kann der gesamte Nettofluss von $s$ nach $t$ nur über Kanten von $S$ nach $T$ den Schnitt passieren. Kanten in Gegenrichtung reduzieren diesen Nettofluss nur.\n\nFormal ist der Flusswert gleich dem Nettofluss über den Schnitt:\n$$|f| = f(S,T)-f(T,S) \\le f(S,T) \\le c(S,T).$$\n\nDabei ist\n$$c(S,T)=\\sum_{e\\in S\\to T} c(e).$$\n\nWichtiges Detail: Für die **Schnittkapazität** zählen nur Kanten von $S$ nach $T$, nicht von $T$ nach $S$."
+  },
+  {
+    "front": "[2026-05-12] Warum sind Rückwärtskanten im Restnetzwerk notwendig und nicht nur ein technischer Trick?",
+    "back": "**Rückwärtskanten** erlauben, bereits geschickten Fluss teilweise wieder zurückzunehmen und anders umzuleiten.\n\nOhne sie könnte man nach einigen naheliegenden Vorwärtsaugmentierungen lokal feststecken, obwohl global noch ein größerer Fluss möglich ist. Die Rückwärtskante bedeutet also nicht „echter Fluss in Gegenrichtung“ im Originalgraphen, sondern:\n- auf einer Kante liegt schon Fluss,\n- dieser Fluss darf reduziert werden,\n- dadurch wird Kapazität für eine bessere Route frei.\n\nDie Restkapazität der Rückwärtskante ist genau\n$$f(e).$$\n\nSie kodiert also, wie viel man auf der Originalkante wieder zurücknehmen kann. Genau dadurch findet man augmentierende Pfade, die frühere Entscheidungen korrigieren."
+  },
+  {
+    "front": "[2026-05-12] Wie ist das Restnetzwerk zu einem aktuellen Fluss definiert?",
+    "back": "Zum aktuellen **Fluss** $f$ im Netzwerk entsteht das **Restnetzwerk** so:\n\nFür jede Originalkante $e=(u,v)$ mit Kapazität $c(e)$:\n- es gibt eine **Vorwärtskante** $(u,v)$ mit Restkapazität\n  $$c(e)-f(e),$$\n  falls noch Kapazität frei ist;\n- es gibt eine **Rückwärtskante** $(v,u)$ mit Restkapazität\n  $$f(e),$$\n  falls auf $e$ bereits positiver Fluss liegt.\n\nDas Restnetzwerk beschreibt also genau, welche lokalen Änderungen am Fluss noch möglich sind:\n- **erhöhen** auf Vorwärtskanten,\n- **verringern** auf Rückwärtskanten.\n\nEin **augmentierender Pfad** ist dann einfach ein gerichteter $s$-$t$-Pfad im Restnetzwerk."
+  },
+  {
+    "front": "[2026-05-12] Wie augmentiert man entlang eines Pfades im Restnetzwerk?",
+    "back": "Sei $P$ ein **augmentierender Pfad** im Restnetzwerk. Dann erhöht man den Fluss um\n$$\\Delta=\\min_{e\\in P} c_f(e),$$\nalso um die kleinste Restkapazität auf dem Pfad.\n\nUpdate-Regel:\n- auf **Vorwärtskanten** des Pfades erhöht man den Originalfluss um $\\Delta$,\n- auf **Rückwärtskanten** des Pfades verringert man den Originalfluss um $\\Delta$.\n\nWarum funktioniert das? Weil $\\Delta$ so gewählt ist, dass keine Restkapazität negativ wird und keine Originalkapazität überschritten wird.\n\nAußerdem bleibt die **Flusserhaltung** erhalten: Jeder innere Knoten des Pfades bekommt genau so viel zusätzlichen Zufluss wie zusätzlichen Abfluss."
+  },
+  {
+    "front": "[2026-05-12] Warum bleibt bei einer Augmentierung die Flusserhaltung erhalten?",
+    "back": "Bei einer **Augmentierung** entlang eines $s$-$t$-Pfades wird an jedem inneren Knoten genau eine Pfadkante betreten und genau eine verlassen.\n\nErhöht man entlang des Pfades um $\\Delta$, dann gilt für jeden inneren Knoten:\n- der eingehende Fluss ändert sich um $\\Delta$,\n- der ausgehende Fluss ändert sich ebenfalls um $\\Delta$.\n\nDamit bleibt\n$$\\text{Zufluss}=\\text{Abfluss}.$$\n\nAuch wenn eine Pfadkante im Restnetzwerk eine **Rückwärtskante** ist, bedeutet das nur, dass auf der entsprechenden Originalkante Fluss reduziert wird. Die Bilanz am Knoten bleibt trotzdem korrekt.\n\nNur bei $s$ und $t$ ändert sich der Nettofluss:\n- bei $s$ steigt der Nettoausfluss,\n- bei $t$ steigt der Nettozufluss."
+  },
+  {
+    "front": "[2026-05-12] Wann terminiert Ford-Fulkerson sicher, und warum?",
+    "back": "**Ford-Fulkerson** terminiert sicher bei **ganzzahligen Kapazitäten**.\n\nGrund:\n1. Start mit dem Nullfluss, also ganzzahlig.\n2. Restkapazitäten bleiben ganzzahlig.\n3. Jeder augmentierende Pfad erhöht den Flusswert um mindestens\n   $$1,$$\n   weil die minimale Restkapazität auf dem Pfad eine positive ganze Zahl ist.\n\nIst jede Kapazität durch $U$ beschränkt, dann ist der maximale Flusswert höchstens $nU$ grob genug beschränkt, und man erhält die Laufzeit\n$$O(mnU).$$\n\nBei **reellen Kapazitäten** gilt diese einfache Argumentation nicht: Die Verbesserungen können beliebig klein werden."
+  },
+  {
+    "front": "[2026-05-12] Was kann bei Ford-Fulkerson mit reellen Kapazitäten schiefgehen?",
+    "back": "Bei **reellen Kapazitäten** muss Ford-Fulkerson im Allgemeinen **nicht terminieren**.\n\nDas Problem ist, dass die Augmentierungen nicht um mindestens $1$ wachsen müssen. Stattdessen kann der Algorithmus eine Folge immer kleinerer Verbesserungen machen.\n\nIm schlimmsten Fall kann er sogar gegen einen Wert konvergieren, der **kleiner als der Maximalfluss** ist, wenn die Wahl der augmentierenden Pfade unglücklich ist.\n\nDie Ganzzahligkeit ist also nicht nur bequem, sondern zentral für die einfache Aussage:\n- Terminierung,\n- ganzzahliges Ergebnis,\n- monotone Erhöhung in diskreten Schritten."
+  },
+  {
+    "front": "[2026-05-12] Wie konstruiert man aus einem bipartiten Graphen ein Maxflow-Netzwerk für Maximum Matching?",
+    "back": "Für einen bipartiten Graphen mit Partition\n$$U \\dot\\cup W$$\nbaut man das Netzwerk so:\n\n- neue **Quelle** $s$,\n- neue **Senke** $t$,\n- Kanten\n  $$s \\to u \\quad \\text{für alle } u\\in U,$$\n- jede ursprüngliche Kante wird gerichtet von\n  $$U \\to W,$$\n- Kanten\n  $$w \\to t \\quad \\text{für alle } w\\in W.$$\n\nAlle diese Kanten bekommen Kapazität\n$$1.$$\n\nIntuition:\n- $s\\to U$ erzwingt, dass jeder Knoten in $U$ höchstens einmal benutzt wird,\n- $W\\to t$ erzwingt dasselbe für $W$,\n- eine Flusseinheit durch $u\\to w$ entspricht der Auswahl der Matching-Kante $\\{u,w\\}$."
+  },
+  {
+    "front": "[2026-05-12] Warum entspricht ein ganzzahliger Fluss im Matching-Netzwerk genau einem Matching?",
+    "back": "Im Matching-Netzwerk haben alle Kapazitäten den Wert\n$$1.$$\n\nIst der Fluss **ganzzahlig**, dann kann jede Kante nur Fluss $0$ oder $1$ tragen.\n\nWegen der Kapazitäten auf\n$$s\\to U \\quad \\text{und} \\quad W\\to t$$\nkann jeder Knoten in $U$ und jeder Knoten in $W$ an höchstens einer Flusseinheit beteiligt sein. Daher können nicht zwei ausgewählte Kanten denselben Endpunkt haben.\n\nDie Kanten $u\\to w$ mit Fluss $1$ bilden also genau ein **Matching**. Umgekehrt erzeugt jedes Matching der Größe $k$ einen Flusswert $k$, indem man auf den Pfaden\n$$s\\to u\\to w\\to t$$\njeweils eine Einheit schickt."
+  },
+  {
+    "front": "[2026-05-12] Warum reicht ein beliebiger fraktionaler Maxflow im Matching-Netzwerk nicht als Matching?",
+    "back": "Ein **Matching** ist eine diskrete Kantenmenge. Ein **fraktionaler Fluss** kann dagegen Fluss auf mehrere Kanten aufteilen.\n\nDann könnte ein Knoten effektiv „halb“ mit mehreren Nachbarn verbunden sein, was kein gültiges Matching ist. Solche Lösungen sind für das ursprüngliche Problem unbrauchbar.\n\nErst die **Ganzzahligkeit** macht aus Flusswerten echte Entscheidungen:\n$$f(e)\\in\\{0,1\\}.$$\n\nDeshalb ist wichtig:\n- das Netzwerk hat ganzzahlige Kapazitäten,\n- Ford-Fulkerson liefert dann einen ganzzahligen Maximalfluss,\n- dieser lässt sich direkt als Matching lesen.\n\nDie Aussage „Maxflow = Matching“ stimmt also in dieser direkten Form nur über den Umweg der Ganzzahligkeit."
+  },
+  {
+    "front": "[2026-05-12] Warum kann ein greedily gewähltes Matching kleiner sein als ein Maximum Matching?",
+    "back": "Ein **greedy Matching** wählt lokal plausible Kanten, ohne spätere Konflikte zu berücksichtigen.\n\nDadurch kann es früh Knoten „verbrauchen“, die man für eine bessere globale Kombination gebraucht hätte. In bipartiten Graphen ist das besonders tückisch: Eine lokal gute Kante kann mehrere spätere Möglichkeiten blockieren.\n\nDie Maxflow-Modellierung vermeidet dieses Problem, weil sie nicht lokal entscheidet, sondern eine globale Struktur optimiert. Augmentierende Pfade im zugehörigen Netzwerk entsprechen genau den Verbesserungen, die ein festgefahrenes greedy Matching noch vergrößern können.\n\nDie Lehre ist: **lokal maximal** bedeutet nicht **maximum**."
+  },
+  {
+    "front": "[2026-05-12] Wie modelliert man kantendisjunkte $u$-$v$-Pfade als Flussproblem?",
+    "back": "Für einen ungerichteten Graphen ersetzt man jede Kante\n$$\\{x,y\\}$$\ndurch zwei gerichtete Kanten\n$$(x,y)\\ \\text{und}\\ (y,x)$$\nmit Kapazität $1$.\n\nDann setzt man:\n- **Quelle** $u$,\n- **Senke** $v$.\n\nEin ganzzahliger Flusswert $k$ bedeutet, dass insgesamt $k$ Einheiten von $u$ nach $v$ geschickt werden. Wegen der Kapazität $1$ kann jede gerichtete Kante höchstens einmal benutzt werden.\n\nÜber **Max-Flow-Min-Cut** folgt dann die kantendisjunkte Version von **Mengers Satz**: Die maximale Anzahl kantendisjunkter $u$-$v$-Pfade ist gleich der minimalen Anzahl von Kanten, deren Entfernung $u$ von $v$ trennt."
+  },
+  {
+    "front": "[2026-05-12] Warum bleibt die Extraktion von Wegen aus einem ganzzahligen Fluss nicht stecken?",
+    "back": "Betrachte den Subgraphen der Kanten mit Fluss $1$. Für jeden inneren Knoten gilt wegen **Flusserhaltung**:\n- Anzahl benutzter eingehender Kanten\n- = Anzahl benutzter ausgehender Kanten.\n\nWenn man also auf einem konstruierten Weg in einen inneren Knoten hineinkommt, gibt es — solange man benutzte Kanten korrekt entfernt — auch wieder eine ausgehende Kante, auf der man weitergehen kann.\n\nDarum bleibt das greedige Extrahieren eines $u$-$v$-Weges nicht stecken. Nach dem Entfernen dieses Weges sinkt der Flusswert um genau\n$$1,$$\nund man kann weitermachen, bis kein Fluss mehr übrig ist."
+  },
+  {
+    "front": "[2026-05-12] Warum darf ein aus dem Fluss extrahierter Weg Kreise enthalten, und was macht man dann?",
+    "back": "Ein aus dem Fluss gelesener Weg muss zunächst **nicht einfach** sein. Er kann:\n- einen Kreis enthalten,\n- sogar vorübergehend wieder zur Quelle zurücklaufen.\n\nDas ist kein Problem. Enthält der Weg einen Kreis, kann man diesen **löschen**, ohne die Verbindung von $u$ nach $v$ zu zerstören. Übrig bleibt ein echter Pfad.\n\nDer Grund ist, dass Kreise keinen Netto-Beitrag zum Transport von einer Quelle zur Senke leisten. Für die Anzahl kantendisjunkter Wege zählt nur, dass jede extrahierte Einheit Fluss letztlich einen $u$-$v$-Pfad liefert.\n\nSo wird aus dem Flusswert $k$ tatsächlich eine Menge von $k$ kantendisjunkten Pfaden."
+  },
+  {
+    "front": "[2026-05-12] Wie wird die Qualitätsfunktion der Bildsegmentierung in ein Min-Cut-Problem umgeformt?",
+    "back": "Die ursprüngliche Qualität ist\n$$Q(A,B)=\\sum_{p\\in A}\\alpha(p)+\\sum_{p\\in B}\\beta(p)-\\sum_{\\lvert e\\cap A\\rvert=1}\\gamma(e).$$\n\nDiese soll **maximiert** werden. Für Min-Cut formt man sie mit der konstanten Summe\n$$\\sum_p (\\alpha(p)+\\beta(p))$$\num. Dadurch erhält man äquivalent die zu **minimierende** Kostenfunktion\n$$\\sum_{p\\in A}\\beta(p)+\\sum_{p\\in B}\\alpha(p)+\\sum_{\\lvert e\\cap A\\rvert=1}\\gamma(e).$$\n\nInterpretation:\n- ein Pixel in $A$ zahlt die „Hintergrund-Strafe“ $\\beta(p)$,\n- ein Pixel in $B$ zahlt die „Vordergrund-Strafe“ $\\alpha(p)$,\n- getrennte Nachbarn zahlen $\\gamma(e)$.\n\nGenau diese positiven Kosten lassen sich als Schnittkapazitäten modellieren."
   }
 ]

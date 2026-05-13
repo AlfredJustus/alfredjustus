@@ -1318,5 +1318,65 @@
   {
     "front": "[2026-05-11] Was ist das **ABA-Problem**, und warum ist ein erfolgreicher CAS dafür kein Gegenbeweis?",
     "back": "Beim **ABA-Problem** liest ein Thread zuerst den Wert `A`. Danach ändern andere Threads den Wert zu `B` und später wieder zu `A`. Ein späterer CAS auf `A` kann dann erfolgreich sein, obwohl sich zwischenzeitlich sehr wohl etwas Relevantes geändert hat.\n\nCAS garantiert nur:\n**Der aktuelle Bitwert entspricht dem erwarteten Wert.**\n\nCAS garantiert **nicht**:\n**Seit dem letzten Lesen ist nichts passiert.**\n\nDas Problem liegt also nicht im CAS selbst, sondern in der falschen Interpretation seines Erfolgs."
+  },
+  {
+    "front": "[2026-05-12] Warum ist das ABA-Muster bei `compareAndSwap` auf Pointern gefährlich?",
+    "back": "Gefährlich ist nicht das Muster `$A \\to B \\to A$` selbst, sondern die falsche Schlussfolgerung daraus: Ein Thread sieht wieder denselben Pointerwert `$A$` und nimmt an, die Datenstruktur sei unverändert.\n\nBei **lockfreien Datenstrukturen** mit **Node-Pool** kann aber Folgendes passieren:\n1. Thread $T_1$ liest Pointer `$A$`.\n2. Andere Threads entfernen den Knoten, benutzen oder verändern die Struktur, und legen später wieder einen Knoten an dieselbe Adresse.\n3. Der globale Pointer ist wieder `$A$`.\n\nDann kann `compareAndSwap` erfolgreich sein, obwohl sich der **logische Zustand** der Datenstruktur zwischenzeitlich geändert hat. **Pointer-Gleichheit** bedeutet also nicht **Zustands-Gleichheit**."
+  },
+  {
+    "front": "[2026-05-12] Wie erzeugt ein Node-Pool konkret ein ABA-Problem in einer Stack- oder Listenstruktur?",
+    "back": "Ein **Node-Pool** recycelt entfernte Knoten statt sie endgültig freizugeben. Genau diese Wiederverwendung macht ABA möglich:\n\n- Ein Thread liest den aktuellen `top` als Knoten `$A$`.\n- Ein anderer Thread poppt `$A$`, legt ihn in den Pool zurück und verändert den Stack.\n- Später wird derselbe Speicherplatz erneut als Knoten verwendet und wieder an die Spitze gesetzt.\n\nDer erste Thread sieht nun wieder denselben Pointer `$A$`. Sein lokales Wissen ist aber **veraltet**, weil `$A$` inzwischen für einen **logisch anderen Zustand** stehen kann. Dadurch kann ein CAS auf `top` fälschlich erfolgreich sein."
+  },
+  {
+    "front": "[2026-05-12] Warum löst Pointer Tagging das ABA-Problem nicht vollständig?",
+    "back": "**Pointer Tagging** speichert zusätzlich zum Pointer einen kleinen **Tag-Zähler** in freien Bits. Dadurch wird aus einem bloßen Vergleich auf `$A$` ein Vergleich auf etwa `$(A, t)$`.\n\nDas hilft, weil nach einer Änderung typischerweise nicht wieder exakt derselbe kombinierte Wert erscheint. Aber es ist **keine Garantie**, denn der Tag hat nur endlich viele Zustände:\n$$2^k \\text{ bei } k \\text{ freien Bits.}$$\n\nNach genügend Änderungen läuft der Tag **modulo $2^k$** über. Dann kann derselbe kombinierte Wert wieder auftreten. Pointer Tagging macht ABA also **unwahrscheinlicher**, aber nicht **unmöglich**."
+  },
+  {
+    "front": "[2026-05-12] Gegeben sind 5 freie Tag-Bits in einem Pointer. Wie viele Tag-Zustände kann Pointer Tagging unterscheiden?",
+    "back": "Bei **$k$ freien Bits** gibt es\n$$2^k$$\nverschiedene Tag-Zustände.\n\nFür $k = 5$ also:\n$$2^5 = 32.$$\n\nMit 5 freien Bits kann man also **32 verschiedene Tags** unterscheiden, bevor der Zähler wieder überläuft."
+  },
+  {
+    "front": "[2026-05-12] Warum sind bei 32-Byte-Alignment die untersten 5 Bits eines Pointers frei?",
+    "back": "Bei **32-Byte-Alignment** beginnt jede gültige Adresse an einem Vielfachen von $32$.\n\nDa\n$$32 = 2^5,$$\nsind solche Adressen immer durch $2^5$ teilbar. In Binärdarstellung bedeutet das: Die **untersten 5 Bits** sind immer `$0$`.\n\nGenau diese Bits kann man für **Pointer Tagging** verwenden, ohne die eigentliche Adresse zu verlieren. Das funktioniert aber nur, solange die Architektur und das Speicherlayout diese freien Bits tatsächlich garantieren."
+  },
+  {
+    "front": "[2026-05-12] Warum verhindern Hazard Pointers das Pointer-ABA sicherer als Pointer Tagging?",
+    "back": "**Hazard Pointers** verhindern nicht bloß das Erkennen von ABA, sondern die entscheidende Ursache: die **zu frühe Wiederverwendung** eines Knotens.\n\nEin Thread, der einen Pointer lokal halten will, trägt ihn in einen **global sichtbaren Hazard-Slot** ein. Bevor ein anderer Thread einen entfernten Knoten in den Pool zurücklegt, prüft er, ob dieser Knoten irgendwo als Hazard markiert ist.\n\nIst der Knoten noch hazardous, darf er **nicht wiederverwendet** werden. Dadurch kann derselbe Pointer nicht als „neuer“ Knoten zurückkehren, solange noch ein Thread ihn lokal benutzt. Das ist eine echte **Sicherheitsgarantie**, nicht nur eine Wahrscheinlichkeitsverbesserung."
+  },
+  {
+    "front": "[2026-05-12] Warum reicht es nicht, einen gelesenen Pointer einfach sofort als Hazard einzutragen?",
+    "back": "Zwischen dem **Lesen** des globalen Pointers und dem **Eintragen** in den eigenen Hazard-Slot liegt ein Race:\n\n- Thread $T_1$ liest `head = A`.\n- Bevor $T_1$ seinen Hazard-Slot setzt, entfernt ein anderer Thread `$A$` aus der Struktur und verarbeitet ihn weiter.\n- Erst danach markiert $T_1$ `$A$` als Hazard.\n\nDann schützt der Hazard-Eintrag zu spät. Der Thread könnte mit einem Pointer weiterarbeiten, der in der Zwischenzeit schon ungültig geworden ist. Deshalb braucht man nach dem Setzen des Hazards eine **erneute Prüfung**, ob der globale Pointer noch derselbe ist."
+  },
+  {
+    "front": "[2026-05-12] Wie funktioniert das sichere Setzen eines Hazard Pointers?",
+    "back": "Das sichere Schema ist:\n\n1. Globalen Pointer lesen, z. B. `head`.\n2. Diesen Wert in den eigenen **Hazard-Slot** eintragen.\n3. Noch einmal den globalen Pointer lesen.\n4. Nur wenn beide Werte gleich sind, weiterarbeiten; sonst wiederholen.\n\nDie entscheidende Bedingung ist also:\n$$\\text{globaler Pointer nach dem Setzen} = \\text{lokal gemerkter Pointer}.$$\n\nDiese **Nachprüfung** schließt das Race zwischen Lesen und Hazard-Setzen. Ohne sie wäre die Hazard-Markierung nicht zuverlässig."
+  },
+  {
+    "front": "[2026-05-12] Warum hat jeder Thread bei Hazard Pointers typischerweise einen eigenen Slot?",
+    "back": "Das Modell ist absichtlich einfach:\n\n- **Jeder Thread schreibt nur seinen eigenen Slot.**\n- **Alle Threads dürfen alle Slots lesen.**\n\nDadurch gibt es keinen Konflikt darüber, wer einen Slot verändern darf. Gleichzeitig kann jeder Thread vor dem Recyceln eines Knotens global prüfen, ob dieser Knoten noch von irgendeinem anderen Thread gehalten wird.\n\nDiese Aufteilung macht die Synchronisation übersichtlich und vermeidet zusätzliche Konkurrenz beim Schreiben der Hazard-Information."
+  },
+  {
+    "front": "[2026-05-12] Warum kostet `isHazard(node)` typischerweise $O(n)$ bei $n$ Threads?",
+    "back": "Um festzustellen, ob ein Knoten noch **hazardous** ist, muss geprüft werden, ob er in **irgendeinem** Hazard-Slot steht.\n\nWenn jeder der $n$ Threads einen eigenen Slot hat, muss man im einfachsten Fall alle Slots durchsuchen. Daher ist die Laufzeit:\n$$O(n).$$\n\nDer Preis der Sicherheit ist also ein **linearer Scan** über die Threads. Das ist oft akzeptabel, weil dadurch die Wiederverwendung von Knoten korrekt kontrolliert wird."
+  },
+  {
+    "front": "[2026-05-12] Warum geht bei einem Hazard-Pointer-basierten Pool kein Knoten dauerhaft verloren?",
+    "back": "Wenn ein Thread einen Knoten nicht in den Pool zurücklegt, weil er noch als Hazard markiert ist, sieht das zunächst wie ein Speicherleck aus. Tatsächlich ist es nur eine **verzögerte Freigabe**.\n\nDer Grund:\n- Solange der Knoten hazardous ist, hält ihn noch irgendein Thread sichtbar fest.\n- Sobald der letzte Thread fertig ist, entfernt er seinen Hazard-Eintrag.\n- Danach kann ein späterer Freigabeschritt erkennen, dass der Knoten nicht mehr hazardous ist, und ihn in den Pool zurücklegen.\n\nDer Knoten ist also nicht verloren, sondern nur so lange zurückgehalten, wie seine Wiederverwendung unsicher wäre."
+  },
+  {
+    "front": "[2026-05-12] Warum hilft Garbage Collection gegen Pointer-ABA in den gezeigten Beispielen, aber nicht allgemein gegen ABA?",
+    "back": "Ein **Garbage Collector** verhindert in den Pointer-Beispielen, dass ein Objekt freigegeben und an derselben Adresse wiederverwendet wird, solange noch irgendeine Variable darauf zeigt. Dadurch kann derselbe Pointer nicht als „neues“ Objekt zurückkommen.\n\nDas hilft aber nur, wenn das ABA-Problem auf **Pointern** beruht. Bei `compareAndSwap` auf **Werten** wie Integer-Countern gilt das nicht: Derselbe Zahlenwert kann wieder auftreten, ohne dass Speicherverwaltung eine Rolle spielt.\n\nGC verhindert also bestimmtes **Pointer-ABA**, aber nicht das allgemeine Muster\n$$A \\to B \\to A$$\nauf beliebigen CAS-Werten."
+  },
+  {
+    "front": "[2026-05-12] Warum ist die gezeigte FIFO-Queue wait-free, obwohl sie weder Locks noch `compareAndSwap` benutzt?",
+    "back": "Die gezeigte Queue ist stark eingeschränkt: **genau ein Producer** führt `enqueue` aus und **genau ein Consumer** führt `dequeue` aus.\n\nDadurch gibt es keine konkurrierenden Schreibzugriffe auf dieselben Verwaltungsvariablen:\n- Nur der Producer schreibt `tail`.\n- Nur der Consumer schreibt `head`.\n\nDie Queue ist ein **zyklischer Puffer** mit fester Größe; Indizes laufen modulo `capacity`. Weil kein zweiter Thread denselben Zeiger schreibt, braucht man weder Locks noch CAS. Jede Operation kann in endlich vielen eigenen Schritten abgeschlossen werden, also ist die Struktur in diesem Modell **wait-free**."
+  },
+  {
+    "front": "[2026-05-12] Warum wäre dieselbe Array-Queue mit zwei Produzenten oder zwei Konsumenten nicht korrekt?",
+    "back": "Die Korrektheit der gezeigten Queue hängt daran, dass es pro Verwaltungsvariable genau **einen Schreiber** gibt.\n\nMit zwei Produzenten würden beide `tail` verändern, mit zwei Konsumenten beide `head`. Dann könnten Updates verloren gehen oder auf veralteten Werten basieren, weil die Implementierung keine zusätzliche Synchronisation wie Locks oder CAS verwendet.\n\nDie Struktur ist also nicht „allgemein lockfrei“, sondern nur korrekt unter der Bedingung:\n- **ein** Producer,\n- **ein** Consumer,\n- feste Kapazität.\n\nSobald mehrere Threads denselben Index schreiben, bricht die Begründung zusammen."
+  },
+  {
+    "front": "[2026-05-12] Was bedeutet Linearisierbarkeit für eine nebenläufige Methode?",
+    "back": "**Linearisierbarkeit** verlangt, dass jede Methodenoperation so erklärbar ist, als hätte ihr gesamter Effekt an genau **einem atomaren Punkt** stattgefunden:\n$$\\text{zwischen Invocation und Response.}$$\n\nObwohl die Methode real über ein Zeitintervall läuft, muss es einen **Linearization Point** geben, an dem man sie in eine passende sequenzielle Reihenfolge einordnen kann. Diese Reihenfolge muss dann der **sequenziellen Spezifikation** des Objekts entsprechen.\n\nLinearisierbarkeit ist also ein Korrektheitsbegriff, der reale Nebenläufigkeit auf eine zulässige atomare Sicht zurückführt."
   }
 ]
