@@ -1198,5 +1198,65 @@
   {
     "front": "[2026-05-11] Wie schreibt man bei der Substitution $w=\\sqrt{x-2}$ sowohl $x$ als auch $dx$ in $w$ um?",
     "back": "Aus\n$$\nw=\\sqrt{x-2}\n$$\nfolgt durch Quadrieren\n$$\nx=w^2+2.\n$$\n\nAußerdem gilt\n$$\n\\frac{dw}{dx}=\\frac12(x-2)^{-1/2}=\\frac{1}{2w}.\n$$\nDaraus erhält man\n$$\ndx=2w\\,dw.\n$$\n\nFür eine vollständige Substitution müssen also beide Ersetzungen gemacht werden:\n$$\nx=w^2+2,\\qquad dx=2w\\,dw.\n$$\n\nErst dann ist das Integral vollständig in der neuen Variablen formuliert."
+  },
+  {
+    "front": "[2026-05-13] Warum berechnet $\\int_a^b v(t)\\,dt$ die Positionsänderung, aber $\\int_a^b |v(t)|\\,dt$ die zurückgelegte Strecke?",
+    "back": "Bei $\\int_a^b v(t)\\,dt$ werden **positive und negative Geschwindigkeiten mit Vorzeichen** aufsummiert. Vorwärtsbewegung erhöht also die Position, Rückwärtsbewegung verringert sie.\n\nBei $\\int_a^b |v(t)|\\,dt$ wird die **Richtung ignoriert**, weil der Betrag jede Geschwindigkeit nichtnegativ macht. Deshalb zählt jede Bewegung positiv zur Gesamtlänge des Weges.\n\nKurz:\n$$\\text{Positionsänderung}=\\int_a^b v(t)\\,dt,$$\n$$\\text{zurückgelegte Strecke}=\\int_a^b |v(t)|\\,dt.$$"
+  },
+  {
+    "front": "[2026-05-13] Was ist der entscheidende Unterschied zwischen einem bestimmten und einem unbestimmten Integral?",
+    "back": "Ein **bestimmtes Integral** über $[a,b]$ liefert eine **Zahl**:\n$$\\int_a^b f(x)\\,dx.$$\n\nEs beschreibt einen aufsummierten Gesamteffekt auf einem festen Intervall.\n\nEin **unbestimmtes Integral** meint das Finden einer **Stammfunktion**:\n$$\\int f(x)\\,dx = F(x)+C.$$\n\nEs liefert also keine Zahl, sondern eine Funktionsfamilie. Der Hauptsatz verbindet beide Sichtweisen:\nWenn $F'=f$, dann\n$$\\int_a^b f(x)\\,dx = F(b)-F(a).$$"
+  },
+  {
+    "front": "[2026-05-13] Warum ist eine Zerlegung nicht auf gleich lange Teilintervalle beschränkt?",
+    "back": "Für das **Riemann-Integral** ist nur wichtig, dass man das Intervall in endlich viele Teilintervalle zerlegt und diese immer feiner machen kann. Die Teilintervalle müssen **nicht gleich lang** sein.\n\nDas ist wichtig, weil man so flexibel an problematischen Stellen feiner zerlegen kann. Die Konstruktion hängt also nicht an einer speziellen Gitterform, sondern an der Idee, dass die maximale Teilintervalllänge gegen $0$ geht.\n\nGleichlange Intervalle sind nur ein Spezialfall, nicht die allgemeine Definition."
+  },
+  {
+    "front": "[2026-05-13] Was ist eine Verfeinerung einer Zerlegung, und warum ist sie für Ober- und Untersummen nützlich?",
+    "back": "Eine **Verfeinerung** entsteht, wenn man zu einer vorhandenen Zerlegung weitere Unterteilungspunkte hinzufügt. Die alten Punkte bleiben erhalten, einige Teilintervalle werden nur weiter aufgespalten.\n\nDas ist nützlich, weil feinere Zerlegungen die Approximation verbessern:\n- **Untersummen** können dadurch größer werden,\n- **Obersummen** können dadurch kleiner werden.\n\nSo rücken beide näher zusammen. Genau dieses Zusammenrücken ist die Grundlage der Riemann-Integrierbarkeit."
+  },
+  {
+    "front": "[2026-05-13] Warum dürfen bei einer Treppenfunktion die Werte an den Zerlegungspunkten beliebig sein?",
+    "back": "Eine **Treppenfunktion** ist auf jedem offenen Teilintervall $(x_{k-1},x_k)$ konstant. An den Zerlegungspunkten selbst ist der Wert für das Integral unwesentlich.\n\nGrund:\nEin einzelner Punkt hat **Länge $0$** und trägt daher keine Fläche bei. Ändert man den Funktionswert nur an endlich vielen Punkten, ändert sich das Integral nicht.\n\nDeshalb hängt\n$$\\int_a^b s(x)\\,dx$$\nnur von den konstanten Werten auf den Teilintervallen ab, nicht von isolierten Punktwerten."
+  },
+  {
+    "front": "[2026-05-13] Wie berechnet man das Integral einer Treppenfunktion?",
+    "back": "Ist $s$ auf jedem Intervall $(x_{k-1},x_k)$ konstant mit Wert $c_k$, dann gilt\n$$\\int_a^b s(x)\\,dx=\\sum_{k=1}^n c_k(x_k-x_{k-1}).$$\n\nMan addiert also für jedes Teilintervall:\n- **Höhe** $c_k$\n- mal **Breite** $(x_k-x_{k-1})$.\n\nDas ist genau die Summe der Rechtecksflächen. Diese Formel ist die Grundidee, aus der das Riemann-Integral durch Grenzübergang entsteht."
+  },
+  {
+    "front": "[2026-05-13] Warum reicht es für das Riemann-Integral nicht, irgendeinen repräsentativen Punkt pro Teilintervall zu wählen?",
+    "back": "Man darf in jedem Teilintervall zwar **beliebige repräsentative Funktionswerte** wählen, aber eine einzelne solche Summe ist noch **nicht** das Integral. Sie ist nur eine Approximation.\n\nErst wenn bei immer feineren Zerlegungen alle zulässigen Rechteckapproximationen auf denselben Grenzwert zulaufen, ist ein eindeutiger Integralwert bestimmt.\n\nDarum ist die präzise Definition nicht „eine Summe mit Stützstellen“, sondern die Übereinstimmung von bester Approximation von unten und oben:\n$$\\sup L(f)=\\inf U(f).$$"
+  },
+  {
+    "front": "[2026-05-13] Was sind Ober- und Untersummen konzeptionell?",
+    "back": "**Untersummen** approximieren $f$ durch Treppenfunktionen, die überall **unterhalb oder gleich** $f$ liegen.  \n**Obersummen** verwenden Treppenfunktionen, die überall **oberhalb oder gleich** $f$ liegen.\n\nDamit erhält man:\n- eine Menge aller unteren Approximationen $L(f)$,\n- eine Menge aller oberen Approximationen $U(f)$.\n\nDie Untersummen liefern sichere Werte **von unten**, die Obersummen sichere Werte **von oben**. Das Integral existiert genau dann, wenn die beste untere und die beste obere Approximation zusammenfallen."
+  },
+  {
+    "front": "[2026-05-13] Wann ist eine Funktion Riemann-integrierbar?",
+    "back": "Eine Funktion ist **Riemann-integrierbar**, wenn die Menge ihrer Untersummen und die Menge ihrer Obersummen denselben Grenzwert festlegen, also\n$$\\sup L(f)=\\inf U(f).$$\n\nDann gibt es einen **eindeutigen** Wert, der weder von unten noch von oben weiter verbessert werden kann.\n\nWenn zwischen diesen beiden Werten ein positiver Abstand bleibt, ist kein eindeutiger Integralwert durch die Riemann-Konstruktion bestimmt."
+  },
+  {
+    "front": "[2026-05-13] Warum ist „differenzierbar $\\Rightarrow$ integrierbar“ nicht die richtige Leitidee für das Riemann-Integral?",
+    "back": "Die Riemann-Konstruktion basiert auf **Rechteckapproximationen**, nicht auf Ableitungen. Deshalb ist **Differenzierbarkeit nicht erforderlich**.\n\nWichtige Gegenbeispiele zur falschen Leitidee:\n- **Treppenfunktionen** sind zentral für die Konstruktion, aber an Sprungstellen nicht differenzierbar.\n- Funktionen mit **Knick** können ebenfalls integrierbar sein, obwohl dort keine Ableitung existiert.\n\nFür die Vorlesung sind die relevanten hinreichenden Klassen:\n- **stetige Funktionen** auf $[a,b]$,\n- **monotone Funktionen** auf $[a,b]$.\n\nBeide sind Riemann-integrierbar."
+  },
+  {
+    "front": "[2026-05-13] Warum sind stetige Funktionen auf einem kompakten Intervall immer Riemann-integrierbar?",
+    "back": "**Stetige Funktionen** auf einem kompakten Intervall $[a,b]$ schwanken auf hinreichend kleinen Teilintervallen nur wenig. Dadurch kann man Zerlegungen so fein wählen, dass Ober- und Untersummen beliebig nahe zusammenrücken.\n\nGenau deshalb gilt:\n$$f \\text{ stetig auf } [a,b] \\;\\Rightarrow\\; f \\text{ ist Riemann-integrierbar.}$$\n\nDie Stetigkeit liefert also die Kontrolle, die man braucht, damit die Rechteckapproximationen von oben und unten denselben Wert erzwingen."
+  },
+  {
+    "front": "[2026-05-13] Warum sind monotone Funktionen auf einem kompakten Intervall trotz möglicher Sprünge Riemann-integrierbar?",
+    "back": "**Monotone Funktionen** können Sprungstellen haben und müssen nicht stetig sein. Trotzdem sind sie auf kompakten Intervallen Riemann-integrierbar.\n\nDer Grund ist, dass ihre Werte auf jedem Teilintervall geordnet sind: Das Minimum und Maximum liegen an den Randbereichen. Dadurch lässt sich die Differenz zwischen Ober- und Untersummen durch feine Zerlegungen kontrollieren.\n\nAlso gilt:\n$$f \\text{ monoton auf } [a,b] \\;\\Rightarrow\\; f \\text{ ist Riemann-integrierbar.}$$\n\nDas zeigt besonders gut, dass **Stetigkeit hinreichend, aber nicht notwendig** ist."
+  },
+  {
+    "front": "[2026-05-13] Wie benutzt man den Hauptsatz zur Berechnung eines bestimmten Integrals?",
+    "back": "Hat man eine **Stammfunktion** $F$ von $f$, also\n$$F'(x)=f(x),$$\ndann berechnet man das bestimmte Integral durch\n$$\\int_a^b f(t)\\,dt = F(b)-F(a).$$\n\nMan muss also nicht mehr direkt mit Ober- und Untersummen arbeiten. Der Hauptsatz ersetzt den Grenzwertprozess durch eine Auswertung an den Grenzen.\n\nRezept:\n1. Stammfunktion $F$ finden,\n2. obere Grenze einsetzen,\n3. untere Grenze einsetzen,\n4. differenzieren:\n$$F(b)-F(a).$$"
+  },
+  {
+    "front": "[2026-05-13] Was sagt der erste Teil des Hauptsatzes in Funktionsform?",
+    "back": "Ist $f$ **stetig**, dann definiert\n$$G(x)=\\int_a^x f(t)\\,dt$$\neine Funktion $G$, die eine Stammfunktion von $f$ ist.\n\nDas heißt:\n$$G'(x)=f(x).$$\n\nDer erste Teil des Hauptsatzes erklärt also, warum das bestimmte Integral nicht nur Zahlen liefert, sondern durch den variablen oberen Rand direkt eine neue Funktion erzeugt, deren Ableitung wieder der Integrand ist."
+  },
+  {
+    "front": "[2026-05-13] Was folgt aus der Umkehr der Integrationsgrenzen, und warum ist das sinnvoll?",
+    "back": "Es gilt\n$$\\int_b^a f(x)\\,dx=-\\int_a^b f(x)\\,dx.$$\n\nDas ist sinnvoll, weil das bestimmte Integral eine **orientierte Aufsummierung** ist. Wechselt man die Laufrichtung durch das Intervall, kehrt sich das Vorzeichen um.\n\nEin typischer Fehler ist, beim Vertauschen der Grenzen das Minuszeichen zu vergessen. Gerade bei Rechnungen mit dem Hauptsatz ist das wichtig:\n$$F(a)-F(b)=-(F(b)-F(a)).$$"
   }
 ]
