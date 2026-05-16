@@ -1078,5 +1078,65 @@
   {
     "front": "[2026-05-08] Why does higher memory density make robustness harder, and how does Row Hammer illustrate this?",
     "back": "Higher density usually means cells are **smaller**, **closer together**, and in DRAM often store **less charge**. That makes them more vulnerable to leakage and electrical interference.\n\n**Row Hammer** shows this concretely: repeatedly activating one DRAM row can disturb nearby rows enough to cause **bit flips**. This violates the architectural expectation that a load or access should not modify unrelated memory.\n\nSo increasing density improves capacity and cost, but can make reliability and isolation harder to maintain."
+  },
+  {
+    "front": "[2026-05-15] Why can’t one memory technology serve as the “ideal memory” for a computer?",
+    "back": "Because the desired properties conflict: ideal memory would be **fast, large, cheap, dense, low-energy, and easy to integrate**, but real technologies trade these off against each other.\n\nExamples:\n- **SRAM** is fast and logic-compatible, but low-density and expensive.\n- **DRAM** is denser and cheaper, but slower and needs refresh.\n- **PCM** is non-volatile and dense, but has high write energy and higher latency.\n\nThis is why systems use a **memory hierarchy** instead of a single universal memory."
+  },
+  {
+    "front": "[2026-05-15] Why is DRAM used for main memory while SRAM is used for caches?",
+    "back": "Because their strengths match different hierarchy levels.\n\n- **DRAM** stores bits as charge in a capacitor, so it is **dense** and relatively **low-cost**, which makes it suitable for large-capacity **main memory**.\n- **SRAM** stores bits in **cross-coupled inverters**, so it is **faster** and integrates well with logic, which makes it suitable for small, fast **caches**.\n\nThe trade-off is that SRAM uses more transistors per cell, so it is much less dense and more expensive than DRAM."
+  },
+  {
+    "front": "[2026-05-15] What important read behavior of DRAM makes it different from SRAM?",
+    "back": "A **DRAM read is destructive**.\n\nReading DRAM requires sensing the tiny charge stored in a capacitor, and this process disturbs or removes the stored value. Therefore, after the value is sensed, it must be **restored**.\n\nIn contrast, **SRAM** stores data in stable cross-coupled inverters, so reads do not require this restore step.\n\nThis is one reason DRAM access behavior is more complex than SRAM access behavior."
+  },
+  {
+    "front": "[2026-05-15] Why is PCM interesting as an alternative memory, and what limits its use?",
+    "back": "**Phase-change memory (PCM)** is attractive because it is **non-volatile** and can be **denser than DRAM**. It stores data by switching a material between **amorphous** and **crystalline** phases, which have different resistances.\n\nIt is limited by:\n- **higher latency**\n- especially **high write energy**\n- **limited endurance** after many writes\n\nThe high write cost comes from needing to **heat and cool** the material to change phase."
+  },
+  {
+    "front": "[2026-05-15] Why does a memory hierarchy work only if programs exhibit locality?",
+    "back": "Because upper levels help only when they can serve a large fraction of accesses.\n\nIf most accesses **miss** in the fast levels, the processor keeps paying the latency of lower levels, so the hierarchy gives little benefit. The hierarchy works because programs often:\n- reuse recently accessed data (**temporal locality**)\n- access nearby addresses soon after one another (**spatial locality**)\n\nWithout locality, small fast memories near the CPU would not significantly reduce average access time."
+  },
+  {
+    "front": "[2026-05-15] How do temporal and spatial locality differ, and how does a cache exploit each?",
+    "back": "**Temporal locality** means a recently accessed location is likely to be accessed again soon.\n\n**Spatial locality** means locations near a recently accessed address are likely to be accessed soon.\n\nA cache exploits them differently:\n- For **temporal locality**, it keeps recently used blocks in fast storage.\n- For **spatial locality**, it fetches an entire **cache block** rather than only the requested byte or word.\n\nTypical examples are loop counters and loop instructions for temporal locality, and array traversals or consecutive instructions for spatial locality."
+  },
+  {
+    "front": "[2026-05-15] In a loop over a contiguous array, which kind of locality is most directly exploited by fetching cache blocks?",
+    "back": "Primarily **spatial locality**.\n\nWhen a program accesses one array element, nearby elements are likely to be accessed soon. If the cache fetches a whole block, one miss can bring in several consecutive elements, so later accesses to neighbors may hit.\n\nTemporal locality may also appear if elements are reused, but the main benefit in a simple sequential array traversal comes from **nearby addresses being accessed next**."
+  },
+  {
+    "front": "[2026-05-15] What is a cache block, and why is it the transfer unit instead of a single byte?",
+    "back": "A **cache block** or **cache line** is the fixed-size unit of storage and transfer between memory hierarchy levels.\n\nIt is used instead of a single byte because fetching a whole block exploits **spatial locality**: after accessing one address, nearby addresses are likely to be needed soon.\n\nSo on a miss, the cache brings in the entire block containing the requested address. This improves future hit probability, though it also means the cache stores data in coarse chunks rather than arbitrary individual bytes."
+  },
+  {
+    "front": "[2026-05-15] What must be true for a cache access to be a hit?",
+    "back": "A cache access is a **hit** only if:\n1. the selected entry or set contains a **valid** block, and\n2. the stored **tag matches** the tag of the requested address\n\nThe **offset** then selects the byte or word within that block.\n\nSo a matching tag alone is not enough: if the **valid bit** is not set, the entry does not contain meaningful cache contents."
+  },
+  {
+    "front": "[2026-05-15] In the address split $\\text{tag} \\mid \\text{index} \\mid \\text{offset}$, what does each field do?",
+    "back": "Each field has a different role:\n\n- **Offset**: selects the byte or word **within a cache block**\n- **Index**: selects the cache **entry or set**\n- **Tag**: identifies **which memory block** is currently stored there\n\nSo the index narrows the search location, the tag confirms identity, and the offset chooses the requested data inside the block.\n\nA common mistake is to confuse **offset** with **index**: offset is inside the block, index is for locating the cache position."
+  },
+  {
+    "front": "[2026-05-15] Why is the L2 hit rate not defined over all processor accesses?",
+    "back": "Because **L2** only sees accesses that **missed in L1**.\n\nSo the **local hit rate** of L2 is:\n$$\\text{L2 hit rate} = \\frac{\\text{L2 hits}}{\\text{L2 hits}+\\text{L2 misses}}$$\nwhere the denominator includes only requests that actually reached L2.\n\nDefining it over all processor accesses would mix **global traffic** with **local behavior** and give the wrong quantity for hierarchical timing equations such as\n$$T_i = t_i + m_i T_{i+1}.$$"
+  },
+  {
+    "front": "[2026-05-15] Compute $T_2$ and $T_1$ for $t_1=4$, $m_1=0.1$, $t_2=18$, $m_2=0.1$, and $T_3=180$.",
+    "back": "Using\n$$T_i = t_i + m_i T_{i+1},$$\nfirst compute:\n$$T_2 = 18 + 0.1 \\cdot 180 = 18 + 18 = 36.$$\n\nThen:\n$$T_1 = 4 + 0.1 \\cdot 36 = 4 + 3.6 = 7.6.$$\n\nSo the results are:\n$$T_2 = 36,\\qquad T_1 = 7.6.$$\n\nThis shows how a low miss rate can make the perceived access time much closer to the upper-level latency than to the lower-level latency."
+  },
+  {
+    "front": "[2026-05-15] Why can making a cache larger improve performance and hurt it at the same time?",
+    "back": "A larger cache can **reduce miss rate** because it holds more blocks, but it can also increase the cache’s **intrinsic hit latency**.\n\nThe trade-off appears in:\n$$T_i = t_i + m_i T_{i+1}.$$\n\n- Lower **$m_i$** helps because fewer accesses go to the next level.\n- Higher **$t_i$** hurts because every access reaching that level pays it.\n\nThis is why processors often use multiple cache levels: a small fast **L1** for low $t_i$, then larger slower **L2/L3** for lower miss rates."
+  },
+  {
+    "front": "[2026-05-15] Why can a direct-mapped cache suffer a 0% hit rate even when the cache is not “too small” overall?",
+    "back": "Because of **conflict misses**.\n\nIn a **direct-mapped cache**, each memory block has exactly one allowed cache location. If two frequently used blocks map to the same index and are accessed alternately, each access evicts the other.\n\nExample pattern:\n$$A, B, A, B, A, B$$\nwith $A$ and $B$ mapping to the same index.\n\nAfter the first two misses, every later access also misses, so the hit rate becomes **$0\\%$** for that pattern. This is a placement problem, not simply a total-capacity problem."
+  },
+  {
+    "front": "[2026-05-15] What changes when moving from direct-mapped to set-associative to fully associative caches?",
+    "back": "The key change is **where a block is allowed to go**.\n\n- **Direct-mapped**: one block $\\to$ exactly one cache location\n- **Set-associative**: one block $\\to$ one set, but any **way** in that set\n- **Fully associative**: one block $\\to$ anywhere in the cache\n\nAs associativity increases:\n- **conflict misses decrease**\n- the number of possible placements increases\n- **tag comparison hardware** becomes more expensive and complex\n\nSo higher associativity improves flexibility, but not for free."
   }
 ]

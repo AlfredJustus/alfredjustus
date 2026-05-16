@@ -1,5 +1,5 @@
 {
-  "generated": "2026-05-15T13:15:06.191Z",
+  "generated": "2026-05-16T12:39:44.641Z",
   "model": "gpt-5.4",
   "cardsPerLectureTarget": 15,
   "format": "markdown->parser->json",
@@ -9,9 +9,9 @@
       "name": "Digital Design and Computer Architecture",
       "file": "227-0003-10L.json",
       "apkg": null,
-      "cards": 270,
+      "cards": 285,
       "semester": "spring-2026",
-      "lectures": 18
+      "lectures": 19
     },
     {
       "id": "252-0029-00L",
