@@ -1258,5 +1258,65 @@
   {
     "front": "[2026-05-13] Was folgt aus der Umkehr der Integrationsgrenzen, und warum ist das sinnvoll?",
     "back": "Es gilt\n$$\\int_b^a f(x)\\,dx=-\\int_a^b f(x)\\,dx.$$\n\nDas ist sinnvoll, weil das bestimmte Integral eine **orientierte Aufsummierung** ist. Wechselt man die Laufrichtung durch das Intervall, kehrt sich das Vorzeichen um.\n\nEin typischer Fehler ist, beim Vertauschen der Grenzen das Minuszeichen zu vergessen. Gerade bei Rechnungen mit dem Hauptsatz ist das wichtig:\n$$F(a)-F(b)=-(F(b)-F(a)).$$"
+  },
+  {
+    "front": "[2026-05-18] Warum ist $F(x)=\\int_a^x f(y)\\,dy+C$ mehr als nur eine formale Definition?",
+    "back": "Für **stetiges** $f$ auf $[a,b]$ ist diese Funktion tatsächlich eine **Stammfunktion** von $f$, also gilt\n$$F'(x)=f(x).$$\n\nDer Ausdruck konstruiert also aus einer Änderungsrate $f$ eine passende Größe $F$. Der Hauptsatz sagt damit nicht nur, dass Stammfunktionen existieren, sondern auch, **wie man sie aus dem bestimmten Integral baut**.\n\nDie Konstante $C$ ist nötig, weil beim Ableiten Konstanten verschwinden."
+  },
+  {
+    "front": "[2026-05-18] Warum ist die obere Grenze in $\\int_a^x f(y)\\,dy$ keine bloße Schreibweise, sondern macht den Ausdruck zu einer Funktion?",
+    "back": "Weil **$x$ variabel** ist. Für jedes $x\\in[a,b]$ erhält man einen anderen Wert\n$$F(x)=\\int_a^x f(y)\\,dy.$$\n\nDas Integral beschreibt also nicht nur eine Zahl, sondern den **aufsummierten Effekt von $a$ bis zur aktuellen Stelle $x$**. Genau deshalb kann man diese Integralfunktion anschließend ableiten und mit $f$ vergleichen.\n\nDie Variable $y$ ist dabei nur eine **Integrationsvariable**; entscheidend ist, dass die Grenze $x$ variiert."
+  },
+  {
+    "front": "[2026-05-18] Warum ist die Stetigkeit von $f$ im Beweis von $F'(x_0)=f(x_0)$ entscheidend?",
+    "back": "Man betrachtet den Differenzenquotienten\n$$\\frac{F(x)-F(x_0)}{x-x_0}\n=\\frac{1}{x-x_0}\\int_{x_0}^x f(y)\\,dy.$$\n\nDas ist ein **Mittelwert-artiger Ausdruck** über ein kleines Intervall um $x_0$. Damit dieser gegen $f(x_0)$ konvergiert, muss gelten: Für $y$ nahe bei $x_0$ ist auch $f(y)$ nahe bei $f(x_0)$.\n\nGenau das liefert die **Stetigkeit**. Ohne sie kann das Integral zwar existieren, aber der Mittelwert über kleine Intervalle muss nicht gegen den Funktionswert an der Stelle konvergieren."
+  },
+  {
+    "front": "[2026-05-18] Warum reicht es im Beweis der Differenzierbarkeit nicht, nur den Fall $x>x_0$ zu betrachten?",
+    "back": "Für **Differenzierbarkeit** muss der Grenzwert des Differenzenquotienten von **beiden Seiten** existieren und übereinstimmen.\n\nDer Fall $x>x_0$ behandelt nur den **rechtsseitigen** Grenzübergang. Man muss analog auch $x<x_0$ untersuchen, sonst könnte links ein anderes Verhalten auftreten.\n\nErst wenn beide einseitigen Grenzwerte denselben Wert $f(x_0)$ liefern, folgt\n$$F'(x_0)=f(x_0).$$"
+  },
+  {
+    "front": "[2026-05-18] Warum sind Stammfunktionen nie eindeutig?",
+    "back": "Wenn $F$ eine **Stammfunktion** von $f$ ist, dann ist auch\n$$F(x)+C$$\nfür jede Konstante $C\\in\\mathbb R$ eine Stammfunktion, denn\n$$(F+C)'=F'=f.$$\n\nDer Grund ist: **Ableiten lässt Konstanten verschwinden**. Deshalb erhält man nie nur eine einzelne Stammfunktion, sondern immer eine ganze Familie."
+  },
+  {
+    "front": "[2026-05-18] Warum ist die Integrationskonstante die einzige Freiheit bei Stammfunktionen?",
+    "back": "Sind $F$ und $G$ zwei Stammfunktionen derselben Funktion $f$, dann gilt\n$$F'=f,\\qquad G'=f.$$\n\nFür die Differenz folgt\n$$(F-G)'=F'-G'=0.$$\n\nEine Funktion mit Ableitung $0$ ist auf einem Intervall **konstant**. Also gibt es ein $C\\in\\mathbb R$ mit\n$$F-G=C,$$\nalso\n$$G=F+C.$$\n\nDamit sind **alle** Stammfunktionen genau bis auf eine Konstante bestimmt."
+  },
+  {
+    "front": "[2026-05-18] Wie berechnet man ein bestimmtes Integral mit dem Hauptsatz?",
+    "back": "Man sucht eine **Stammfunktion** $F$ von $f$ und verwendet dann\n$$\\int_a^b f(x)\\,dx=F(b)-F(a).$$\n\nDas verbindet den aufsummierten Effekt des Integrals mit der Ableitung. Statt das Integral direkt als Grenzwert von Summen auszurechnen, genügt es, eine Stammfunktion an den Grenzen auszuwerten.\n\nWichtig ist die Reihenfolge:\n1. Stammfunktion $F$ finden,\n2. obere Grenze einsetzen,\n3. untere Grenze abziehen."
+  },
+  {
+    "front": "[2026-05-18] Wie liest man die Formel $F(x)=F(a)+\\int_a^x F'(y)\\,dy$ inhaltlich?",
+    "back": "Sie ist eine **Startwertformel**:\n$$F(x)=F(a)+\\int_a^x F'(y)\\,dy.$$\n\nBedeutung: Der Wert von $F$ an der Stelle $x$ ist gleich dem **Startwert** $F(a)$ plus der **aufsummierten Änderung** zwischen $a$ und $x$.\n\nDas ist die inhaltliche Brücke zwischen Funktion und Ableitung: Aus einer bekannten Anfangsbedingung und der Änderungsrate kann man die Funktion rekonstruieren."
+  },
+  {
+    "front": "[2026-05-18] Was geht an einer Sprungstelle schief, wenn man $F(x)=\\int_a^x f(y)\\,dy$ betrachtet?",
+    "back": "Hat $f$ eine **Sprungstelle**, dann ist $F$ dort nicht automatisch differenzierbar. Der Hauptsatz in der einfachen Form verlangt **Stetigkeit** von $f$ an der betrachteten Stelle.\n\nBei endlich vielen Sprungstellen kann man die Integralfunktion oft **abschnittsweise** als Stammfunktion auffassen, also auf\n$$[a,b]\\setminus\\{x_1,\\dots,x_n\\}.$$\n\nAn den Sprungstellen selbst darf man aber nicht einfach\n$$F'(x)=f(x)$$\nbehaupten."
+  },
+  {
+    "front": "[2026-05-18] Was ist der Unterschied zwischen unbestimmter und bestimmter Integration?",
+    "back": "Die **unbestimmte Integration** sucht alle Stammfunktionen zu $f$, also die Familie\n$$F+C\\quad\\text{mit }F'=f.$$\n\nDie **bestimmte Integration** liefert eine Zahl bzw. bei variabler Grenze eine Integralfunktion:\n$$\\int_a^b f(x)\\,dx \\quad\\text{oder}\\quad \\int_a^x f(y)\\,dy.$$\n\nKurz:\n- unbestimmt $\\rightarrow$ **Funktionenfamilie**,\n- bestimmt $\\rightarrow$ **aufsummierter Effekt** über ein Intervall.\n\nDer Hauptsatz verbindet beide Sichtweisen."
+  },
+  {
+    "front": "[2026-05-18] Wie erhält man partielle Integration für bestimmte Integrale aus Produktregel und Hauptsatz?",
+    "back": "Aus der **Produktregel**\n$$(f(x)g(x))'=f'(x)g(x)+f(x)g'(x)$$\nfolgt durch Integration von $a$ bis $b$:\n$$\\int_a^b (f'g+fg')\\,dx=\\int_a^b (fg)'(x)\\,dx.$$\n\nMit dem Hauptsatz wird daraus\n$$\\int_a^b (fg)'(x)\\,dx=[f(x)g(x)]_a^b.$$\n\nUmstellen liefert\n$$\\int_a^b f'(x)g(x)\\,dx=[f(x)g(x)]_a^b-\\int_a^b f(x)g'(x)\\,dx.$$\n\nDer wichtige Zusatz bei bestimmten Integralen sind die **Randterme** $[f(x)g(x)]_a^b$."
+  },
+  {
+    "front": "[2026-05-18] Warum ist es bei Substitution in bestimmten Integralen falsch, die alten Grenzen stehen zu lassen?",
+    "back": "Die Grenzen gehören immer zur **aktuellen Integrationsvariable**. Wenn man von $t$ zu\n$$u=\\varphi(t)$$\nwechselt, dann sind die alten Grenzen Werte von $t$, nicht von $u$.\n\nDeshalb müssen auch die Grenzen transformiert werden:\n$$t=a \\mapsto u=\\varphi(a),\\qquad t=b \\mapsto u=\\varphi(b).$$\n\nLässt man die alten Grenzen unverändert stehen, mischt man zwei verschiedene Variablen und erhält ein falsches Integral."
+  },
+  {
+    "front": "[2026-05-18] Rechne das Beispiel: $\\int_0^{\\pi/2}(1+2\\sin t)^{1/3}\\cos t\\,dt$ mit Substitution.",
+    "back": "Setze\n$$u=1+2\\sin t.$$\nDann ist\n$$du=2\\cos t\\,dt,\\qquad \\cos t\\,dt=\\frac12\\,du.$$\n\nDie Grenzen werden zu\n$$t=0 \\Rightarrow u=1,\\qquad t=\\frac{\\pi}{2} \\Rightarrow u=3.$$\n\nAlso:\n$$\\int_0^{\\pi/2}(1+2\\sin t)^{1/3}\\cos t\\,dt\n=\\frac12\\int_1^3 u^{1/3}\\,du.$$\n\nNun integrieren:\n$$\\frac12\\left[\\frac{3}{4}u^{4/3}\\right]_1^3\n=\\frac{3}{8}\\left(3^{4/3}-1\\right).$$"
+  },
+  {
+    "front": "[2026-05-18] Wann ist Trennung der Variablen anwendbar?",
+    "back": "Bei einer Differentialgleichung erster Ordnung, deren rechte Seite sich als Produkt eines **$x$-Teils** und eines **$z$-Teils** schreiben lässt.\n\nTypisch:\n$$z'(x)=p(x)\\,q(z).$$\n\nDann bringt man formal alles mit $z$ auf eine Seite und alles mit $x$ auf die andere:\n$$\\frac{1}{q(z)}\\,dz=p(x)\\,dx.$$\n\nAnschließend integriert man beide Seiten und löst, wenn möglich, nach $z$ auf.\n\nDie Methode funktioniert also nur, wenn die Gleichung wirklich **separierbar** ist."
+  },
+  {
+    "front": "[2026-05-18] Warum darf sich bei unbestimmter Integration die Konstante beim Umformen „ändern“?",
+    "back": "Wenn man nach dem Integrieren algebraisch umformt, kann aus einer Konstante eine **anders geschriebene Konstante** werden. Beispiel:\n$$\\ln|z|=x+C.$$\n\nNach Exponentiation:\n$$|z|=e^{x+C}=e^C e^x.$$\n\nDa $e^C$ wieder eine beliebige positive Konstante ist, schreibt man oft erneut\n$$|z|=C e^x.$$\n\nDie Konstante wurde nicht „verloren“, sondern nur **neu zusammengefasst**."
   }
 ]

@@ -1378,5 +1378,65 @@
   {
     "front": "[2026-05-12] Was bedeutet Linearisierbarkeit für eine nebenläufige Methode?",
     "back": "**Linearisierbarkeit** verlangt, dass jede Methodenoperation so erklärbar ist, als hätte ihr gesamter Effekt an genau **einem atomaren Punkt** stattgefunden:\n$$\\text{zwischen Invocation und Response.}$$\n\nObwohl die Methode real über ein Zeitintervall läuft, muss es einen **Linearization Point** geben, an dem man sie in eine passende sequenzielle Reihenfolge einordnen kann. Diese Reihenfolge muss dann der **sequenziellen Spezifikation** des Objekts entsprechen.\n\nLinearisierbarkeit ist also ein Korrektheitsbegriff, der reale Nebenläufigkeit auf eine zulässige atomare Sicht zurückführt."
+  },
+  {
+    "front": "[2026-05-18] Warum ist **Linearisierbarkeit** stärker als **sequenzielle Konsistenz**?",
+    "back": "**Linearisierbarkeit** verlangt zusätzlich zur sequenziellen Erklärung die **Echtzeitordnung**: Wenn Operation $A$ fertig ist, bevor $C$ überhaupt beginnt, dann muss $A$ auch in der linearen Reihenfolge vor $C$ stehen.\n\n**Sequenzielle Konsistenz** fordert nur:\n- eine globale Reihenfolge,\n- die die **Program Order** jedes Threads respektiert.\n\nDadurch dürfen bei sequenzieller Konsistenz Operationen verschiedener Threads auch dann vertauscht werden, wenn sie in Echtzeit nicht überlappt haben. Genau das ist bei Linearisierbarkeit verboten."
+  },
+  {
+    "front": "[2026-05-18] Wann darf man eine **pending invocation** in einer Historie ergänzen, und wann darf man sie entfernen?",
+    "back": "Eine **offene Operation** ohne sichtbare Rückgabe wird je nach beobachteter Wirkung behandelt:\n\n- **Ergänzen** eines passenden Response-Events, wenn die Operation bereits **sichtbar gewirkt** haben muss.\n- **Entfernen**, wenn sie noch **keine beobachtbare Wirkung** hatte.\n\nWichtig ist, dass die abgeschlossene Historie spätere Beobachtungen erklären kann. Wenn z. B. ein `dequeue()` bereits `x` zurückgibt, dann muss ein passendes `enqueue(x)` in der abgeschlossenen Historie Wirkung gehabt haben."
+  },
+  {
+    "front": "[2026-05-18] Warum muss der **Linearisierungspunkt** zwischen Invocation und Response liegen?",
+    "back": "Der **Linearisierungspunkt** ist der gedachte Moment, an dem die Operation atomar „passiert“. Er muss zwischen Aufruf und Rückgabe liegen, weil die Methode nur in diesem Zeitraum aktiv ist.\n\nLiegt der Punkt davor, hätte die Operation gewirkt, bevor sie überhaupt aufgerufen wurde. Liegt er danach, würde sie noch Wirkung entfalten, obwohl sie schon beendet ist. Beides widerspricht der Idee, dass ein Methodenaufruf wie eine atomare sequenzielle Operation erklärt werden soll."
+  },
+  {
+    "front": "[2026-05-18] Warum hat ein **Methodenaufruf**, aber nicht unbedingt eine **Methode**, genau einen Linearisierungspunkt?",
+    "back": "Eine Methode kann mehrere Ausführungspfade haben, etwa:\n- **Erfolgspfad**: Element wird eingefügt\n- **Fehlerpfad**: Queue ist voll\n\nDiese Fälle haben unterschiedliche sichtbare Wirkungen und können daher an **verschiedenen Codezeilen** linearisiert werden.\n\nGefordert ist nur: **Jeder konkrete Aufruf auf einem konkreten Ausführungspfad** hat genau einen Linearisierungspunkt. Problematisch wäre ein einzelner Pfad mit zwei getrennten sichtbaren Wirkungen, denn dann gäbe es keinen einzigen atomaren Moment mehr."
+  },
+  {
+    "front": "[2026-05-18] Wo liegt bei einer CAS-basierten Methode typischerweise der Linearisierungspunkt?",
+    "back": "Bei **CAS-basierten** Methoden liegt der Linearisierungspunkt oft bei der **erfolgreichen atomaren Schreiboperation** `compareAndSet`.\n\nGrund:\n- Genau dort wird die Änderung für andere Threads sichtbar.\n- Vorher ist die Änderung nur lokal vorbereitet.\n- Nachher können andere Threads den neuen Zustand beobachten.\n\nFalls ein Aufruf fehlschlägt, kann sein Linearisierungspunkt an einer anderen Stelle liegen, z. B. dort, wo der Fehlschlag logisch feststeht."
+  },
+  {
+    "front": "[2026-05-18] Warum kann bei einer Methode mit genau einem Lock das `unlock` ein sinnvoller Linearisierungspunkt sein?",
+    "back": "Bei einem **einzigen Lock** sind die Änderungen während des kritischen Abschnitts für andere Threads typischerweise nicht gleichzeitig beobachtbar. Erst nach dem **`unlock`** können andere Threads den neuen Zustand regulär sehen.\n\nDeshalb kann man die gesamte Wirkung oft so erklären, als sei sie beim Freigeben des Locks atomar geworden. Das ist kein Naturgesetz, aber häufig ein passender Beweispunkt für Linearisierbarkeit."
+  },
+  {
+    "front": "[2026-05-18] Was geht schief, wenn ein einzelner Ausführungspfad zwei getrennte sichtbare Wirkungen hat?",
+    "back": "Dann gibt es keinen einzelnen Zeitpunkt mehr, an dem die Operation als **atomar** erklärt werden kann.\n\nFür Linearisierbarkeit braucht jeder konkrete Aufruf genau **einen** Moment, der seine gesamte Wirkung repräsentiert. Wenn ein Pfad erst eine sichtbare Änderung macht und später noch eine zweite unabhängige sichtbare Änderung, dann lässt sich die Operation nicht mehr als eine einzige sequenzielle Aktion modellieren."
+  },
+  {
+    "front": "[2026-05-18] Warum ist **Linearisierbarkeit kompositionell**, **sequenzielle Konsistenz** aber nicht?",
+    "back": "Für **Linearisierbarkeit** gilt:\n$$H \\text{ ist linearisierbar } \\iff \\forall x:\\ H|x \\text{ ist linearisierbar.}$$\n\nDas heißt: Man kann Objekte **lokal** prüfen.\n\nBei **sequenzieller Konsistenz** funktioniert das nicht, weil verschiedene Objektprojektionen widersprüchliche globale Reihenfolgen verlangen können. Ein Objekt kann fordern, dass eine Operation vorgezogen wird, ein anderes das Gegenteil. Zusammen entsteht ein **Zyklus**, der sich nicht in eine einzige globale Reihenfolge übersetzen lässt."
+  },
+  {
+    "front": "[2026-05-18] Gib ein Beispiel dafür, warum eine FIFO-Queue **sequenziell konsistent**, aber nicht **linearisierbar** sein kann.",
+    "back": "Angenommen:\n- `enqueue(x)` ist vollständig beendet,\n- danach beginnt erst `enqueue(y)`,\n- ein `dequeue()` liefert aber `y` vor `x`.\n\nFür **Linearisierbarkeit** ist das unmöglich, weil die Echtzeitordnung verlangt:\n$$enqueue(x) < enqueue(y)$$\nalso müsste `x` zuerst entfernt werden.\n\nFür **sequenzielle Konsistenz** kann man Operationen verschiedener Threads aber umordnen, solange die Program Order jedes Threads erhalten bleibt. Dann darf man `enqueue(y)` vor `enqueue(x)` legen und so das Ergebnis `y` erklären."
+  },
+  {
+    "front": "[2026-05-18] Was ist der zentrale Unterschied zwischen **sequenzieller Konsistenz** und **Quiescent Consistency**?",
+    "back": "**Sequenzielle Konsistenz** respektiert die **Program Order pro Thread**.\n\n**Quiescent Consistency** orientiert sich stattdessen an **ruhigen Phasen**:\n- Innerhalb aktiver Phasen darf stark umgeordnet werden.\n- Über eine **quiescent period** hinweg darf nicht beliebig umgeordnet werden.\n\nDamit modelliert Quiescent Consistency Systeme, die während hoher Parallelität vorübergehend inkonsistent erscheinen dürfen, aber an Ruhepunkten wieder einen konsistenten Zustand haben."
+  },
+  {
+    "front": "[2026-05-18] Warum sind **Quiescent Consistency** und **sequenzielle Konsistenz** nicht einfach vergleichbar?",
+    "back": "Keines der beiden Modelle enthält das andere allgemein.\n\n- **Sequenzielle Konsistenz** kann Ordnungen erzwingen, weil die Program Order pro Thread erhalten bleiben muss.\n- **Quiescent Consistency** kann andere Ordnungen erzwingen, weil über **ruhige Phasen** hinweg nicht umgeordnet werden darf.\n\nDaher gibt es Historien, die unter dem einen Modell erlaubt sind, unter dem anderen aber nicht. Die Modelle setzen schlicht **verschiedene Nebenbedingungen**."
+  },
+  {
+    "front": "[2026-05-18] Was ist das **ABA-Problem** bei `compareAndSet`, und warum ist es gefährlich?",
+    "back": "Beim **ABA-Problem** liest ein Thread zunächst den Wert $A$ und prüft später mit `compareAndSet`, ob noch $A$ dort steht. Das kann erfolgreich sein, obwohl zwischenzeitlich\n$$A \\to B \\to A$$\npassiert ist.\n\nGefährlich ist das, weil „Wert ist wieder $A$“ fälschlich als „Zustand unverändert“ interpretiert wird. In einer Datenstruktur kann sich aber die semantische Bedeutung geändert haben, etwa weil ein Knoten entfernt, wiederverwendet und erneut eingesetzt wurde."
+  },
+  {
+    "front": "[2026-05-18] Warum löst **Pointer Tagging** das ABA-Problem nicht vollständig?",
+    "back": "Beim **Pointer Tagging** wird zum Pointer ein **Versionszähler** gespeichert. Dann vergleicht man nicht nur die Adresse, sondern z. B. $(ptr, version)$.\n\nDas reduziert ABA, weil aus\n$$A \\to B \\to A$$\neher\n$$(A,1) \\to (B,2) \\to (A,3)$$\nwird und der alte Zustand erkannt werden kann.\n\nAber vollständig beseitigt ist das Problem nicht, weil der Versionszähler **überlaufen** kann. Nach genügend vielen Änderungen kann wieder derselbe getaggte Wert erscheinen."
+  },
+  {
+    "front": "[2026-05-18] Wie verhindern **Hazard Pointer** das ABA-Problem im Node-Pool-Szenario?",
+    "back": "**Hazard Pointer** markieren, dass ein Thread einen bestimmten Pointer gerade noch benutzt. Solange ein Knoten als Hazard markiert ist, darf er **nicht wiederverwendet** oder freigegeben werden.\n\nDadurch kann ein schlafender Thread nicht später denselben Speicherplatz wiedersehen und fälschlich annehmen, es sei derselbe logische Knoten wie zuvor. Das verhindert die problematische Wiederverwendung, die ABA im Stack mit Node-Pool auslöst.\n\nNachteil: Wenn Threads ausfallen, kann Speicher länger blockiert bleiben und muss speziell aufgeräumt werden."
+  },
+  {
+    "front": "[2026-05-18] Was bedeutet **Consensus** genau, und welche Bedingungen muss ein korrektes Protokoll erfüllen?",
+    "back": "Beim **Consensus** ruft jeder Thread `decide(v)` mit einem vorgeschlagenen Wert auf. Korrektheit verlangt:\n\n- **Agreement**: Alle Threads erhalten denselben Rückgabewert.\n- **Validity**: Der Rückgabewert ist einer der vorgeschlagenen Werte.\n- **Wait-freedom**: Jeder Thread terminiert nach endlich vielen **eigenen** Schritten, unabhängig von anderen.\n\nConsensus ist wichtig, weil er die Synchronisationsmacht von Objekten misst."
   }
 ]
