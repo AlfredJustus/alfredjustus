@@ -1378,5 +1378,65 @@
   {
     "front": "[2026-05-12] Wie wird die Qualitätsfunktion der Bildsegmentierung in ein Min-Cut-Problem umgeformt?",
     "back": "Die ursprüngliche Qualität ist\n$$Q(A,B)=\\sum_{p\\in A}\\alpha(p)+\\sum_{p\\in B}\\beta(p)-\\sum_{\\lvert e\\cap A\\rvert=1}\\gamma(e).$$\n\nDiese soll **maximiert** werden. Für Min-Cut formt man sie mit der konstanten Summe\n$$\\sum_p (\\alpha(p)+\\beta(p))$$\num. Dadurch erhält man äquivalent die zu **minimierende** Kostenfunktion\n$$\\sum_{p\\in A}\\beta(p)+\\sum_{p\\in B}\\alpha(p)+\\sum_{\\lvert e\\cap A\\rvert=1}\\gamma(e).$$\n\nInterpretation:\n- ein Pixel in $A$ zahlt die „Hintergrund-Strafe“ $\\beta(p)$,\n- ein Pixel in $B$ zahlt die „Vordergrund-Strafe“ $\\alpha(p)$,\n- getrennte Nachbarn zahlen $\\gamma(e)$.\n\nGenau diese positiven Kosten lassen sich als Schnittkapazitäten modellieren."
+  },
+  {
+    "front": "[2026-05-19] Warum sind die beiden Sichtweisen auf einen globalen Kantenschnitt äquivalent?",
+    "back": "Ein **globaler Kantenschnitt** kann auf zwei äquivalente Arten beschrieben werden:\n\n1. als eine Kantenmenge $C \\subseteq E$, deren Entfernen den Graphen unzusammenhängend macht,\n2. als die Menge aller Kanten zwischen zwei nichtleeren Teilen einer Partition $V = S \\dot\\cup (V\\setminus S)$.\n\nDie Äquivalenz gilt, weil jede Trennung des Graphen nach dem Löschen von $C$ eine Zerlegung der Knoten in mindestens zwei Zusammenhangskomponenten erzeugt; wählt man eine dieser Komponenten als $S$, dann sind genau die Kanten zwischen $S$ und $V\\setminus S$ entfernt worden.\n\nFür Minimum Cuts reicht daher die Partitionssicht:\n$$\n\\mu(G)=\\min_{\\emptyset \\neq S \\subsetneq V} |\\delta(S)|.\n$$"
+  },
+  {
+    "front": "[2026-05-19] Wann gilt für den globalen Minimum-Cut-Wert $\\mu(G)=0$?",
+    "back": "Es gilt genau dann\n$$\n\\mu(G)=0,\n$$\nwenn der Graph **bereits unzusammenhängend** ist.\n\nDenn dann muss man gar keine Kante entfernen, um den Graphen unzusammenhängend zu machen. Umgekehrt: Ist $\\mu(G)=0$, dann existiert ein Schnitt der Größe $0$, also ist $G-C=G$ schon unzusammenhängend.\n\nDas ist ein wichtiger Randfall, weil viele Aussagen über Kontraktion und Zufallsalgorithmen stillschweigend von einem zusammenhängenden Graphen ausgehen."
+  },
+  {
+    "front": "[2026-05-19] Warum braucht der Minimum-Cut-Algorithmus Multigraphen, selbst wenn der Eingabegraph einfach ist?",
+    "back": "**Multigraphen** sind nötig, weil durch **Kantenkontraktion** natürlich parallele Kanten entstehen können.\n\nWenn man eine Kante $\\{u,v\\}$ kontrahiert und es einen dritten Knoten $w$ gibt, der sowohl mit $u$ als auch mit $v$ verbunden war, dann werden diese Kanten nach der Verschmelzung zu mehreren Kanten zwischen demselben neuen Knoten und $w$.\n\nSchleifen werden dabei gelöscht, aber parallele Kanten bleiben erhalten. Deshalb arbeitet der Algorithmus nicht mehr nur auf einfachen Graphen.\n\nFür Implementierungen kann man parallele Kanten oft als **Gewichte** speichern, z. B.:\n- drei parallele Kanten $\\leftrightarrow$ eine Kante mit Gewicht $3$."
+  },
+  {
+    "front": "[2026-05-19] Warum ist der Grad im Multigraphen nicht einfach die Anzahl der Nachbarn?",
+    "back": "Im **Multigraphen** zählt der Grad eines Knotens jede inzidente Kante mit ihrer **Multiplizität**. Parallele Kanten zählen also mehrfach.\n\nBeispiel:\n- Ein Knoten $v$ hat Nachbarn $a,b,c$,\n- zu $a$ gibt es $3$ parallele Kanten,\n- zu $b$ eine,\n- zu $c$ eine.\n\nDann hat $v$ zwar nur $3$ verschiedene Nachbarn, aber\n$$\n\\deg(v)=3+1+1=5.\n$$\n\nDiese Definition ist wichtig, weil nur so bekannte Formeln wie\n$$\n\\sum_{v\\in V}\\deg(v)=2|E|\n$$\nauch im Multigraphen korrekt bleiben."
+  },
+  {
+    "front": "[2026-05-19] Warum gilt auch im Multigraphen die Handshaking-Formel $\\sum_{v\\in V}\\deg(v)=2|E|$?",
+    "back": "Jede **ungerichtete Kante** hat genau zwei Endpunkte und trägt daher insgesamt $2$ zur Summe aller Grade bei.\n\nDa im Multigraphen parallele Kanten als verschiedene Kanten gezählt werden, gilt dieselbe Zählung weiterhin:\n$$\n\\sum_{v\\in V}\\deg(v)=2|E|.\n$$\n\nWichtig ist nur, dass der Grad mit Multiplizität gezählt wird. Dann macht es keinen Unterschied, ob zwei Knoten durch eine oder durch fünf parallele Kanten verbunden sind: Jede einzelne Kante erhöht die Gradsumme um $2$."
+  },
+  {
+    "front": "[2026-05-19] Warum liefert der minimale Knotengrad immer eine obere Schranke für $\\mu(G)$?",
+    "back": "Wählt man einen Knoten $v$ mit minimalem Grad, dann kann man ihn isolieren, indem man alle inzidenten Kanten entfernt. Danach ist $v$ vom Rest des Graphen getrennt.\n\nAlso ist diese Kantenmenge ein gültiger Schnitt mit Größe $\\deg(v)$. Daher gilt\n$$\n\\mu(G)\\le \\min_{v\\in V}\\deg(v).\n$$\n\nDie Aussage ist nur eine **obere Schranke**: Der globale Minimum Cut kann kleiner sein als der Grad vieler Knoten, aber nie größer als der kleinste Grad."
+  },
+  {
+    "front": "[2026-05-19] Warum reicht es für den globalen Minimum Cut, einen Knoten $s$ zu fixieren und alle $s$-$t$-Schnitte zu testen?",
+    "back": "Fixiere einen Knoten $s$. Betrachte nun einen globalen Minimum Cut, also eine Partition\n$$\nV=S \\dot\\cup (V\\setminus S).\n$$\nDer Knoten $s$ liegt auf genau einer der beiden Seiten. Da beide Seiten nichtleer sind, gibt es mindestens einen Knoten $t$ auf der anderen Seite.\n\nDann trennt derselbe Schnitt auch $s$ von $t$. Also ist der Wert dieses globalen Minimum Cuts zugleich ein gültiger $s$-$t$-Schnittwert. Für dieses passende $t$ findet ein Minimum-$s$-$t$-Cut daher den globalen Wert.\n\nDeshalb genügt es, für festes $s$ alle anderen Knoten $t$ durchzuprobieren."
+  },
+  {
+    "front": "[2026-05-19] Was passiert bei der Kontraktion einer Kante $\\{u,v\\}$ genau?",
+    "back": "Bei der **Kantenkontraktion** von $e=\\{u,v\\}$ werden $u$ und $v$ zu einem neuen Knoten $x_{uv}$ verschmolzen.\n\nDabei gilt:\n- alle Kanten zwischen $u$ und $v$ verschwinden, weil sie zu Schleifen würden,\n- alle anderen inzidenten Kanten bleiben erhalten,\n- Kanten zu gemeinsamen Nachbarn werden zu parallelen Kanten.\n\nWenn es genau $k$ parallele Kanten zwischen $u$ und $v$ gab, dann gilt:\n$$\n|E(G/e)|=|E(G)|-k\n$$\nund\n$$\n\\deg_{G/e}(x_{uv})=\\deg_G(u)+\\deg_G(v)-2k.\n$$\n\nDas $-2k$ kommt daher, dass jede der $k$ Kanten zwischen $u$ und $v$ vorher zu beiden Graden beitrug, nach der Kontraktion aber verschwindet."
+  },
+  {
+    "front": "[2026-05-19] Warum kann eine Kontraktion einen Minimum Cut zerstören, aber keinen kleineren Minimum-Cut-Wert erzeugen?",
+    "back": "Ein Schnitt, der $u$ und $v$ **trennt**, hat nach der Kontraktion von $\\{u,v\\}$ keine Entsprechung mehr, weil $u$ und $v$ nun derselbe Knoten sind. Solche Minimum Cuts können also **zerstört** werden.\n\nAber jeder Schnitt im kontrahierten Graphen entspricht einem Schnitt gleicher Größe im ursprünglichen Graphen, bei dem $u$ und $v$ auf derselben Seite liegen. Deshalb entstehen durch Kontraktion keine neuen, kleineren Schnitte.\n\nDaher gilt das **Kontraktionslemma**:\n$$\n\\mu(G)\\le \\mu(G/e).\n$$\n\nDie Richtung wird leicht verwechselt: Kontraktion kann $\\mu$ erhöhen, aber nicht verkleinern."
+  },
+  {
+    "front": "[2026-05-19] Wann gilt bei einer Kontraktion sogar $\\mu(G/e)=\\mu(G)$?",
+    "back": "Gleichheit gilt, wenn es einen **Minimum Cut** in $G$ gibt, der die kontrahierte Kante $e$ **nicht** enthält.\n\nDann liegen die Endpunkte von $e$ auf derselben Seite dieses Minimum Cuts. Dieser Schnitt überlebt die Kontraktion unverändert und hat im kontrahierten Graphen dieselbe Größe.\n\nZusammen mit\n$$\n\\mu(G)\\le \\mu(G/e)\n$$\nfolgt dann\n$$\n\\mu(G/e)=\\mu(G).\n$$\n\nDie Kernaussage ist also: Eine Kontraktion ist genau dann sicher für einen bestimmten Minimum Cut, wenn sie keine Kante dieses Cuts kontrahiert."
+  },
+  {
+    "front": "[2026-05-19] Warum muss eine zufällige Kante gleichverteilt unter allen Einzelkanten gewählt werden?",
+    "back": "Im **Multigraphen** sind parallele Kanten verschiedene Kanten und müssen daher auch mit entsprechend höherer Wahrscheinlichkeit gewählt werden.\n\nWählt man stattdessen erst einen zufälligen Knoten und dann einen zufälligen Nachbarn, erhält man im Allgemeinen **keine gleichverteilte zufällige Kante**. Kanten an Knoten kleinen Grades werden dann anders gewichtet als Kanten an Knoten großen Grades.\n\nDas ist problematisch, weil die Erfolgsanalyse des Kontraktionsalgorithmus genau auf\n$$\n\\Pr[e\\in C]=\\frac{|C|}{|E|}\n$$\nberuht. Diese Formel gilt nur, wenn wirklich jede Einzelkante dieselbe Auswahlwahrscheinlichkeit hat."
+  },
+  {
+    "front": "[2026-05-19] Woher kommt die Schranke $\\Pr[\\mu(G/e)=\\mu(G)]\\ge 1-\\frac{2}{n}$ für einen Kontraktionsschritt?",
+    "back": "Fixiere einen Minimum Cut $C$ mit\n$$\n|C|=\\mu(G).\n$$\nEin Kontraktionsschritt ist sicher für diesen Cut, wenn die zufällig gewählte Kante **nicht** in $C$ liegt. Also:\n$$\n\\Pr[\\text{schlecht}]=\\frac{\\mu(G)}{|E|}.\n$$\n\nNun gilt wegen der Gradschranke für jeden Knoten\n$$\n\\deg(v)\\ge \\mu(G),\n$$\ndenn sonst könnte man einen kleineren Schnitt durch Isolieren von $v$ erhalten. Mit Handshaking folgt:\n$$\n2|E|=\\sum_{v\\in V}\\deg(v)\\ge n\\mu(G),\n$$\nalso\n$$\n|E|\\ge \\frac n2 \\mu(G).\n$$\n\nDamit:\n$$\n\\Pr[\\text{schlecht}]=\\frac{\\mu(G)}{|E|}\\le \\frac{2}{n}.\n$$\nAlso\n$$\n\\Pr[\\mu(G/e)=\\mu(G)]\\ge 1-\\frac{2}{n}.\n$$"
+  },
+  {
+    "front": "[2026-05-19] Warum ist die Erfolgswahrscheinlichkeit eines vollständigen Kontraktionslaufs mindestens $\\frac{2}{n(n-1)}$?",
+    "back": "Damit ein Lauf korrekt bleibt, darf in keinem Schritt eine Kante eines festen Minimum Cuts kontrahiert werden.\n\nWenn aktuell noch $i$ Knoten vorhanden sind, ist die Erfolgswahrscheinlichkeit des nächsten Schritts mindestens\n$$\n1-\\frac{2}{i}=\\frac{i-2}{i}.\n$$\n\nFür einen vollständigen Lauf von $n$ auf $2$ Knoten multipliziert man diese Schranken:\n$$\n\\prod_{i= n}^{3}\\frac{i-2}{i}.\n$$\nDas teleskopiert zu\n$$\n\\frac{n-2}{n}\\cdot\\frac{n-3}{n-1}\\cdots\\frac{1}{3}\n= \\frac{2}{n(n-1)}.\n$$\n\nAlso gilt\n$$\n\\Pr[\\text{korrekt}]\\ge \\frac{2}{n(n-1)}=\\binom n2^{-1}.\n$$"
+  },
+  {
+    "front": "[2026-05-19] Rechne die Vorlesungsabschätzung für $n=1000$ aus: Wie groß ist die Erfolgswahrscheinlichkeit eines einfachen Laufs mindestens?",
+    "back": "Setze in\n$$\n\\Pr[\\text{korrekt}]\\ge \\frac{2}{n(n-1)}\n$$\nden Wert $n=1000$ ein:\n$$\n\\Pr[\\text{korrekt}]\\ge \\frac{2}{1000\\cdot 999}\n= \\frac{2}{999000}.\n$$\n\nDas ist ungefähr\n$$\n2.002\\cdot 10^{-6}.\n$$\n\nAlso liegt die garantierte Erfolgswahrscheinlichkeit eines einzelnen vollständigen Kontraktionslaufs nur bei etwa\n$$\n0.000002.\n$$\n\nDas erklärt, warum man den Algorithmus praktisch **wiederholen** muss."
+  },
+  {
+    "front": "[2026-05-19] Warum ist der Kontraktionsalgorithmus einseitig fehlerhaft?",
+    "back": "Der Algorithmus kann nie einen Wert **kleiner** als den echten Minimum-Cut-Wert $\\mu(G)$ ausgeben.\n\nGrund: Nach jeder Kontraktion gilt\n$$\n\\mu(G)\\le \\mu(G/e),\n$$\nalso kann der Minimum-Cut-Wert entlang des Laufs nur gleich bleiben oder steigen. Der am Ende ausgegebene Schnitt im 2-Knoten-Graphen ist daher immer mindestens so groß wie der ursprüngliche Wert.\n\nFehler entstehen nur in die andere Richtung: Wenn unterwegs eine Kante eines Minimum Cuts kontrahiert wird, kann der optimale Schnitt zerstört werden, und der ausgegebene Wert wird **zu groß**.\n\nDarum spricht man von **einseitigem Fehler**."
   }
 ]

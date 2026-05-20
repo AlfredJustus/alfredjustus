@@ -1438,5 +1438,65 @@
   {
     "front": "[2026-05-18] Was bedeutet **Consensus** genau, und welche Bedingungen muss ein korrektes Protokoll erfüllen?",
     "back": "Beim **Consensus** ruft jeder Thread `decide(v)` mit einem vorgeschlagenen Wert auf. Korrektheit verlangt:\n\n- **Agreement**: Alle Threads erhalten denselben Rückgabewert.\n- **Validity**: Der Rückgabewert ist einer der vorgeschlagenen Werte.\n- **Wait-freedom**: Jeder Thread terminiert nach endlich vielen **eigenen** Schritten, unabhängig von anderen.\n\nConsensus ist wichtig, weil er die Synchronisationsmacht von Objekten misst."
+  },
+  {
+    "front": "[2026-05-19] Warum ist die Konsensus-Hierarchie für Unmöglichkeitsbeweise nützlich?",
+    "back": "Die **Konsensus-Hierarchie** ordnet Synchronisationsobjekte nach ihrer **Konsensuszahl**: der maximalen Zahl von Threads, für die sie wait-free Konsensus lösen können.\n\nSie ist für Unmöglichkeitsbeweise nützlich, weil gilt:\n\n- Wenn ein Objekt mit Konsensuszahl $k$ ein wait-free Objekt mit höherer Konsensuszahl implementieren könnte,\n- dann könnte man damit auch Konsensus für mehr als $k$ Threads lösen,\n- was der Definition der Konsensuszahl widerspricht.\n\nDarum folgt z. B.: Mit **atomaren Registern** allein kann man kein wait-free Objekt implementieren, das Konsensuszahl $>1$ hat."
+  },
+  {
+    "front": "[2026-05-19] Was bedeutet wait-free Konsensus genau?",
+    "back": "**Wait-free Konsensus** verlangt drei Dinge:\n\n- Jeder Thread schlägt einen Wert vor.\n- Alle Threads, die terminieren, geben **denselben** Wert zurück.\n- Dieser Wert muss einer der vorgeschlagenen Werte sein.\n- Jeder Thread beendet in endlich vielen **eigenen** Schritten, unabhängig vom Verhalten anderer Threads.\n\nDer entscheidende Punkt ist **wait-free**: Kein Thread darf darauf angewiesen sein, dass andere Threads kooperieren, weiterlaufen oder Locks freigeben."
+  },
+  {
+    "front": "[2026-05-19] Warum haben atomare Register nur Konsensuszahl $1$?",
+    "back": "**Atomare Register** haben nur **Konsensuszahl $1$**, weil sie für zwei Threads keinen wait-free Konsensus ermöglichen.\n\nIntuition:\nMit bloßem Lesen und Schreiben gibt es keinen ausreichend starken atomaren Schritt, der einen Konflikt zwischen zwei konkurrierenden Vorschlägen eindeutig und wait-free entscheidet. Beide Threads können in Zustände geraten, die aus ihrer lokalen Sicht symmetrisch sind.\n\nDaher gilt:\n\n$$\\text{consensus number}(\\text{atomic registers}) = 1.$$\n\nDas ist wichtig, weil es viele Implementierungen mit nur Registern grundsätzlich ausschließt."
+  },
+  {
+    "front": "[2026-05-19] Warum hat `compare-and-set` eine unendliche Konsensuszahl?",
+    "back": "**Compare-and-set (CAS)** hat **unendliche Konsensuszahl**, weil man damit für beliebig viele Threads wait-free Konsensus konstruieren kann.\n\nDie Idee:\nAlle Threads versuchen auf derselben Speicherstelle\n\n$$\\text{CAS}(\\bot, v_i)$$\n\nauszuführen, wobei $\\bot$ „noch kein Gewinner“ bedeutet und $v_i$ der vorgeschlagene Wert von Thread $i$ ist.\n\n- Genau ein Thread kann erfolgreich von $\\bot$ auf seinen Wert umstellen.\n- Alle anderen sehen danach den bereits gesetzten Gewinnerwert.\n- Somit entscheiden alle denselben vorgeschlagenen Wert.\n\nDeshalb:\n\n$$\\text{consensus number}(\\text{CAS}) = \\infty.$$"
+  },
+  {
+    "front": "[2026-05-19] Warum folgt aus einer wait-free Queue bereits Konsensuszahl mindestens $2$?",
+    "back": "Eine **wait-free Queue** hat mindestens **Konsensuszahl $2$**, weil man mit ihr einen 2-Thread-Konsensus konstruieren kann.\n\nDie Vorlesung erwähnt dazu das **rot/schwarz-Ball**-Argument: Zwei Threads verwenden die Queue so, dass die Reihenfolge der beobachteten Elemente entscheidet, welcher vorgeschlagene Wert gewählt wird.\n\nWichtig ist nicht jedes Detail des Beweises, sondern die Konsequenz:\n\n- Wenn eine Queue wait-free implementierbar wäre,\n- dann könnte man damit 2-Thread-Konsensus lösen,\n- also muss ihre Konsensuszahl mindestens $2$ sein.\n\nDamit kann sie nicht allein aus Objekten mit Konsensuszahl $1$ aufgebaut werden."
+  },
+  {
+    "front": "[2026-05-19] Warum lösen Locks zwar Race Conditions, erzeugen aber neue Probleme?",
+    "back": "**Locks** erzwingen **gegenseitigen Ausschluss** und verhindern dadurch manche Race Conditions. Sie bringen aber eigene Fehlerquellen mit:\n\n- **Deadlock**: Threads warten zyklisch aufeinander.\n- **Convoying**: Viele Threads warten auf ein Lock, dessen Besitzer gerade nicht läuft.\n- **Priority Inversion**: Ein hoch priorisierter Thread wird von einem niedrig priorisierten Lock-Besitzer blockiert.\n\nZusätzlich ist oft schwer erkennbar,\n\n- welche Daten ein Lock tatsächlich schützt,\n- und in welcher Reihenfolge mehrere Locks genommen werden müssen.\n\nLocks lösen also nicht „Nebenläufigkeit allgemein“, sondern tauschen ein Problem oft gegen andere aus."
+  },
+  {
+    "front": "[2026-05-19] Warum ist Atomizität nicht dasselbe wie Mutual Exclusion?",
+    "back": "**Mutual Exclusion** ist eine **Implementierungsstrategie**: Zu einem Zeitpunkt darf nur ein Thread im kritischen Abschnitt sein.\n\n**Atomizität** ist eine **beobachtbare Eigenschaft**: Die Wirkung eines Blocks soll so aussehen, als wäre sie an einem einzigen Punkt passiert, also seriell erklärbar.\n\nDeshalb gilt:\n\n- Mutual Exclusion $\\Rightarrow$ oft atomare Wirkung\n- Atomizität $\\not\\Rightarrow$ nur ein Thread gleichzeitig\n\nBei **Transactional Memory** können zwei Threads gleichzeitig in atomaren Blöcken laufen, solange das Gesamtergebnis einer seriellen Reihenfolge entspricht."
+  },
+  {
+    "front": "[2026-05-19] Warum ist ein `atomic`-Block deklarativer als ein `synchronized`-Block?",
+    "back": "Ein **`atomic`-Block** beschreibt **was** gelten soll: Der Block soll wie eine unteilbare Operation erscheinen.\n\nEin **`synchronized`-Block** beschreibt eher **wie** man das erreichen will: durch ein bestimmtes Lock und damit durch Mutual Exclusion.\n\nDer Unterschied ist wichtig für **Kompositionierbarkeit**:\n\n- Bei `synchronized` muss man Lock-Zuordnung und Lock-Reihenfolge mitdenken.\n- Bei `atomic` formuliert man nur die gewünschte Semantik.\n- Das TM-System entscheidet, wie Konflikte erkannt und behandelt werden.\n\nDadurch wird Code modularer, besonders wenn mehrere Methoden kombiniert werden."
+  },
+  {
+    "front": "[2026-05-19] Warum ist ein globales Lock keine gute Implementierung von Transactional Memory?",
+    "back": "Ein **globales Lock** kann atomare Blöcke zwar serialisieren, verfehlt aber den Hauptzweck von **Transactional Memory**.\n\nNachteile:\n\n- Es verhindert Parallelität zwischen **allen** atomaren Blöcken.\n- Es verursacht Overhead auch ohne echte Konflikte.\n- Es ersetzt optimistische Ausführung durch vollständige Serialisierung.\n\nDamit bekommt man zwar eine einfache Semantik, aber nicht den gewünschten Vorteil von TM: parallele Ausführung, solange sie noch in eine serielle Reihenfolge passt."
+  },
+  {
+    "front": "[2026-05-19] Warum reicht es nicht, Konflikte erst beim Commit zu prüfen?",
+    "back": "Nur beim Commit zu prüfen ist zu spät, wenn die Transaktion vorher schon auf **inkonsistenten Zwischenständen** gerechnet hat.\n\nDas Vorlesungsbeispiel ist:\n\n$$\\frac{1}{a-b}$$\n\nWenn eine Transaktion für $a$ einen alten und für $b$ einen neuen Wert sieht, kann plötzlich\n\n$$a-b = 0$$\n\nwerden, obwohl das bei jedem konsistenten Snapshot nie passiert wäre.\n\nDann kann schon **vor dem Commit** falsches Verhalten auftreten, etwa eine Division durch $0$.\n\nDarum braucht TM entweder:\n\n- einen konsistenten **Snapshot**, oder\n- **Early Abort**, sobald neu gelesene Werte nicht mehr konsistent sind."
+  },
+  {
+    "front": "[2026-05-19] Was ist die Rolle von Snapshot, Commit und Abort in einer Transaktion?",
+    "back": "Eine **Transaktion** arbeitet konzeptuell auf einem **konsistenten Snapshot** des relevanten Zustands.\n\nDann gilt:\n\n- Änderungen passieren zunächst nur lokal.\n- Beim **Commit** werden sie atomar global sichtbar.\n- Beim **Abort** werden sie verworfen.\n\nDer zentrale Zweck ist, dass keine **teilweise sichtbaren** Zustände entstehen. Andere Threads sollen also nicht beobachten können, dass nur ein Teil der Änderungen schon sichtbar ist.\n\nSo wirkt die Transaktion nach außen wie eine einzige atomare Operation."
+  },
+  {
+    "front": "[2026-05-19] Warum reicht ein einzelnes CAS oft nicht für komplexe Datenstrukturen?",
+    "back": "Ein einzelnes **CAS** kann nur **eine Speicherstelle** atomar prüfen und ändern.\n\nBei komplexen Datenstrukturen müssen aber oft mehrere zusammenhängende Felder konsistent aktualisiert werden, z. B. in einer Queue:\n\n- `last.next`\n- `tail`\n\nWenn man diese mit getrennten CAS-Schritten aktualisiert, können andere Threads einen **Zwischenzustand** sehen, in dem nur eine der beiden Änderungen schon erfolgt ist.\n\nCAS ist also sehr mächtig, aber **lokal**. Genau deshalb motivieren solche Fälle Modelle wie **Transactional Memory** oder hypothetische **Multi-compare-and-set**-Operationen."
+  },
+  {
+    "front": "[2026-05-19] Was würde ein Multi-compare-and-set gegenüber normalem CAS verbessern?",
+    "back": "Ein **Multi-compare-and-set** würde mehrere Prüf-und-Schreib-Schritte zu **einer atomaren Operation** zusammenfassen.\n\nStatt nur eine Speicherstelle zu prüfen und zu ändern, könnte man mehrere abhängige Stellen gleichzeitig behandeln, etwa:\n\n- prüfe `x = old_x` und `y = old_y`\n- setze dann atomar `x := new_x` und `y := new_y`\n\nDer Vorteil wäre, dass keine anderen Threads inkonsistente Zwischenzustände sehen.\n\nDas Problem: Solche Operationen sind typischerweise **nicht als normale Hardwareprimitive verfügbar**. Deshalb muss man ähnliche Effekte oft in Software oder mit TM nachbilden."
+  },
+  {
+    "front": "[2026-05-19] Was ist der Unterschied zwischen strong und weak Isolation?",
+    "back": "**Strong Isolation** bedeutet: Die Garantien des TM-Systems gelten auch gegenüber Zugriffen **außerhalb** von Transaktionen.\n\n**Weak Isolation** bedeutet: Das TM-System garantiert Korrektheit nur für Interaktionen **zwischen Transaktionen**; normale Zugriffe außerhalb von Transaktionen sind nicht sauber eingebunden.\n\nFür die Vorlesung wichtig:\n\n- **`Scala STM` verwendet weak Isolation.**\n\nDaher ist es falsch zu glauben, dass beliebige nicht-transaktionale Zugriffe auf dieselben Daten automatisch sicher mitlaufen."
+  },
+  {
+    "front": "[2026-05-19] Warum müssen bei `Scala STM` veränderliche geteilte Daten in spezielle Referenzen verpackt werden?",
+    "back": "`Scala STM` ist **reference-based**. Geteilter, veränderlicher Zustand muss in spezielle **STM-Referenzen** gepackt werden, z. B. mit `STM.newRef`.\n\nWarum?\n\n- Das STM-System muss Lese- und Schreibzugriffe kontrollieren können.\n- Nur so kann es Konflikte erkennen, Snapshots verwalten und Commits korrekt durchführen.\n- Normale Speicherzugriffe wären für das STM unsichtbar.\n\nDer Nachteil ist geringere direkte Portierbarkeit bestehenden Codes. Der Vorteil ist eine einfachere und praktikable STM-Implementierung."
   }
 ]
