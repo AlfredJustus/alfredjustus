@@ -1318,5 +1318,65 @@
   {
     "front": "[2026-05-18] Warum darf sich bei unbestimmter Integration die Konstante beim Umformen „ändern“?",
     "back": "Wenn man nach dem Integrieren algebraisch umformt, kann aus einer Konstante eine **anders geschriebene Konstante** werden. Beispiel:\n$$\\ln|z|=x+C.$$\n\nNach Exponentiation:\n$$|z|=e^{x+C}=e^C e^x.$$\n\nDa $e^C$ wieder eine beliebige positive Konstante ist, schreibt man oft erneut\n$$|z|=C e^x.$$\n\nDie Konstante wurde nicht „verloren“, sondern nur **neu zusammengefasst**."
+  },
+  {
+    "front": "[2026-05-20] Wann ist Trennung der Variablen für eine Differentialgleichung erster Ordnung anwendbar?",
+    "back": "**Trennung der Variablen** passt, wenn sich die Gleichung in die Form\n$$\n\\frac{dz}{dx}=g(z)f(x)\n$$\nbringen lässt, also als Produkt eines Terms in der abhängigen Variable und eines Terms in der unabhängigen Variable.\n\nDann formt man um zu\n$$\n\\frac{1}{g(z)}\\,dz=f(x)\\,dx\n$$\nund integriert:\n$$\n\\int \\frac{1}{g(z)}\\,dz=\\int f(x)\\,dx.\n$$\n\nWichtig: Diese Umformungen sind nur auf Intervallen erlaubt, auf denen die beteiligten Ausdrücke definiert sind und man insbesondere nicht durch $0$ teilt."
+  },
+  {
+    "front": "[2026-05-20] Löse die trennbare Differentialgleichung $z'=-3+2z$.",
+    "back": "Schreibe zuerst\n$$\nz'=2z-3.\n$$\nDann trenne:\n$$\n\\frac{dz}{2z-3}=dx.\n$$\nIntegrieren liefert\n$$\n\\int \\frac{1}{2z-3}\\,dz=\\int 1\\,dx\n\\quad\\Rightarrow\\quad\n\\frac12\\ln|2z-3|=x+C.\n$$\nAlso\n$$\n\\ln|2z-3|=2x+C'\n$$\nund damit\n$$\n2z-3=De^{2x}.\n$$\nAuflösen nach $z$ ergibt\n$$\nz(x)=\\frac32+De^{2x}.\n$$\n\nDie Konstante $D\\in\\mathbb R$ wird durch eine Anfangsbedingung bestimmt."
+  },
+  {
+    "front": "[2026-05-20] Warum beschreibt $y'=-k(y-y^*)$ mit $k>0$ ein Annähern an die Umgebungstemperatur $y^*$?",
+    "back": "Die Änderungsrate ist proportional zur **Temperaturdifferenz** $y-y^*$, aber mit negativem Vorzeichen:\n$$\ny'=-k(y-y^*), \\qquad k>0.\n$$\n\n- Ist $y>y^*$, dann gilt $y-y^*>0$ und daher $y'<0$: Die Temperatur sinkt.\n- Ist $y<y^*$, dann gilt $y-y^*<0$ und daher $y'>0$: Die Temperatur steigt.\n- Ist $y=y^*$, dann ist $y'=0$: Das System bleibt im Gleichgewicht.\n\nDamit bewegt sich die Lösung stets in Richtung der **Umgebungstemperatur** $y^*$."
+  },
+  {
+    "front": "[2026-05-20] Warum ist das Newtonsche Abkühlungsgesetz trennbar?",
+    "back": "Für\n$$\ny'=-k(y-y^*)\n$$\nhängt die rechte Seite nur von $y$ ab, multipliziert mit der konstanten Funktion in der Zeit. Man kann also schreiben:\n$$\n\\frac{dy}{dx}=-k(y-y^*).\n$$\nDann trennt man:\n$$\n\\frac{1}{y-y^*}\\,dy=-k\\,dx.\n$$\n\nDamit ist die Gleichung **trennbar**, weil alle Terme mit $y$ auf einer Seite und alle mit der unabhängigen Variable auf der anderen Seite stehen. Danach reduziert sich das Problem auf zwei Integrale."
+  },
+  {
+    "front": "[2026-05-20] Was ist der Unterschied zwischen „homogen in den Variablen“ und „zugehörige homogene Differentialgleichung“?",
+    "back": "**Homogen in den Variablen** bedeutet: Die rechte Seite hängt nur von einem Verhältnis wie\n$$\n\\frac{y}{x}\n\\quad\\text{oder}\\quad\n\\frac{x}{y}\n$$\nab.\n\nDie **zugehörige homogene Differentialgleichung** entsteht dagegen bei einer linearen inhomogenen Gleichung, indem man die rechte Seite durch $0$ ersetzt.\n\nDas sind also zwei verschiedene Begriffe:\n- **homogen in den Variablen**: Struktur der rechten Seite\n- **homogene lineare Gleichung**: rechte Seite ist $0$\n\nDie Aussage „homogen in den Variablen“ bedeutet also **nicht** automatisch „rechte Seite gleich $0$“."
+  },
+  {
+    "front": "[2026-05-20] Warum ist $y'=\\frac{y}{x}+\\frac{x^2}{y^2}$ homogen in den Variablen?",
+    "back": "Man kann die rechte Seite nur durch das Verhältnis $\\frac{y}{x}$ ausdrücken:\n$$\n\\frac{y}{x}+\\frac{x^2}{y^2}\n=\n\\frac{y}{x}+\\left(\\frac{x}{y}\\right)^2\n=\n\\frac{y}{x}+\\left(\\frac{1}{y/x}\\right)^2.\n$$\n\nDamit hängt die rechte Seite nur von\n$$\nz=\\frac{y}{x}\n$$\nab. Genau das ist mit **homogen in den Variablen** gemeint.\n\nDiese Struktur motiviert die Substitution\n$$\nz(x)=\\frac{y(x)}{x}.\n$$"
+  },
+  {
+    "front": "[2026-05-20] Welche Substitution ist bei einer in den Variablen homogenen Gleichung typisch, und warum?",
+    "back": "Bei einer Gleichung, deren rechte Seite nur von $\\frac{y}{x}$ abhängt, setzt man typischerweise\n$$\nz(x)=\\frac{y(x)}{x},\n\\qquad\\text{also}\\qquad\ny(x)=z(x)\\,x.\n$$\n\nDer Grund: Die komplizierte Abhängigkeit von $x$ und $y$ wird auf eine einzige neue Funktion $z$ reduziert. Nach Ableiten von\n$$\ny=zx\n$$\nerhält man\n$$\ny'=z+xz',\n$$\nund nach Einsetzen entsteht oft eine **trennbare** Differentialgleichung für $z$."
+  },
+  {
+    "front": "[2026-05-20] Wie erhält man aus $y'=\\frac{y}{x}+\\frac{x^2}{y^2}$ mit $z=\\frac{y}{x}$ eine trennbare Gleichung?",
+    "back": "Setze\n$$\ny=zx.\n$$\nDann ist\n$$\ny'=z+xz'.\n$$\nEinsetzen in\n$$\ny'=\\frac{y}{x}+\\frac{x^2}{y^2}\n$$\ngibt\n$$\nz+xz' = z+\\frac{x^2}{(zx)^2}\n= z+\\frac{1}{z^2}.\n$$\nDie $z$-Terme kürzen sich:\n$$\nxz'=\\frac{1}{z^2}.\n$$\nAlso\n$$\nz'=\\frac{1}{xz^2}.\n$$\nNun ist die Gleichung trennbar:\n$$\nz^2\\,dz=\\frac{1}{x}\\,dx.\n$$\n\nGerade diese Kürzung zeigt, dass die Substitution passend gewählt war."
+  },
+  {
+    "front": "[2026-05-20] Was ist die Lösung des Beispiels $y'=\\frac{y}{x}+\\frac{x^2}{y^2}$?",
+    "back": "Aus der Substitution $z=\\frac{y}{x}$ erhält man\n$$\nz^2\\,dz=\\frac{1}{x}\\,dx.\n$$\nIntegrieren liefert\n$$\n\\frac{z^3}{3}=\\ln|x|+C,\n$$\nalso\n$$\nz^3=3\\ln|x|+C.\n$$\nDamit\n$$\nz=(3\\ln|x|+C)^{1/3}.\n$$\nWegen\n$$\ny=xz\n$$\nfolgt\n$$\ny(x)=x\\bigl(3\\ln|x|+C\\bigr)^{1/3}.\n$$\n\nWichtig: Diese Formel gilt nur auf Bereichen mit\n$$\nx\\neq 0\n$$\nund außerdem muss auch der Nenner der ursprünglichen Gleichung definiert sein, also insbesondere\n$$\ny\\neq 0.\n$$"
+  },
+  {
+    "front": "[2026-05-20] Warum muss man nach einer Substitution immer rücksubstituieren?",
+    "back": "Die Substitution führt eine **Hilfsfunktion** ein, etwa\n$$\nz(x)=\\frac{y(x)}{x}\n\\quad\\text{oder}\\quad\nz(x)=-3x+2u(x)-5.\n$$\nGelöst wird dann zunächst eine Gleichung für $z$, nicht für die ursprünglich gesuchte Funktion.\n\nOhne **Rücksubstitution** hat man daher das ursprüngliche Problem noch nicht vollständig gelöst. Erst durch Einsetzen der Definition von $z$ erhält man wieder die gesuchte Funktion $y$ oder $u$."
+  },
+  {
+    "front": "[2026-05-20] Warum gilt bei linearen inhomogenen Differentialgleichungen $y=y_h+y_p$?",
+    "back": "Sei\n$$\nL(y)=f\n$$\neine lineare Differentialgleichung. Wenn\n$$\nL(y_h)=0\n$$\nund\n$$\nL(y_p)=f,\n$$\ndann folgt wegen der **Linearität**\n$$\nL(y_h+y_p)=L(y_h)+L(y_p)=0+f=f.\n$$\n\nAlso ist\n$$\ny=y_h+y_p\n$$\neine Lösung der inhomogenen Gleichung.\n\nDie gesamte Lösungsfreiheit steckt in $y_h$, während $y_p$ nur eine einzige passende Antwort auf die Störfunktion liefern muss."
+  },
+  {
+    "front": "[2026-05-20] Warum reicht bei einer linearen inhomogenen Differentialgleichung eine einzige partikuläre Lösung?",
+    "back": "Wenn $y_p$ und $\\tilde y_p$ beide partikuläre Lösungen sind, dann gilt\n$$\nL(y_p)=f,\\qquad L(\\tilde y_p)=f.\n$$\nSubtrahiert man, erhält man\n$$\nL(y_p-\\tilde y_p)=0.\n$$\nAlso ist die Differenz zweier partikulärer Lösungen immer eine **homogene Lösung**.\n\nDeshalb erzeugt schon **eine einzige partikuläre Lösung** zusammen mit der allgemeinen homogenen Lösung alle anderen Lösungen:\n$$\ny=y_h+y_p.\n$$\n\nEine zusätzliche Integrationskonstante bei der Bestimmung von $y_p$ ist daher oft überflüssig, weil sie nur einen bereits bekannten homogenen Anteil wieder einführt."
+  },
+  {
+    "front": "[2026-05-20] Wie funktioniert Variation der Konstanten bei $u'-2u=-3x-5$?",
+    "back": "Zuerst löst man die homogene Gleichung\n$$\nu'-2u=0,\n$$\nderen Lösung ist\n$$\nu_h=Ce^{2x}.\n$$\nFür eine partikuläre Lösung ersetzt man die Konstante durch eine Funktion:\n$$\nu_p=C(x)e^{2x}.\n$$\nDann\n$$\nu_p'=C'(x)e^{2x}+2C(x)e^{2x}.\n$$\nEinsetzen in\n$$\nu'-2u=-3x-5\n$$\nliefert\n$$\n\\bigl(C'(x)e^{2x}+2C(x)e^{2x}\\bigr)-2C(x)e^{2x}=-3x-5.\n$$\nDie Terme mit $C(x)$ kürzen sich, also\n$$\nC'(x)e^{2x}=-3x-5,\n$$\ndamit\n$$\nC'(x)=(-3x-5)e^{-2x}.\n$$\n\nDanach integriert man $C'(x)$ und setzt zurück in $u_p=C(x)e^{2x}$."
+  },
+  {
+    "front": "[2026-05-20] Warum ist die Kürzung bei Variation der Konstanten ein wichtiger Kontrollschritt?",
+    "back": "Beim Ansatz\n$$\nu_p=C(x)e^{2x}\n$$\nstammt der Faktor $e^{2x}$ aus der **homogenen Lösung**. Deshalb müssen beim Ausdruck\n$$\nu_p'-2u_p\n$$\nalle Terme verschwinden, die schon zur homogenen Gleichung gehören.\n\nTatsächlich bleibt nur\n$$\nC'(x)e^{2x}\n$$\nübrig. Wenn sich die übrigen Terme nicht wegkürzen, ist das ein starkes Warnsignal für:\n- einen Ableitungsfehler,\n- ein falsches Vorzeichen,\n- oder einen unpassenden Ansatz.\n\nDie Kürzung ist also nicht nur bequem, sondern auch eine eingebaute **Plausibilitätskontrolle**."
+  },
+  {
+    "front": "[2026-05-20] Bestimme mit dem Ansatz $u_p=ax+b$ eine partikuläre Lösung von $u'-2u=-3x-5$.",
+    "back": "Setze\n$$\nu_p=ax+b.\n$$\nDann ist\n$$\nu_p'=a.\n$$\nEinsetzen in\n$$\nu'-2u=-3x-5\n$$\ngibt\n$$\na-2(ax+b)=-3x-5.\n$$\nAlso\n$$\n-2ax+(a-2b)=-3x-5.\n$$\nVergleiche die Koeffizienten:\n$$\n-2a=-3 \\quad\\Rightarrow\\quad a=\\frac32,\n$$\nund\n$$\na-2b=-5.\n$$\nMit $a=\\frac32$ folgt\n$$\n\\frac32-2b=-5\n\\quad\\Rightarrow\\quad\n-2b=-\\frac{13}{2}\n\\quad\\Rightarrow\\quad\nb=\\frac{13}{4}.\n$$\n\nDamit ist eine partikuläre Lösung\n$$\nu_p(x)=\\frac32x+\\frac{13}{4}.\n$$"
   }
 ]

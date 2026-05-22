@@ -1438,5 +1438,65 @@
   {
     "front": "[2026-05-19] Warum ist der Kontraktionsalgorithmus einseitig fehlerhaft?",
     "back": "Der Algorithmus kann nie einen Wert **kleiner** als den echten Minimum-Cut-Wert $\\mu(G)$ ausgeben.\n\nGrund: Nach jeder Kontraktion gilt\n$$\n\\mu(G)\\le \\mu(G/e),\n$$\nalso kann der Minimum-Cut-Wert entlang des Laufs nur gleich bleiben oder steigen. Der am Ende ausgegebene Schnitt im 2-Knoten-Graphen ist daher immer mindestens so groß wie der ursprüngliche Wert.\n\nFehler entstehen nur in die andere Richtung: Wenn unterwegs eine Kante eines Minimum Cuts kontrahiert wird, kann der optimale Schnitt zerstört werden, und der ausgegebene Wert wird **zu groß**.\n\nDarum spricht man von **einseitigem Fehler**."
+  },
+  {
+    "front": "[2026-05-21] Warum ist der kleinste umschließende Kreis einer endlichen Punktmenge eindeutig?",
+    "back": "Angenommen, es gäbe zwei verschiedene **kleinste umschließende Kreise** mit demselben minimalen Radius. Dann liegt die ganze Punktmenge $P$ im Schnitt ihrer Kreisscheiben.\n\nDiesen Schnitt kann man aber wieder mit einem kleineren Kreis überdecken: Man nimmt den Mittelpunkt zwischen den beiden Kreismittelpunkten und wählt den Radius bis zu einem Schnittpunkt der beiden Kreise. Dieser Radius ist echt kleiner als der ursprüngliche, weil in einem rechtwinkligen Dreieck nach Pythagoras ein positiver Term abgezogen wird.\n\nDamit gäbe es einen umschließenden Kreis mit kleinerem Radius als den angeblich kleinsten. Widerspruch. Also ist $C(P)$ **eindeutig**."
+  },
+  {
+    "front": "[2026-05-21] Warum ist beim Umschließen die Kreisscheibe und nicht nur der Kreisrand relevant?",
+    "back": "Ein Kreis **umschließt** $P$ genau dann, wenn jeder Punkt aus $P$ in der **Kreisscheibe** liegt, also im Inneren oder auf dem Rand.\n\nDer Rand allein reicht nicht, weil die meisten Punkte eines umschließenden Kreises gerade **nicht** auf dem Rand liegen müssen. Für die Minimalität sind aber Randpunkte entscheidend:\n\n- Liegt **kein** Punkt auf dem Rand, kann man den Kreis verkleinern.\n- Liegt **genau ein** Punkt auf dem Rand, kann man den Mittelpunkt leicht verschieben und dann verkleinern.\n- Stabil wird die Situation erst durch genügend Randpunkte, typischerweise zwei diametrale oder drei Punkte.\n\nDarum ist die Kreisscheibe die richtige geometrische Bedingung."
+  },
+  {
+    "front": "[2026-05-21] Warum kann ein kleinster umschließender Kreis nicht genau einen Randpunkt haben?",
+    "back": "Hat ein umschließender Kreis genau **einen** Randpunkt, dann liegen alle anderen Punkte strikt im Inneren der Kreisscheibe.\n\nDann kann man den Mittelpunkt ein kleines Stück **vom Randpunkt weg** verschieben, ohne dass ein Punkt aus der Kreisscheibe herausfällt. Danach ist sogar der bisherige Randpunkt im Inneren. Nun kann man den Radius etwas verkleinern und erhält immer noch einen umschließenden Kreis.\n\nDas widerspricht der Minimalität. Daher kann ein **kleinster umschließender Kreis** nicht genau einen Randpunkt haben."
+  },
+  {
+    "front": "[2026-05-21] Wann reichen genau zwei Randpunkte aus, um den kleinsten Kreis zu bestimmen?",
+    "back": "Genau zwei Randpunkte reichen nur im **Spezialfall**, dass sie sich **diametral gegenüberliegen**.\n\nWarum? Wenn zwei Randpunkte nicht Endpunkte eines Durchmessers sind, kann man den Mittelpunkt typischerweise noch so verschieben, dass beide Punkte in der Kreisscheibe bleiben, während der Radius kleiner wird. Dann war der Kreis nicht minimal.\n\nSind die beiden Punkte aber Endpunkte eines Durchmessers, ist der Kreis durch sie festgelegt: Der Mittelpunkt ist ihr Mittelpunkt, und der Radius ist die halbe Distanz.\n\nAlso: **Zwei Randpunkte genügen nur im Durchmesserfall**."
+  },
+  {
+    "front": "[2026-05-21] Was ist ein Zertifikat für den kleinsten umschließenden Kreis, und warum ist es algorithmisch nützlich?",
+    "back": "Ein **Zertifikat** ist eine Teilmenge $Q \\subseteq P$, so dass\n$$C(Q)=C(P).$$\n\nFür endliche Punktmengen gibt es immer ein Zertifikat aus **höchstens drei Punkten**. In der Vorlesung wurde es als Dreiermenge formuliert; falls eigentlich zwei diametrale Punkte genügen, kann man einen beliebigen dritten Punkt hinzufügen.\n\nAlgorithmisch ist das wichtig, weil man den gesuchten Kreis nicht durch alle Punkte gleichzeitig „verstehen“ muss. Es reicht prinzipiell, die **richtigen höchstens drei Punkte** zu finden, die den Kreis festlegen.\n\nDas ist die Grundlage sowohl für Brute-Force über Dreiermengen als auch für die Analyse des randomisierten Algorithmus."
+  },
+  {
+    "front": "[2026-05-21] Warum gilt für $Q \\subseteq P$ immer $\\operatorname{rad}(C(Q)) \\le \\operatorname{rad}(C(P))$?",
+    "back": "Der Kreis $C(P)$ umschließt per Definition alle Punkte aus $P$ und damit insbesondere auch alle Punkte aus $Q$.\n\nAlso ist $C(P)$ ein zulässiger umschließender Kreis für $Q$. Da $C(Q)$ unter allen solchen Kreisen den **minimalen Radius** hat, kann sein Radius nicht größer sein:\n$$\\operatorname{rad}(C(Q)) \\le \\operatorname{rad}(C(P)).$$\n\nDas ist **Radius-Monotonie**.\n\nWichtig: Daraus folgt **nicht**, dass die Kreisscheibe von $C(Q)$ in der von $C(P)$ enthalten ist. Verglichen wird nur der Radius, nicht die Lage der Mittelpunkte."
+  },
+  {
+    "front": "[2026-05-21] Warum folgt aus gleichem Radius bereits gleicher Kreis?",
+    "back": "Sei $Q \\subseteq P$ und\n$$\\operatorname{rad}(C(Q))=\\operatorname{rad}(C(P)).$$\n\nAus der Radius-Monotonie weiß man bereits, dass der Radius von $C(Q)$ nicht größer sein kann als der von $C(P)$. Wenn beide gleich sind, hat man für $Q$ einen Kreis mit demselben minimalen Radius wie für $P$.\n\nDa der **kleinste umschließende Kreis eindeutig** ist, kann es nicht zwei verschiedene kleinste Kreise mit diesem Radius geben, die beide die relevante Punktmenge minimal umschließen. Daher muss gelten:\n$$C(Q)=C(P).$$\n\nDiese Beobachtung ist der entscheidende letzte Schritt im $O(n^3)$-Algorithmus."
+  },
+  {
+    "front": "[2026-05-21] Warum ist die Aussage „Für $Q \\subseteq P$ liegt die Kreisscheibe von $C(Q)$ in der von $C(P)$“ falsch?",
+    "back": "Aus $Q \\subseteq P$ folgt nur\n$$\\operatorname{rad}(C(Q)) \\le \\operatorname{rad}(C(P)).$$\n\nDie **Mittelpunkte** der beiden Kreise können aber verschieden sein. Ein kleinerer oder gleich großer Radius sagt nichts darüber aus, ob eine Kreisscheibe geometrisch in der anderen liegt.\n\nMan kann also sehr wohl zwei Kreise haben, bei denen $C(Q)$ einen kleineren Radius hat, aber seitlich so verschoben ist, dass Teile seiner Kreisscheibe außerhalb von $C(P)$ liegen.\n\nDer Fehler ist, **Radiusvergleich** mit **Mengeninklusion** zu verwechseln."
+  },
+  {
+    "front": "[2026-05-21] Wie funktioniert der naive Brute-Force-Algorithmus über Zertifikate, und warum kostet er $O(n^4)$?",
+    "back": "Man betrachtet alle Dreiermengen\n$$Q \\in \\binom{P}{3}.$$\n\nFür jede solche Menge berechnet man $C(Q)$ und prüft dann, ob dieser Kreis **alle** Punkte aus $P$ umschließt. Falls ja, ist wegen des Zertifikatslemmas der gesuchte Kreis gefunden.\n\nDie Laufzeit:\n\n- Es gibt ungefähr $O(n^3)$ Dreiermengen.\n- Für jede Dreiermenge kostet der Test gegen alle Punkte $O(n)$.\n\nAlso insgesamt:\n$$O(n^3)\\cdot O(n)=O(n^4).$$\n\nDie Idee ist korrekt, aber zu langsam."
+  },
+  {
+    "front": "[2026-05-21] Warum reicht im verbesserten Brute-Force-Algorithmus der größte Radius über alle Dreiermengen?",
+    "back": "Für jede Dreiermenge $Q$ gilt wegen Radius-Monotonie:\n$$\\operatorname{rad}(C(Q)) \\le \\operatorname{rad}(C(P)).$$\n\nAndererseits garantiert das **Zertifikatslemma**, dass es mindestens eine Dreiermenge $Q$ gibt mit\n$$C(Q)=C(P).$$\nFür diese gilt also\n$$\\operatorname{rad}(C(Q))=\\operatorname{rad}(C(P)).$$\n\nDamit ist der größte Radius unter allen $C(Q)$ genau der Radius von $C(P)$. Wegen der **Eindeutigkeit** folgt dann sogar, dass der zugehörige Kreis selbst gleich $C(P)$ ist.\n\nSo spart man den expliziten Test gegen alle Punkte und erhält Laufzeit $O(n^3)$."
+  },
+  {
+    "front": "[2026-05-21] Wie arbeitet der randomisierte Multiplicative-Weights-Algorithmus in einer Runde?",
+    "back": "Er arbeitet mit einer **Multimenge** $P'$, in der jeder ursprüngliche Punkt eine Multiplizität besitzt.\n\nEine Runde:\n\n1. Wähle zufällig $r=11$ Punkte aus $P'$.\n2. Berechne den kleinsten umschließenden Kreis $C(R)$ dieser Stichprobe $R$.\n3. Prüfe, ob $C(R)$ alle ursprünglichen Punkte aus $P$ umschließt.\n4. Falls ja, gib den Kreis zurück.\n5. Falls nein, **verdopple** die Multiplizität aller nicht abgedeckten Punkte.\n\nDie Idee von **multiplicative weights** ist: Punkte, an denen der aktuelle Kreis scheitert, werden in späteren Stichproben wahrscheinlicher ausgewählt."
+  },
+  {
+    "front": "[2026-05-21] Warum darf man $P'$ nicht explizit als Liste aller Kopien speichern?",
+    "back": "Durch das wiederholte Verdoppeln können Multiplizitäten sehr schnell wachsen. Würde man $P'$ als echte Liste aller Kopien speichern, könnte seine Größe exponentiell in der Rundenzahl anwachsen.\n\nDann wäre eine Runde nicht mehr garantiert in\n$$O(n)$$\nimplementierbar.\n\nStattdessen speichert man für jeden ursprünglichen Punkt nur seine **Multiplizität**. Zufälliges Ziehen aus $P'$ bedeutet dann **gewichtetes Ziehen** entsprechend diesen Multiplizitäten.\n\nSo bleibt die Repräsentation kompakt und die Rundekosten hängen von der Anzahl ursprünglicher Punkte ab, nicht von der aktuellen Gesamtzahl aller Kopien."
+  },
+  {
+    "front": "[2026-05-21] Was bedeutet „zufällig aus $P'$ wählen“ genau, und welcher Denkfehler ist häufig?",
+    "back": "Da $P'$ eine **Multimenge** ist, bedeutet zufälliges Wählen aus $P'$ nicht gleichverteiltes Wählen aus den ursprünglichen Punkten.\n\nStattdessen wird ein Punkt mit Wahrscheinlichkeit proportional zu seiner **Multiplizität** gewählt. Hat ein Punkt doppelt so viele Kopien wie ein anderer, ist er auch doppelt so wahrscheinlich in der Stichprobe.\n\nDer häufige Denkfehler ist, die Gewichte zwar zu aktualisieren, beim Sampling aber trotzdem alle ursprünglichen Punkte gleich wahrscheinlich zu behandeln. Dann würde der Multiplicative-Weights-Mechanismus seine Wirkung verlieren."
+  },
+  {
+    "front": "[2026-05-21] Warum ist der Zusammenhang „$s$ liegt außerhalb von $C(R)$ genau dann, wenn $s$ in $R\\cup\\{s\\}$ essentiell ist“ so wichtig?",
+    "back": "Ein Punkt $s$ ist **essentiell** für eine Menge $Q$, wenn das Entfernen von $s$ den kleinsten umschließenden Kreis verkleinert.\n\nDer zentrale Zusammenhang lautet:\n$$s \\notin C(R) \\quad \\Longleftrightarrow \\quad s \\text{ ist essentiell für } R\\cup\\{s\\}.$$\n\nIntuition:\n\n- Liegt $s$ außerhalb von $C(R)$, dann muss der Kreis größer werden, sobald man $s$ hinzunimmt; also ist $s$ essentiell.\n- Ist $s$ essentiell in $R\\cup\\{s\\}$, dann kann $s$ nicht schon von $C(R)$ abgedeckt gewesen sein.\n\nDieser Zusammenhang übersetzt „nicht abgedeckt“ in eine strukturelle Eigenschaft, die man mit dem Zertifikatslemma begrenzen kann."
+  },
+  {
+    "front": "[2026-05-21] Warum gibt es höchstens drei essentielle Punkte?",
+    "back": "Wenn ein Punkt **essentiell** ist, gehört er zu einer kleinen Menge von Punkten, die den kleinsten umschließenden Kreis festlegen.\n\nNach dem **Zertifikatslemma** gibt es für jede endliche Punktmenge ein Zertifikat aus höchstens drei Punkten. Entfernt man einen nicht-zertifizierenden Punkt, bleibt der kleinste Kreis unverändert; ein solcher Punkt ist also nicht essentiell.\n\nDaher können nur Punkte aus einem Zertifikat essentiell sein, also höchstens drei.\n\nGenau diese Schranke macht das Sampling-Lemma möglich: Die Zahl problematischer Punkte lässt sich über die Zahl essentieller Punkte kontrollieren."
   }
 ]

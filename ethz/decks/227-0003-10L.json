@@ -1138,5 +1138,65 @@
   {
     "front": "[2026-05-15] What changes when moving from direct-mapped to set-associative to fully associative caches?",
     "back": "The key change is **where a block is allowed to go**.\n\n- **Direct-mapped**: one block $\\to$ exactly one cache location\n- **Set-associative**: one block $\\to$ one set, but any **way** in that set\n- **Fully associative**: one block $\\to$ anywhere in the cache\n\nAs associativity increases:\n- **conflict misses decrease**\n- the number of possible placements increases\n- **tag comparison hardware** becomes more expensive and complex\n\nSo higher associativity improves flexibility, but not for free."
+  },
+  {
+    "front": "[2026-05-21] Why do caches exist at all, beyond “memory is slow”?",
+    "back": "Caches exploit **temporal locality** and **spatial locality** so the processor communicates less often with far-away storage.\n\n- **Temporal locality**: data used now is likely to be used again soon.\n- **Spatial locality**: nearby addresses are likely to be used soon.\n\nThe deeper principle is **minimizing communication**: moving data farther usually costs more in latency, bandwidth, and energy. A cache keeps copies of likely-useful data close to the CPU so many accesses avoid expensive long-distance transfers."
+  },
+  {
+    "front": "[2026-05-21] Why is a memory hierarchy necessary instead of building one memory that is both huge and fast?",
+    "back": "A **memory hierarchy** exists because hardware generally cannot be both very large and very fast at the same time.\n\nSo systems use layers:\n\n- small, fast storage near the CPU\n- larger, slower storage farther away\n\nThis lets common accesses hit in fast levels while still providing large total capacity. In modern systems, the hierarchy may even extend to **remote memory** over a network, so the cost of a miss can vary dramatically depending on where the data comes from."
+  },
+  {
+    "front": "[2026-05-21] In a direct-mapped cache, why can two frequently used blocks still cause many misses?",
+    "back": "Because each block has exactly **one possible cache location**.\n\nIf two active memory blocks map to the same index, they continually evict each other even if the rest of the cache is empty. These are **conflict misses**. Direct mapping is simple and fast, but it is vulnerable to this kind of pathological interference."
+  },
+  {
+    "front": "[2026-05-21] Why does increasing associativity usually reduce conflict misses but increase hit cost?",
+    "back": "Higher **associativity** gives each block more possible locations within a set, so colliding blocks are less likely to evict each other. That reduces **conflict misses**.\n\nBut the cache must then do more work on a hit:\n\n- compare more tags\n- run more hit/miss logic\n- select among more ways with multiplexers\n- spend more area and often more access time\n\nSo associativity trades lower miss rate for higher hit complexity and often higher latency."
+  },
+  {
+    "front": "[2026-05-21] What makes a fully associative cache different from a set-associative cache?",
+    "back": "In a **fully associative cache**, a block can go anywhere in the cache, so there are no index bits selecting a set.\n\nThat removes set-based conflict placement restrictions, but the hardware must check the tag against essentially **every location**. This makes lookup logic expensive and less scalable than ordinary **set-associative** designs."
+  },
+  {
+    "front": "[2026-05-21] On a miss in a set-associative cache, what are the roles of replacement, insertion, and promotion?",
+    "back": "They answer three different questions about **priority** inside a set:\n\n- **Replacement**: which existing block should be evicted on a miss?\n- **Insertion**: what initial priority should a newly fetched block get?\n- **Promotion**: how should a block’s priority change after a hit?\n\nAll three try to predict future usefulness using signals like recency, frequency, locality, or refetch cost."
+  },
+  {
+    "front": "[2026-05-21] How many bits are needed to represent perfect LRU ordering for $N$ ways, and why?",
+    "back": "Perfect **LRU** must distinguish all possible recency orderings of the $N$ ways.\n\nThere are $N!$ such orderings, so the minimum number of bits is\n\n$$\\left\\lceil \\log_2(N!) \\right\\rceil.$$\n\nThis is why exact LRU becomes expensive as associativity grows: the number of possible orderings grows factorially, not linearly."
+  },
+  {
+    "front": "[2026-05-21] How many bits does perfect LRU need for a 4-way set, and how does that compare to 2-way LRU?",
+    "back": "For a 4-way set, perfect LRU needs\n\n$$\\left\\lceil \\log_2(4!) \\right\\rceil = \\left\\lceil \\log_2(24) \\right\\rceil = 5 \\text{ bits}.$$\n\nFor a 2-way set, only **1 bit** is needed, because identifying the **least recently used** way automatically identifies the other as most recently used.\n\nThis shows why exact LRU is easy for 2-way caches but gets more costly for higher associativity."
+  },
+  {
+    "front": "[2026-05-21] Why can LRU perform terribly on the repeating 4-way access pattern $A\\,B\\,C\\,D\\,E$?",
+    "back": "A 4-way set can hold only four of the five blocks. Under **LRU**, after filling with $A,B,C,D$, the access to $E$ evicts the least recently used block, which is $A$.\n\nThen the next access is exactly $A$, so it misses and evicts the current LRU. The same pattern repeats forever: each access evicts the block needed next.\n\nSo the repeating sequence\n\n$$A\\,B\\,C\\,D\\,E\\,A\\,B\\,C\\,D\\,E\\ldots$$\n\ncan give **zero hits** under LRU in that set."
+  },
+  {
+    "front": "[2026-05-21] Why can random replacement outperform LRU on some patterns?",
+    "back": "**LRU** assumes recent use predicts near-future use. That works well for many loop-like patterns, but not for cyclic patterns slightly larger than the associativity.\n\nIn the 4-way, 5-block cycle $A\\,B\\,C\\,D\\,E$, LRU makes the systematically worst choice by evicting the next-needed block. **Random replacement** does not follow that deterministic bad pattern, so although it is not smarter in general, it can avoid this worst-case behavior and achieve a better hit rate."
+  },
+  {
+    "front": "[2026-05-21] What does Belady’s OPT policy do, and what is it actually optimal for?",
+    "back": "**Belady’s OPT** evicts the block whose next reference is **furthest in the future**.\n\nIt is optimal for minimizing **miss rate** under its assumptions. Formally, on each miss it chooses the eviction that leads to the fewest future misses.\n\nBut “optimal” here does **not** mean optimal for execution time, energy, or bandwidth."
+  },
+  {
+    "front": "[2026-05-21] Why is Belady’s OPT not necessarily optimal for execution time?",
+    "back": "Because performance depends not only on **how many** misses occur, but also on **how expensive** those misses are.\n\nIf one block is cheap to refetch and another would come from a much slower source such as remote memory, a policy that minimizes miss count may still increase total stall time by evicting the expensive block.\n\nSo minimizing miss rate and minimizing execution time are different objectives when miss costs are unequal."
+  },
+  {
+    "front": "[2026-05-21] What is the difference between write-through/write-back and write-allocate/no-write-allocate?",
+    "back": "They answer different questions.\n\n**Write-through vs. write-back** asks: what happens on a **write hit**?\n\n- **Write-through**: immediately propagate the write to lower levels.\n- **Write-back**: update only this cache level now, and write lower levels later on eviction.\n\n**Write-allocate vs. no-write-allocate** asks: what happens on a **write miss**?\n\n- **Write-allocate**: fetch the block into the cache, then write it.\n- **No-write-allocate**: do not bring the block into the cache.\n\nDo not confuse them."
+  },
+  {
+    "front": "[2026-05-21] Why does write-back need a dirty bit, while write-through typically does not?",
+    "back": "In **write-back**, the cache may contain data newer than lower memory levels. The cache therefore needs a **dirty bit** (or modified bit) to record whether a block has been changed and must be written back on eviction.\n\nIn **write-through**, lower levels are updated immediately on each write, so the cache does not need to remember deferred write-back responsibility in the same way.\n\nThe trade-off is that write-through is simpler for consistency between levels, but it uses more write bandwidth."
+  },
+  {
+    "front": "[2026-05-21] What problem do sub-blocked (sector) caches solve?",
+    "back": "A **sub-blocked** or **sector** cache divides one cache block into smaller pieces with separate **valid** and **dirty** bits, while sharing one tag.\n\nThis helps when only part of a large block is actually needed or modified:\n\n- fetch only the needed sub-blocks\n- update only modified sub-blocks\n- avoid wasting bandwidth on unused portions\n\nSo sub-blocking keeps some spatial grouping benefits without forcing every transfer or writeback to involve the entire block."
   }
 ]
