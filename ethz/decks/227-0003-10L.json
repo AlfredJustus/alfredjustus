@@ -1198,5 +1198,65 @@
   {
     "front": "[2026-05-21] What problem do sub-blocked (sector) caches solve?",
     "back": "A **sub-blocked** or **sector** cache divides one cache block into smaller pieces with separate **valid** and **dirty** bits, while sharing one tag.\n\nThis helps when only part of a large block is actually needed or modified:\n\n- fetch only the needed sub-blocks\n- update only modified sub-blocks\n- avoid wasting bandwidth on unused portions\n\nSo sub-blocking keeps some spatial grouping benefits without forcing every transfer or writeback to involve the entire block."
+  },
+  {
+    "front": "[2026-05-22] Why can eliminating one isolated cache miss help more than eliminating one of two overlapping misses?",
+    "back": "Because the processor cares about **stall time**, not just **miss count**. With **memory-level parallelism (MLP)**, multiple misses can overlap in time.\n\nIf two misses occur in parallel, removing one may save little, since the processor still waits for the other. But an **isolated miss** lies alone on the critical path, so removing it can directly reduce execution time.\n\nThis is why a policy that minimizes misses is not always optimal for performance: misses differ in both **latency** and **overlap**."
+  },
+  {
+    "front": "[2026-05-22] Why is minimizing cache misses not always the same as minimizing execution time?",
+    "back": "A miss has two different notions of cost:\n\n- **Latency**: how long the access takes\n- **Processor-visible cost**: how much of that latency actually stalls execution\n\nA miss found in another cache level may be cheaper than one going to DRAM, and a miss that overlaps with others may hurt less than a serial miss. Therefore, a replacement policy that only reduces the number of misses can keep the “wrong” blocks.\n\nAn execution-time-oriented policy should prefer keeping blocks whose future misses are likely to be **isolated**, **high-latency**, or both."
+  },
+  {
+    "front": "[2026-05-22] In the lecture’s MLP example, why might keeping serial blocks like $S1,S2,S3$ be better even if total misses increase?",
+    "back": "Because the goal is to reduce **stalls**, not necessarily the number of misses. If blocks $S1,S2,S3$ would otherwise miss one after another, each miss can create a separate stall.\n\nAn **MLP-aware** policy may keep those serial blocks in cache and instead allow misses that tend to happen in **parallel clusters**. That can produce more total misses, but fewer distinct waiting periods for the processor.\n\nSo the policy intentionally trades miss count for better overlap."
+  },
+  {
+    "front": "[2026-05-22] What is the key idea behind an MLP-aware cache replacement policy?",
+    "back": "The key idea is to estimate whether future misses for a block or set are likely to be **serial** or **parallel**, and bias replacement accordingly.\n\nSuch a policy tries to:\n\n- protect blocks whose misses would likely be isolated or expensive\n- evict blocks whose future misses are likely to overlap with others\n\nIn practice, this is often done by learning from past behavior of a cache set. Since many workloads still benefit from recency, the policy is usually **hybrid** rather than replacing LRU-like behavior completely."
+  },
+  {
+    "front": "[2026-05-22] Why can starting a main-memory request before finishing on-chip cache lookups reduce miss cost?",
+    "back": "Normally, an access that ultimately goes to DRAM first spends time checking **L1**, **L2**, and the **last-level cache**. If the block is absent everywhere on chip, those lookup delays are on the critical path before DRAM access even begins.\n\nIf hardware predicts an **on-chip miss**, it can launch the DRAM request in parallel with those cache checks. When the prediction is correct, part of the off-chip latency is hidden.\n\nSo the benefit comes from overlapping **on-chip miss detection** with **off-chip access**."
+  },
+  {
+    "front": "[2026-05-22] What is the main risk of predicting an on-chip miss and going to memory early?",
+    "back": "If the prediction is wrong, the machine sends an unnecessary **main-memory request** even though the data was actually on chip.\n\nThat wastes:\n\n- **bandwidth**\n- **energy**\n- possibly memory-system capacity that could have served useful requests\n\nSo early off-chip access is only worthwhile if the predictor is accurate enough. The lecture mentioned **perceptron-based prediction** as a hardware-friendly way to make this decision."
+  },
+  {
+    "front": "[2026-05-22] Why can compressed caches increase effective capacity without doubling physical cache size?",
+    "back": "A **compressed cache** stores some cache lines in fewer bytes than their original form. If many lines are compressible, the same physical cache can hold more logical data.\n\nThis works because real programs often contain patterns such as:\n\n- all-zero values\n- repeated values\n- narrow values stored in wide words\n- nearby pointer-like values\n\nThe gain is effectively larger capacity, while the cost is extra compression/decompression logic that must remain simple enough not to hurt cache access time."
+  },
+  {
+    "front": "[2026-05-22] How does base-delta-immediate compression work, and why is it hardware-friendly?",
+    "back": "In **base-delta** compression, one value is stored as a **base**, and the remaining values are stored as small **deltas** from that base. **Base-delta-immediate (BDI)** also allows an implicit base of zero, which helps compress patterns like zeros or small values.\n\nIt is hardware-friendly because decompression mainly requires parallel computation of\n\n$$\\text{value}_i = \\text{base} + \\Delta_i.$$\n\nThat is much simpler than complex variable-length decoding schemes, so it is more suitable near the processor core where latency matters."
+  },
+  {
+    "front": "[2026-05-22] When does a shared cache help compared with private caches?",
+    "back": "A **shared cache** helps when dynamic sharing of capacity is valuable. If one thread uses little cache, another can use the freed space. It also avoids storing multiple copies of some **shared data**, which can reduce communication overhead.\n\nSo shared caches are especially attractive when:\n\n- thread working sets are uneven\n- data is shared across cores\n- utilization matters more than strict isolation\n\nThe trade-off is that threads can interfere with each other."
+  },
+  {
+    "front": "[2026-05-22] Why can a shared cache hurt predictability and fairness?",
+    "back": "Because one thread’s behavior can directly change another thread’s hit rate. A thread with streaming accesses may fill the shared cache and evict another thread’s useful working set, even if the streaming thread gains little from caching.\n\nThis makes performance depend on co-runners, reducing:\n\n- **predictability**\n- **fairness**\n- **performance isolation**\n\nThat is why **partitioning** and QoS mechanisms matter: they limit how much cache space or bandwidth each thread can consume."
+  },
+  {
+    "front": "[2026-05-22] What problem does cache coherence solve in a multicore system?",
+    "back": "**Cache coherence** ensures that multiple cached copies of the same memory block remain consistent.\n\nIf processor 1 and processor 2 both cache block $X$, and processor 1 writes a new value, processor 2 must not later read the stale old value from its own cache. Coherence hardware enforces this consistency automatically.\n\nWithout coherence, shared-memory programming would be extremely difficult or slow, because software would need to manage stale cached copies explicitly."
+  },
+  {
+    "front": "[2026-05-22] How does broadcast-based coherence differ from directory-based coherence?",
+    "back": "In **broadcast-based coherence**, caches observe shared bus transactions. When one cache writes a block, other caches snoop the bus and invalidate or update their copies.\n\nIn **directory-based coherence**, a **directory** tracks which caches hold each block and sends messages only to those caches when a write requires exclusive access.\n\nThe main difference is scope:\n\n- broadcast: notify everyone\n- directory: notify only known sharers\n\nDirectory schemes scale better because they avoid system-wide broadcasts."
+  },
+  {
+    "front": "[2026-05-22] What is prefetching, and how is it fundamentally different from caching?",
+    "back": "**Prefetching** predicts future memory accesses and fetches data before the program explicitly requests it. **Caching** is reactive: data enters the cache because it was already accessed.\n\nThis difference matters because prefetching can reduce even **compulsory misses** if it is early and accurate enough. But unlike ordinary caching, prefetching depends on prediction, so wrong prefetches can waste cache space, bandwidth, and energy.\n\nSo caching exploits past accesses; prefetching tries to anticipate future ones."
+  },
+  {
+    "front": "[2026-05-22] A prefetcher sent $100$ prefetches, $70$ were used, and $50$ were used on time. What are accuracy and timeliness?",
+    "back": "Using the lecture formulas:\n\n**Accuracy**\n$$\\frac{\\text{used prefetches}}{\\text{sent prefetches}}=\\frac{70}{100}=0.7=70\\%$$\n\n**Timeliness**\n$$\\frac{\\text{on-time used prefetches}}{\\text{used prefetches}}=\\frac{50}{70}\\approx 0.714=71.4\\%$$\n\nSo the prefetcher is reasonably accurate, but not every useful prefetch arrived early enough to hide the miss."
+  },
+  {
+    "front": "[2026-05-22] Why is a 100% accurate prefetcher not necessarily useful?",
+    "back": "Because **accuracy** alone says nothing about how many misses are affected. A prefetcher could issue very few prefetches, all correct, and still have almost no impact.\n\nThat is why **coverage** also matters:\n\n$$\\text{coverage}=\\frac{\\text{prefetched misses}}{\\text{all misses}}.$$\n\nA prefetcher with perfect accuracy but near-zero coverage may save almost no stall time. Good prefetching must balance **accuracy**, **coverage**, **timeliness**, and resource cost."
   }
 ]
