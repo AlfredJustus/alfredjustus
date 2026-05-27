@@ -1498,5 +1498,65 @@
   {
     "front": "[2026-05-21] Warum gibt es höchstens drei essentielle Punkte?",
     "back": "Wenn ein Punkt **essentiell** ist, gehört er zu einer kleinen Menge von Punkten, die den kleinsten umschließenden Kreis festlegen.\n\nNach dem **Zertifikatslemma** gibt es für jede endliche Punktmenge ein Zertifikat aus höchstens drei Punkten. Entfernt man einen nicht-zertifizierenden Punkt, bleibt der kleinste Kreis unverändert; ein solcher Punkt ist also nicht essentiell.\n\nDaher können nur Punkte aus einem Zertifikat essentiell sein, also höchstens drei.\n\nGenau diese Schranke macht das Sampling-Lemma möglich: Die Zahl problematischer Punkte lässt sich über die Zahl essentieller Punkte kontrollieren."
+  },
+  {
+    "front": "[2026-05-26] Warum ist eine Menge genau dann konvex, wenn sie mit je zwei Punkten auch das ganze Verbindungssegment enthält?",
+    "back": "Eine Menge $M \\subseteq \\mathbb{R}^d$ ist **konvex**, wenn für alle $v_0,v_1 \\in M$ und alle $\\lambda \\in [0,1]$ auch\n$$\n(1-\\lambda)v_0+\\lambda v_1 \\in M\n$$\ngilt.\n\nDas ist genau die formale Version von: Zwischen zwei Punkten der Menge darf es keine „Einbuchtung“ geben. Das ganze **Liniensegment**\n$$\n\\{(1-\\lambda)v_0+\\lambda v_1 \\mid \\lambda \\in [0,1]\\}\n$$\nmuss in der Menge bleiben.\n\nAlgorithmisch ist das wichtig, weil viele geometrische und Optimierungsprobleme auf konvexen Mengen einfacher werden als auf nichtkonvexen."
+  },
+  {
+    "front": "[2026-05-26] Was ist die konvexe Hülle einer Punktmenge, und wie repräsentiert man sie bei endlichen Punktmengen in der Ebene?",
+    "back": "Die **konvexe Hülle** $\\operatorname{conv}(S)$ einer Punktmenge $S$ ist die kleinste konvexe Menge, die $S$ enthält.\n\nÄquivalent ist sie:\n- der **Schnitt aller konvexen Mengen**, die $S$ enthalten,\n- oder der **Schnitt aller Halbebenen**, die $S$ enthalten.\n\nFür eine endliche Punktmenge in der Ebene ist der Rand von $\\operatorname{conv}(S)$ ein Polygon. Algorithmisch speichert man daher nicht die ganze unendliche Menge, sondern die **Eckpunkte des Randpolygons in zyklischer Reihenfolge**, z. B. gegen den Uhrzeigersinn."
+  },
+  {
+    "front": "[2026-05-26] Warum ist eine Folge von Punkten genau dann der Rand der konvexen Hülle, wenn jedes aufeinanderfolgende Paar eine Randkante bildet?",
+    "back": "Eine gerichtete Kante $(q,r)$ ist eine **Randkante**, wenn alle anderen Punkte links von der gerichteten Geraden $q \\to r$ liegen.\n\nWenn eine zyklische Punktfolge nur aus solchen Kanten besteht, dann:\n- zeigt jede Kante nach außen,\n- liegen alle Punkte auf derselben Seite jeder Kante,\n- und der entstehende Polygonrand umschließt die gesamte Punktmenge konvex.\n\nUmgekehrt muss auf dem Rand der konvexen Hülle jede Kante genau diese Eigenschaft haben. Sonst läge ein Punkt auf der „falschen“ Seite, und die Kante könnte kein Randstück der Hülle sein.\n\nDamit wird die geometrische Hülle auf eine lokal testbare Bedingung reduziert."
+  },
+  {
+    "front": "[2026-05-26] Wie entscheidet der Determinantentest, ob ein Punkt links von einer gerichteten Geraden liegt?",
+    "back": "Für den Ursprung gilt: Ein Punkt $p$ liegt links von der gerichteten Geraden $0 \\to r$, wenn\n$$\n\\det(r,p)=r_xp_y-r_yp_x>0\n$$\nist.\n\nFür allgemeine Punkte verschiebt man das Koordinatensystem nach $q$. Dann gilt:\n$$\np \\text{ liegt links von } q \\to r\n\\quad\\Longleftrightarrow\\quad\n\\det(r-q,p-q)>0.\n$$\n\nDie **Determinante** ist die vorzeichenbehaftete Fläche des aufgespannten Parallelogramms:\n- $>0$: links / gegen den Uhrzeigersinn,\n- $<0$: rechts / im Uhrzeigersinn,\n- $=0$: kollinear.\n\nDer Test läuft in **konstanter Zeit**."
+  },
+  {
+    "front": "[2026-05-26] Rechne den Orientierungstest aus: Liegt $p=(2,3)$ links von der gerichteten Geraden von $q=(1,1)$ nach $r=(4,2)$?",
+    "back": "Man berechnet\n$$\nr-q=(4-1,2-1)=(3,1), \\qquad p-q=(2-1,3-1)=(1,2).\n$$\n\nDann:\n$$\n\\det(r-q,p-q)\n=\n\\det\\begin{pmatrix}3 & 1\\\\ 1 & 2\\end{pmatrix}\n=\n3\\cdot 2 - 1\\cdot 1\n=\n5.\n$$\n\nDa\n$$\n5>0,\n$$\nliegt $p$ **links** von der gerichteten Geraden $q \\to r$.\n\nDer Punkt erfüllt also genau die Bedingung, die man für eine Randkante testen würde."
+  },
+  {
+    "front": "[2026-05-26] Warum ist der naive Algorithmus zur Berechnung der konvexen Hülle kubisch?",
+    "back": "Der **naive Algorithmus** betrachtet alle geordneten Punktpaare $(q,r)$ als mögliche Randkanten. Für jedes Paar prüft er, ob alle übrigen Punkte links von $q \\to r$ liegen.\n\nDas ergibt:\n- $O(n^2)$ mögliche geordnete Paare,\n- pro Paar ein Test gegen $O(n)$ weitere Punkte.\n\nInsgesamt also\n$$\nO(n^2)\\cdot O(n)=O(n^3).\n$$\n\nDie Idee ist korrekt, aber ineffizient, weil fast alle getesteten Paare keine Randkanten sind."
+  },
+  {
+    "front": "[2026-05-26] Warum ist der Punkt mit kleinster $x$-Koordinate sicher ein Hülleneckpunkt, wenn alle $x$-Koordinaten verschieden sind?",
+    "back": "Hat ein Punkt $q$ die **kleinste $x$-Koordinate** aller Punkte, dann kann er nicht im Inneren der konvexen Hülle liegen.\n\nDenn wäre $q$ eine konvexe Kombination anderer Punkte, dann müsste seine $x$-Koordinate ein gewichteter Mittelwert der anderen $x$-Koordinaten sein. Ein solcher Mittelwert kann aber nicht strikt kleiner sein als alle beteiligten Werte.\n\nAlso muss $q$ auf dem Rand der Hülle liegen. Bei eindeutigen $x$-Koordinaten ist er sogar ein **Eckpunkt** der konvexen Hülle.\n\nDas macht ihn zu einem sicheren Startpunkt für **Jarvis Wrap**."
+  },
+  {
+    "front": "[2026-05-26] Warum funktioniert `find_next` bei Jarvis Wrap nur sauber, wenn der aktuelle Punkt bereits ein Hülleneckpunkt ist?",
+    "back": "Die Relation „$a$ liegt rechts von $b$ bezüglich $q$“ kann im Allgemeinen **zyklisch** sein, wenn Punkte rund um $q$ verteilt liegen. Dann gibt es keinen eindeutig „rechtesten“ Punkt.\n\nIst $q$ aber ein **Hülleneckpunkt**, dann liegen alle anderen Punkte in einer Halbebene, deren Rand durch $q$ geht. In dieser Situation wird die Rechts-vs.-Links-Relation entlang der Punkte zu einer **totalen Ordnung**.\n\nDann ist das fortlaufende Aktualisieren sinnvoll: Der extremste Kandidat liefert die nächste Randkante der Hülle.\n\nOhne diese Eigenschaft könnte `find_next` einen inneren oder inkonsistenten Kandidaten liefern."
+  },
+  {
+    "front": "[2026-05-26] Warum hat Jarvis Wrap die Laufzeit $O(nh)$, und wann ist das gut?",
+    "back": "Bei **Jarvis Wrap** wird für jeden der $h$ Hülleneckpunkte einmal `find_next` ausgeführt. Diese Prozedur scannt alle $n$ Punkte, um den nächsten Eckpunkt zu finden.\n\nDaher ist die Laufzeit\n$$\nO(nh).\n$$\n\nDas ist **output-sensitiv**, weil nicht nur die Eingabegröße $n$, sondern auch die Ausgabegröße $h$ eingeht.\n\nGut ist das, wenn $h$ klein ist:\n- z. B. bei einer dreieckigen Hülle mit $h=3$ erhält man\n$$\nO(nh)=O(n).\n$$\n\nSchlecht ist es im Worst Case:\n- wenn alle Punkte auf der Hülle liegen, ist $h=n$ und damit\n$$\nO(nh)=O(n^2).\n$$"
+  },
+  {
+    "front": "[2026-05-26] Warum ist die Aussage „Jarvis Wrap ist immer schneller als der $O(n\\log n)$-Algorithmus“ falsch?",
+    "back": "**Falsch**, weil Jarvis Wrap von $h$ abhängt:\n$$\nT_{\\text{Jarvis}}(n,h)=O(nh).\n$$\n\nWenn die Hülle nur wenige Ecken hat, kann Jarvis Wrap sehr schnell sein, sogar linear. Aber im schlechtesten Fall gilt $h=n$, also\n$$\nT_{\\text{Jarvis}}(n,n)=O(n^2).\n$$\n\nDer Algorithmus mit **Sortieren plus lokaler Verbesserung** braucht dagegen\n$$\nO(n\\log n)\n$$\nunabhängig davon, wie groß $h$ ist.\n\nAlso:\n- bei kleinem $h$ kann Jarvis Wrap besser sein,\n- im Worst Case ist $O(n\\log n)$ asymptotisch besser."
+  },
+  {
+    "front": "[2026-05-26] Was ist die Idee des Algorithmus mit lokaler Verbesserung nach dem Sortieren?",
+    "back": "Man sortiert die Punkte zunächst nach ihrer $x$-Koordinate. Danach baut man einen einfachen Polygonzug:\n- unten von links nach rechts,\n- oben zurück.\n\nDann repariert man lokal: Wenn drei aufeinanderfolgende Punkte $q_{i-1},q_i,q_{i+1}$ in die falsche Richtung abbiegen, entfernt man den mittleren Punkt $q_i$.\n\nSo entstehen schrittweise:\n- die **untere konvexe Hülle**,\n- und analog die **obere konvexe Hülle**.\n\nNach dem Sortieren kostet diese Reparatur nur noch linear viel Zeit, sodass insgesamt\n$$\nO(n\\log n)\n$$\nentsteht."
+  },
+  {
+    "front": "[2026-05-26] Wann wird bei der lokalen Verbesserung ein Punkt entfernt?",
+    "back": "Ein mittlerer Punkt $q_i$ wird entfernt, wenn die drei aufeinanderfolgenden Punkte lokal **nicht konvex** abbiegen.\n\nIn der Vorlesungsformulierung: Man entfernt $q_i$, wenn $q_{i+1}$ **rechts** von der gerichteten Geraden\n$$\nq_{i-1}\\to q_i\n$$\nliegt.\n\nÄquivalent prüft man per Orientierungstest das Vorzeichen von\n$$\n\\det(q_i-q_{i-1},\\, q_{i+1}-q_{i-1}).\n$$\n\nIst die Orientierung falsch, kann $q_i$ kein Eckpunkt der entsprechenden Teilhülle sein und wird gelöscht. Dadurch bleibt nur die konvexe Kette übrig."
+  },
+  {
+    "front": "[2026-05-26] Warum ist der Reparaturschritt nach dem Sortieren nur linear?",
+    "back": "Jede **erfolgreiche lokale Verbesserung** löscht genau einen Punkt aus dem aktuellen Polygonzug. Da man mit nur $O(n)$ Punkten startet, kann es insgesamt höchstens $O(n)$ Löschungen geben.\n\nAuch die erfolglosen Tests summieren sich nur linear:\n- Jeder Punkt wird eingefügt,\n- und die zugehörige While-Schleife endet pro Einfügephase nur einmal ohne Löschung.\n\nDamit kosten untere und obere Hülle zusammen nur\n$$\nO(n).\n$$\n\nDie Gesamtlaufzeit wird also vom Sortieren dominiert:\n$$\nO(n\\log n)+O(n)=O(n\\log n).\n$$"
+  },
+  {
+    "front": "[2026-05-26] Warum kann man im vergleichsbasierten Modell die konvexe Hülle nicht schneller als $\\Omega(n\\log n)$ berechnen?",
+    "back": "Man reduziert **Sortieren** auf **konvexe Hülle**:\nJede Zahl $x_i$ wird auf den Punkt\n$$\n(x_i,x_i^2)\n$$\nabgebildet.\n\nDiese Punkte liegen auf einer Parabel und sind in **konvexer Position**: Alle erscheinen auf der konvexen Hülle. Berechnet man die Hülle und läuft sie ab dem Punkt mit kleinster $x$-Koordinate ab, erhält man die Punkte in aufsteigender $x$-Reihenfolge.\n\nEin schnellerer vergleichsbasierter Hüllenalgorithmus würde also ein schnelleres vergleichsbasiertes Sortierverfahren liefern. Da Sortieren eine untere Schranke von\n$$\n\\Omega(n\\log n)\n$$\nhat, gilt dieselbe Schranke für die konvexe Hülle."
+  },
+  {
+    "front": "[2026-05-26] Was ist der wichtige Sonderfall bei kollinearen Punkten für Randkanten und Jarvis Wrap?",
+    "back": "Sind mehrere Punkte **kollinear** auf derselben Randgeraden, dann reicht „alle Punkte liegen links“ allein nicht für eine robuste Auswahl des nächsten Eckpunkts.\n\nMan muss unter kollinearen Kandidaten den **von $q$ am weitesten entfernten Punkt** behalten. Sonst könnte ein innerer Punkt fälschlich als Hülleneckpunkt gewählt werden, obwohl die eigentliche Randkante weitergeht.\n\nOhne diese Regel würde die berechnete Hülle unnötige Zwischenpunkte enthalten oder sogar falsch sein."
   }
 ]

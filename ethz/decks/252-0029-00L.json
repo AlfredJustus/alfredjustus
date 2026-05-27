@@ -1498,5 +1498,65 @@
   {
     "front": "[2026-05-19] Warum müssen bei `Scala STM` veränderliche geteilte Daten in spezielle Referenzen verpackt werden?",
     "back": "`Scala STM` ist **reference-based**. Geteilter, veränderlicher Zustand muss in spezielle **STM-Referenzen** gepackt werden, z. B. mit `STM.newRef`.\n\nWarum?\n\n- Das STM-System muss Lese- und Schreibzugriffe kontrollieren können.\n- Nur so kann es Konflikte erkennen, Snapshots verwalten und Commits korrekt durchführen.\n- Normale Speicherzugriffe wären für das STM unsichtbar.\n\nDer Nachteil ist geringere direkte Portierbarkeit bestehenden Codes. Der Vorteil ist eine einfachere und praktikable STM-Implementierung."
+  },
+  {
+    "front": "[2026-05-26] Warum vereinfacht transaktioneller Speicher das Programmieren gegenüber Locks?",
+    "back": "**Transaktioneller Speicher (STM)** kapselt einen kritischen Abschnitt als **atomaren** und **isolierten** Block: Entweder werden alle Änderungen sichtbar, oder keine.\n\nDer Vorteil gegenüber **Locks** ist, dass man keine Lock-Reihenfolgen entwerfen und keine `unlock`-Fehler vermeiden muss. Dadurch verschwinden typische Probleme wie:\n\n- **Deadlocks** durch falsche Lock-Reihenfolge\n- vergessene Freigaben\n- schwer wartbare, fein granulare Sperrlogik\n\nDer Preis ist zur Laufzeit hoch: Das System muss Zugriffe protokollieren, Konflikte erkennen, lokale Kopien verwalten und Commits koordinieren."
+  },
+  {
+    "front": "[2026-05-26] Wann verwendet man in Java `stm.atomic(new Runnable(...))` und wann `stm.atomic(new Callable<T>(...))`?",
+    "back": "`stm.atomic(new Runnable(...))` verwendet man für einen **atomaren Block ohne Rückgabewert**.\n\n`stm.atomic(new Callable<T>(...))` verwendet man für einen **atomaren Block mit Rückgabewert**; der Wert wird über `call()` geliefert.\n\nDer Unterschied ist also nicht die Atomizität, sondern nur, ob der Block ein Ergebnis zurückgeben soll."
+  },
+  {
+    "front": "[2026-05-26] Warum müssen alle Zugriffe auf STM-Variablen innerhalb atomarer Blöcke liegen?",
+    "back": "Weil STM nur dann korrekt ein **Read-Set** und **Write-Set** führen und Konflikte beim **Commit** prüfen kann.\n\nLiest oder schreibt man STM-Variablen außerhalb von `atomic`, dann umgeht man genau die Mechanismen, auf denen die Korrektheit beruht:\n\n- gelesene Werte erscheinen nicht im **Read-Set**\n- geplante Änderungen landen nicht im **Write-Set**\n- Konflikte werden nicht zuverlässig erkannt\n\nDamit zerstört man die Annahmen über **Isolation** und **Atomizität**."
+  },
+  {
+    "front": "[2026-05-26] Warum kann `retry` ohne explizites Signal funktionieren, anders als eine Condition Variable?",
+    "back": "**`retry`** funktioniert, weil das STM-System weiß, **welche Variablen die Transaktion bis dahin gelesen hat**.\n\nBeim `retry` wird die Transaktion abgebrochen und erst dann neu gestartet, wenn sich eine Variable aus diesem **Read-Set** ändert. Die Bedingung entsteht also automatisch aus den tatsächlich gelesenen Daten.\n\nBei einer **Condition Variable** muss dagegen typischerweise ein anderer Thread explizit `signal` oder `broadcast` ausführen.\n\nDer Kernunterschied:\n- **Condition Variable:** manuelles Signalisieren\n- **`retry`:** automatisches Wiederanstoßen anhand des Read-Sets"
+  },
+  {
+    "front": "[2026-05-26] Warum ist `retry` nicht einfach ein `sleep` mit erneutem Prüfen?",
+    "back": "Ein **`sleep`** ist blindes Warten: Danach prüft der Thread einfach erneut, egal ob sich relevante Daten geändert haben oder nicht.\n\n**`retry`** ist präziser:\n- die aktuelle Transaktion wird **abgebrochen**\n- das System merkt sich das bisherige **Read-Set**\n- ein Neustart erfolgt erst, wenn sich eine dieser gelesenen Variablen ändert\n\nDadurch vermeidet man unnötiges Polling. `retry` ist also datengetrieben, nicht zeitgetrieben."
+  },
+  {
+    "front": "[2026-05-26] Was speichern Read-Set und Write-Set in STM, und warum braucht man beides?",
+    "back": "Das **Read-Set** enthält die von einer Transaktion **gelesenen Objekte**.\n\nDas **Write-Set** enthält die **lokalen geänderten Kopien**, die noch nicht global sichtbar sind.\n\nBeides ist nötig:\n- Mit dem **Read-Set** prüft man beim Commit, ob gelesene Daten inzwischen von anderen Transaktionen verändert wurden.\n- Mit dem **Write-Set** kann man Änderungen zunächst lokal sammeln und erst beim erfolgreichen Commit global sichtbar machen.\n\nSo entstehen **Isolation** während der Ausführung und **Atomizität** beim Commit."
+  },
+  {
+    "front": "[2026-05-26] Warum gilt STM als optimistisch, und was ist die Konsequenz davon?",
+    "back": "STM ist **optimistisch**, weil eine Transaktion zunächst so arbeitet, **als ob kein Konflikt auftreten würde**.\n\nErst später, typischerweise beim **Commit**, wird geprüft, ob gelesene oder zu schreibende Daten inzwischen mit anderen Transaktionen kollidieren. Falls ja, wird abgebrochen und neu versucht.\n\nDie Konsequenz:\n- wenig Sperrlogik während der normalen Ausführung\n- aber möglicher Mehraufwand durch **Abbrüche**, **Validierung** und **Wiederholungen**\n\nOptimistisch heißt also: erst arbeiten, Konflikte später erkennen."
+  },
+  {
+    "front": "[2026-05-26] Warum müssen beim STM-Commit die Locks in definierter Reihenfolge genommen werden?",
+    "back": "Eine **definierte Reihenfolge** verhindert, dass zwei Commits sich gegenseitig blockieren.\n\nBeispielidee:  \nWenn Transaktion $T_1$ erst Objekt $A$ und dann $B$ lockt, während $T_2$ erst $B$ und dann $A$ lockt, kann ein klassischer Zyklus entstehen.\n\nNimmt man Locks dagegen immer in derselben globalen Reihenfolge, etwa nach Objekt-ID, dann kann dieser Zyklus nicht entstehen.\n\nDie Reihenfolge ist also ein praktisches Mittel, um **Deadlocks beim Commit** zu vermeiden."
+  },
+  {
+    "front": "[2026-05-26] Warum sind I/O-Operationen innerhalb einer Transaktion problematisch?",
+    "back": "Weil eine Transaktion **abgebrochen** werden kann, I/O aber oft **nicht rückgängig** gemacht werden kann.\n\nWenn ein atomarer Block z. B. schon etwas auf die Konsole geschrieben oder eine Datei verändert hat und danach wegen eines Konflikts verworfen wird, bleibt dieser externe Effekt trotzdem bestehen.\n\nDas verletzt die Idee:\n$$\\text{entweder alle Änderungen sichtbar, oder keine}$$\n\nFür Speicherzustand kann STM das garantieren, für allgemeine I/O-Effekte meist nicht."
+  },
+  {
+    "front": "[2026-05-26] Was bedeutet isolierter veränderbarer Zustand, und warum vermeidet er Race Conditions?",
+    "back": "**Isolierter veränderbarer Zustand** bedeutet: Jede Entität darf **ihren eigenen lokalen Speicher** verändern, aber nicht direkt den Speicher anderer Entitäten lesen oder schreiben.\n\nKommunikation erfolgt stattdessen kontrolliert über **Nachrichten**.\n\nDadurch verschwinden viele typische **Race Conditions** des geteilten Speichers, weil nicht mehrere Threads gleichzeitig dieselbe Variable verändern. Der Preis ist, dass globale Information explizit zusammengesammelt werden muss.\n\nEin globaler Zähler ist dann nicht eine gemeinsame Variable, sondern die Summe lokaler Zähler."
+  },
+  {
+    "front": "[2026-05-26] Warum braucht ein verteilter Zähler eine Reduce-Operation statt einer gemeinsamen Variable?",
+    "back": "Im Modell des **Message Passing** besitzt jeder Prozess nur seinen **lokalen Zustand**.\n\nEin verteilter Zähler besteht daher aus mehreren lokalen Zählern. Den globalen Wert erhält man nicht durch direktes Lesen einer gemeinsamen Variable, sondern durch Einsammeln und Zusammenfassen der lokalen Werte, z. B. mit:\n\n$$\\text{global} = \\sum_{i=0}^{n-1} \\text{lokal}_i$$\n\nGenau dafür ist **`MPI_Reduce`** geeignet: Viele Prozesse liefern Werte, ein Prozess erhält das kombinierte Ergebnis."
+  },
+  {
+    "front": "[2026-05-26] Warum ist MPI keine Programmiersprache, und welches Ausführungsmodell ist typisch?",
+    "back": "**MPI** ist keine Programmiersprache, sondern eine **Bibliothek** mit standardisierten Aufrufen für **Message Passing**.\n\nTypisch ist das Modell **SPMD** (**Single Program Multiple Data**):\n- mehrere Prozesse starten denselben Code\n- jeder Prozess arbeitet auf anderen lokalen Daten\n- Unterschiede im Verhalten entstehen oft über den **Rank**\n\nMPI liefert also Kommunikationsprimitive, nicht eine eigene Sprache mit eigener Semantik."
+  },
+  {
+    "front": "[2026-05-26] Warum kann derselbe Prozess in MPI mehrere verschiedene Ranks haben?",
+    "back": "Weil ein **Rank** keine globale Prozess-ID ist, sondern nur eine Nummer **innerhalb eines bestimmten Communicators**.\n\nEin Prozess kann Mitglied in mehreren Communicators sein und dort jeweils unterschiedlich nummeriert werden. Deshalb ist ein Rank immer nur zusammen mit dem Communicator sinnvoll interpretierbar.\n\nWichtig für Debugging:\n- „Prozess mit Rank $3$“ ist unvollständig\n- korrekt ist: „Prozess mit Rank $3$ in Communicator $C$“"
+  },
+  {
+    "front": "[2026-05-26] Ein MPI-Job läuft mit 16 Prozessen in `MPI_COMM_WORLD`. Welche Ranks sind möglich?",
+    "back": "In einem Communicator mit $n$ Prozessen sind die möglichen **Ranks** genau:\n\n$$0,1,\\dots,n-1$$\n\nFür `MPI_COMM_WORLD` mit $16$ Prozessen also:\n\n$$0,1,2,\\dots,15$$\n\nDer kleinste Rank ist immer $0$, der größte hier also $15$."
+  },
+  {
+    "front": "[2026-05-26] Warum sind synchron/asynchron und blocking/nonblocking in MPI nicht dasselbe?",
+    "back": "Die Begriffe beschreiben **verschiedene Achsen**:\n\n- **synchron/asynchron**: Beziehung zwischen **Sender und Empfänger**\n- **blocking/nonblocking**: Beziehung zwischen **Funktionsaufruf und lokalem Puffer**\n\nEin **blocking send** kehrt erst zurück, wenn der Sendepuffer lokal wieder sicher benutzt werden darf. Das sagt aber noch nicht vollständig, ob der Sender auf den Empfänger warten musste.\n\nDarum kann ein `send` blocking sein, ohne dass „blocking“ und „synchron“ dasselbe bedeuten."
   }
 ]
