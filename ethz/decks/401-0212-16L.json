@@ -1378,5 +1378,65 @@
   {
     "front": "[2026-05-20] Bestimme mit dem Ansatz $u_p=ax+b$ eine partikuläre Lösung von $u'-2u=-3x-5$.",
     "back": "Setze\n$$\nu_p=ax+b.\n$$\nDann ist\n$$\nu_p'=a.\n$$\nEinsetzen in\n$$\nu'-2u=-3x-5\n$$\ngibt\n$$\na-2(ax+b)=-3x-5.\n$$\nAlso\n$$\n-2ax+(a-2b)=-3x-5.\n$$\nVergleiche die Koeffizienten:\n$$\n-2a=-3 \\quad\\Rightarrow\\quad a=\\frac32,\n$$\nund\n$$\na-2b=-5.\n$$\nMit $a=\\frac32$ folgt\n$$\n\\frac32-2b=-5\n\\quad\\Rightarrow\\quad\n-2b=-\\frac{13}{2}\n\\quad\\Rightarrow\\quad\nb=\\frac{13}{4}.\n$$\n\nDamit ist eine partikuläre Lösung\n$$\nu_p(x)=\\frac32x+\\frac{13}{4}.\n$$"
+  },
+  {
+    "front": "[2026-05-27] Warum wirkt der Faktor $1-\\frac{p}{L}$ in der logistischen Differentialgleichung als Wachstumsbremse?",
+    "back": "In\n$$\np'(t)=k\\,p(t)\\left(1-\\frac{p(t)}{L}\\right)\n$$\nist der Faktor\n$$\n1-\\frac{p}{L}\n$$\ndie **Bremse**, weil er vom aktuellen Bestand $p$ abhängt:\n\n- Für $p \\ll L$ ist $1-\\frac{p}{L}\\approx 1$, also fast exponentielles Wachstum.\n- Für $p \\approx L$ ist $1-\\frac{p}{L}\\approx 0$, also fast kein Wachstum mehr.\n- Für $p>L$ wird der Faktor negativ, also nimmt $p$ wieder ab.\n\nDamit beschreibt $L$ die **Tragfähigkeit** oder obere Sättigungsgrenze des Systems."
+  },
+  {
+    "front": "[2026-05-27] Welche Gleichgewichtslösungen hat die logistische Differentialgleichung, und warum?",
+    "back": "Die **Gleichgewichtslösungen** sind die konstanten Lösungen mit $p'(t)=0$. Aus\n$$\nk\\,p\\left(1-\\frac{p}{L}\\right)=0\n$$\nfolgt:\n$$\np=0 \\quad \\text{oder} \\quad p=L.\n$$\n\nDiese beiden Werte sind besonders wichtig:\n\n- **$p=0$**: keine Population bzw. kein Bestand,\n- **$p=L$**: Sättigungsniveau bzw. Tragfähigkeit.\n\nFür Anfangswerte zwischen $0$ und $L$ wächst die Lösung typischerweise gegen $L$. Die Gleichgewichtslösungen zeigen also die langfristig möglichen stationären Zustände des Modells."
+  },
+  {
+    "front": "[2026-05-27] Warum ist die Substitution $u=\\frac{1}{p}$ bei der logistischen Gleichung nützlich, und welche Einschränkung hat sie?",
+    "back": "Die Substitution\n$$\nu=\\frac{1}{p}\n$$\nmacht die nichtlineare logistische Gleichung einfacher. Aus\n$$\np'=k\\,p\\left(1-\\frac{p}{L}\\right)\n$$\nwird dann eine **lineare Differentialgleichung** für $u$:\n$$\nu'=-k\\left(u-\\frac{1}{L}\\right).\n$$\n\nDer Vorteil ist, dass lineare Gleichungen systematischer lösbar sind als die ursprüngliche nichtlineare Form.\n\nDie Einschränkung ist wesentlich:\n$$\nu=\\frac{1}{p}\n$$\nist nur sinnvoll, solange\n$$\np\\neq 0.\n$$\nDie Lösung $p\\equiv 0$ wird durch diese Substitution also nicht erfasst und muss separat betrachtet werden."
+  },
+  {
+    "front": "[2026-05-27] Warum ist die Trennung der Variablen zunächst nur heuristisch?",
+    "back": "Beim Schreiben von\n$$\n\\frac{du}{u-\\frac{1}{L}}=-k\\,dt\n$$\nbehandelt man **$du$** und **$dt$** so, als wären sie algebraische Größen, die man einfach umstellen darf. Das ist anschaulich nützlich, aber noch keine präzise Begründung.\n\nMathematisch sauber wird der Schritt erst durch **Integration**:\n$$\n\\int \\frac{1}{u-\\frac{1}{L}}\\,du=\\int -k\\,dt.\n$$\n\nErst diese Integralgleichung ist wohldefiniert. Die „Trennung der Variablen“ ist also eine hilfreiche Schreibweise, deren Rechtfertigung in der anschließenden Integration liegt."
+  },
+  {
+    "front": "[2026-05-27] Welche Form hat die allgemeine Lösung der logistischen Differentialgleichung?",
+    "back": "Eine typische Lösungsform der **logistischen Differentialgleichung** ist\n$$\np(t)=\\frac{L}{A e^{-kt}+1}.\n$$\n\nDabei sind:\n\n- **$L$** die Tragfähigkeit,\n- **$k$** die Wachstumsrate,\n- **$A$** eine Konstante, die durch den Anfangswert bestimmt wird.\n\nFür passende Anfangswerte, insbesondere bei $A>0$, ist die Lösung **sigmoidal**: zuerst fast exponentielles Wachstum, dann Abflachung gegen den Grenzwert $L$."
+  },
+  {
+    "front": "[2026-05-27] Was bedeutet der Parameter $t_0$ in der Form $f(t)=\\frac{L}{1+e^{-k(t-t_0)}}$?",
+    "back": "In\n$$\nf(t)=\\frac{L}{1+e^{-k(t-t_0)}}\n$$\nverschiebt **$t_0$** die Kurve in horizontaler Richtung. Genauer:\n\n- Bei $t=t_0$ gilt\n  $$\n  f(t_0)=\\frac{L}{2}.\n  $$\n- Dort liegt bei geeigneter Normierung der **Wendepunkt** der sigmoidalen Kurve.\n- Vor $t_0$ wächst die Funktion beschleunigt, nach $t_0$ weiter, aber zunehmend gebremst.\n\n$t_0$ markiert also den Zeitpunkt des Übergangs vom schnellen Wachstum zur Sättigungsphase."
+  },
+  {
+    "front": "[2026-05-27] Warum hat eine inhomogene lineare Differentialgleichung die Form $y=y_h+y_p$?",
+    "back": "Für eine lineare inhomogene Differentialgleichung ist die allgemeine Lösung\n$$\ny(t)=y_h(t)+y_p(t),\n$$\nwobei:\n\n- **$y_h$** eine Lösung der zugehörigen **homogenen** Gleichung ist,\n- **$y_p$** eine **partikuläre Lösung** der inhomogenen Gleichung ist.\n\nWarum das funktioniert: Wegen der Linearität verschwindet der homogene Teil unter dem Differentialoperator, während $y_p$ genau die rechte Seite erzeugt. Jede weitere Lösung unterscheidet sich von $y_p$ nur um eine homogene Lösung."
+  },
+  {
+    "front": "[2026-05-27] Wie erhält man das charakteristische Polynom einer homogenen linearen Differentialgleichung?",
+    "back": "Man verwendet den **Euler-Ansatz**\n$$\ny(t)=e^{\\lambda t}.\n$$\nDann werden Ableitungen zu Potenzen von $\\lambda$:\n$$\ny'=\\lambda e^{\\lambda t}, \\qquad y''=\\lambda^2 e^{\\lambda t}, \\quad \\dots\n$$\n\nSetzt man das in die homogene Gleichung ein, kann man den Faktor $e^{\\lambda t}$ ausklammern. Übrig bleibt ein Polynom in $\\lambda$, das **charakteristische Polynom**.\n\nBeispiel:\n$$\ny''-y=0\n$$\nliefert\n$$\n\\lambda^2-1=0.\n$$\nAlso ist das charakteristische Polynom\n$$\np(\\lambda)=\\lambda^2-1=(\\lambda-1)(\\lambda+1).\n$$"
+  },
+  {
+    "front": "[2026-05-27] Welche homogene Lösung gehört zu $y''-y=0$?",
+    "back": "Für\n$$\ny''-y=0\n$$\nist das charakteristische Polynom\n$$\n\\lambda^2-1=(\\lambda-1)(\\lambda+1).\n$$\nDie Nullstellen sind\n$$\n\\lambda=1 \\quad \\text{und} \\quad \\lambda=-1.\n$$\n\nDaraus folgt die allgemeine **homogene Lösung**\n$$\ny_h(t)=C_1 e^t + C_2 e^{-t}.\n$$\n\nJede Nullstelle liefert also einen Exponentialterm. Bei verschiedenen reellen Nullstellen ist die homogene Lösung eine Linearkombination der entsprechenden Exponentialfunktionen."
+  },
+  {
+    "front": "[2026-05-27] Wann reicht bei einer polynomialen Störfunktion ein Polynomansatz für $y_p$ aus?",
+    "back": "Hat die rechte Seite ein **Polynom vom Grad $n$**, dann versucht man\n$$\ny_p(t)=c_0+c_1 t+\\dots+c_n t^n.\n$$\n\nDieser Ansatz funktioniert direkt, wenn\n$$\n0\n$$\n**keine Nullstelle** des charakteristischen Polynoms ist.\n\nDer Grund: Ein Polynomansatz kollidiert sonst mit einem Teil der homogenen Lösung. Dann wäre der Ansatz nicht allgemein genug bzw. würde beim Einsetzen wegfallen."
+  },
+  {
+    "front": "[2026-05-27] Was muss man bei einer polynomialen Störfunktion tun, wenn $0$ eine $m$-fache Nullstelle des charakteristischen Polynoms ist?",
+    "back": "Dann muss der Standardansatz mit einer Potenz von $t$ multipliziert werden:\n$$\ny_p(t)=\\left(c_0+c_1 t+\\dots+c_n t^n\\right)t^m.\n$$\n\nDer Faktor\n$$\nt^m\n$$\nkompensiert, dass der ursprüngliche Ansatz mit der homogenen Lösung überlappt. Ohne diese Anpassung würde man keine passende partikuläre Lösung finden.\n\nDas ist der typische **Resonanz-Spezialfall** für polynomialen Zwang."
+  },
+  {
+    "front": "[2026-05-27] Warum reicht bei $y''-3y'+2y=e^t$ der Ansatz $y_p=c e^t$ nicht aus?",
+    "back": "Das charakteristische Polynom der homogenen Gleichung ist\n$$\n\\lambda^2-3\\lambda+2=(\\lambda-1)(\\lambda-2).\n$$\nAlso ist\n$$\n\\lambda=1\n$$\neine Nullstelle. Da die rechte Seite\n$$\ne^t=e^{1\\cdot t}\n$$\nist, kollidiert der Standardansatz\n$$\ny_p=c e^t\n$$\nmit der homogenen Lösung.\n\nDeshalb muss man mit $t$ multiplizieren:\n$$\ny_p=c\\,t\\,e^t.\n$$\n\nDas ist genau der Spezialfall: Ist $k$ eine $m$-fache Nullstelle des charakteristischen Polynoms, verwendet man\n$$\ny_p=c e^{kt} t^m.\n$$"
+  },
+  {
+    "front": "[2026-05-27] Warum braucht man bei einer Störfunktion $\\sin(\\omega t)$ im Allgemeinen auch einen Cosinus-Term im Ansatz?",
+    "back": "Auch wenn rechts nur\n$$\n\\sin(\\omega t)\n$$\nsteht, genügt meist der Ansatz\n$$\ny_p=c_1\\sin(\\omega t)+c_2\\cos(\\omega t).\n$$\n\nDer Grund ist, dass Ableitungen von Sinus und Cosinus ineinander übergehen:\n$$\n(\\sin(\\omega t))'=\\omega\\cos(\\omega t), \\qquad (\\cos(\\omega t))'=-\\omega\\sin(\\omega t).\n$$\n\nBeim Einsetzen in den Differentialoperator entstehen daher im Allgemeinen **beide** Terme. Ein reiner Sinus-Ansatz wäre meist nicht stabil unter Ableitung und damit zu eng."
+  },
+  {
+    "front": "[2026-05-27] Warum liefert ein gefundener Ansatz für $y_p$ nach dem Koeffizientenvergleich zunächst nur einen Kandidaten?",
+    "back": "Wenn man einen Ansatz wie\n$$\ny_p=c e^{2t}\n$$\neinsetzt und daraus einen Wert für $c$ bestimmt, zeigt die Rechnung zunächst nur:\n\n**Falls** eine Lösung dieser Form existiert, **dann** muss $c$ diesen Wert haben.\n\nDamit ist noch nicht automatisch bewiesen, dass die gefundene Funktion wirklich eine Lösung ist. Diese Sicherheit erhält man erst durch:\n\n- erneutes **Einsetzen** in die Differentialgleichung, oder\n- einen allgemeinen Satz, der die Methode rechtfertigt.\n\nDer Koeffizientenvergleich liefert also zuerst einen **Kandidaten**, nicht sofort den vollständigen Beweis."
+  },
+  {
+    "front": "[2026-05-27] Was ist der entscheidende Unterschied zwischen Stetigkeit und gleichmäßiger Stetigkeit?",
+    "back": "Bei **gewöhnlicher Stetigkeit** darf das $\\delta$ vom Punkt abhängen:\n$$\n\\forall x\\,\\forall \\varepsilon>0\\,\\exists \\delta>0:\\ |x-y|<\\delta \\Rightarrow |f(x)-f(y)|<\\varepsilon.\n$$\n\nBei **gleichmäßiger Stetigkeit** muss ein einziges $\\delta$ für den ganzen Bereich funktionieren:\n$$\n\\forall \\varepsilon>0\\,\\exists \\delta>0\\,\\forall x,y:\\ |x-y|<\\delta \\Rightarrow |f(x)-f(y)|<\\varepsilon.\n$$\n\nDer entscheidende Unterschied ist also die **Vertauschung der Quantoren**. Gleichmäßige Stetigkeit ist stärker, weil das gleiche $\\delta$ global gilt."
   }
 ]
