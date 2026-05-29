@@ -1558,5 +1558,65 @@
   {
     "front": "[2026-05-26] Was ist der wichtige Sonderfall bei kollinearen Punkten für Randkanten und Jarvis Wrap?",
     "back": "Sind mehrere Punkte **kollinear** auf derselben Randgeraden, dann reicht „alle Punkte liegen links“ allein nicht für eine robuste Auswahl des nächsten Eckpunkts.\n\nMan muss unter kollinearen Kandidaten den **von $q$ am weitesten entfernten Punkt** behalten. Sonst könnte ein innerer Punkt fälschlich als Hülleneckpunkt gewählt werden, obwohl die eigentliche Randkante weitergeht.\n\nOhne diese Regel würde die berechnete Hülle unnötige Zwischenpunkte enthalten oder sogar falsch sein."
+  },
+  {
+    "front": "[2026-05-28] Warum haben in einem ungerichteten Graphen alle Knoten derselben Zusammenhangskomponente dieselbe Erreichbarkeitszahl?",
+    "back": "In einem **ungerichteten Graphen** ist Erreichbarkeit symmetrisch: Wenn $u$ von $v$ aus erreichbar ist, dann auch $v$ von $u$. Daher ist die erreichbare Menge $R(v)$ für jeden Knoten $v$ genau seine **Zusammenhangskomponente**.\n\nFolglich gilt für alle Knoten $v,w$ in derselben Komponente:\n$$R(v)=R(w)$$\nund damit auch\n$$N_v = |R(v)| = |R(w)|.$$\n\nDie Antwort für einen Knoten ist also einfach die Größe seiner Komponente."
+  },
+  {
+    "front": "[2026-05-28] Wie berechnet man in einem ungerichteten Graphen alle Werte $N_v$ in Linearzeit?",
+    "back": "Man bestimmt zuerst alle **Zusammenhangskomponenten** per DFS:\n\n1. Gehe alle Knoten durch.\n2. Starte bei jedem noch ungefärbten Knoten eine DFS.\n3. Markiere alle dabei gefundenen Knoten mit einer neuen Komponentenfarbe.\n4. Zähle anschließend, wie oft jede Farbe vorkommt.\n\nDann bekommt jeder Knoten die Größe seiner Farbe als Antwort:\n$$N_v = \\text{Größe der Komponente von } v.$$\n\nDie Gesamtlaufzeit ist\n$$O(n+m),$$\nweil jeder Knoten und jede Kante nur konstant oft betrachtet wird."
+  },
+  {
+    "front": "[2026-05-28] Warum ist der naive Algorithmus für alle $N_v$ in gerichteten Graphen teuer?",
+    "back": "Für einen festen Startknoten $v$ kann man $N_v$ mit **DFS/BFS** in\n$$O(n+m)$$\nberechnen, indem man alle von $v$ aus erreichbaren Knoten besucht.\n\nWill man das für alle $n$ Knoten separat tun, startet man $n$ Suchläufe. Das ergibt:\n$$O(n(n+m)).$$\n\nDer Grund ist, dass in **gerichteten Graphen** verschiedene Startknoten sehr unterschiedliche erreichbare Mengen haben können; anders als im ungerichteten Fall gibt es keine einfache Zerlegung in Komponenten mit identischer Antwort."
+  },
+  {
+    "front": "[2026-05-28] Warum kann man den ungerichteten Fall als Spezialfall des gerichteten Falls sehen?",
+    "back": "Jede ungerichtete Kante $\\{u,v\\}$ kann man durch zwei gerichtete Kanten ersetzen:\n$$u \\to v \\quad \\text{und} \\quad v \\to u.$$\n\nDann bleibt Erreichbarkeit unverändert. Deshalb ist das Problem in gerichteten Graphen mindestens so allgemein wie das in ungerichteten Graphen.\n\nDas erklärt auch, warum der gerichtete Fall schwieriger ist: Eine Lösung für gerichtete Graphen würde automatisch auch den ungerichteten Fall lösen."
+  },
+  {
+    "front": "[2026-05-28] Was ist das Hilfsproblem „kleinster erreichbarer Wert“?",
+    "back": "Jedem Knoten $v$ wird eine Zahl $r_v$ zugewiesen. Gesucht ist für jeden Knoten:\n$$\\min_{u \\in R(v)} r_u.$$\n\nDas ist der **kleinste Wert unter allen von $v$ aus erreichbaren Knoten**, wobei $v$ selbst mitzählt.\n\nDieses Problem ist leichter als exaktes Zählen, weil man die kleinsten Werte in aufsteigender Reihenfolge „verteilen“ kann: Sobald ein Knoten den kleinsten für ihn erreichbaren Wert erhalten hat, muss er später nicht noch einmal bearbeitet werden."
+  },
+  {
+    "front": "[2026-05-28] Warum läuft der Algorithmus für den kleinsten erreichbaren Wert im umgekehrten Graphen?",
+    "back": "Sei $a$ der aktuelle Knoten mit dem kleinsten noch nicht verarbeiteten Wert $r_a$. Gesucht sind alle Knoten $v$, für die $a$ erreichbar ist, also\n$$a \\in R(v).$$\n\nDas bedeutet im Originalgraphen: Es gibt einen Pfad\n$$v \\leadsto a.$$\n\nGenau diese Knoten findet man durch eine DFS ab $a$ im **umgekehrten Graphen**, denn dort entspricht\n$$v \\leadsto a \\text{ im Original} \\iff a \\leadsto v \\text{ im Umkehrgraphen}.$$\n\nDeshalb weist die Rückwärts-DFS genau den Knoten den Wert $r_a$ zu, für die $r_a$ der kleinste erreichbare Wert ist."
+  },
+  {
+    "front": "[2026-05-28] Warum kostet das Berechnen von $\\min_{u\\in R(v)} r_u$ nur $O(n\\log n + m)$?",
+    "back": "Zuerst sortiert man die Knoten nach aufsteigendem $r_v$, was\n$$O(n\\log n)$$\nkostet.\n\nDann startet man DFS-Läufe im **umgekehrten Graphen** nur von Knoten, deren Antwort noch nicht feststeht. Sobald ein Knoten einen kleinsten erreichbaren Wert zugewiesen bekommen hat, wird er nie wieder erneut exploriert.\n\nDadurch werden über alle DFS-Läufe zusammen Knoten und Kanten nur insgesamt linear oft verarbeitet:\n$$O(n+m).$$\n\nInsgesamt ergibt sich also:\n$$O(n\\log n + m).$$"
+  },
+  {
+    "front": "[2026-05-28] Warum ist das Minimum leichter zu berechnen als eine Summe über erreichbare Knoten?",
+    "back": "Beim **Minimum** genügt der erste kleinste erreichbare Wert. Verarbeitet man die Werte in aufsteigender Reihenfolge, dann ist für einen Knoten nach der ersten Zuweisung die Antwort endgültig.\n\nBei einer **Summe** funktioniert das nicht: Erreichbare Mengen verschiedener Nachfolger können sich überlappen. Man kann Beiträge daher nicht einfach addieren, ohne Schnittmengen korrekt zu behandeln.\n\nEin guter Extremfall ist $r_v=1$ für alle Knoten. Dann wäre\n$$\\sum_{u\\in R(v)} r_u = |R(v)| = N_v,$$\nalso genau das ursprüngliche Zählproblem. Daran sieht man, dass Summieren im Allgemeinen nicht einfacher ist."
+  },
+  {
+    "front": "[2026-05-28] Warum ist $X_v=\\min_{u\\in R(v)} r_u$ ein sinnvoller Schätzer für $N_v$?",
+    "back": "Wenn die Werte $r_u$ unabhängig und gleichverteilt aus $[0,1]$ gezogen werden, dann ist\n$$X_v = \\min_{u\\in R(v)} r_u$$\ndas Minimum von genau\n$$N_v = |R(v)|$$\nZufallszahlen.\n\nJe größer $N_v$ ist, desto mehr Werte „konkurrieren“ darum, sehr klein zu sein. Daher liegt das Minimum typischerweise in der Größenordnung von\n$$\\frac{1}{N_v}.$$\n\nDeshalb ist\n$$\\frac{1}{X_v}$$\neine grobe Schätzung für $N_v$: viele erreichbare Knoten $\\Rightarrow$ kleines Minimum $\\Rightarrow$ großer Kehrwert."
+  },
+  {
+    "front": "[2026-05-28] Rechne das Mikro-Beispiel: Erreichbare Zufallswerte $0{,}4, 0{,}2, 0{,}9, 0{,}1$.",
+    "back": "Der kleinste erreichbare Wert ist\n$$X_v = \\min\\{0{,}4,0{,}2,0{,}9,0{,}1\\} = 0{,}1.$$\n\nDie grobe Schätzung lautet dann:\n$$\\tilde N_v \\approx \\frac{1}{X_v} = \\frac{1}{0{,}1} = 10.$$\n\nTatsächlich sind hier nur $4$ Werte sichtbar. Das zeigt die wichtige Schwäche eines einzelnen Laufs: Der Kehrwert eines Minimums kann stark schwanken und deutlich danebenliegen. Genau deshalb wiederholt man das Experiment mehrfach und verwendet den **Median**."
+  },
+  {
+    "front": "[2026-05-28] Warum ist der Kehrwert eines einzelnen Minimums keine verlässliche Schätzung?",
+    "back": "Ein einzelner Wert\n$$\\frac{1}{X_v}$$\nist stark von Zufallsausreißern abhängig:\n\n- Ist $X_v$ ungewöhnlich klein, wird $\\frac{1}{X_v}$ viel zu groß.\n- Ist $X_v$ ungewöhnlich groß, wird $\\frac{1}{X_v}$ zu klein.\n\nDas Problem ist also nicht die Grundidee, sondern die hohe **Varianz** eines einzelnen Laufs. Deshalb verwendet man mehrere unabhängige Läufe und aggregiert sie robust, statt einem einzelnen Minimum zu vertrauen."
+  },
+  {
+    "front": "[2026-05-28] Warum verwendet man den Median der $L$ Läufe und nicht einfach einen einzelnen Lauf?",
+    "back": "Für jeden Lauf $i$ erhält man einen Wert\n$$X_{iv} = \\min_{u\\in R(v)} r_u^{(i)}.$$\n\nStatt nur einen Lauf zu nehmen, betrachtet man\n$$X_{1v},\\dots,X_{Lv}$$\nund bildet den **Median**. Die endgültige Schätzung ist dann grob\n$$\\tilde N_v \\approx \\frac{1}{\\operatorname{median}(X_{1v},\\dots,X_{Lv})}.$$\n\nDer Median ist robust gegen Ausreißer: Er wird erst dann schlecht, wenn mindestens etwa die Hälfte der Läufe in dieselbe falsche Richtung stark abweicht. Einzelne extreme Minima oder Maxima beeinflussen ihn dagegen kaum."
+  },
+  {
+    "front": "[2026-05-28] Warum verhindert der Median große Ausreißer besser als der Mittelwert?",
+    "back": "Der **Median** hängt nur von der Reihenfolge der Werte ab, nicht von deren exakter Größe. Ein extrem kleiner Wert kann den Median daher nicht ruinieren, solange nicht viele Läufe ähnlich extrem sind.\n\nBeim **Mittelwert** wäre das anders: Ein einzelner sehr kleiner Wert $X_{iv}$ würde den Kehrwert-basierten Schätzer stark verzerren.\n\nFür die Analyse ist entscheidend: Der Median ist nur dann schlecht, wenn eine **Mehrheit** der Läufe schlecht ist. Genau diese Mehrheitskatastrophe wird mit Chernoff-Schranken exponentiell unwahrscheinlich in $L$."
+  },
+  {
+    "front": "[2026-05-28] Wie groß muss $L$ sein, damit die Approximation für alle Knoten gleichzeitig mit hoher Wahrscheinlichkeit gilt?",
+    "back": "Für eine konstante Approximation wählt man\n$$L=\\Theta(\\log(n/\\delta)).$$\n\nDann gilt mit Wahrscheinlichkeit mindestens\n$$1-\\delta,$$\ndass die Schätzungen für **alle Knoten gleichzeitig** gut sind; in der Vorlesung etwa bis auf einen konstanten Faktor wie $20$.\n\nFür eine genauere **$(1+\\varepsilon)$-Approximation** muss $L$ zusätzlich um einen Faktor in der Größenordnung von\n$$\\frac{1}{\\varepsilon^2}$$\nwachsen."
+  },
+  {
+    "front": "[2026-05-28] Warum reicht Unabhängigkeit über die Läufe, aber nicht zwischen verschiedenen Knoten?",
+    "back": "Für einen festen Knoten $v$ analysiert man die Zufallsvariablen aus verschiedenen Läufen:\n$$X_{1v},\\dots,X_{Lv}.$$\nDiese sind unabhängig, weil in jedem Lauf neue Zufallszahlen gezogen werden.\n\nFür verschiedene Knoten im selben Lauf sind die Schätzungen aber im Allgemeinen **nicht unabhängig**, weil ihre erreichbaren Mengen überlappen und damit gemeinsame Zufallswerte benutzen.\n\nDas ist kein Problem:\n- **Chernoff-Schranken** nutzt man für einen festen Knoten über die unabhängigen Läufe.\n- Für „alle Knoten gleichzeitig“ verwendet man die **Union Bound**."
   }
 ]

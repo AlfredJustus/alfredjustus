@@ -1258,5 +1258,65 @@
   {
     "front": "[2026-05-22] Why is a 100% accurate prefetcher not necessarily useful?",
     "back": "Because **accuracy** alone says nothing about how many misses are affected. A prefetcher could issue very few prefetches, all correct, and still have almost no impact.\n\nThat is why **coverage** also matters:\n\n$$\\text{coverage}=\\frac{\\text{prefetched misses}}{\\text{all misses}}.$$\n\nA prefetcher with perfect accuracy but near-zero coverage may save almost no stall time. Good prefetching must balance **accuracy**, **coverage**, **timeliness**, and resource cost."
+  },
+  {
+    "front": "[2026-05-28] Why can prefetching improve performance without changing program correctness?",
+    "back": "**Prefetching** only changes **when** data is fetched, not the program’s architectural results. If the prediction is correct, a later demand load may hit and avoid memory latency. If the prediction is wrong, the machine may waste bandwidth, energy, or cache space, but it does not need rollback.\n\nThis differs from branch misprediction: a wrong branch changes the speculative control path and can corrupt architectural state unless recovered. A wrong prefetch does **not** commit incorrect state."
+  },
+  {
+    "front": "[2026-05-28] When is using multiple coordinated prefetchers better than a single prefetcher?",
+    "back": "Use **coordinated prefetchers** when workloads contain different access patterns across phases, such as **streams**, **regular strides**, and more irregular behavior. A single prefetcher usually captures only some of these well.\n\nCoordination matters because multiple active prefetchers can interfere:\n- they may flood shared memory bandwidth,\n- evict useful cache lines from the shared LLC,\n- and compete with demand requests.\n\nSo the benefit comes not from “more prefetchers,” but from controlling **which prefetcher is active**, **how aggressive it is**, and **how its requests are prioritized**."
+  },
+  {
+    "front": "[2026-05-28] Why is execution-based prefetching often more accurate than stream-based address prediction?",
+    "back": "**Execution-based prefetching** runs future program instructions to discover addresses naturally, instead of inferring them only from past memory-access patterns.\n\nIts accuracy is often higher because it follows the program’s own computation:\n- computed addresses come from actual instructions,\n- pointer traversals can be exposed directly,\n- and both data and instruction needs may be prefetched.\n\nThe tradeoff is higher implementation complexity, since the machine must support some form of speculative pre-execution using a thread, core, context, or special mode."
+  },
+  {
+    "front": "[2026-05-28] Why does a long-latency miss at the ROB head stall an out-of-order processor?",
+    "back": "When the oldest instruction in the **reorder buffer (ROB)** has a long-latency cache miss, **retirement** is blocked. Younger instructions may still execute for a while, but they cannot commit before the oldest one.\n\nEventually, the instruction window fills with unretired work, so the processor cannot bring in enough new instructions. At that point, out-of-order execution loses its ability to look further ahead, and the core stalls.\n\nThis is exactly the situation **runahead execution** tries to exploit."
+  },
+  {
+    "front": "[2026-05-28] What is the runahead execution sequence, and what is its goal?",
+    "back": "The sequence is:\n$$\\text{cache miss at ROB head} \\rightarrow \\text{checkpoint} \\rightarrow \\text{runahead mode} \\rightarrow \\text{restore checkpoint}$$\n\nIn **runahead execution**, the processor saves architectural state, then speculatively continues executing future instructions while the original miss is still outstanding. The goal is **not** to commit results. The goal is to generate future cache misses early so that, after restoring the checkpoint and resuming normal execution, those later accesses may already hit.\n\nSo runahead is best understood as **execution-based prefetching**."
+  },
+  {
+    "front": "[2026-05-28] Why can runahead mimic a larger instruction window without physically building one?",
+    "back": "A larger instruction window helps because it can keep more future instructions in flight while an old miss is pending, exposing more **memory-level parallelism**.\n\n**Runahead** approximates this benefit by using the stall time to speculatively move forward and discover later independent misses. It does **not** enlarge the hardware window; instead, it uses the existing core to act as if it could see farther ahead.\n\nSo the benefit is similar to a larger window’s latency tolerance, but achieved through speculative forward execution rather than more physical buffering."
+  },
+  {
+    "front": "[2026-05-28] Why are dependent cache misses hard for classic runahead execution?",
+    "back": "A future load is a **dependent miss** if its address depends on data returned by the original long-latency miss. In classic runahead, that missing value is not available yet.\n\nThe lecture’s mechanism was to mark such unavailable values as **invalid**. Execution can continue speculatively, but if an address computation needs an invalid value, the processor may be unable to form the correct future address. Then the corresponding prefetch opportunity is lost.\n\nSo runahead works best for **independent** future misses, not strongly dependent chains."
+  },
+  {
+    "front": "[2026-05-28] What idea can recover some runahead opportunities lost to dependent misses?",
+    "back": "Use **value prediction** for the missing value, especially for **pointer-like values**. If the processor can predict the value well enough, it may compute addresses for loads that would otherwise be blocked by invalid operands during runahead.\n\nThis does not make classic runahead perfect, but it can recover some useful dependent prefetches that would otherwise be missed.\n\nThe key idea is: predict the unavailable value well enough to continue address generation."
+  },
+  {
+    "front": "[2026-05-28] What does virtual memory provide that physical memory alone does not?",
+    "back": "**Virtual memory** gives each process the illusion of a large, private address space, even though physical memory is limited and shared.\n\nThis enables:\n- **isolation**: different processes can use the same virtual addresses safely,\n- **relocation/flexible placement**: code and data can live anywhere in physical memory,\n- **controlled sharing**: different virtual mappings can intentionally refer to the same physical data.\n\nPrograms use **virtual addresses**; hardware and the OS translate them to physical addresses during execution."
+  },
+  {
+    "front": "[2026-05-28] In address translation, what part of a virtual address is translated, and what part is preserved?",
+    "back": "A virtual address is split as\n$$\\text{virtual address} = \\text{VPN} \\Vert \\text{page offset}$$\n\nOnly the **virtual page number (VPN)** is translated. The **page offset** is preserved unchanged:\n$$\\text{physical address} = \\text{PPN} \\Vert \\text{same page offset}$$\n\nThis works because pages and frames have the same size, so the byte position within the page remains the same after translation.\n\nA common pitfall is to think the offset is replaced by a new physical offset. It is not."
+  },
+  {
+    "front": "[2026-05-28] Given a 4 KB page size and virtual address $0x5F20$, what is the page offset, and what part is translated?",
+    "back": "For a **4 KB** page,\n$$\\text{offset bits} = \\log_2(4096) = 12$$\n\nSo the lower 12 bits are the **page offset**. In hexadecimal, 12 bits correspond to 3 hex digits, so for\n$$0x5F20$$\nthe offset is\n$$0xF20$$\n\nThe remaining upper bits form the **VPN**, which is the part that gets translated to a **PPN**. The offset $0xF20$ stays unchanged in the physical address."
+  },
+  {
+    "front": "[2026-05-28] How do you compute the number of pages or frames in a memory region?",
+    "back": "Use\n$$\\text{number of pages} = \\frac{\\text{address-space size}}{\\text{page size}}$$\n\nThe same formula applies to **virtual pages** and **physical frames**, depending on whether the size refers to virtual or physical memory.\n\nExample with a 4 KB page size:\n$$\\frac{64\\ \\text{KB}}{4\\ \\text{KB}} = 16$$\n\nSo a 64 KB region contains **16 pages** (or 16 frames if it is physical memory)."
+  },
+  {
+    "front": "[2026-05-28] How does a page table translate a virtual page number?",
+    "back": "A **page table** uses the **VPN** as the key or index to retrieve:\n- the **physical page number (PPN)**,\n- and metadata such as **valid**, **dirty/modified**, **usage**, and **permission** bits.\n\nThe **page-table base register** points to the start or root of the page-table structure. Translation conceptually means: extract the VPN, look it up in the page table, obtain the PPN, then concatenate it with the unchanged page offset."
+  },
+  {
+    "front": "[2026-05-28] Why do multilevel page tables save memory, and what do they cost?",
+    "back": "A **flat page table** for a large virtual address space would need entries for huge numbers of virtual pages, even if most of them are unused.\n\nA **multilevel page table** saves memory by allocating lower-level tables only for regions that are actually used. Unused regions can be represented by missing or invalid pointers at higher levels.\n\nThe cost is extra lookup work: translation may require several memory accesses, one per level, before finding the final **PPN**.\n\nSo the tradeoff is:\n- **less page-table memory usage**,\n- but **more translation latency/work**."
+  },
+  {
+    "front": "[2026-05-28] What does a valid versus invalid page-table entry mean?",
+    "back": "A **valid** page-table entry means the virtual page is currently mapped to a physical frame in memory, so translation can proceed normally.\n\nAn **invalid** entry means the page is not currently mapped in physical memory. Accessing it can trigger a **page fault**, causing OS handling rather than a normal data access.\n\nSo “invalid” does not mean “randomly wrong”; it means the mapping is absent and software intervention may be required."
   }
 ]

@@ -1,5 +1,5 @@
 {
-  "generated": "2026-05-28T14:54:05.511Z",
+  "generated": "2026-05-29T14:22:48.062Z",
   "model": "gpt-5.4",
   "cardsPerLectureTarget": 15,
   "format": "markdown->parser->json",
@@ -9,9 +9,9 @@
       "name": "Digital Design and Computer Architecture",
       "file": "227-0003-10L.json",
       "apkg": null,
-      "cards": 315,
+      "cards": 330,
       "semester": "spring-2026",
-      "lectures": 21
+      "lectures": 22
     },
     {
       "id": "252-0029-00L",
@@ -27,9 +27,9 @@
       "name": "Algorithmen und Wahrscheinlichkeit",
       "file": "252-0030-00L.json",
       "apkg": null,
-      "cards": 390,
+      "cards": 405,
       "semester": "spring-2026",
-      "lectures": 26
+      "lectures": 27
     },
     {
       "id": "401-0212-16L",
