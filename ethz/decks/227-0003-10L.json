@@ -1318,5 +1318,65 @@
   {
     "front": "[2026-05-28] What does a valid versus invalid page-table entry mean?",
     "back": "A **valid** page-table entry means the virtual page is currently mapped to a physical frame in memory, so translation can proceed normally.\n\nAn **invalid** entry means the page is not currently mapped in physical memory. Accessing it can trigger a **page fault**, causing OS handling rather than a normal data access.\n\nSo “invalid” does not mean “randomly wrong”; it means the mapping is absent and software intervention may be required."
+  },
+  {
+    "front": "[2026-05-29] Why is the Clock algorithm used instead of true LRU for physical-page replacement?",
+    "back": "**True LRU** is too expensive at physical-memory scale. With, for example, $4\\ \\text{GB}$ of RAM and $4\\ \\text{KB}$ pages, the OS must manage about\n$$\\frac{4 \\cdot 2^{30}}{4 \\cdot 2^{10}} = 2^{20} \\approx 10^6$$\npages.\n\nMaintaining an exact global recency order over roughly a million pages would require too much metadata and too many updates on every access. The **Clock algorithm** approximates LRU much more cheaply by storing only a **reference bit** per frame and scanning frames in a circle when eviction is needed."
+  },
+  {
+    "front": "[2026-05-29] In the Clock algorithm, why is a frame with reference bit `1` not evicted immediately?",
+    "back": "A reference bit of `1` means the page was used recently, so Clock gives it a **second chance**. Instead of evicting it, the algorithm clears the bit to `0` and moves on.\n\nIf the hand comes back later and the bit is still `0`, that page has not been used again and becomes a good eviction candidate. This approximates **LRU**: recently used pages are less likely to be evicted, but without maintaining an exact recency ordering."
+  },
+  {
+    "front": "[2026-05-29] Trace one Clock replacement step: what happens for reference bits $[1,1,0,1]$ if the hand starts at the first frame?",
+    "back": "The hand scans circularly:\n\n1. First frame: bit is `1` $\\rightarrow$ clear it to `0`, move on.\n2. Second frame: bit is `1` $\\rightarrow$ clear it to `0`, move on.\n3. Third frame: bit is `0` $\\rightarrow$ **evict this frame**.\n\nSo the victim is the **third frame**. After the scan up to eviction, the bits have become\n$$[0,0,0,1]$$\nif we show the evicted frame’s old bit before replacement. The key idea is that pages with bit `1` are spared once, not forever."
+  },
+  {
+    "front": "[2026-05-29] In what sense is physical memory a cache for disk?",
+    "back": "**Physical memory** acts like a cache of the larger **backing store** on disk. A virtual page may either:\n\n- already reside in a physical frame, or\n- be absent and require a **page fault** so it can be fetched from disk.\n\nThis is cache-like because the system keeps only a working subset of data in fast memory. The difference from hardware caches is that page replacement is much slower and more flexible: the OS can spend more effort deciding what to evict because disk access is orders of magnitude slower than cache access."
+  },
+  {
+    "front": "[2026-05-29] Why is it wrong to think page tables only translate addresses?",
+    "back": "A **page table** does two jobs at once:\n\n- **address translation**: map a virtual page to a physical frame\n- **protection enforcement**: store permission bits such as readable, writable, executable, and user/supervisor\n\nSo a memory access is not just “where does this go?” but also “is this access allowed?” A translation is only usable if the permissions permit the requested operation. This is why virtual memory is both a mapping mechanism and a protection mechanism."
+  },
+  {
+    "front": "[2026-05-29] How can two processes share one physical page without being able to corrupt each other’s code?",
+    "back": "Two processes can map different virtual pages to the **same physical page** using their own page tables. If that shared page is marked **read-only**, both processes can read the same data, such as a shared library, but neither can write it.\n\nThe key is that **sharing** and **protection** are controlled by page-table metadata. The same physical page can therefore be visible in multiple address spaces while still enforcing safe access rights."
+  },
+  {
+    "front": "[2026-05-29] What privilege levels matter here on x86, and why do they matter for virtual memory?",
+    "back": "On x86, **ring 0** is the highest privilege level and is used by the operating system kernel, while ordinary applications run in **ring 3**.\n\nThis matters because page-table permissions include **user/supervisor** control. A page marked as supervisor-only may be accessible in ring 0 but not in ring 3. Virtual memory therefore helps enforce isolation between user programs and the kernel."
+  },
+  {
+    "front": "[2026-05-29] Why can a RowHammer bit flip in a page table cause privilege escalation rather than just data corruption?",
+    "back": "A bit flip in ordinary data corrupts that data. A bit flip in a **page-table entry** is much more powerful because page tables are **trusted control metadata** for the MMU.\n\nIf RowHammer changes:\n\n- the **physical page number**, a virtual page may point somewhere unintended\n- the **permission bits**, forbidden accesses may become allowed\n\nThat can let an attacker gain write access to critical memory structures. The attack is dangerous because it targets the metadata that controls all later memory accesses."
+  },
+  {
+    "front": "[2026-05-29] Why does “spraying” page tables help a RowHammer attacker?",
+    "back": "**Spraying** means filling much of physical memory with many page tables. This increases the probability that a RowHammer-induced bit flip lands in a useful **page-table entry** rather than in irrelevant data.\n\nSince the attack becomes powerful only when trusted metadata is corrupted, placing many page tables in memory improves the attacker’s odds of flipping a bit that changes a mapping or permission in a useful way."
+  },
+  {
+    "front": "[2026-05-29] What does the MMU do, and why is the TLB its most important fast-path structure?",
+    "back": "The **Memory Management Unit (MMU)** translates virtual addresses from the CPU core into physical addresses used by the memory system.\n\nIts key fast-path structure is the **Translation Lookaside Buffer (TLB)**, a small cache of recently used page-table entries. On a **TLB hit**, the MMU gets both:\n\n- the physical frame number\n- the protection information\n\nwithout walking the multi-level page table. This avoids expensive memory accesses for translation on common cases."
+  },
+  {
+    "front": "[2026-05-29] What happens on a TLB miss in a hardware-managed TLB, and what is the trade-off?",
+    "back": "In a **hardware-managed TLB**, a miss does not immediately trap to the OS. Instead, hardware performs the **page-table walk**, fetches the needed entry, inserts it into the TLB, and may evict an older TLB entry.\n\nThe advantage is **speed**: no exception handling is needed for ordinary misses. The trade-off is **reduced flexibility**: the hardware/software interface is tied to a particular page-table organization, making alternative page-table formats harder to support."
+  },
+  {
+    "front": "[2026-05-29] What happens on a TLB miss in a software-managed TLB, and when is that attractive?",
+    "back": "In a **software-managed TLB**, a miss raises an **exception**. The operating system then:\n\n1. handles the exception,\n2. walks the page table in software,\n3. inserts the translation into the TLB.\n\nThis is much slower because it incurs exception and OS overhead. Its advantage is **flexibility**: the OS can support different page-table organizations without requiring dedicated hardware walkers."
+  },
+  {
+    "front": "[2026-05-29] Why do multiple page sizes complicate TLB lookup?",
+    "back": "The **page offset** is not translated, and its width depends on page size:\n\n- $4\\ \\text{KB} \\rightarrow 12$ offset bits\n- $2\\ \\text{MB} \\rightarrow 21$ offset bits\n- $1\\ \\text{GB} \\rightarrow 30$ offset bits\n\nBecause the offset width changes, the same virtual address must be split differently into **tag/index/offset** depending on page size. But the hardware does not know the page size before translation, so it must either probe multiple TLBs in parallel, predict the size, or retry with another interpretation."
+  },
+  {
+    "front": "[2026-05-29] Compute the offset bits for a $2\\ \\text{MB}$ page. What does that imply for translation?",
+    "back": "A page of size $2\\ \\text{MB}$ has\n$$2\\ \\text{MB} = 2 \\cdot 2^{20} = 2^{21}\\ \\text{bytes}$$\nso it needs **21 offset bits**.\n\nImplication: those 21 low-order bits are copied directly from the virtual address to the physical address. Only the upper bits need translation. Compared with a $4\\ \\text{KB}$ page, the TLB must interpret the address with a different tag/index/offset split, which complicates lookup hardware."
+  },
+  {
+    "front": "[2026-05-29] What is the difference between a homonym and a synonym in virtually addressed caches?",
+    "back": "A **homonym** occurs when the **same virtual address** refers to **different physical addresses**, typically in different processes.\n\nA **synonym** occurs when **different virtual addresses** refer to the **same physical address**, such as shared memory or shared libraries.\n\nWhy this matters:\n\n- **homonyms** can cause one process to see another process’s cached data unless process identity is tracked\n- **synonyms** can create multiple cache entries for the same physical data, risking inconsistency or stale copies"
   }
 ]
